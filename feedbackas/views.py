@@ -165,16 +165,14 @@ def results(request):
     # Surinkti kokybinius atsiliepimus
     qualitative_feedback = [f.feedback for f in completed_feedback]
 
-    # --- Laikini (mock) duomenys kompetencijoms, nes modelis to nepalaiko ---
-    # Ateityje tai turėtų būti gaunama iš duomenų bazės.
+    # Apskaičiuoti kompetencijų vidurkius
     competencies = [
-        {'name': 'Komandinis Darbas', 'score': 9.2},
-        {'name': 'Komunikacija', 'score': 8.5},
-        {'name': 'Iniciatyvumas', 'score': 7.8},
-        {'name': 'Techninės Žinios', 'score': 9.5},
-        {'name': 'Problemų Sprendimas', 'score': 8.9},
+        {'name': 'Komandinis Darbas', 'score': round(completed_feedback.aggregate(Avg('teamwork_rating'))['teamwork_rating__avg'] or 0, 1)},
+        {'name': 'Komunikacija', 'score': round(completed_feedback.aggregate(Avg('communication_rating'))['communication_rating__avg'] or 0, 1)},
+        {'name': 'Iniciatyvumas', 'score': round(completed_feedback.aggregate(Avg('initiative_rating'))['initiative_rating__avg'] or 0, 1)},
+        {'name': 'Techninės Žinios', 'score': round(completed_feedback.aggregate(Avg('technical_skills_rating'))['technical_skills_rating__avg'] or 0, 1)},
+        {'name': 'Problemų Sprendimas', 'score': round(completed_feedback.aggregate(Avg('problem_solving_rating'))['problem_solving_rating__avg'] or 0, 1)},
     ]
-    # -------------------------------------------------------------------------
 
     context = {
         'overall_avg_rating': round(overall_avg_rating, 1),

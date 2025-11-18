@@ -129,6 +129,58 @@
                             </div>
                         </div>
 
+                        <!-- Kompetencijų slankikliai -->
+                        <div class="space-y-4 pt-4 border-t">
+                            <h4 class="text-sm font-medium text-gray-700">Kompetencijų vertinimas</h4>
+
+                            <!-- Komandinis Darbas -->
+                            <div>
+                                <label for="teamwork_rating" class="block text-sm font-medium text-gray-600">Komandinis Darbas</label>
+                                <div class="flex items-center space-x-4 mt-1">
+                                    <input type="range" id="teamwork_rating" name="teamwork_rating" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer competency-slider">
+                                    <span class="text-lg font-bold text-purple-600 w-10 text-center rating-value">5</span>
+                                </div>
+                            </div>
+
+                            <!-- Komunikacija -->
+                            <div>
+                                <label for="communication_rating" class="block text-sm font-medium text-gray-600">Komunikacija</label>
+                                <div class="flex items-center space-x-4 mt-1">
+                                    <input type="range" id="communication_rating" name="communication_rating" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer competency-slider">
+                                    <span class="text-lg font-bold text-purple-600 w-10 text-center rating-value">5</span>
+                                </div>
+                            </div>
+
+                            <!-- Iniciatyvumas -->
+                            <div>
+                                <label for="initiative_rating" class="block text-sm font-medium text-gray-600">Iniciatyvumas</label>
+                                <div class="flex items-center space-x-4 mt-1">
+                                    <input type="range" id="initiative_rating" name="initiative_rating" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer competency-slider">
+                                    <span class="text-lg font-bold text-purple-600 w-10 text-center rating-value">5</span>
+                                </div>
+                            </div>
+
+                            <!-- Techninės Žinios -->
+                            <div>
+                                <label for="technical_skills_rating" class="block text-sm font-medium text-gray-600">Techninės Žinios</label>
+                                <div class="flex items-center space-x-4 mt-1">
+                                    <input type="range" id="technical_skills_rating" name="technical_skills_rating" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer competency-slider">
+                                    <span class="text-lg font-bold text-purple-600 w-10 text-center rating-value">5</span>
+                                </div>
+                            </div>
+
+                            <!-- Problemų Sprendimas -->
+                            <div>
+                                <label for="problem_solving_rating" class="block text-sm font-medium text-gray-600">Problemų Sprendimas</label>
+                                <div class="flex items-center space-x-4 mt-1">
+                                    <input type="range" id="problem_solving_rating" name="problem_solving_rating" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer competency-slider">
+                                    <span class="text-lg font-bold text-purple-600 w-10 text-center rating-value">5</span>
+                                </div>
+                            </div>
+
+                        </div>
+
+
                         <!-- 2. Raktinių Žodžių Laukas -->
                         <div>
                             <label for="keywords" class="block text-sm font-medium text-gray-700">
@@ -174,18 +226,24 @@
     <!-- Slankiklio reikšmės atnaujinimo skriptas -->
     <script>
         try {
-            const ratingSlider = document.getElementById('rating');
-            const ratingValue = document.getElementById('rating-value');
-            
-            if (ratingSlider && ratingValue) {
-                // Atnaujiname iš karto
-                ratingValue.textContent = ratingSlider.value;
-                
-                // Atnaujiname keičiant
-                ratingSlider.oninput = function() {
-                    ratingValue.textContent = this.value;
+            // Bendras slankiklių valdymas
+            const sliders = document.querySelectorAll('input[type="range"]');
+
+            sliders.forEach(slider => {
+                const valueSpan = slider.nextElementSibling;
+
+                // Nustatome pradinę reikšmę
+                if (valueSpan) {
+                    valueSpan.textContent = slider.value;
                 }
-            }
+
+                // Atnaujiname keičiant
+                slider.oninput = function() {
+                    if (valueSpan) {
+                        valueSpan.textContent = this.value;
+                    }
+                }
+            });
         } catch (e) {
             console.error("Klaida nustatant slankiklį:", e);
         }
