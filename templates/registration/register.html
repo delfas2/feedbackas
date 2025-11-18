@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registracijos Forma</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Pritaikome Inter šriftą visam puslapiui */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-purple-50 flex items-center justify-center min-h-screen px-4">
+
+    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+        
+        <!-- Formos Antraštė -->
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">
+            Sukurti Paskyrą ✨
+        </h2>
+        
+        <!-- Registracijos Forma -->
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+
+            {% if form.errors %}
+                <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                    <strong class="font-bold">Klaida!</strong>
+                    <ul class="list-disc pl-5">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+            
+            <!-- Vardas -->
+            <div>
+                <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    Vardas
+                </label>
+                {{ form.first_name }}
+            </div>
+
+            <!-- Pavardė -->
+            <div>
+                <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    Pavardė
+                </label>
+                {{ form.last_name }}
+            </div>
+
+            <!-- Įmonė -->
+            <div>
+                <label for="{{ form.company.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    Įmonė (Nebūtina)
+                </label>
+                {{ form.company }}
+            </div>
+
+            <!-- El. paštas -->
+            <div>
+                <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    El. paštas
+                </label>
+                {{ form.email }}
+            </div>
+
+            <!-- Slaptažodis -->
+            <div>
+                <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    Slaptažodis
+                </label>
+                {{ form.password }}
+            </div>
+
+            <!-- Pakartoti Slaptažodį -->
+            <div>
+                <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                    Pakartokite slaptažodį
+                </label>
+                {{ form.password2 }}
+            </div>
+
+            <!-- Registracijos Mygtukas -->
+            <div>
+                <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-purple-500 hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200">
+                    Registruotis
+                </button>
+            </div>
+        </form>
+
+        <!-- Prisijungimo Nuoroda -->
+        <p class="mt-6 text-center text-sm text-gray-600">
+            Jau turite paskyrą?
+            <a href="{% url 'login' %}" class="font-medium text-purple-600 hover:text-purple-500">
+                Prisijunkite
+            </a>
+        </p>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+
+{% block title %}Rezultatai - Atsiliepimai+{% endblock %}
+
+{% block content %}
+<!-- Pagrindinis Turinys -->
+        <main class="flex-1 overflow-y-auto">
+            
+            <!-- Viršutinė juosta -->
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+                <!-- Mobilus Meniu Mygtukas -->
+                <button class="md:hidden p-2 text-gray-600">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+                </button>
+                
+                <h1 class="text-2xl font-bold text-gray-800 hidden md:block">
+                    Mano Rezultatai 📊
+                </h1>
+                
+                <!-- Laikotarpio pasirinkimas -->
+                <div class="flex bg-gray-100 rounded-lg p-1">
+                   <button class="px-4 py-1.5 text-sm font-medium text-gray-600 rounded-md hover:bg-white hover:shadow-sm transition-all">Mėnuo</button>
+                   <button class="px-4 py-1.5 text-sm font-medium text-purple-600 bg-white shadow-sm rounded-md">Ketvirtis</button>
+                   <button class="px-4 py-1.5 text-sm font-medium text-gray-600 rounded-md hover:bg-white hover:shadow-sm transition-all">Metai</button>
+                </div>
+            </header>
+
+            <!-- Turinys -->
+            <div class="p-6 md:p-8 space-y-8">
+                
+                <!-- 1. Apibendrinimo Kortelė -->
+                <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-purple-100 rounded-full opacity-50 blur-2xl"></div>
+                    
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-8 relative z-10">
+                        <!-- Įvertinimas -->
+                        <div class="text-center md:text-left">
+                            <p class="text-gray-500 font-medium mb-1">Bendras Įvertinimas</p>
+                            <div class="flex items-baseline gap-2 justify-center md:justify-start">
+                                <h2 class="text-5xl font-extrabold text-gray-800">{{ overall_avg_rating }}</h2>
+                                <!-- Pokytis laikinai paslėptas -->
+                                <!-- <span class="text-green-500 font-bold flex items-center">
+                                    <svg class="w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 15.293 6.293A1 1 0 0115.293 6.293z" clip-rule="evenodd" /></svg>
+                                    +0.4
+                                </span> -->
+                            </div>
+                            <p class="text-sm text-gray-400 mt-2">Palyginus su praeitu ketvirčiu</p>
+                        </div>
+
+                        <!-- Statistika -->
+                        <div class="flex gap-8">
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-purple-600">{{ received_feedback_count }}</div>
+                                <div class="text-xs text-gray-500 uppercase tracking-wide">Gauta Atsiliepimų</div>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-2xl font-bold text-purple-600">--%</div>
+                                <div class="text-xs text-gray-500 uppercase tracking-wide">Dalyvavimas</div>
+                            </div>
+                            <div class="text-center hidden sm:block">
+                                <div class="text-2xl font-bold text-purple-600">Top --%</div>
+                                <div class="text-xs text-gray-500 uppercase tracking-wide">Įmonėje</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Kompetencijų Grafikas ir Detalės -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    
+                    <!-- Kairė: Kompetencijos (Progress Bars) -->
+                    <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">Kompetencijų Vertinimas</h3>
+                        <div class="space-y-6">
+                            
+                            {% for comp in competencies %}
+                            <div>
+                                <div class="flex justify-between mb-1">
+                                    <span class="text-sm font-medium text-gray-700">{{ comp.name }}</span>
+                                    <span class="text-sm font-bold text-purple-600">{{ comp.score }}/10</span>
+                                </div>
+                                <div class="w-full bg-gray-100 rounded-full h-3">
+                                    <div class="bg-purple-500 h-3 rounded-full" style="width: {{ comp.score|floatformat:0 }}0%"></div>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                        </div>
+                    </div>
+
+                    <!-- Dešinė: Raktiniai Žodžiai -->
+                    <div class="bg-white rounded-2xl shadow-lg p-6">
+                        <h3 class="text-xl font-bold text-gray-800 mb-6">Kaip jus apibūdina</h3>
+                        <div class="flex flex-wrap gap-2">
+                            {% for keyword in all_keywords %}
+                                <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">{{ keyword }}</span>
+                            {% empty %}
+                                <span class="text-sm text-gray-500">Kol kas nėra raktinių žodžių.</span>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="mt-8 p-4 bg-gray-50 rounded-xl border border-gray-100">
+                            <h4 class="font-semibold text-gray-800 mb-2 text-sm">AI Įžvalga 🤖</h4>
+                            <p class="text-sm text-gray-600 leading-relaxed">
+                                Jūsų kolegos labiausiai vertina jūsų techninę kompetenciją ir norą padėti. Tačiau keletas atsiliepimų rodo, kad galėtumėte rodyti daugiau iniciatyvos naujuose projektuose.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Kokybiniai Atsiliepimai (Stiprybės ir Tobulėjimas) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    
+                    <!-- Stiprybės -->
+                    <div class="bg-green-50 border border-green-100 rounded-2xl p-6">
+                        <div class="flex items-center mb-4">
+                            <div class="bg-green-100 p-2 rounded-full mr-3">
+                                <svg class="w-6 h-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.247-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.176.405.28.6a3.75 3.75 0 10-4.296-5.75l-.02.02a.75.75 0 01-1.248-.742l.2-.406a5.25 5.25 0 011.683-1.914M5.904 18.75c.098-.237.21-.468.332-.688M5.904 18.75h2.906" /></svg>
+                            </div>
+                            <h3 class="text-lg font-bold text-green-800">Stiprybės</h3>
+                        </div>
+                        <ul class="space-y-4">
+                            {% for feedback_text in strengths %}
+                            <li class="bg-white p-3 rounded-lg shadow-sm text-gray-700 text-sm">
+                                "{{ feedback_text }}"
+                            </li>
+                            {% empty %}
+                            <li class="text-sm text-gray-500">Kol kas nėra atsiliepimų.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                    <!-- Tobulintinos sritys -->
+                    <div class="bg-orange-50 border border-orange-100 rounded-2xl p-6">
+                         <div class="flex items-center mb-4">
+                            <div class="bg-orange-100 p-2 rounded-full mr-3">
+                                <svg class="w-6 h-6 text-orange-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 18v-5.25m0 0a6.01 6.01 0 001.5-.189m-1.5.189a6.01 6.01 0 01-1.5-.189m3.75 7.478a12.06 12.06 0 01-7.5 0m7.5 0a12.06 12.06 0 007.5 0m-7.5 0a12.06 12.06 0 017.5 0m-7.5 0a12.06 12.06 0 00-7.5 0m7.5 0a6.01 6.01 0 00-1.5-.189m1.5.189a6.01 6.01 0 01-1.5-.189m0 0A23.978 23.978 0 016 15.75m12 0c.358.06.71.128 1.06.201m-1.06-.201a23.978 23.978 0 00-1.06.201m0 0A23.978 23.978 0 0112 15.75m0 0a23.978 23.978 0 00-1.06.201M15 15.75a23.978 23.978 0 01-1.06.201m0 0a23.978 23.978 0 00-1.06.201m3.75 6.478A12.06 12.06 0 0112 21.75m0 0a12.06 12.06 0 01-7.5-3.522m7.5 3.522a12.06 12.06 0 007.5-3.522m-7.5 3.522v-5.25" /></svg>
+                            </div>
+                            <h3 class="text-lg font-bold text-orange-800">Tobulintinos sritys</h3>
+                        </div>
+                        <ul class="space-y-4">
+                            {% for feedback_text in improvements %}
+                            <li class="bg-white p-3 rounded-lg shadow-sm text-gray-700 text-sm">
+                                "{{ feedback_text }}"
+                            </li>
+                            {% empty %}
+                            <li class="text-sm text-gray-500">Kol kas nėra atsiliepimų.</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+{% endblock %}

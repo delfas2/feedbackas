@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prisijungimo Forma</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Pritaikome Inter šriftą visam puslapiui */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-purple-50 flex items-center justify-center min-h-screen px-4">
+
+    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+        
+        <!-- Formos Antraštė -->
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">
+            Prisijungti 👋
+        </h2>
+        
+        <!-- Prisijungimo Forma -->
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            
+            <!-- El. paštas -->
+            <div>
+                <label for="id_username" class="block text-sm font-medium text-gray-700">
+                    El. paštas
+                </label>
+                <input type="email"
+                       name="username"
+                       id="id_username"
+                       placeholder="jusu.pastas@domenas.lt"
+                       required
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+            </div>
+
+            <!-- Slaptažodis -->
+            <div>
+                <label for="id_password" class="block text-sm font-medium text-gray-700">
+                    Slaptažodis
+                </label>
+                <input type="password"
+                       name="password"
+                       id="id_password"
+                       placeholder="••••••••"
+                       required
+                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+            </div>
+
+            <!-- Prisijungimo Mygtukas -->
+            <div>
+                <button type="submit"
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-purple-500 hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200">
+                    Prisijungti
+                </button>
+            </div>
+        </form>
+
+        <!-- Registracijos Nuoroda -->
+        <p class="mt-6 text-center text-sm text-gray-600">
+            Neturite paskyros?
+            <a href="{% url 'register' %}" class="font-medium text-purple-600 hover:text-purple-500">
+                Registruokitės
+            </a>
+        </p>
+    </div>
+
+</body>
+</html>

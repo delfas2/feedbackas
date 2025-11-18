@@ -1,0 +1,63 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Virtualenv
+venv/
+.venv/
+env/
+.env/
+virtualenv/
+.virtualenv/
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Statinių ir medijos failų aplankai
+/static/
+/media/
+
+# IDE ir redaktorių konfigūracijos
+.idea/
+.vscode/
+
+# Operacinės sistemos failai
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Aplinkos kintamųjų failas
+.env
+
+# Testavimo ir kodo padengimo ataskaitos
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.pytest_cache/
+
+# Dokumentacija
+/site
+
+# Mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre
+.pyre/

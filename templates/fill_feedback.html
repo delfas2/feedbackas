@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kolegos Apklausa - Atsiliepimai+</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Slankiklio stilius */
+        input[type='range']::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            background: #8B5CF6; /* purple-500 */
+            border-radius: 50%;
+            cursor: pointer;
+            margin-top: -6px; /* Centravimui */
+        }
+        input[type='range']::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            background: #8B5CF6;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div class="flex h-screen">
+        
+        <!-- 1. Šoninė Navigacijos Juosta -->
+        <aside class="hidden md:flex w-64 flex-col bg-white shadow-lg">
+            <!-- Logotipas -->
+            <div class="px-6 py-5 border-b">
+                <a href="{% url 'index' %}" class="text-2xl font-bold text-purple-600">
+                    Atsiliepimai+
+                </a>
+            </div>
+            
+            <!-- Navigacija -->
+            <nav class="flex-1 space-y-2 py-4 px-4">
+                <a href="{% url 'home' %}" class="flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 hover:bg-purple-50 hover:text-purple-600 font-medium">
+                    <!-- Piktograma -->
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l-3.75 5.25h16.5l-3.75-5.25h-9zM3.75 6.75h.75l.75 1.5h.75l.75-1.5h.75l-.75 1.5h.75l.75 1.5h.75l.75-1.5h.75l-.75 1.5h.75l.75 1.5h.75l.75-1.5h.75l-.75 1.5h.75l.75 1.5h.75l.75-1.5h.75" /></svg>
+                    <span>Pagrindinis</span>
+                </a>
+                <a href="{% url 'my_tasks_list' %}" class="flex items-center space-x-3 px-4 py-2 rounded-lg text-white bg-purple-500 font-medium">
+                    <!-- Piktograma -->
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-10.5c-.621 0-1.125-.504-1.125-1.125v-11.25c0-.621.504-1.125 1.125-1.125H9M9 7.5h.008v.008H9V7.5z" /></svg>
+                    <span>Mano Užduotys</span>
+                </a>
+                <a href="{% url 'team_members_list' %}" class="flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 hover:bg-purple-50 hover:text-purple-600 font-medium">
+                    <!-- Piktograma -->
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.182 14.818a4.5 4.5 0 0 1-6.364 0l-2.121-2.121a4.5 4.5 0 0 1 0-6.364l2.121-2.121a4.5 4.5 0 0 1 6.364 0l2.121 2.121a4.5 4.5 0 0 1 0 6.364l-2.121 2.121zM9.172 9.172a.375.375 0 1 1-.53.53l-.354-.354a.375.375 0 0 1 0-.53l.354-.354a.375.375 0 0 1 .53 0z" /></svg>
+                    <span>Mano Komanda</span>
+                </a>
+                <a href="{% url 'results' %}" class="flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 hover:bg-purple-50 hover:text-purple-600 font-medium">
+                    <!-- Piktograma -->
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h15.75c.621 0 1.125.504 1.125 1.125v6.75C21 20.496 20.496 21 19.875 21H4.125A1.125 1.125 0 0 1 3 19.875v-6.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.375c1.036 0 1.875.84 1.875 1.875v.375c0 1.036-.84 1.875-1.875 1.875h-.375A1.875 1.875 0 0 1 9.75 9v-.375z" /></svg>
+                    <span>Rezultatai</span>
+                </a>
+            </nav>
+
+            <!-- Vartotojo profilis ir atsijungimas -->
+            <div class="mt-auto border-t p-4">
+                <div class="flex items-center space-x-3">
+                    <img class="w-10 h-10 rounded-full" src="https://placehold.co/40x40/eee/333?text=VP" alt="Vartotojo profilio nuotrauka">
+                    <div>
+                        <p class="font-medium text-gray-800">{{ user.first_name }}</p>
+                        <a href="{% url 'logout' %}" class="text-sm text-purple-600 hover:text-purple-800">Atsijungti</a>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 2. Pagrindinis Turinys -->
+        <main class="flex-1 overflow-y-auto">
+            
+            <!-- Viršutinė juosta -->
+            <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+                <!-- Mobilus Meniu Mygtukas -->
+                <button class="md:hidden p-2 text-gray-600">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+                </button>
+                
+                <h1 class="text-2xl font-bold text-gray-800 hidden md:block">
+                    {{ feedback_request.project_name }}
+                </h1>
+                
+                <a href="{% url 'home' %}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-500">
+                    Atgal į panelę
+                </a>
+            </header>
+
+            <!-- Turinys -->
+            <div class="p-6 md:p-8">
+                <!-- Apklausos Forma -->
+                <div class="max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                        Atsiliepimas apie: <span class="text-purple-600">{{ feedback_request.requester.first_name }} {{ feedback_request.requester.last_name }}</span>
+                    </h2>
+                    
+                    <form method="POST" class="space-y-6">
+                        {% csrf_token %}
+                        <!-- 1. Įvertinimo Slankiklis ("Temperatūra") -->
+                        <div>
+                            <label for="rating" class="block text-sm font-medium text-gray-700">
+                                Bendras įvertinimas (1 - Blogai, 10 - Puikiai)
+                            </label>
+                            <div class="flex items-center space-x-4 mt-2">
+                                <input type="range"
+                                       id="rating"
+                                       name="rating"
+                                       min="1"
+                                       max="10"
+                                       value="5"
+                                       class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                                <span class="text-lg font-bold text-purple-600 w-10 text-center" id="rating-value">5</span>
+                            </div>
+                        </div>
+
+                        <!-- 2. Raktinių Žodžių Laukas -->
+                        <div>
+                            <label for="keywords" class="block text-sm font-medium text-gray-700">
+                                Raktiniai žodžiai
+                            </label>
+                            <input type="text"
+                                   name="keywords"
+                                   id="keywords"
+                                   placeholder="pvz., komandiškas darbas, iniciatyvumas, analitinis mąstymas..."
+                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                        </div>
+
+                        <!-- 3. Išsamaus Atsiliepimo Laukas -->
+                        <div>
+                            <label for="feedback" class="block text-sm font-medium text-gray-700">
+                                Išsamus atsiliepimas
+                            </label>
+                            <textarea id="feedback"
+                                      name="feedback"
+                                      rows="6"
+                                      placeholder="Pateikite išsamesnį komentarą, nurodydami konkrečius pavyzdžius, kas sekėsi puikiai ir kur reikėtų tobulėti..."
+                                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                            ></textarea>
+                        </div>
+
+                        <!-- 4. Mygtukai -->
+                        <div class="flex justify-end space-x-4 pt-4">
+                            <button type="button"
+                                    class="px-5 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors">
+                                Generuoti (AI)
+                            </button>
+                            <button type="submit"
+                                    class="px-5 py-2 text-sm font-medium text-white bg-purple-500 rounded-lg shadow-sm hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors">
+                                Siųsti Atsiliepimą
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Slankiklio reikšmės atnaujinimo skriptas -->
+    <script>
+        try {
+            const ratingSlider = document.getElementById('rating');
+            const ratingValue = document.getElementById('rating-value');
+            
+            if (ratingSlider && ratingValue) {
+                // Atnaujiname iš karto
+                ratingValue.textContent = ratingSlider.value;
+                
+                // Atnaujiname keičiant
+                ratingSlider.oninput = function() {
+                    ratingValue.textContent = this.value;
+                }
+            }
+        } catch (e) {
+            console.error("Klaida nustatant slankiklį:", e);
+        }
+    </script>
+</body>
+</html>
