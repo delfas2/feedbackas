@@ -111,6 +111,7 @@
                     </h2>
                     
                     <form method="POST" class="space-y-6">
+                        <input type="hidden" id="colleague-name" value="{{ feedback_request.requester.first_name }} {{ feedback_request.requester.last_name }}">
                         {% csrf_token %}
                         <!-- 1. Įvertinimo Slankiklis ("Temperatūra") -->
                         <div>
@@ -398,11 +399,13 @@
             };
             const keywords = document.getElementById('keywords').value;
             const existing_feedback = document.getElementById('feedback').value;
+            const colleague_name = document.getElementById('colleague-name').value;
 
             const data = {
                 ratings: ratings,
                 keywords: keywords,
                 existing_feedback: existing_feedback,
+                colleague_name: colleague_name,
             };
 
             const csrftoken = getCookie('csrftoken');

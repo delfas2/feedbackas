@@ -13,7 +13,14 @@ class FeedbackRequest(models.Model):
 
 class Feedback(models.Model):
     feedback_request = models.OneToOneField(FeedbackRequest, on_delete=models.CASCADE)
-    rating = models.IntegerField()
+    rating = models.IntegerField(help_text="Bendras įvertinimas")
+    # Pridėkite trūkstamus laukus:
+    teamwork_rating = models.IntegerField(default=5)
+    communication_rating = models.IntegerField(default=5)
+    initiative_rating = models.IntegerField(default=5)
+    technical_skills_rating = models.IntegerField(default=5)
+    problem_solving_rating = models.IntegerField(default=5)
+
     keywords = models.CharField(max_length=255)
     feedback = models.TextField()
 

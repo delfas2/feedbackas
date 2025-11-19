@@ -12,6 +12,9 @@ import json
 import google.generativeai as genai
 from django.conf import settings
 from django.db.models import Avg
+import logging
+
+logger = logging.getLogger(__name__)
 
 def index(request):
     if request.user.is_authenticated:
@@ -163,15 +166,16 @@ def generate_ai_feedback(request):
         ratings = data.get('ratings', {})
         keywords = data.get('keywords', '')
         existing_feedback = data.get('existing_feedback', '')
+        colleague_name = data.get('colleague_name', 'Kolega')
 
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-2.5-flash')
 
         prompt = f"""
-        Apibendrink šį grįžtamąjį ryšį apie komandos narį.
+        Apibendrink šį grįžtamąjį ryšį apie komandos narį, vardu {colleague_name}.
 
         **Kontekstas:**
-        Tai yra kolegos vertinimas. Prašau suformuluoti konstruktyvų, profesionalų ir malonų atsiliepimą.
+        Tai yra kolegos vertinimas. Prašau suformuluoti konstruktyvų, profesionalų ir malonų atsiliepimą apie {colleague_name}.
         Tekstas turi būti parašytas lietuvių kalba.
 
         **Duomenys:**
@@ -188,7 +192,7 @@ def generate_ai_feedback(request):
         - **Esamas išsamus atsiliepimas (jei yra, papildyk jį):** {existing_feedback}
 
         **Užduotis:**
-        Remdamasis pateiktais duomenimis, sugeneruok sklandų ir išsamų atsiliepimo tekstą. 
+        Remdamasis pateiktais duomenimis, sugeneruok sklandų ir išsamų atsiliepimo tekstą apie {colleague_name}. 
         - Pradėk nuo bendro teigiamo įspūdžio (jei įvertinimai geri).
         - Išskirk 2-3 stipriąsias puses, pagrįsdamas jas raktiniais žodžiais ar aukštais įvertinimais.
         - Jei yra žemų įvertinimų ar neigiamų raktinių žodžių, pasiūlyk 1-2 tobulintinas sritis. Formuluok pasiūlymus kaip galimybes augti, o ne kaip kritiką.

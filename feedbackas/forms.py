@@ -16,4 +16,13 @@ class RegistrationForm(UserCreationForm):
 class FeedbackForm(forms.ModelForm):
     class Meta:
         model = Feedback
-        fields = ['rating', 'keywords', 'feedback']
+        fields = [
+            'rating', 
+            'teamwork_rating', 
+            'communication_rating', 
+            'initiative_rating', 
+            'technical_skills_rating', 
+            'problem_solving_rating',
+            'keywords', 
+            'feedback'
+        ]
