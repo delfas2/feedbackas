@@ -165,6 +165,7 @@ def generate_ai_feedback(request):
         data = json.loads(request.body)
         ratings = data.get('ratings', {})
         keywords = data.get('keywords', '')
+        comments = data.get('comments', '')
         existing_feedback = data.get('existing_feedback', '')
         colleague_name = data.get('colleague_name', 'Kolega')
 
@@ -175,7 +176,7 @@ def generate_ai_feedback(request):
         Apibendrink šį grįžtamąjį ryšį apie komandos narį, vardu {colleague_name}.
 
         **Kontekstas:**
-        Tai yra kolegos vertinimas. Prašau suformuluoti konstruktyvų, profesionalų ir malonų atsiliepimą apie {colleague_name}.
+        Tai yra kolegos vertinimas. Prašau suformuluoti konstruktyvų, profesionalų atsiliepimą apie {colleague_name}, srityse kurios įvertintos žemiau 7 gali duoti lengvos kritikos.
         Tekstas turi būti parašytas lietuvių kalba.
 
         **Duomenys:**
@@ -189,12 +190,15 @@ def generate_ai_feedback(request):
         
         - **Raktiniai žodžiai:** {keywords}
         
+        - **Komentarai:** {comments}
+
         - **Esamas išsamus atsiliepimas (jei yra, papildyk jį):** {existing_feedback}
 
         **Užduotis:**
         Remdamasis pateiktais duomenimis, sugeneruok sklandų ir išsamų atsiliepimo tekstą apie {colleague_name}. 
         - Pradėk nuo bendro teigiamo įspūdžio (jei įvertinimai geri).
         - Išskirk 2-3 stipriąsias puses, pagrįsdamas jas raktiniais žodžiais ar aukštais įvertinimais.
+        - Atsižvelk į laisvos formos komentarus.
         - Jei yra žemų įvertinimų ar neigiamų raktinių žodžių, pasiūlyk 1-2 tobulintinas sritis. Formuluok pasiūlymus kaip galimybes augti, o ne kaip kritiką.
         - Apibendrink atsiliepimą pozityvia nata.
         - Nenaudok Markdown formatavimo.

@@ -194,10 +194,9 @@
                                        placeholder="pvz., komandiškas darbas, iniciatyvumas, analitinis mąstymas..."
                                        class="flex-1 block w-full rounded-none rounded-l-md px-3 py-2 border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
                                 <button type="button" id="open-keyword-modal" class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm hover:bg-gray-100">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9.75a3 3 0 0 1 0 6 3 3 0 0 1 0-6zm0-4.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15z" />
-                                      </svg>
-                                      
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                    </svg>
                                 </button>
                             </div>
                         </div>
@@ -217,6 +216,19 @@
                             </div>
                         </div>
 
+                        <!-- Komentarų laukas -->
+                        <div>
+                            <label for="comments" class="block text-sm font-medium text-gray-700">
+                                Komentarai
+                            </label>
+                            <textarea id="comments"
+                                      name="comments"
+                                      rows="4"
+                                      placeholder="Įrašykite laisvos formos komentarus apie kolegą..."
+                                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
+                            ></textarea>
+                        </div>
+
                         <!-- 3. Išsamaus Atsiliepimo Laukas -->
                         <div>
                             <label for="feedback" class="block text-sm font-medium text-gray-700">
@@ -234,8 +246,12 @@
                         <div class="flex justify-end space-x-4 pt-4">
                             <button type="button"
                                     id="generate-ai-btn"
-                                    class="px-5 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors">
-                                Generuoti (AI)
+                                    class="inline-flex items-center px-5 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors">
+                                <svg id="ai-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-700 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span id="ai-btn-text">Generuoti (AI)</span>
                             </button>
                             <button type="submit"
                                     class="px-5 py-2 text-sm font-medium text-white bg-purple-500 rounded-lg shadow-sm hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors">
@@ -250,190 +266,200 @@
 
     <!-- Slankiklio reikšmės atnaujinimo skriptas -->
     <script>
-        try {
-            // Bendras slankiklių valdymas
-            const sliders = document.querySelectorAll('input[type="range"]');
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // Bendras slankiklių valdymas
+                const sliders = document.querySelectorAll('input[type="range"]');
 
-            sliders.forEach(slider => {
-                const valueSpan = slider.nextElementSibling;
+                sliders.forEach(slider => {
+                    const valueSpan = slider.nextElementSibling;
 
-                // Nustatome pradinę reikšmę
-                if (valueSpan) {
-                    valueSpan.textContent = slider.value;
-                }
-
-                // Atnaujiname keičiant
-                slider.oninput = function() {
+                    // Nustatome pradinę reikšmę
                     if (valueSpan) {
-                        valueSpan.textContent = this.value;
+                        valueSpan.textContent = slider.value;
                     }
-                }
-            });
-        } catch (e) {
-            console.error("Klaida nustatant slankiklį:", e);
-        }
 
-        // Keyword Modal
-        const keywordModal = document.getElementById('keyword-modal');
-        const openKeywordModalBtn = document.getElementById('open-keyword-modal');
-        const closeKeywordModalBtn = document.getElementById('close-keyword-modal');
-        const keywordCloud = document.getElementById('keyword-cloud');
-        const keywordsInput = document.getElementById('keywords');
-
-        const positiveKeywords = [
-            'Komandinis darbas', 'Komunikabilumas', 'Iniciatyvumas', 'Problemų sprendimas', 'Lyderystė',
-            'Analitinis mąstymas', 'Kūrybiškumas', 'Adaptabilumas', 'Atsakingumas', 'Laiko planavimas',
-            'Techninės žinios', 'Strateginis mąstymas', 'Klientų aptarnavimas', 'Derybos', 'Prezentavimo įgūdžiai',
-            'Patikimumas', 'Motyvacija', 'Pozityvumas', 'Efektyvumas', 'Savarankiškumas', 'Mentorystė', 'Pagalba kitiems',
-            'Atvirumas', 'Entuziazmas', 'Profesionalumas', 'Kruopštumas', 'Smalsumas', 'Konstruktyvumas', 'Įžvalgumas', 'Lankstumas', 
-            'Draugiškumas', 'Mandagumas', 'Punktualumas', 'Organizuotumas', 'Empatija', 'Orientacija į rezultą', 'Gebėjimas įkvėpti', 
-            'Gebėjimas mokytis', 'Sąžiningumas', 'Atkaklumas'
-        ];
-
-        const neutralKeywords = [
-            'Tylus', 'Ramus', 'Individualistas', 'Analitikas', 'Stebėtojas', 'Vykdytojas', 'Planuotojas',
-            'Struktūruotas', 'Formalus', 'Neformalus', 'Praktiškas', 'Teoretikas', 'Atsargus', 'Racionalus', 'Intravertas',
-            'Ekstravertas', 'Realistas', 'Pragmmatikas', 'Diplomatas', 'Kritikas', 'Svajotojas', 'Logiškas', 
-            'Emocionalus', 'Konservatyvus', 'Liberalus', 'Tiesioginis', 'Netiesioginis', 'Detalus', 'Apibendrinantis', 'Koncepualus'
-        ];
-
-        const negativeKeywords = [
-            'Vėlavimas', 'Neatsakingumas', 'Pasyvumas', 'Konfliktiškumas', 'Arogancija',
-            'Klaidų slėpimas', 'Neorganizuotumas', 'Nekokybiškas darbas', 'Stresas', 'Negatyvumas',
-            'Nepasitikėjimas', 'Kritikos nepriėmimas', 'Dėmesio stoka', 'Bendradarbiavimo stoka', 'Lėtas darbas',
-            'Nedraugiškumas', 'Chaotiškumas', 'Uždarumas', 'Pesimizmas', 'Abejingumas', 'Išsiblaškymas', 'Paviršutiniškumas', 
-            'Neapdairumas', 'Neryžtingumas', 'Užsispyrimas', 'Ignoravimas', 'Manipuliavimas', 'Pesimizmas', 'Skubotumas', 
-            'Neetiškas elgesys', 'Nepagarba', 'Apatija', 'Neigiamas požiūris', 'Komunikacijos stoka', 'Negebėjimas priimti sprendimų'
-        ];
-
-        positiveKeywords.forEach(keyword => {
-            const keywordEl = document.createElement('span');
-            keywordEl.textContent = keyword;
-            keywordEl.className = 'cursor-pointer bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
-            keywordEl.addEventListener('click', () => {
-                if (keywordsInput.value) {
-                    keywordsInput.value += ', ' + keyword;
-                } else {
-                    keywordsInput.value = keyword;
-                }
-                keywordEl.style.display = 'none';
-            });
-            keywordCloud.appendChild(keywordEl);
-        });
-
-        neutralKeywords.forEach(keyword => {
-            const keywordEl = document.createElement('span');
-            keywordEl.textContent = keyword;
-            keywordEl.className = 'cursor-pointer bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
-            keywordEl.addEventListener('click', () => {
-                if (keywordsInput.value) {
-                    keywordsInput.value += ', ' + keyword;
-                } else {
-                    keywordsInput.value = keyword;
-                }
-                keywordEl.style.display = 'none';
-            });
-            keywordCloud.appendChild(keywordEl);
-        });
-
-        negativeKeywords.forEach(keyword => {
-            const keywordEl = document.createElement('span');
-            keywordEl.textContent = keyword;
-            keywordEl.className = 'cursor-pointer bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
-            keywordEl.addEventListener('click', () => {
-                if (keywordsInput.value) {
-                    keywordsInput.value += ', ' + keyword;
-                } else {
-                    keywordsInput.value = keyword;
-                }
-                keywordEl.style.display = 'none';
-                keywordModal.classList.add('hidden');
-            });
-            keywordCloud.appendChild(keywordEl);
-        });
-
-        openKeywordModalBtn.addEventListener('click', () => {
-            keywordModal.classList.remove('hidden');
-        });
-
-        closeKeywordModalBtn.addEventListener('click', () => {
-            keywordModal.classList.add('hidden');
-        });
-
-        window.addEventListener('click', (event) => {
-            if (event.target == keywordModal) {
-                keywordModal.classList.add('hidden');
+                    // Atnaujiname keičiant
+                    slider.oninput = function() {
+                        if (valueSpan) {
+                            valueSpan.textContent = this.value;
+                        }
+                    }
+                });
+            } catch (e) {
+                console.error("Klaida nustatant slankiklį:", e);
             }
+
+            // Keyword Modal
+            const keywordModal = document.getElementById('keyword-modal');
+            const openKeywordModalBtn = document.getElementById('open-keyword-modal');
+            const closeKeywordModalBtn = document.getElementById('close-keyword-modal');
+            const keywordCloud = document.getElementById('keyword-cloud');
+            const keywordsInput = document.getElementById('keywords');
+
+            const positiveKeywords = [
+                'Komandinis darbas', 'Komunikabilumas', 'Iniciatyvumas', 'Problemų sprendimas', 'Lyderystė',
+                'Analitinis mąstymas', 'Kūrybiškumas', 'Adaptabilumas', 'Atsakingumas', 'Laiko planavimas',
+                'Techninės žinios', 'Strateginis mąstymas', 'Klientų aptarnavimas', 'Derybos', 'Prezentavimo įgūdžiai',
+                'Patikimumas', 'Motyvacija', 'Pozityvumas', 'Efektyvumas', 'Savarankiškumas', 'Mentorystė', 'Pagalba kitiems',
+                'Atvirumas', 'Entuziazmas', 'Profesionalumas', 'Kruopštumas', 'Smalsumas', 'Konstruktyvumas', 'Įžvalgumas', 'Lankstumas', 
+                'Draugiškumas', 'Mandagumas', 'Punktualumas', 'Organizuotumas', 'Empatija', 'Orientacija į rezultą', 'Gebėjimas įkvėpti', 
+                'Gebėjimas mokytis', 'Sąžiningumas', 'Atkaklumas'
+            ];
+
+            const neutralKeywords = [
+                'Tylus', 'Ramus', 'Individualistas', 'Analitikas', 'Stebėtojas', 'Vykdytojas', 'Planuotojas',
+                'Struktūruotas', 'Formalus', 'Neformalus', 'Praktiškas', 'Teoretikas', 'Atsargus', 'Racionalus', 'Intravertas',
+                'Ekstravertas', 'Realistas', 'Pragmmatikas', 'Diplomatas', 'Kritikas', 'Svajotojas', 'Logiškas', 
+                'Emocionalus', 'Konservatyvus', 'Liberalus', 'Tiesioginis', 'Netiesioginis', 'Detalus', 'Apibendrinantis', 'Koncepualus'
+            ];
+
+            const negativeKeywords = [
+                'Vėlavimas', 'Neatsakingumas', 'Pasyvumas', 'Konfliktiškumas', 'Arogancija',
+                'Klaidų slėpimas', 'Neorganizuotumas', 'Nekokybiškas darbas', 'Stresas', 'Negatyvumas',
+                'Nepasitikėjimas', 'Kritikos nepriėmimas', 'Dėmesio stoka', 'Bendradarbiavimo stoka', 'Lėtas darbas',
+                'Nedraugiškumas', 'Chaotiškumas', 'Uždarumas', 'Pesimizmas', 'Abejingumas', 'Išsiblaškymas', 'Paviršutiniškumas', 
+                'Neapdairumas', 'Neryžtingumas', 'Užsispyrimas', 'Ignoravimas', 'Manipuliavimas', 'Pesimizmas', 'Skubotumas', 
+                'Neetiškas elgesys', 'Nepagarba', 'Apatija', 'Neigiamas požiūris', 'Komunikacijos stoka', 'Negebėjimas priimti sprendimų'
+            ];
+
+            positiveKeywords.forEach(keyword => {
+                const keywordEl = document.createElement('span');
+                keywordEl.textContent = keyword;
+                keywordEl.className = 'cursor-pointer bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
+                keywordEl.addEventListener('click', () => {
+                    if (keywordsInput.value) {
+                        keywordsInput.value += ', ' + keyword;
+                    } else {
+                        keywordsInput.value = keyword;
+                    }
+                    keywordEl.style.display = 'none';
+                });
+                keywordCloud.appendChild(keywordEl);
+            });
+
+            neutralKeywords.forEach(keyword => {
+                const keywordEl = document.createElement('span');
+                keywordEl.textContent = keyword;
+                keywordEl.className = 'cursor-pointer bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
+                keywordEl.addEventListener('click', () => {
+                    if (keywordsInput.value) {
+                        keywordsInput.value += ', ' + keyword;
+                    } else {
+                        keywordsInput.value = keyword;
+                    }
+                    keywordEl.style.display = 'none';
+                });
+                keywordCloud.appendChild(keywordEl);
+            });
+
+            negativeKeywords.forEach(keyword => {
+                const keywordEl = document.createElement('span');
+                keywordEl.textContent = keyword;
+                keywordEl.className = 'cursor-pointer bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
+                keywordEl.addEventListener('click', () => {
+                    if (keywordsInput.value) {
+                        keywordsInput.value += ', ' + keyword;
+                    } else {
+                        keywordsInput.value = keyword;
+                    }
+                    keywordEl.style.display = 'none';
+                    keywordModal.classList.add('hidden');
+                });
+                keywordCloud.appendChild(keywordEl);
+            });
+
+            openKeywordModalBtn.addEventListener('click', () => {
+                keywordModal.classList.remove('hidden');
+            });
+
+            closeKeywordModalBtn.addEventListener('click', () => {
+                keywordModal.classList.add('hidden');
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target == keywordModal) {
+                    keywordModal.classList.add('hidden');
+                }
+            });
         });
     </script>
 
     <script>
-        function getCookie(name) {
-            let cookieValue = null;
-            if (document.cookie && document.cookie !== '') {
-                const cookies = document.cookie.split(';');
-                for (let i = 0; i < cookies.length; i++) {
-                    const cookie = cookies[i].trim();
-                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                        break;
+        document.addEventListener('DOMContentLoaded', function() {
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    const cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        const cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
+                        }
                     }
                 }
+                return cookieValue;
             }
-            return cookieValue;
-        }
 
-        document.getElementById('generate-ai-btn').addEventListener('click', function() {
-            const btn = this;
-            const originalBtnText = btn.innerHTML;
-            btn.innerHTML = 'Generuojama...';
-            btn.disabled = true;
+            document.getElementById('generate-ai-btn').addEventListener('click', function() {
+                const btn = this;
+                const spinner = document.getElementById('ai-spinner');
+                const btnText = document.getElementById('ai-btn-text');
 
-            const ratings = {
-                rating: document.getElementById('rating').value,
-                teamwork: document.getElementById('teamwork_rating').value,
-                communication: document.getElementById('communication_rating').value,
-                initiative: document.getElementById('initiative_rating').value,
-                technical_skills: document.getElementById('technical_skills_rating').value,
-                problem_solving: document.getElementById('problem_solving_rating').value,
-            };
-            const keywords = document.getElementById('keywords').value;
-            const existing_feedback = document.getElementById('feedback').value;
-            const colleague_name = document.getElementById('colleague-name').value;
+                spinner.classList.remove('hidden');
+                btnText.textContent = 'Generuojama...';
+                btn.disabled = true;
 
-            const data = {
-                ratings: ratings,
-                keywords: keywords,
-                existing_feedback: existing_feedback,
-                colleague_name: colleague_name,
-            };
+                const ratings = {
+                    rating: document.getElementById('rating').value,
+                    teamwork: document.getElementById('teamwork_rating').value,
+                    communication: document.getElementById('communication_rating').value,
+                    initiative: document.getElementById('initiative_rating').value,
+                    technical_skills: document.getElementById('technical_skills_rating').value,
+                    problem_solving: document.getElementById('problem_solving_rating').value,
+                };
+                const keywords = document.getElementById('keywords').value;
+                const comments = document.getElementById('comments').value;
+                const existing_feedback = document.getElementById('feedback').value;
+                const colleague_name = document.getElementById('colleague-name').value;
 
-            const csrftoken = getCookie('csrftoken');
+                const data = {
+                    ratings: ratings,
+                    keywords: keywords,
+                    comments: comments,
+                    existing_feedback: existing_feedback,
+                    colleague_name: colleague_name,
+                };
 
-            fetch("{% url 'generate_ai_feedback' %}", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRFToken': csrftoken,
-                },
-                body: JSON.stringify(data),
-            })
-            .then(response => response.json())
-            .then(result => {
-                if (result.generated_feedback) {
-                    document.getElementById('feedback').value = result.generated_feedback;
-                } else if (result.error) {
-                    console.error('Klaida generuojant atsiliepimą:', result.error);
-                    alert('Atsiprašome, įvyko klaida generuojant atsiliepimą. Bandykite vėliau.');
-                }
-            })
-            .catch(error => {
-                console.error('Fetch klaida:', error);
-                alert('Atsiprašome, įvyko tinklo klaida. Bandykite vėliau.');
-            })
-            .finally(() => {
-                btn.innerHTML = originalBtnText;
-                btn.disabled = false;
+                const csrftoken = getCookie('csrftoken');
+
+                fetch("{% url 'generate_ai_feedback' %}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify(data),
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.generated_feedback) {
+                        document.getElementById('feedback').value = result.generated_feedback;
+                    } else if (result.error) {
+                        console.error('Klaida generuojant atsiliepimą:', result.error);
+                        alert('Atsiprašome, įvyko klaida generuojant atsiliepimą. Bandykite vėliau.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch klaida:', error);
+                    alert('Atsiprašome, įvyko tinklo klaida. Bandykite vėliau.');
+                })
+                .finally(() => {
+                    spinner.classList.add('hidden');
+                    btnText.textContent = 'Generuoti (AI)';
+                    btn.disabled = false;
+                });
             });
         });
     </script>

@@ -36,7 +36,7 @@
                     <ul class="list-disc pl-5">
                     {% for field, errors in form.errors.items %}
                         {% for error in errors %}
-                            <li>{{ error }}</li>
+                            <li>{{ field }}: {{ error }}</li>
                         {% endfor %}
                     {% endfor %}
                     </ul>
@@ -77,10 +77,10 @@
 
             <!-- Slaptažodis -->
             <div>
-                <label for="{{ form.password.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700">
                     Slaptažodis
                 </label>
-                {{ form.password }}
+                {{ form.password1 }}
             </div>
 
             <!-- Pakartoti Slaptažodį -->

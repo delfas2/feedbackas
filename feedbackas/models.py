@@ -22,6 +22,7 @@ class Feedback(models.Model):
     problem_solving_rating = models.IntegerField(default=5)
 
     keywords = models.CharField(max_length=255)
+    comments = models.TextField(blank=True)
     feedback = models.TextField()
 
     def __str__(self):
