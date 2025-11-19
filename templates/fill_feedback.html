@@ -186,11 +186,34 @@
                             <label for="keywords" class="block text-sm font-medium text-gray-700">
                                 Raktiniai žodžiai
                             </label>
-                            <input type="text"
-                                   name="keywords"
-                                   id="keywords"
-                                   placeholder="pvz., komandiškas darbas, iniciatyvumas, analitinis mąstymas..."
-                                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                            <div class="mt-1 flex rounded-md shadow-sm">
+                                <input type="text"
+                                       name="keywords"
+                                       id="keywords"
+                                       placeholder="pvz., komandiškas darbas, iniciatyvumas, analitinis mąstymas..."
+                                       class="flex-1 block w-full rounded-none rounded-l-md px-3 py-2 border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                                <button type="button" id="open-keyword-modal" class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm hover:bg-gray-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9.75a3 3 0 0 1 0 6 3 3 0 0 1 0-6zm0-4.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15z" />
+                                      </svg>
+                                      
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Keyword Modal -->
+                        <div id="keyword-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
+                            <div class="relative top-20 mx-auto p-5 border w-1/2 shadow-lg rounded-md bg-white">
+                                <div class="flex justify-between items-center pb-3">
+                                    <p class="text-2xl font-bold">Raktinių žodžių debesis</p>
+                                    <div class="cursor-pointer z-50" id="close-keyword-modal">
+                                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                                    </div>
+                                </div>
+                                <div id="keyword-cloud" class="flex flex-wrap gap-2">
+                                    <!-- Keywords will be populated here -->
+                                </div>
+                            </div>
                         </div>
 
                         <!-- 3. Išsamaus Atsiliepimo Laukas -->
@@ -247,6 +270,96 @@
         } catch (e) {
             console.error("Klaida nustatant slankiklį:", e);
         }
+
+        // Keyword Modal
+        const keywordModal = document.getElementById('keyword-modal');
+        const openKeywordModalBtn = document.getElementById('open-keyword-modal');
+        const closeKeywordModalBtn = document.getElementById('close-keyword-modal');
+        const keywordCloud = document.getElementById('keyword-cloud');
+        const keywordsInput = document.getElementById('keywords');
+
+        const positiveKeywords = [
+            'Komandinis darbas', 'Komunikabilumas', 'Iniciatyvumas', 'Problemų sprendimas', 'Lyderystė',
+            'Analitinis mąstymas', 'Kūrybiškumas', 'Adaptabilumas', 'Atsakingumas', 'Laiko planavimas',
+            'Techninės žinios', 'Strateginis mąstymas', 'Klientų aptarnavimas', 'Derybos', 'Prezentavimo įgūdžiai',
+            'Patikimumas', 'Motyvacija', 'Pozityvumas', 'Efektyvumas', 'Savarankiškumas', 'Mentorystė', 'Pagalba kitiems',
+            'Atvirumas', 'Entuziazmas', 'Profesionalumas', 'Kruopštumas', 'Smalsumas', 'Konstruktyvumas', 'Įžvalgumas', 'Lankstumas', 
+            'Draugiškumas', 'Mandagumas', 'Punktualumas', 'Organizuotumas', 'Empatija', 'Orientacija į rezultą', 'Gebėjimas įkvėpti', 
+            'Gebėjimas mokytis', 'Sąžiningumas', 'Atkaklumas'
+        ];
+
+        const neutralKeywords = [
+            'Tylus', 'Ramus', 'Individualistas', 'Analitikas', 'Stebėtojas', 'Vykdytojas', 'Planuotojas',
+            'Struktūruotas', 'Formalus', 'Neformalus', 'Praktiškas', 'Teoretikas', 'Atsargus', 'Racionalus', 'Intravertas',
+            'Ekstravertas', 'Realistas', 'Pragmmatikas', 'Diplomatas', 'Kritikas', 'Svajotojas', 'Logiškas', 
+            'Emocionalus', 'Konservatyvus', 'Liberalus', 'Tiesioginis', 'Netiesioginis', 'Detalus', 'Apibendrinantis', 'Koncepualus'
+        ];
+
+        const negativeKeywords = [
+            'Vėlavimas', 'Neatsakingumas', 'Pasyvumas', 'Konfliktiškumas', 'Arogancija',
+            'Klaidų slėpimas', 'Neorganizuotumas', 'Nekokybiškas darbas', 'Stresas', 'Negatyvumas',
+            'Nepasitikėjimas', 'Kritikos nepriėmimas', 'Dėmesio stoka', 'Bendradarbiavimo stoka', 'Lėtas darbas',
+            'Nedraugiškumas', 'Chaotiškumas', 'Uždarumas', 'Pesimizmas', 'Abejingumas', 'Išsiblaškymas', 'Paviršutiniškumas', 
+            'Neapdairumas', 'Neryžtingumas', 'Užsispyrimas', 'Ignoravimas', 'Manipuliavimas', 'Pesimizmas', 'Skubotumas', 
+            'Neetiškas elgesys', 'Nepagarba', 'Apatija', 'Neigiamas požiūris', 'Komunikacijos stoka', 'Negebėjimas priimti sprendimų'
+        ];
+
+        positiveKeywords.forEach(keyword => {
+            const keywordEl = document.createElement('span');
+            keywordEl.textContent = keyword;
+            keywordEl.className = 'cursor-pointer bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
+            keywordEl.addEventListener('click', () => {
+                if (keywordsInput.value) {
+                    keywordsInput.value += ', ' + keyword;
+                } else {
+                    keywordsInput.value = keyword;
+                }
+            });
+            keywordCloud.appendChild(keywordEl);
+        });
+
+        neutralKeywords.forEach(keyword => {
+            const keywordEl = document.createElement('span');
+            keywordEl.textContent = keyword;
+            keywordEl.className = 'cursor-pointer bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
+            keywordEl.addEventListener('click', () => {
+                if (keywordsInput.value) {
+                    keywordsInput.value += ', ' + keyword;
+                } else {
+                    keywordsInput.value = keyword;
+                }
+            });
+            keywordCloud.appendChild(keywordEl);
+        });
+
+        negativeKeywords.forEach(keyword => {
+            const keywordEl = document.createElement('span');
+            keywordEl.textContent = keyword;
+            keywordEl.className = 'cursor-pointer bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
+            keywordEl.addEventListener('click', () => {
+                if (keywordsInput.value) {
+                    keywordsInput.value += ', ' + keyword;
+                } else {
+                    keywordsInput.value = keyword;
+                }
+                keywordModal.classList.add('hidden');
+            });
+            keywordCloud.appendChild(keywordEl);
+        });
+
+        openKeywordModalBtn.addEventListener('click', () => {
+            keywordModal.classList.remove('hidden');
+        });
+
+        closeKeywordModalBtn.addEventListener('click', () => {
+            keywordModal.classList.add('hidden');
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target == keywordModal) {
+                keywordModal.classList.add('hidden');
+            }
+        });
     </script>
 </body>
 </html>
