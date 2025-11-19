@@ -32,4 +32,5 @@ urlpatterns = [
     path('team/', views.team_members_list, name='team_members_list'),
     path('tasks/dashboard/', views.my_tasks_list, name='my_tasks_list'),
     path('results/', views.results, name='results'),
+    path('generate_ai_feedback/', views.generate_ai_feedback, name='generate_ai_feedback'),
 ]

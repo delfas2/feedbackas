@@ -232,6 +232,7 @@
                         <!-- 4. Mygtukai -->
                         <div class="flex justify-end space-x-4 pt-4">
                             <button type="button"
+                                    id="generate-ai-btn"
                                     class="px-5 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors">
                                 Generuoti (AI)
                             </button>
@@ -362,6 +363,75 @@
             if (event.target == keywordModal) {
                 keywordModal.classList.add('hidden');
             }
+        });
+    </script>
+
+    <script>
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        document.getElementById('generate-ai-btn').addEventListener('click', function() {
+            const btn = this;
+            const originalBtnText = btn.innerHTML;
+            btn.innerHTML = 'Generuojama...';
+            btn.disabled = true;
+
+            const ratings = {
+                rating: document.getElementById('rating').value,
+                teamwork: document.getElementById('teamwork_rating').value,
+                communication: document.getElementById('communication_rating').value,
+                initiative: document.getElementById('initiative_rating').value,
+                technical_skills: document.getElementById('technical_skills_rating').value,
+                problem_solving: document.getElementById('problem_solving_rating').value,
+            };
+            const keywords = document.getElementById('keywords').value;
+            const existing_feedback = document.getElementById('feedback').value;
+
+            const data = {
+                ratings: ratings,
+                keywords: keywords,
+                existing_feedback: existing_feedback,
+            };
+
+            const csrftoken = getCookie('csrftoken');
+
+            fetch("{% url 'generate_ai_feedback' %}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken,
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.generated_feedback) {
+                    document.getElementById('feedback').value = result.generated_feedback;
+                } else if (result.error) {
+                    console.error('Klaida generuojant atsiliepimą:', result.error);
+                    alert('Atsiprašome, įvyko klaida generuojant atsiliepimą. Bandykite vėliau.');
+                }
+            })
+            .catch(error => {
+                console.error('Fetch klaida:', error);
+                alert('Atsiprašome, įvyko tinklo klaida. Bandykite vėliau.');
+            })
+            .finally(() => {
+                btn.innerHTML = originalBtnText;
+                btn.disabled = false;
+            });
         });
     </script>
 </body>

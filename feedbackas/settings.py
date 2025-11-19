@@ -130,3 +130,7 @@ AUTHENTICATION_BACKENDS = [
 ]
 
 LOGIN_REDIRECT_URL = '/home/'
+
+# For production, it's recommended to store the API key as an environment variable.
+GEMINI_API_KEY = 'AIzaSyAROW9qQ7KxUFH96UFQ8rjDe-E9MmEYBkg'
+

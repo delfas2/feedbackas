@@ -7,6 +7,11 @@ from users.models import Profile
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.db import OperationalError
+from django.views.decorators.http import require_POST
+import json
+import google.generativeai as genai
+from django.conf import settings
+from django.db.models import Avg
 
 def index(request):
     if request.user.is_authenticated:
@@ -100,7 +105,7 @@ def fill_feedback(request, request_id):
     }
     return render(request, 'fill_feedback.html', context)
 
-from django.db.models import Avg
+
 
 @login_required
 def team_members_list(request):
@@ -145,6 +150,61 @@ def my_tasks_list(request):
         'assigned_requests': assigned_requests,
     }
     return render(request, 'my_tasks.html', context)
+
+
+
+import traceback
+
+@login_required
+@require_POST
+def generate_ai_feedback(request):
+    try:
+        data = json.loads(request.body)
+        ratings = data.get('ratings', {})
+        keywords = data.get('keywords', '')
+        existing_feedback = data.get('existing_feedback', '')
+
+        genai.configure(api_key=settings.GEMINI_API_KEY)
+        model = genai.GenerativeModel('gemini-1.5-flash')
+
+        prompt = f"""
+        Apibendrink šį grįžtamąjį ryšį apie komandos narį.
+
+        **Kontekstas:**
+        Tai yra kolegos vertinimas. Prašau suformuluoti konstruktyvų, profesionalų ir malonų atsiliepimą.
+        Tekstas turi būti parašytas lietuvių kalba.
+
+        **Duomenys:**
+        - **Kompetencijų įvertinimai (1-10, kur 10 yra puikiai):**
+          - Bendras įvertinimas: {ratings.get('rating')}
+          - Komandinis Darbas: {ratings.get('teamwork')}
+          - Komunikacija: {ratings.get('communication')}
+          - Iniciatyvumas: {ratings.get('initiative')}
+          - Techninės Žinios: {ratings.get('technical_skills')}
+          - Problemų Sprendimas: {ratings.get('problem_solving')}
+        
+        - **Raktiniai žodžiai:** {keywords}
+        
+        - **Esamas išsamus atsiliepimas (jei yra, papildyk jį):** {existing_feedback}
+
+        **Užduotis:**
+        Remdamasis pateiktais duomenimis, sugeneruok sklandų ir išsamų atsiliepimo tekstą. 
+        - Pradėk nuo bendro teigiamo įspūdžio (jei įvertinimai geri).
+        - Išskirk 2-3 stipriąsias puses, pagrįsdamas jas raktiniais žodžiais ar aukštais įvertinimais.
+        - Jei yra žemų įvertinimų ar neigiamų raktinių žodžių, pasiūlyk 1-2 tobulintinas sritis. Formuluok pasiūlymus kaip galimybes augti, o ne kaip kritiką.
+        - Apibendrink atsiliepimą pozityvia nata.
+        - Nenaudok Markdown formatavimo.
+        """
+
+        response = model.generate_content(prompt)
+        
+        return JsonResponse({'generated_feedback': response.text})
+
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
 
 @login_required
 def results(request):
