@@ -132,37 +132,45 @@ def fill_feedback(request, request_id):
 
 @login_required
 def team_members_list(request):
-    # Paimame visus vartotojus, išskyrus patį save (pasirinktinai)
-    team_members_qs = User.objects.exclude(id=request.user.id)
-    
-    # Paieškos logika (jei tokią turėjai)
+    user = request.user
+    team_members_qs = User.objects.none() 
+
+    try:
+        user_company = user.profile.company
+        if user_company:
+            # Filtruojame pagal įmonę ir atmetame patį vartotoją
+            team_members_qs = User.objects.filter(profile__company__iexact=user_company).exclude(id=user.id)
+        else:
+            # Jei vartotojas neturi įmonės, rodome visus vartotojus be įmonės
+            team_members_qs = User.objects.filter(Q(profile__company__isnull=True) | Q(profile__company='')).exclude(id=user.id)
+    except Profile.DoesNotExist:
+        # Jei vartotojas neturi profilio, rodome visus kitus vartotojus, kurie taip pat neturi profilio
+        team_members_qs = User.objects.filter(profile__isnull=True).exclude(id=user.id)
+
+    # Paieškos logika
     query = request.GET.get('q')
     if query:
         team_members_qs = team_members_qs.filter(
-            Q(username__icontains=query) |
             Q(first_name__icontains=query) |
             Q(last_name__icontains=query)
         )
 
-    # PAGRINDINIS PATAISYMAS ČIA:
-    # 1. Naudojame 'received_requests' vietoje 'feedback_requests_received'
-    # 2. Naudojame Q(...) vietoje models.Q(...)
+    # Anotuojame su papildomais duomenimis
     team_members = team_members_qs.select_related('profile').annotate(
-        completed_requests_count=Count(
-            'received_requests', 
-            filter=Q(received_requests__status='completed')
-        ),
-        # Galbūt tu taip pat skaičiavai vidutinį įvertinimą? Jei taip, kodas būtų toks:
-        # average_rating=Avg('received_requests__feedback__rating')
+        average_rating=Avg('made_requests__feedback__rating')
     )
+
+    # Bendra statistika
+    overall_avg_rating = Feedback.objects.filter(feedback_request__requester__in=team_members_qs).aggregate(Avg('rating'))['rating__avg']
+    pending_feedback_count = FeedbackRequest.objects.filter(requester__in=team_members_qs, status='pending').count()
 
     context = {
         'team_members': team_members,
         'search_query': query,
+        'overall_avg_rating': overall_avg_rating,
+        'pending_feedback_count': pending_feedback_count,
     }
     
-    # Patikrink, ar šablonas yra šiame kelyje. Pagal klaidą URL yra /team/, 
-    # tad tikriausiai šablonas kažkur 'feedbackas/...'
     return render(request, 'feedbackas/team_members_list.html', context)
 
 @login_required
