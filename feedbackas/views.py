@@ -45,7 +45,7 @@ def register(request):
             user = form.save()
             company = form.cleaned_data.get('company')
             Profile.objects.create(user=user, company=company)
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('home')
     else:
         form = RegistrationForm()
