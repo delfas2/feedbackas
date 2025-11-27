@@ -77,10 +77,10 @@
                             <div>
                                 <div class="flex justify-between mb-1">
                                     <span class="text-sm font-medium text-gray-700">{{ comp.name }}</span>
-                                    <span class="text-sm font-bold text-purple-600">{{ comp.score }}/10</span>
+                                    <span class="text-sm font-bold text-purple-600">{{ comp.score }}/4</span>
                                 </div>
                                 <div class="w-full bg-gray-100 rounded-full h-3">
-                                    <div class="bg-purple-500 h-3 rounded-full" style="width: {{ comp.score|floatformat:0 }}0%"></div>
+                                    <div class="bg-purple-500 h-3 rounded-full" style="width: {% widthratio comp.score 4 100 %}%"></div>
                                 </div>
                             </div>
                             {% endfor %}
@@ -149,34 +149,6 @@
                         </ul>
                     </div>
 
-                </div>
-
-                <!-- 4. Rekomenduojami Mokymai -->
-                <div class="bg-white rounded-2xl shadow-lg p-6">
-                    <h3 class="text-xl font-bold text-gray-800 mb-6">Rekomenduojami Mokymai 🎓</h3>
-                    {% if recommended_trainings %}
-                        <div class="space-y-4">
-                            {% for item in recommended_trainings %}
-                                <div class="bg-blue-50 border border-blue-100 rounded-lg p-4 flex items-center justify-between">
-                                    <div>
-                                        <p class="font-semibold text-blue-800">{{ item.competency }}</p>
-                                        <p class="text-sm text-blue-700">{{ item.training }}</p>
-                                    </div>
-                                    <a href="#" class="px-3 py-1 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600 transition-colors">
-                                        Žiūrėti
-                                    </a>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% else %}
-                        <div class="text-center py-6">
-                            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <h3 class="mt-2 text-sm font-medium text-gray-900">Puiku!</h3>
-                            <p class="mt-1 text-sm text-gray-500">Šiuo metu neturime jokių mokymų rekomendacijų.</p>
-                        </div>
-                    {% endif %}
                 </div>
 
             </div>
