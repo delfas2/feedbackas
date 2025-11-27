@@ -32,6 +32,55 @@
             border-radius: 50%;
             cursor: pointer;
         }
+
+        /* Nauji stiliai baterijos komponentui */
+        .competency-battery .battery-segment {
+            transition: all 0.3s ease-out;
+        }
+        .competency-battery .battery-segment.active {
+            color: white;
+        }
+        .competency-battery .battery-segment.level-1.active { background-color: #60A5FA; /* blue-400 */ }
+        .competency-battery .battery-segment.level-2.active { background-color: #A3E635; /* lime-400 */ }
+        .competency-battery .battery-segment.level-3.active { background-color: #22C55E; /* green-500 */ }
+        .competency-battery .battery-segment.level-4.active { background-color: #9333EA; /* purple-600 */ }
+
+        .competency-battery .battery-label {
+            transition: opacity 0.3s ease-out;
+        }
+        .competency-battery .battery-label.active {
+            opacity: 1;
+        }
+        .competency-battery .battery-label.inactive {
+            opacity: 0.4;
+        }
+        .competency-battery .battery-label:not(.active):hover {
+            opacity: 0.7;
+        }
+
+        .competency-tag {
+            transition: all 0.3s ease-out;
+        }
+        .competency-tag.level-1 {
+            background-color: #DBEAFE; /* blue-100 */
+            border-color: #60A5FA; /* blue-400 */
+            color: #1D4ED8; /* blue-700 */
+        }
+        .competency-tag.level-2 {
+            background-color: #ECFCCB; /* lime-100 */
+            border-color: #84CC16; /* lime-500 */
+            color: #3F6212; /* lime-800 */
+        }
+        .competency-tag.level-3 {
+            background-color: #DCFCE7; /* green-100 */
+            border-color: #16A34A; /* green-600 */
+            color: #14532D; /* green-800 */
+        }
+        .competency-tag.level-4 {
+            background-color: #F3E8FF; /* purple-100 */
+            border-color: #9333EA; /* purple-600 */
+            color: #581C87; /* purple-900 */
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -113,72 +162,85 @@
                     <form method="POST" class="space-y-6">
                         <input type="hidden" id="colleague-name" value="{{ feedback_request.requester.first_name }} {{ feedback_request.requester.last_name }}">
                         {% csrf_token %}
-                        <!-- 1. Įvertinimo Slankiklis ("Temperatūra") -->
-                        <div>
-                            <label for="rating" class="block text-sm font-medium text-gray-700">
-                                Bendras įvertinimas (1 - Blogai, 10 - Puikiai)
-                            </label>
-                            <div class="flex items-center space-x-4 mt-2">
-                                <input type="range"
-                                       id="rating"
-                                       name="rating"
-                                       min="1"
-                                       max="10"
-                                       value="5"
-                                       class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
-                                <span class="text-lg font-bold text-purple-600 w-10 text-center" id="rating-value">5</span>
-                            </div>
-                        </div>
 
                         <!-- Kompetencijų slankikliai -->
-                        <div class="space-y-4 pt-4 border-t">
-                            <h4 class="text-sm font-medium text-gray-700">Kompetencijų vertinimas</h4>
-
+                        <div class="space-y-2 pt-4 border-t">
+                            <p class="text-sm text-slate-500 text-center italic">
+                                "Pasirinkite baterijos lygį. Nėra vidurio - yra tik augimo etapai."
+                            </p>
+                            <div class="competency-battery" data-competency="rating">
+                                <input type="hidden" name="rating" value="0">
+                            </div>
+                            
                             <!-- Komandinis Darbas -->
-                            <div>
-                                <label for="teamwork_rating" class="block text-sm font-medium text-gray-600">Komandinis Darbas</label>
-                                <div class="flex items-center space-x-4 mt-1">
-                                    <input type="range" id="teamwork_rating" name="teamwork_rating" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer competency-slider">
-                                    <span class="text-lg font-bold text-purple-600 w-10 text-center rating-value">5</span>
-                                </div>
+                            <div class="competency-battery" data-competency="teamwork_rating">
+                                <input type="hidden" name="teamwork_rating" value="0">
                             </div>
 
                             <!-- Komunikacija -->
-                            <div>
-                                <label for="communication_rating" class="block text-sm font-medium text-gray-600">Komunikacija</label>
-                                <div class="flex items-center space-x-4 mt-1">
-                                    <input type="range" id="communication_rating" name="communication_rating" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer competency-slider">
-                                    <span class="text-lg font-bold text-purple-600 w-10 text-center rating-value">5</span>
-                                </div>
+                            <div class="competency-battery" data-competency="communication_rating">
+                                <input type="hidden" name="communication_rating" value="0">
                             </div>
 
                             <!-- Iniciatyvumas -->
-                            <div>
-                                <label for="initiative_rating" class="block text-sm font-medium text-gray-600">Iniciatyvumas</label>
-                                <div class="flex items-center space-x-4 mt-1">
-                                    <input type="range" id="initiative_rating" name="initiative_rating" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer competency-slider">
-                                    <span class="text-lg font-bold text-purple-600 w-10 text-center rating-value">5</span>
-                                </div>
+                            <div class="competency-battery" data-competency="initiative_rating">
+                                <input type="hidden" name="initiative_rating" value="0">
                             </div>
 
                             <!-- Techninės Žinios -->
-                            <div>
-                                <label for="technical_skills_rating" class="block text-sm font-medium text-gray-600">Techninės Žinios</label>
-                                <div class="flex items-center space-x-4 mt-1">
-                                    <input type="range" id="technical_skills_rating" name="technical_skills_rating" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer competency-slider">
-                                    <span class="text-lg font-bold text-purple-600 w-10 text-center rating-value">5</span>
-                                </div>
+                            <div class="competency-battery" data-competency="technical_skills_rating">
+                                <input type="hidden" name="technical_skills_rating" value="0">
                             </div>
 
                             <!-- Problemų Sprendimas -->
-                            <div>
-                                <label for="problem_solving_rating" class="block text-sm font-medium text-gray-600">Problemų Sprendimas</label>
-                                <div class="flex items-center space-x-4 mt-1">
-                                    <input type="range" id="problem_solving_rating" name="problem_solving_rating" min="1" max="10" value="5" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer competency-slider">
-                                    <span class="text-lg font-bold text-purple-600 w-10 text-center rating-value">5</span>
-                                </div>
+                            <div class="competency-battery" data-competency="problem_solving_rating">
+                                <input type="hidden" name="problem_solving_rating" value="0">
                             </div>
 
+                            <!-- Baterijos šablonas (bus klonuojamas su JS) -->
+                            <template id="competency-template">
+                                <div class="mb-10 transition-all hover:scale-[1.01] duration-300">
+                                    <div class="flex justify-between items-center mb-3 px-1">
+                                        <h3 class="font-bold text-slate-700 text-lg competency-label"></h3>
+                                        <span class="text-xs font-bold px-3 py-1 rounded-full border competency-tag shadow-sm" style="display: none;"></span>
+                                    </div>
+                                    <div class="relative">
+                                        <div class="relative h-20 w-full bg-white rounded-2xl border-[4px] border-slate-300 p-1.5 flex gap-1.5 shadow-sm overflow-hidden group cursor-pointer z-10">
+                                            <button type="button" data-level="1" class="relative flex-1 rounded-lg battery-segment level-1 bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center overflow-hidden">
+                                                <div class="shine-effect"></div>
+                                                <div class="icon-container transform text-slate-300 translate-y-1"><span class="font-black text-xl opacity-20">1</span></div>
+                                            </button>
+                                            <button type="button" data-level="2" class="relative flex-1 rounded-lg battery-segment level-2 bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center overflow-hidden">
+                                                <div class="shine-effect"></div>
+                                                <div class="icon-container transform text-slate-300 translate-y-1"><span class="font-black text-xl opacity-20">2</span></div>
+                                            </button>
+                                            <button type="button" data-level="3" class="relative flex-1 rounded-lg battery-segment level-3 bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center overflow-hidden">
+                                                <div class="shine-effect"></div>
+                                                <div class="icon-container transform text-slate-300 translate-y-1"><span class="font-black text-xl opacity-20">3</span></div>
+                                            </button>
+                                            <button type="button" data-level="4" class="relative flex-1 rounded-lg battery-segment level-4 bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center overflow-hidden">
+                                                <div class="shine-effect"></div>
+                                                <div class="icon-container transform text-slate-300 translate-y-1"><span class="font-black text-xl opacity-20">4</span></div>
+                                            </button>
+                                        </div>
+                                        <div class="absolute -right-[12px] top-1/2 -translate-y-1/2 w-4 h-10 bg-slate-300 rounded-r-md border-y-[4px] border-r-[4px] border-l-0 border-slate-300 z-0"></div>
+                                    </div>
+                                    <div class="flex justify-between mt-2 px-1">
+                                        <div data-level="1" class="cursor-pointer w-1/4 text-center battery-label inactive opacity-40 hover:opacity-70">
+                                            <p class="text-xs font-bold text-slate-700">Mokosi</p><p class="text-[10px] text-slate-500 leading-tight">Reikia pagalbos</p>
+                                        </div>
+                                        <div data-level="2" class="cursor-pointer w-1/4 text-center battery-label inactive opacity-40 hover:opacity-70">
+                                            <p class="text-xs font-bold text-slate-700">Daro</p><p class="text-[10px] text-slate-500 leading-tight">Atitinka lūkesčius</p>
+                                        </div>
+                                        <div data-level="3" class="cursor-pointer w-1/4 text-center battery-label inactive opacity-40 hover:opacity-70">
+                                            <p class="text-xs font-bold text-slate-700">Varo</p><p class="text-[10px] text-slate-500 leading-tight">Viršija lūkesčius</p>
+                                        </div>
+                                        <div data-level="4" class="cursor-pointer w-1/4 text-center battery-label inactive opacity-40 hover:opacity-70">
+                                            <p class="text-xs font-bold text-slate-700">Pavyzdys</p><p class="text-[10px] text-slate-500 leading-tight">Superžvaigždė</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
                         </div>
 
 
@@ -267,28 +329,91 @@
     <!-- Slankiklio reikšmės atnaujinimo skriptas -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            try {
-                // Bendras slankiklių valdymas
-                const sliders = document.querySelectorAll('input[type="range"]');
+             // Naujos "baterijos" logikos inicializavimas
+            const competencyData = {
+                teamwork_rating: { label: 'Komandinis Darbas' },
+                communication_rating: { label: 'Komunikacija' },
+                initiative_rating: { label: 'Iniciatyvumas' },
+                technical_skills_rating: { label: 'Techninės Žinios' },
+                problem_solving_rating: { label: 'Problemų Sprendimas' },
+                rating: { label: 'Bendras įvertinimas' }
+            };
 
-                sliders.forEach(slider => {
-                    const valueSpan = slider.nextElementSibling;
+            const levels = [
+                { id: 1, title: "Mokosi", icon: "🌱" },
+                { id: 2, title: "Daro", icon: "🏃" },
+                { id: 3, title: "Varo", icon: "🚀" },
+                { id: 4, title: "Pavyzdys", icon: "⚡" }
+            ];
 
-                    // Nustatome pradinę reikšmę
-                    if (valueSpan) {
-                        valueSpan.textContent = slider.value;
-                    }
+            document.querySelectorAll('.competency-battery').forEach(container => {
+                const competencyName = container.dataset.competency;
+                const template = document.getElementById('competency-template').content.cloneNode(true);
+                container.appendChild(template);
 
-                    // Atnaujiname keičiant
-                    slider.oninput = function() {
-                        if (valueSpan) {
-                            valueSpan.textContent = this.value;
+                container.querySelector('.competency-label').textContent = competencyData[competencyName].label;
+                const hiddenInput = container.querySelector(`input[name="${competencyName}"]`);
+
+                const updateView = (value) => {
+                    hiddenInput.value = value;
+
+                    const segments = container.querySelectorAll('.battery-segment');
+                    const labels = container.querySelectorAll('.battery-label');
+                    const tag = container.querySelector('.competency-tag');
+
+                    segments.forEach(segment => {
+                        const level = parseInt(segment.dataset.level, 10);
+                        const iconContainer = segment.querySelector('.icon-container');
+                        const shineEffect = segment.querySelector('.shine-effect');
+
+                        const isActive = level <= value;
+                        segment.classList.toggle('active', isActive);
+                        segment.classList.toggle('bg-slate-50', !isActive);
+                        segment.classList.toggle('shadow-inner', isActive);
+
+                        if (isActive) {
+                            shineEffect.className = 'shine-effect absolute top-0 left-0 w-full h-1/2 bg-white opacity-20 pointer-events-none';
+                            iconContainer.classList.remove('text-slate-300', 'translate-y-1');
+                            iconContainer.classList.add('text-white', 'scale-110', 'translate-y-0');
+                            iconContainer.innerHTML = level === 4 ? '⚡' : `<span class="text-2xl">${levels[level-1].icon}</span>`;
+                        } else {
+                            shineEffect.className = 'shine-effect'; // Remove classes
+                            iconContainer.classList.add('text-slate-300', 'translate-y-1');
+                            iconContainer.classList.remove('text-white', 'scale-110', 'translate-y-0');
+                            iconContainer.innerHTML = `<span class="font-black text-xl opacity-20">${level}</span>`;
                         }
+                    });
+
+                    labels.forEach(label => {
+                        const level = parseInt(label.dataset.level, 10);
+                        const p = label.querySelector('p:first-child');
+                        const isActive = level === value;
+                        label.classList.toggle('opacity-100', isActive);
+                        label.classList.toggle('transform', isActive);
+                        label.classList.toggle('-translate-y-1', isActive);
+                        label.classList.toggle('opacity-40', !isActive);
+                        p.classList.toggle('text-slate-800', isActive);
+                        p.classList.toggle('text-slate-500', !isActive);
+                    });
+
+                    if (value > 0) {
+                        const levelData = levels[value - 1];
+                        tag.innerHTML = `${levelData.icon} ${levelData.title}`;
+                        tag.className = `text-xs font-bold px-3 py-1 rounded-full border competency-tag shadow-sm level-${value}`;
+                        tag.style.display = 'inline-block';
+                    } else {
+                        tag.style.display = 'none';
+                    }
+                };
+
+                container.addEventListener('click', (e) => {
+                    const target = e.target.closest('[data-level]');
+                    if (target) {
+                        const level = parseInt(target.dataset.level, 10);
+                        updateView(level);
                     }
                 });
-            } catch (e) {
-                console.error("Klaida nustatant slankiklį:", e);
-            }
+            });
 
             // Keyword Modal
             const keywordModal = document.getElementById('keyword-modal');
@@ -411,12 +536,12 @@
                 btn.disabled = true;
 
                 const ratings = {
-                    rating: document.getElementById('rating').value,
-                    teamwork: document.getElementById('teamwork_rating').value,
-                    communication: document.getElementById('communication_rating').value,
-                    initiative: document.getElementById('initiative_rating').value,
-                    technical_skills: document.getElementById('technical_skills_rating').value,
-                    problem_solving: document.getElementById('problem_solving_rating').value,
+                    rating: document.querySelector('input[name="rating"]').value,
+                    teamwork: document.querySelector('input[name="teamwork_rating"]').value,
+                    communication: document.querySelector('input[name="communication_rating"]').value,
+                    initiative: document.querySelector('input[name="initiative_rating"]').value,
+                    technical_skills: document.querySelector('input[name="technical_skills_rating"]').value,
+                    problem_solving: document.querySelector('input[name="problem_solving_rating"]').value,
                 };
                 const keywords = document.getElementById('keywords').value;
                 const comments = document.getElementById('comments').value;
