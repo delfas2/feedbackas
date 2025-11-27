@@ -15,6 +15,7 @@ from django.conf import settings
 from django.db.models import Avg
 from django.db import models
 import logging
+from datetime import date
 
 
 logger = logging.getLogger(__name__)
@@ -93,8 +94,8 @@ def request_feedback(request):
 
 @login_required
 def send_feedback(request, user_id):
-    requester = request.user
-    requested_to = get_object_or_404(User, id=user_id)
+    requester = get_object_or_404(User, id=user_id)
+    requested_to = request.user
     
     feedback_request = FeedbackRequest.objects.create(
         requester=requester,
@@ -243,7 +244,7 @@ def results(request):
     user = request.user
     
     # Gauti visus užbaigtus atsiliepimus vartotojui
-    completed_feedback = Feedback.objects.filter(feedback_request__requested_to=user, feedback_request__status='completed')
+    completed_feedback = Feedback.objects.filter(feedback_request__requester=user, feedback_request__status='completed')
     
     # Apskaičiuoti bendrą vidutinį įvertinimą
     overall_avg_rating = completed_feedback.aggregate(Avg('rating'))['rating__avg'] or 0
