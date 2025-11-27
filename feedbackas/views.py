@@ -197,35 +197,58 @@ def generate_ai_feedback(request):
         model = genai.GenerativeModel('gemini-2.5-flash')
 
         prompt = f"""
-        Apibendrink šį grįžtamąjį ryšį apie komandos narį, vardu {colleague_name}.
+        Veik kaip konkretus, kolegiškas komandos narys, būk empatiškas ir teik konstruktyvią kritiką.
+        Eik iš kato prie esmės, nereikia jokių įžangų ir atsisveikinimų.
+        Tavo užduotis - sugeneruoti kokybišką, duomenimis pagrįstą grįžtamąjį ryšį kolegai {colleague_name}.
+        
+        **SVARBU: Vertinimo sistema (Kontekstas):**
+        Mes nenaudojame standartinių balų. Mes naudojame augimo skalę (1-4):
+        - **1 = 🌱 Learning (Mokosi / Reikia pagalbos):** Tai nėra "blogai", tai reiškia, kad čia reikia skirti dėmesio, mokytis ir tobulėti.
+        - **2 = 🏃 Doing (Daro / Atitinka lūkesčius):** Tai solidus pagrindas, kolega susitvarko.
+        - **3 = 🚀 Driving (Varo / Viršija lūkesčius):** Kolega rodo iniciatyvą ir tempia komandą.
+        - **4 = ⭐️ Role Model (Pavyzdys kitiems):** Tai superžvaigždės lygis, kiti turi mokytis iš jo.
+        
+        **JOKIO FORMATAVIMO (NO MARKDOWN):**    
+        - Griežtai **NENAUDOK** jokių žvaigždučių (`**` ar `*`), paryškinimų, punktų (bullet points) ar antraščių.    
+        - **NERAŠYK** etikečių kaip "Situacija:", "Elgesys:", "Poveikis:", "Lygis:".    
+        - Tekstas turi būti paprastas, suskirstytas tik į pastraipas (paragraphs), glaustas, konkretus. Tai turi atrodyti kaip paprastas el. laiškas ar žinutė nuo kolegos.
+        - Maksimalus ilgis 160-180 žodžių.
 
-        **Kontekstas:**
-        Tai yra kolegos vertinimas. Prašau suformuluoti konstruktyvų, profesionalų atsiliepimą apie {colleague_name}, srityse kurios įvertintos žemiau 7 gali duoti lengvos kritikos.
-        Tekstas turi būti parašytas lietuvių kalba.
-
+        
+        Naudok Situation-Behavior-Impact logiką, bet integruok ją į sakinius natūraliai.
+ 
+        
         **Duomenys:**
-        - **Kompetencijų įvertinimai (1-10, kur 10 yra puikiai):**
-          - Bendras įvertinimas: {ratings.get('rating')}
-          - Komandinis Darbas: {ratings.get('teamwork')}
-          - Komunikacija: {ratings.get('communication')}
-          - Iniciatyvumas: {ratings.get('initiative')}
-          - Techninės Žinios: {ratings.get('technical_skills')}
-          - Problemų Sprendimas: {ratings.get('problem_solving')}
+        - **Kompetencijų lygiai (1-4):**
+        - Bendras: {ratings.get('rating')}
+        - Komandinis Darbas: {ratings.get('teamwork')}
+        - Komunikacija: {ratings.get('communication')}
+        - Iniciatyvumas: {ratings.get('initiative')}
+        - Techninės Žinios: {ratings.get('technical_skills')}
+        - Problemų Sprendimas: {ratings.get('problem_solving')}
         
         - **Raktiniai žodžiai:** {keywords}
-        
         - **Komentarai:** {comments}
-
-        - **Esamas išsamus atsiliepimas (jei yra, papildyk jį):** {existing_feedback}
-
-        **Užduotis:**
-        Remdamasis pateiktais duomenimis, sugeneruok sklandų ir išsamų atsiliepimo tekstą apie {colleague_name}. 
-        - Pradėk nuo bendro teigiamo įspūdžio (jei įvertinimai geri).
-        - Išskirk 2-3 stipriąsias puses, pagrįsdamas jas raktiniais žodžiais ar aukštais įvertinimais.
-        - Atsižvelk į laisvos formos komentarus.
-        - Jei yra žemų įvertinimų ar neigiamų raktinių žodžių, pasiūlyk 1-2 tobulintinas sritis. Formuluok pasiūlymus kaip galimybes augti, o ne kaip kritiką.
-        - Apibendrink atsiliepimą pozityvia nata.
-        - Nenaudok Markdown formatavimo.
+        - **Papildomas kontekstas:** {existing_feedback}
+        
+        **Generavimo Instrukcija:**
+        Parašyk rišlų atsiliepimą lietuvių kalba, skirtą {colleague_name}:
+        
+        1. **Stiprybės (Lygiai 3-4 "Varo" ir "Pavyzdys"):**
+        Jei yra sričių su įvertinimais 3 arba 4, paminėk jas kaip pavyzdines. Naudok tokias frazes kaip "Šioje srityje esi pavyzdys kitiems", "Čia tu tikrai varai į priekį". Konkrečiai įvardink, kokį teigiamą poveikį (Impact) tai daro.
+        
+        2. **Stabilumas (Lygis 2 "Daro"):**
+        Jei sritis įvertinta 2, paminėk tai kaip stabilią, patikimą veiklą, kuri atitinka lūkesčius.
+        
+        3. **Augimo zonos (Lygis 1 "Mokosi"):**
+        Jei yra sričių su įvertinimu 1 (arba 1.x), tai yra vieta SBI konstruktyvumui.
+        NEKRITIKUOK asmenybės. Formuluok tai kaip galimybę mokytis: "Matau galimybę augti...", "Čia dar galime pasitempti...".
+        Būtinai paaiškink Situaciją ir Elgesį, kuris lėmė tokį vertinimą, ir pasiūlyk, kaip pasiekti "Daro" lygį.
+        
+        4. **Komentarų integracija:**
+        Natūraliai įpink pateiktus komentarus ir raktinius žodžius į tekstą, kad jie neskambėtų kaip atskiras sąrašas.
+        
+        Tekstas turi būti motyvuojantis, profesionalus ir aiškus. Nenaudok Markdown formatavimo.
         """
 
         response = model.generate_content(prompt)
@@ -334,3 +357,17 @@ def results(request):
     }
     
     return render(request, 'results.html', context)
+
+@login_required
+def all_feedback_list(request):
+    # Fetch all completed feedback, ordered by the newest first.
+    # Using select_related to optimize DB queries by fetching related objects in a single query.
+    all_feedback = Feedback.objects.select_related(
+        'feedback_request__requester', 
+        'feedback_request__requested_to'
+    ).filter(feedback_request__status='completed').order_by('-feedback_request__created_at')
+
+    context = {
+        'all_feedback': all_feedback,
+    }
+    return render(request, 'all_feedback_list.html', context)
