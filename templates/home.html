@@ -1,149 +1,161 @@
-{% extends "base.html" %}
-
-{% block title %}Valdymo Panelė - Atsiliepimai+{% endblock %}
+{% extends 'base.html' %}
 
 {% block content %}
-        <!-- Pagrindinis Turinys -->
-        <main class="flex-1 overflow-y-auto">
-            
-            <!-- Viršutinė juosta (su "Menu" mygtuku mobiliesiems) -->
-            <header class="bg-white shadow-sm p-4 flex justify-between items-center">
-                <!-- Mobilus Meniu Mygtukas -->
-                <button class="md:hidden p-2 text-gray-600">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
-                </button>
-                
-                <h1 class="text-2xl font-bold text-gray-800 hidden md:block">
-                    Sveiki, {{ user.first_name }}! 👋
-                </h1>
-                
-                <a href="#" id="request-feedback-btn" class="px-4 py-2 text-sm font-medium text-white bg-purple-500 rounded-lg shadow-sm hover:bg-purple-600 transition-colors">
-                    Prašyti feedback'o
-                </a>
-            </header>
+<main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50">
+    <header class="bg-white shadow p-4 flex justify-between items-center">
+        <h2 class="text-xl font-bold text-gray-800">Pagrindinis</h2>
+        <div class="flex space-x-2">
+            <a href="#" id="request-feedback-btn" class="px-4 py-2 text-sm font-medium text-white bg-purple-500 rounded-lg shadow-sm hover:bg-purple-600 transition-colors">
+                Prašyti feedback'o
+            </a>
+            <a href="#" id="send-feedback-btn" class="px-4 py-2 text-sm font-medium text-white bg-blue-500 rounded-lg shadow-sm hover:bg-blue-600 transition-colors">
+                Siųsti feedback'ą
+            </a>
+        </div>
+    </header>
 
-            <!-- Turinys -->
-            <div class="p-6 md:p-8 space-y-6">
+    <div class="p-6 md:p-8 space-y-6">
 
-                <!-- 2.1. Statistikos Kortelės -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-lg flex items-center space-x-4">
-                        <div class="bg-purple-100 p-3 rounded-full">
-                            <svg class="w-6 h-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" /></svg>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-500">Laukiančios Užduotys</p>
-                            <p class="text-2xl font-bold text-gray-800">3</p>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-lg flex items-center space-x-4">
-                        <div class="bg-purple-100 p-3 rounded-full">
-                            <svg class="w-6 h-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-500">Užpildytos Apklausos</p>
-                            <p class="text-2xl font-bold text-gray-800">12</p>
-                        </div>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-lg flex items-center space-x-4">
-                        <div class="bg-purple-100 p-3 rounded-full">
-                            <svg class="w-6 h-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.998-2.55m-3.002 2.55a9.094 9.094 0 0 1-3.741-.479 3 3 0 0 1-4.998-2.55m3.002 2.55a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0 4.998-2.55m-3.002 2.55a3 3 0 0 1-4.998-2.55m0 0a9.094 9.094 0 0 1-3.741-.479 3 3 0 0 1-4.998-2.55M12 9.75a3 3 0 0 1 0-3 3 3 0 0 1 0 3z" /></svg>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-500">Mano Komanda</p>
-                            <p class="text-2xl font-bold text-gray-800">8</p>
-                        </div>
-                    </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white p-6 rounded-2xl shadow-lg flex items-center space-x-4">
+                <div class="bg-purple-100 p-3 rounded-full">
+                    <svg class="w-6 h-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" /></svg>
                 </div>
-
-                <!-- 2.2. Turinys (2 stulpeliai) -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    
-                    <!-- Kairys stulpelis (Užduotys) -->
-                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Mano Užduotys</h3>
-                        <div class="space-y-4">
-                            {% if feedback_requests %}
-                                {% for fr in feedback_requests %}
-                                    <div class="border rounded-lg p-4 flex justify-between items-center">
-                                        <div>
-                                            <h4 class="font-semibold text-gray-800">{{ fr.project_name }}</h4>
-                                            <p class="text-sm text-gray-500">Pateikė: {{ fr.requester.first_name }} {{ fr.requester.last_name }} | Iki: {{ fr.due_date }}</p>
-                                        </div>
-                                        <a href="{% url 'fill_feedback' fr.id %}" class="px-4 py-2 text-sm font-medium text-white bg-purple-500 rounded-lg shadow-sm hover:bg-purple-600">
-                                            Pildyti
-                                        </a>
-                                    </div>
-                                {% endfor %}
-                            {% else %}
-                                <p>Neturite jokių užduočių.</p>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <!-- Dešinys stulpelis (Aktyvumas) -->
-                    <div class="bg-white p-6 rounded-2xl shadow-lg">
-                        <h3 class="text-xl font-bold text-gray-800 mb-4">Komandos Aktyvumas</h3>
-                        <ul class="space-y-3">
-                            <li class="flex items-center space-x-3">
-                                <img class="w-8 h-8 rounded-full" src="https://placehold.co/40x40/ecc94b/333?text=JA" alt="J.A.">
-                                <p class="text-sm text-gray-600"><span class="font-semibold">Jonas Antanaitis</span> pateikė atsiliepimą apie jus.</p>
-                            </li>
-                            <li class="flex items-center space-x-3">
-                                <img class="w-8 h-8 rounded-full" src="https://placehold.co/40x40/9f7aea/333?text=LP" alt="L.P.">
-                                <p class="text-sm text-gray-600"><span class="font-semibold">Lina Petraitienė</span> pradėjo "Ketvirčio 360°" apklausą.</p>
-                            </li>
-                            <li class="flex items-center space-x-3">
-                                <img class="w-8 h-8 rounded-full" src="https://placehold.co/40x40/48bb78/333?text=KS" alt="K.S.">
-                                <p class="text-sm text-gray-600"><span class="font-semibold">Kęstas S</span> paprašė jūsų atsiliepimo.</p>
-                            </li>
-                        </ul>
-                    </div>
-
+                <div>
+                    <p class="text-sm text-gray-500">Laukiančios Užduotys</p>
+                    <p class="text-2xl font-bold text-gray-800">3</p>
                 </div>
             </div>
-        </main>
-
-    <div id="feedback-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden">
-        <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div class="mt-3 text-center">
-                <h3 class="text-lg leading-6 font-medium text-gray-900">Prašyti Feedback'o</h3>
-                <div class="mt-2 px-7 py-3">
-                    <form id="feedback-form">
-                                                        {% csrf_token %}
-                                                        <div class="mb-4">
-                                                            <label for="team-member" class="block text-sm font-medium text-gray-700">Komandos narys</label>
-                                                            <select id="team-member" name="requested_to" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                                                <!-- Options will be populated by JavaScript -->
-                                                            </select>
-                                                        </div>
-                                                        <div class="mb-4">
-                                                            <label for="project-name" class="block text-sm font-medium text-gray-700">Projekto pavadinimas</label>
-                                                            <input type="text" name="project_name" id="project-name" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                                                        </div>
-                                                        <div class="mb-4">
-                                                            <label for="comment" class="block text-sm font-medium text-gray-700">Komentaras</label>
-                                                            <textarea name="comment" id="comment" rows="3" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
-                                                        </div>
-                                                        <div class="mb-4">
-                                                            <label for="due-date" class="block text-sm font-medium text-gray-700">Pateikti iki</label>
-                                                            <input type="date" name="due_date" id="due-date" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                                                        </div>
-                                                        <div class="items-center px-4 py-3">
-                                                            <button id="submit-feedback" class="px-4 py-2 bg-purple-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300">
-                                                                Pateikti
-                                                            </button>
-                                                        </div>
-                                                    </form>                </div>
-                <div class="items-center px-4 py-3">
-                    <button id="close-modal" class="px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300">
-                        Uždaryti
-                    </button>
+            <div class="bg-white p-6 rounded-2xl shadow-lg flex items-center space-x-4">
+                <div class="bg-purple-100 p-3 rounded-full">
+                    <svg class="w-6 h-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Užpildytos Apklausos</p>
+                    <p class="text-2xl font-bold text-gray-800">12</p>
+                </div>
+            </div>
+            <div class="bg-white p-6 rounded-2xl shadow-lg flex items-center space-x-4">
+                <div class="bg-purple-100 p-3 rounded-full">
+                    <svg class="w-6 h-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.998-2.55m-3.002 2.55a9.094 9.094 0 0 1-3.741-.479 3 3 0 0 1-4.998-2.55m3.002 2.55a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0 4.998-2.55m-3.002 2.55a3 3 0 0 1-4.998-2.55m0 0a9.094 9.094 0 0 1-3.741-.479 3 3 0 0 1-4.998-2.55M12 9.75a3 3 0 0 1 0-3 3 3 0 0 1 0 3z" /></svg>
+                </div>
+                <div>
+                    <p class="text-sm text-gray-500">Mano Komanda</p>
+                    <p class="text-2xl font-bold text-gray-800">8</p>
                 </div>
             </div>
         </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <div class="lg:col-span-2 bg-white p-6 rounded-2xl shadow-lg">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Mano Užduotys</h3>
+                <div class="space-y-4">
+                    {% if feedback_requests %}
+                        {% for fr in feedback_requests %}
+                            <div class="border rounded-lg p-4 flex justify-between items-center">
+                                <div>
+                                    <h4 class="font-semibold text-gray-800">{{ fr.project_name }}</h4>
+                                    <p class="text-sm text-gray-500">Pateikė: {{ fr.requester.first_name }} {{ fr.requester.last_name }} | Iki: {{ fr.due_date }}</p>
+                                </div>
+                                <a href="{% url 'fill_feedback' fr.id %}" class="px-4 py-2 text-sm font-medium text-white bg-purple-500 rounded-lg shadow-sm hover:bg-purple-600">
+                                    Pildyti
+                                </a>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-gray-500">Neturite jokių užduočių.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-lg">
+                <h3 class="text-xl font-bold text-gray-800 mb-4">Komandos Aktyvumas</h3>
+                <ul class="space-y-3">
+                    <li class="flex items-center space-x-3">
+                        <img class="w-8 h-8 rounded-full" src="https://placehold.co/40x40/ecc94b/333?text=JA" alt="J.A.">
+                        <p class="text-sm text-gray-600"><span class="font-semibold">Jonas Antanaitis</span> pateikė atsiliepimą apie jus.</p>
+                    </li>
+                    <li class="flex items-center space-x-3">
+                        <img class="w-8 h-8 rounded-full" src="https://placehold.co/40x40/9f7aea/333?text=LP" alt="L.P.">
+                        <p class="text-sm text-gray-600"><span class="font-semibold">Lina Petraitienė</span> pradėjo "Ketvirčio 360°" apklausą.</p>
+                    </li>
+                    <li class="flex items-center space-x-3">
+                        <img class="w-8 h-8 rounded-full" src="https://placehold.co/40x40/48bb78/333?text=KS" alt="K.S.">
+                        <p class="text-sm text-gray-600"><span class="font-semibold">Kęstas S</span> paprašė jūsų atsiliepimo.</p>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
     </div>
-{% endblock %}
+</main> <div id="feedback-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden" style="z-index: 50;">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Prašyti Feedback'o</h3>
+            <div class="mt-2 px-7 py-3">
+                <form id="feedback-form">
+                    {% csrf_token %}
+                    <div class="mb-4">
+                        <label for="team-member" class="block text-sm font-medium text-gray-700 text-left">Komandos narys</label>
+                        <select id="team-member" name="requested_to" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            </select>
+                    </div>
+                    <div class="mb-4">
+                        <label for="project-name" class="block text-sm font-medium text-gray-700 text-left">Projekto pavadinimas</label>
+                        <input type="text" name="project_name" id="project-name" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                    </div>
+                    <div class="mb-4">
+                        <label for="comment" class="block text-sm font-medium text-gray-700 text-left">Komentaras</label>
+                        <textarea name="comment" id="comment" rows="3" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label for="due-date" class="block text-sm font-medium text-gray-700 text-left">Pateikti iki</label>
+                        <input type="date" name="due_date" id="due-date" class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                    </div>
+                    <div class="items-center px-4 py-3">
+                        <button id="submit-feedback" type="submit" class="px-4 py-2 bg-purple-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300">
+                            Pateikti
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="items-center px-4 py-3">
+                <button id="close-modal" class="px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                    Uždaryti
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="send-feedback-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden" style="z-index: 50;">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Siųsti Feedback'ą</h3>
+            <div class="mt-2 px-7 py-3">
+                <form id="send-feedback-form">
+                    <div class="mb-4">
+                        <label for="send-to-member" class="block text-sm font-medium text-gray-700 text-left">Pasirinkite kolegą</label>
+                        <select id="send-to-member" name="send_to" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                            </select>
+                    </div>
+                    <div class="items-center px-4 py-3">
+                        <button id="select-colleague-btn" class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                            Pasirinkti
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="items-center px-4 py-3">
+                <button id="close-send-modal" class="px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                    Uždaryti
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
 
 {% block scripts %}
 <script>
@@ -153,48 +165,117 @@
     const teamMemberSelect = document.getElementById('team-member');
     const feedbackForm = document.getElementById('feedback-form');
 
-    requestFeedbackBtn.addEventListener('click', () => {
-        fetch("{% url 'get_team_members' %}")
-            .then(response => response.json())
-            .then(data => {
-                teamMemberSelect.innerHTML = '';
-                data.forEach(member => {
-                    const option = document.createElement('option');
-                    option.value = member.id;
-                    option.textContent = member.name;
-                    teamMemberSelect.appendChild(option);
+    const sendFeedbackModal = document.getElementById('send-feedback-modal');
+    const sendFeedbackBtn = document.getElementById('send-feedback-btn');
+    const closeSendModalBtn = document.getElementById('close-send-modal');
+    const sendToMemberSelect = document.getElementById('send-to-member');
+    const selectColleagueBtn = document.getElementById('select-colleague-btn');
+
+    // Atidaryti "Prašyti Feedback"
+    if (requestFeedbackBtn) {
+        requestFeedbackBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            fetch("{% url 'get_team_members' %}")
+                .then(response => response.json())
+                .then(data => {
+                    teamMemberSelect.innerHTML = '<option value="">Pasirinkite narį</option>';
+                    data.forEach(member => {
+                        const option = document.createElement('option');
+                        option.value = member.id;
+                        option.textContent = member.name;
+                        teamMemberSelect.appendChild(option);
+                    });
                 });
-            });
-        feedbackModal.classList.remove('hidden');
-    });
+            feedbackModal.classList.remove('hidden');
+        });
+    }
 
-    closeModalBtn.addEventListener('click', () => {
-        feedbackModal.classList.add('hidden');
-    });
+    // Uždaryti "Prašyti Feedback"
+    if (closeModalBtn) {
+        closeModalBtn.addEventListener('click', () => {
+            feedbackModal.classList.add('hidden');
+        });
+    }
 
-    feedbackForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const formData = new FormData(feedbackForm);
-        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-        formData.append('csrfmiddlewaretoken', csrftoken);
+    // Atidaryti "Siųsti Feedback"
+    if (sendFeedbackBtn) {
+        sendFeedbackBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            fetch("{% url 'get_team_members' %}")
+                .then(response => response.json())
+                .then(data => {
+                    sendToMemberSelect.innerHTML = '<option value="">Pasirinkite narį</option>';
+                    data.forEach(member => {
+                        const option = document.createElement('option');
+                        option.value = member.id;
+                        option.textContent = member.name;
+                        sendToMemberSelect.appendChild(option);
+                    });
+                });
+            sendFeedbackModal.classList.remove('hidden');
+        });
+    }
 
-        fetch("{% url 'request_feedback' %}", {
-            method: 'POST',
-            body: formData,
-            headers: {
-                'X-CSRFToken': csrftoken
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                feedbackModal.classList.add('hidden');
-                // Optionally, show a success message
+    // Uždaryti "Siųsti Feedback"
+    if (closeSendModalBtn) {
+        closeSendModalBtn.addEventListener('click', () => {
+            sendFeedbackModal.classList.add('hidden');
+        });
+    }
+
+    // Pasirinkti kolegą siuntimui
+    if (selectColleagueBtn) {
+        selectColleagueBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const selectedMemberId = sendToMemberSelect.value;
+            if (selectedMemberId) {
+                // Svarbu: įsitikink, kad url 'fill_feedback_direct' arba panašus egzistuoja tavo urls.py
+                // Arba naudok tą patį 'fill_feedback' jei jis priima ID.
+                // Čia pavyzdys, nukreipiantis į formą:
+                window.location.href = `/feedback/fill/${selectedMemberId}/`; 
             } else {
-                // Handle errors
-                console.error(data.errors);
+                alert("Pasirinkite kolegą!");
             }
         });
-    });
+    }
+
+    // Formos pateikimas (AJAX)
+    if (feedbackForm) {
+        feedbackForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const formData = new FormData(feedbackForm);
+            
+            // Saugiai gauname CSRF tokeną
+            const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
+            const csrftoken = csrfInput ? csrfInput.value : '';
+            
+            // Jei FormData neturi tokeno, pridedame
+            if (!formData.has('csrfmiddlewaretoken')) {
+                formData.append('csrfmiddlewaretoken', csrftoken);
+            }
+
+            fetch("{% url 'request_feedback' %}", {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    feedbackModal.classList.add('hidden');
+                    // Galima perkrauti puslapį, kad atsinaujintų sąrašas
+                    window.location.reload(); 
+                } else {
+                    console.error(data.errors);
+                    alert("Įvyko klaida: " + JSON.stringify(data.errors));
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        });
+    }
 </script>
-{% endblock %}
+{% endblock scripts %}

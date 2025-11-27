@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Q, Count, Avg
 from .forms import RegistrationForm, FeedbackForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
@@ -8,11 +9,13 @@ from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.db import OperationalError
 from django.views.decorators.http import require_POST
-import json
+import json, traceback
 import google.generativeai as genai
 from django.conf import settings
 from django.db.models import Avg
+from django.db import models
 import logging
+
 
 logger = logging.getLogger(__name__)
 
@@ -55,18 +58,17 @@ def logout_view(request):
 @login_required
 def get_team_members(request):
     user = request.user
+    team_members_qs = User.objects.none()
     try:
         user_company = user.profile.company
         if user_company:
-            team_members = User.objects.filter(profile__company__iexact=user_company).exclude(id=user.id)
-        else:
-            team_members = User.objects.exclude(id=user.id)
-        data = [{'id': member.id, 'name': f'{member.first_name} {member.last_name}'} for member in team_members]
-        return JsonResponse(data, safe=False)
+            team_members_qs = User.objects.filter(profile__company__iexact=user_company).exclude(id=user.id)
     except (Profile.DoesNotExist, OperationalError):
-        team_members = User.objects.exclude(id=user.id)
-        data = [{'id': member.id, 'name': f'{member.first_name} {member.last_name}'} for member in team_members]
-        return JsonResponse(data, safe=False)
+        pass  # Jei nėra įmonės, grąžinsime visus vartotojus žemiau
+    if not team_members_qs.exists():
+        team_members_qs = User.objects.exclude(id=user.id)
+    data = [{'id': member.id, 'name': f'{member.first_name} {member.last_name}'} for member in team_members_qs]
+    return JsonResponse(data, safe=False)
 
 @login_required
 def request_feedback(request):
@@ -79,19 +81,34 @@ def request_feedback(request):
         
         requested_to = get_object_or_404(User, id=requested_to_id)
         
-        FeedbackRequest.objects.create(
+        feedback_request = FeedbackRequest.objects.create(
             requester=requester,
             requested_to=requested_to,
             project_name=project_name,
             comment=comment,
             due_date=due_date
         )
-        return JsonResponse({'success': True})
+        return JsonResponse({'success': True, 'feedback_request_id': feedback_request.id})
     return JsonResponse({'success': False, 'errors': 'Invalid request method'})
 
 @login_required
+def send_feedback(request, user_id):
+    requester = request.user
+    requested_to = get_object_or_404(User, id=user_id)
+    
+    feedback_request = FeedbackRequest.objects.create(
+        requester=requester,
+        requested_to=requested_to,
+        project_name='Atsiliepimas',
+        comment='',
+        due_date=date.today()
+    )
+    
+    return redirect('fill_feedback', request_id=feedback_request.id)
+
+@login_required
 def fill_feedback(request, request_id):
-    feedback_request = get_object_or_404(FeedbackRequest, id=request_id, requested_to=request.user)
+    feedback_request = get_object_or_404(FeedbackRequest, id=request_id)
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
         if form.is_valid():
@@ -114,33 +131,38 @@ def fill_feedback(request, request_id):
 
 @login_required
 def team_members_list(request):
-    user = request.user
-    try:
-        user_company = user.profile.company
-        if user_company:
-            team_members_qs = User.objects.filter(profile__company__iexact=user_company)
-        else:
-            team_members_qs = User.objects.all()
-    except (Profile.DoesNotExist, OperationalError):
-        team_members_qs = User.objects.all()
-
-    # Enhance team member data with individual average ratings
-    team_members = []
-    for member in team_members_qs:
-        avg_rating = Feedback.objects.filter(feedback_request__requested_to=member, feedback_request__status='completed').aggregate(Avg('rating'))['rating__avg']
-        member.average_rating = round(avg_rating, 1) if avg_rating else 0
-        team_members.append(member)
-
-    # Calculate overall team statistics
-    pending_feedback_count = FeedbackRequest.objects.filter(requested_to__in=team_members_qs, status='pending').count()
-    overall_avg_rating = Feedback.objects.filter(feedback_request__requested_to__in=team_members_qs, feedback_request__status='completed').aggregate(Avg('rating'))['rating__avg']
+    # Paimame visus vartotojus, išskyrus patį save (pasirinktinai)
+    team_members_qs = User.objects.exclude(id=request.user.id)
     
+    # Paieškos logika (jei tokią turėjai)
+    query = request.GET.get('q')
+    if query:
+        team_members_qs = team_members_qs.filter(
+            Q(username__icontains=query) |
+            Q(first_name__icontains=query) |
+            Q(last_name__icontains=query)
+        )
+
+    # PAGRINDINIS PATAISYMAS ČIA:
+    # 1. Naudojame 'received_requests' vietoje 'feedback_requests_received'
+    # 2. Naudojame Q(...) vietoje models.Q(...)
+    team_members = team_members_qs.select_related('profile').annotate(
+        completed_requests_count=Count(
+            'received_requests', 
+            filter=Q(received_requests__status='completed')
+        ),
+        # Galbūt tu taip pat skaičiavai vidutinį įvertinimą? Jei taip, kodas būtų toks:
+        # average_rating=Avg('received_requests__feedback__rating')
+    )
+
     context = {
         'team_members': team_members,
-        'pending_feedback_count': pending_feedback_count,
-        'overall_avg_rating': round(overall_avg_rating, 1) if overall_avg_rating else 0,
+        'search_query': query,
     }
-    return render(request, 'team_members.html', context)
+    
+    # Patikrink, ar šablonas yra šiame kelyje. Pagal klaidą URL yra /team/, 
+    # tad tikriausiai šablonas kažkur 'feedbackas/...'
+    return render(request, 'feedbackas/team_members_list.html', context)
 
 @login_required
 def my_tasks_list(request):
@@ -158,7 +180,6 @@ def my_tasks_list(request):
 
 
 
-import traceback
 
 @login_required
 @require_POST
@@ -213,6 +234,7 @@ def generate_ai_feedback(request):
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     except Exception as e:
+        logger.error(f"AI feedback generation failed: {e}\n{traceback.format_exc()}")
         return JsonResponse({'error': str(e)}, status=500)
 
 
@@ -235,13 +257,20 @@ def results(request):
     # Surinkti kokybinius atsiliepimus
     qualitative_feedback = [f.feedback for f in completed_feedback]
 
-    # Apskaičiuoti kompetencijų vidurkius
+    # Apskaičiuoti kompetencijų vidurkius viena užklausa
+    competency_averages = completed_feedback.aggregate(
+        teamwork=Avg('teamwork_rating'),
+        communication=Avg('communication_rating'),
+        initiative=Avg('initiative_rating'),
+        technical_skills=Avg('technical_skills_rating'),
+        problem_solving=Avg('problem_solving_rating')
+    )
     competencies = [
-        {'name': 'Komandinis Darbas', 'score': round(completed_feedback.aggregate(Avg('teamwork_rating'))['teamwork_rating__avg'] or 0, 1)},
-        {'name': 'Komunikacija', 'score': round(completed_feedback.aggregate(Avg('communication_rating'))['communication_rating__avg'] or 0, 1)},
-        {'name': 'Iniciatyvumas', 'score': round(completed_feedback.aggregate(Avg('initiative_rating'))['initiative_rating__avg'] or 0, 1)},
-        {'name': 'Techninės Žinios', 'score': round(completed_feedback.aggregate(Avg('technical_skills_rating'))['technical_skills_rating__avg'] or 0, 1)},
-        {'name': 'Problemų Sprendimas', 'score': round(completed_feedback.aggregate(Avg('problem_solving_rating'))['problem_solving_rating__avg'] or 0, 1)},
+        {'name': 'Komandinis Darbas', 'score': round(competency_averages.get('teamwork') or 0, 1)},
+        {'name': 'Komunikacija', 'score': round(competency_averages.get('communication') or 0, 1)},
+        {'name': 'Iniciatyvumas', 'score': round(competency_averages.get('initiative') or 0, 1)},
+        {'name': 'Techninės Žinios', 'score': round(competency_averages.get('technical_skills') or 0, 1)},
+        {'name': 'Problemų Sprendimas', 'score': round(competency_averages.get('problem_solving') or 0, 1)},
     ]
 
     context = {
