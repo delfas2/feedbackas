@@ -240,6 +240,38 @@ def generate_ai_feedback(request):
 
 
 @login_required
+def get_feedback_data(request):
+    user = request.user
+    # Pakeista tvarka į 'created_at', kad būtų nuo seniausio iki naujausio
+    feedback_requests = FeedbackRequest.objects.filter(requester=user).order_by('created_at')[:8]
+    
+    data = []
+    # Užpildome duomenis iš esamų užklausų
+    for i, fr in enumerate(feedback_requests):
+        data.append({
+            'id': fr.id,
+            'label': f'Apklausa {i + 1}',
+            'status': 'done' if fr.status == 'completed' else 'pending'
+        })
+        
+    # Užpildome likusius taškus iki 8
+    num_existing = len(data)
+    for i in range(num_existing, 8):
+        data.append({
+            'id': None,
+            'label': f'Apklausa {i + 1}',
+            'status': 'empty'
+        })
+        
+    # Find the last 'done' and mark it as 'active'
+    last_done_index = next((i for i in range(len(data) - 1, -1, -1) if data[i]['status'] == 'done'), -1)
+    if last_done_index != -1 and data[last_done_index]['id'] is not None:
+        data[last_done_index]['status'] = 'active'
+        
+    return JsonResponse(data, safe=False)
+
+
+@login_required
 def results(request):
     user = request.user
     

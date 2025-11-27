@@ -16,6 +16,10 @@
 
     <div class="p-6 md:p-8 space-y-6">
 
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-2 text-center">Gauti atsiliepimai augimui</h3>
+            <div id="feedback-chart-container"></div>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-white p-6 rounded-2xl shadow-lg flex items-center space-x-4">
                 <div class="bg-purple-100 p-3 rounded-full">
@@ -229,10 +233,7 @@
             e.preventDefault();
             const selectedMemberId = sendToMemberSelect.value;
             if (selectedMemberId) {
-                // Svarbu: įsitikink, kad url 'fill_feedback_direct' arba panašus egzistuoja tavo urls.py
-                // Arba naudok tą patį 'fill_feedback' jei jis priima ID.
-                // Čia pavyzdys, nukreipiantis į formą:
-                window.location.href = `/feedback/fill/${selectedMemberId}/`; 
+                window.location.href = `/send_feedback/${selectedMemberId}/`; 
             } else {
                 alert("Pasirinkite kolegą!");
             }
@@ -245,11 +246,9 @@
             e.preventDefault();
             const formData = new FormData(feedbackForm);
             
-            // Saugiai gauname CSRF tokeną
             const csrfInput = document.querySelector('[name=csrfmiddlewaretoken]');
             const csrftoken = csrfInput ? csrfInput.value : '';
             
-            // Jei FormData neturi tokeno, pridedame
             if (!formData.has('csrfmiddlewaretoken')) {
                 formData.append('csrfmiddlewaretoken', csrftoken);
             }
@@ -265,7 +264,6 @@
             .then(data => {
                 if (data.success) {
                     feedbackModal.classList.add('hidden');
-                    // Galima perkrauti puslapį, kad atsinaujintų sąrašas
                     window.location.reload(); 
                 } else {
                     console.error(data.errors);
@@ -278,4 +276,197 @@
         });
     }
 </script>
+{% verbatim %}
+<script type="text/babel">
+const { useState, useEffect, useMemo } = React;
+
+const SurveyTimelineChart = () => {
+  const [data, setData] = useState([]);
+  const [hoveredIndex, setHoveredIndex] = useState(null);
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    fetch("/get_feedback_data/")
+      .then(response => response.json())
+      .then(fetchedData => {
+        setData(fetchedData);
+      });
+    setTimeout(() => setIsVisible(true), 100);
+  }, []);
+
+  const getCoordinates = (index, total, width, height, padding) => {
+    const x = total > 1 ? (index / (total - 1)) * (width - padding * 2) + padding : width / 2;
+    const y = height / 2;
+    return { x, y };
+  };
+
+  const width = 800;
+  const height = 100;
+  const padding = 60;
+
+  const points = useMemo(() => {
+    if (data.length === 0) return [];
+    return data.map((_, index) => 
+      getCoordinates(index, data.length, width, height, padding)
+    );
+  }, [data, width, height, padding]);
+
+  const activeIndex = data.findLastIndex(d => d.status === 'done' || d.status === 'active');
+  const pulseStartX = points.length > 0 ? points[0].x : padding;
+  const pulseEndX = activeIndex !== -1 ? points[activeIndex].x : padding;
+  const progressEndX = pulseEndX;
+
+  if (data.length === 0) {
+    return (
+        <div className="w-full flex items-center justify-center p-6 bg-white min-h-[100px]">
+            <p className="text-gray-500">Atsiliepimų istorija bus matoma čia.</p>
+        </div>
+    );
+  }
+
+  return (
+    <div className="w-full flex items-center justify-center pt-6 bg-white">
+      <div className="relative w-full max-w-5xl select-none">
+        <svg 
+          viewBox={`0 0 ${width} ${height}`} 
+          className="w-full h-auto overflow-visible"
+        >
+          <defs>
+            <linearGradient id="staticLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#A855F7" />
+              <stop offset="100%" stopColor="#8B5CF6" />
+            </linearGradient>
+            <linearGradient id="pulseBeam" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="white" stopOpacity="0" />
+              <stop offset="50%" stopColor="white" stopOpacity="0.8" />
+              <stop offset="100%" stopColor="white" stopOpacity="0" />
+            </linearGradient>
+            <mask id="lineMask">
+              <path 
+                d={`M ${pulseStartX},${height/2} L ${pulseEndX},${height/2}`} 
+                stroke="white" 
+                strokeWidth="6" 
+                strokeLinecap="round"
+              />
+            </mask>
+          </defs>
+          <line 
+            x1={padding} 
+            y1={height / 2} 
+            x2={width - padding} 
+            y2={height / 2} 
+            stroke="#E2E8F0" 
+            strokeWidth="6" 
+            strokeLinecap="round" 
+          />
+          <line 
+            x1={padding} 
+            y1={height / 2} 
+            x2={progressEndX} 
+            y2={height / 2} 
+            stroke="url(#staticLineGradient)" 
+            strokeWidth="6" 
+            strokeLinecap="round"
+          />
+          {activeIndex > -1 && (
+            <g mask="url(#lineMask)">
+              <rect 
+                x={pulseStartX} 
+                y={height/2 - 5} 
+                width={pulseEndX - pulseStartX} 
+                height="10" 
+                fill="url(#staticLineGradient)" 
+              />
+              <rect 
+                x={pulseStartX - 100}
+                y={height/2 - 5} 
+                width="200"
+                height="10" 
+                fill="url(#pulseBeam)" 
+                style={{ mixBlendMode: 'overlay' }}
+              >
+                <animate 
+                  attributeName="x" 
+                  from={pulseStartX - 200} 
+                  to={pulseEndX} 
+                  dur="2s" 
+                  repeatCount="indefinite" 
+                />
+              </rect>
+            </g>
+          )}
+          {points.map((point, index) => {
+            const item = data[index];
+            const isDone = item.status === 'done';
+            const isActive = item.status === 'active';
+            const isHovered = hoveredIndex === index;
+            return (
+              <g 
+                key={index}
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+                style={{ cursor: 'pointer' }}
+              >
+                <circle cx={point.x} cy={point.y} r="20" fill="transparent" />
+                <circle 
+                  cx={point.x} 
+                  cy={point.y} 
+                  r={isHovered ? 14 : 10} 
+                  fill={isDone || isActive ? "#8B5CF6" : "white"}
+                  stroke={isDone || isActive ? "#A855F7" : "#E2E8F0"}
+                  strokeWidth={3}
+                  className="transition-all duration-300"
+                />
+                {isDone && (
+                  <circle cx={point.x} cy={point.y} r={isHovered ? 6 : 4} fill="white" className="transition-all duration-300"/>
+                )}
+                {isActive && (
+                  <circle cx={point.x} cy={point.y} r={isHovered ? 6 : 4} fill="white" className="animate-pulse"/>
+                )}
+                <text
+                  x={point.x}
+                  y={point.y + 25}
+                  textAnchor="middle"
+                  className={`text-[11px] font-bold transition-colors duration-300 ${
+                    isDone || isActive ? 'fill-purple-500' : 'fill-slate-400'
+                  }`}
+                >
+                  {index + 1}
+                </text>
+                {isHovered && (
+                  <g>
+                    <rect 
+                      x={point.x - 40} 
+                      y={point.y - 45} 
+                      width="80" 
+                      height="30" 
+                      rx="6" 
+                      fill="#1E293B" 
+                    />
+                    <path d={`M ${point.x},${point.y - 15} L ${point.x - 5},${point.y - 20} L ${point.x + 5},${point.y - 20} Z`} fill="#1E293B" />
+                    <text 
+                      x={point.x} 
+                      y={point.y - 26} 
+                      textAnchor="middle" 
+                      fill="white" 
+                      fontSize="10" 
+                      fontWeight="bold"
+                    >
+                      {item.label}
+                    </text>
+                  </g>
+                )}
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+    </div>
+  );
+}
+const domContainer = document.querySelector('#feedback-chart-container');
+const root = ReactDOM.createRoot(domContainer);
+root.render(<SurveyTimelineChart />);
+</script>
+{% endverbatim %}
 {% endblock scripts %}

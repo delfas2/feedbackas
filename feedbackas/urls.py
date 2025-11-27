@@ -35,4 +35,5 @@ urlpatterns = [
     path('results/', views.results, name='results'),
     path('feedback/results/', views.results, name='feedback_results'),
     path('generate_ai_feedback/', views.generate_ai_feedback, name='generate_ai_feedback'),
+    path('get_feedback_data/', views.get_feedback_data, name='get_feedback_data'),
 ]

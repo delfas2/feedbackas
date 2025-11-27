@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class FeedbackRequest(models.Model):
     requester = models.ForeignKey(User, related_name='made_requests', on_delete=models.CASCADE)
@@ -8,6 +9,7 @@ class FeedbackRequest(models.Model):
     comment = models.TextField(blank=True, null=True)
     due_date = models.DateField()
     status = models.CharField(max_length=20, default='pending')
+    created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
         return f"Feedback request from {self.requester} to {self.requested_to} for {self.project_name}"
