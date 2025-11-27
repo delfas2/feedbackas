@@ -74,6 +74,7 @@ def request_feedback(request):
         requester = request.user
         requested_to_id = request.POST.get('requested_to')
         project_name = request.POST.get('project_name')
+        comment = request.POST.get('comment')
         due_date = request.POST.get('due_date')
         
         requested_to = get_object_or_404(User, id=requested_to_id)
@@ -82,6 +83,7 @@ def request_feedback(request):
             requester=requester,
             requested_to=requested_to,
             project_name=project_name,
+            comment=comment,
             due_date=due_date
         )
         return JsonResponse({'success': True})

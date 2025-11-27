@@ -5,6 +5,7 @@ class FeedbackRequest(models.Model):
     requester = models.ForeignKey(User, related_name='made_requests', on_delete=models.CASCADE)
     requested_to = models.ForeignKey(User, related_name='received_requests', on_delete=models.CASCADE)
     project_name = models.CharField(max_length=255)
+    comment = models.TextField(blank=True, null=True)
     due_date = models.DateField()
     status = models.CharField(max_length=20, default='pending')
 
