@@ -273,6 +273,22 @@ def results(request):
         {'name': 'Problemų Sprendimas', 'score': round(competency_averages.get('problem_solving') or 0, 1)},
     ]
 
+    training_map = {
+        'Komandinis Darbas': 'Mokymai apie efektyvų komandinį darbą',
+        'Komunikacija': 'Viešojo kalbėjimo ir komunikacijos įgūdžių mokymai',
+        'Iniciatyvumas': 'Proaktyvumo ir iniciatyvumo skatinimo seminaras',
+        'Techninės Žinios': 'Specializuoti techniniai kursai pagal Jūsų sritį',
+        'Problemų Sprendimas': 'Kritinio mąstymo ir problemų sprendimo dirbtuvės',
+    }
+    
+    recommended_trainings = []
+    for competency in competencies:
+        if competency['score'] < 7: # Naudojame 7 kaip ribą, kaip ir AI raginime
+            recommended_trainings.append({
+                'competency': competency['name'],
+                'training': training_map.get(competency['name'], 'Bendrieji tobulinimosi kursai')
+            })
+
     context = {
         'overall_avg_rating': round(overall_avg_rating, 1),
         'received_feedback_count': completed_feedback.count(),
@@ -280,6 +296,7 @@ def results(request):
         'competencies': competencies,
         'strengths': qualitative_feedback[:3], # Laikinai priskiriame pirmuosius atsiliepimus kaip stiprybes
         'improvements': qualitative_feedback[3:5], # Laikinai priskiriame kitus kaip tobulintinas sritis
+        'recommended_trainings': recommended_trainings,
         'company_name': request.user.profile.company if hasattr(request.user, 'profile') else '',
     }
     
