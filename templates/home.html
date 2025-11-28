@@ -401,38 +401,36 @@ const SurveyTimelineChart = () => {
           )}
           {points.map((point, index) => {
             const item = data[index];
-            const isDone = item.status === 'done' || item.status === 'pending';
-            const isActive = item.status === 'active';
+            const isCompleted = item.status === 'done';
+            const isPending = item.status === 'pending';
+            const isActionable = isCompleted || isPending;
             const isHovered = hoveredIndex === index;
             return (
               <g 
                 key={index}
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: isActionable ? 'pointer' : 'default' }}
               >
                 <circle cx={point.x} cy={point.y} r="20" fill="transparent" />
                 <circle 
                   cx={point.x} 
                   cy={point.y} 
                   r={isHovered ? 14 : 10} 
-                  fill={isDone ? "#8B5CF6" : "white"}
-                  stroke={isDone ? "#A855F7" : "#E2E8F0"}
+                  fill={isCompleted ? "#8B5CF6" : "white"}
+                  stroke={isActionable ? "#A855F7" : "#E2E8F0"}
                   strokeWidth={3}
                   className="transition-all duration-300"
                 />
-                {isDone && (
+                {isCompleted && (
                   <circle cx={point.x} cy={point.y} r={isHovered ? 6 : 4} fill="white" className="transition-all duration-300"/>
-                )}
-                {isActive && (
-                  <circle cx={point.x} cy={point.y} r={isHovered ? 6 : 4} fill="white" className="animate-pulse"/>
                 )}
                 <text
                   x={point.x}
                   y={point.y + 25}
                   textAnchor="middle"
                   className={`text-[11px] font-bold transition-colors duration-300 ${
-                    isDone || isActive ? 'fill-purple-500' : 'fill-slate-400'
+                    isActionable ? 'fill-purple-500' : 'fill-slate-400'
                   }`}
                 >
                   {index + 1}

@@ -273,27 +273,25 @@ def generate_ai_feedback(request):
 @login_required
 def get_feedback_data(request):
     user = request.user
-    # Pakeista tvarka į 'created_at', kad būtų nuo seniausio iki naujausio
-    feedback_requests = FeedbackRequest.objects.filter(requester=user).order_by('created_at')[:8]
+    # Suskaičiuojame tik užpildytas apklausas
+    completed_requests_count = FeedbackRequest.objects.filter(requester=user, status='completed').count()
     
     data = []
-    # Užpildome duomenis iš esamų užklausų
-    for i, fr in enumerate(feedback_requests):
+    # Pirmieji taškai bus 'done' (pilnaviduriai)
+    for i in range(completed_requests_count):
         data.append({
-            'id': fr.id, # Priskiriame ID, kad būtų galima paspausti
+            'id': None, # Šiuo atveju ID nereikalingas, nes nekeičiame logikos
             'label': f'Apklausa {i + 1}',
-            'status': 'done' if fr.status == 'completed' else 'pending' # 'done' bus spalvotas, 'pending' - ne
+            'status': 'done'
         })
         
-    # Užpildome likusius taškus iki 8 kaip tuščius
-    num_existing = len(data)
-    for i in range(num_existing, 8):
+    # Likę taškai bus 'empty' (tušti)
+    for i in range(completed_requests_count, 8):
         data.append({
             'id': None,
             'label': f'Apklausa {i + 1}',
             'status': 'empty'
         })
-        
     return JsonResponse(data, safe=False)
 
 
