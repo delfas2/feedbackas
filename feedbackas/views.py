@@ -280,12 +280,12 @@ def get_feedback_data(request):
     # Užpildome duomenis iš esamų užklausų
     for i, fr in enumerate(feedback_requests):
         data.append({
-            'id': fr.id,
+            'id': fr.id, # Priskiriame ID, kad būtų galima paspausti
             'label': f'Apklausa {i + 1}',
-            'status': 'done' if fr.status == 'completed' else 'pending'
+            'status': 'done' if fr.status == 'completed' else 'pending' # 'done' bus spalvotas, 'pending' - ne
         })
         
-    # Užpildome likusius taškus iki 8
+    # Užpildome likusius taškus iki 8 kaip tuščius
     num_existing = len(data)
     for i in range(num_existing, 8):
         data.append({
@@ -293,11 +293,6 @@ def get_feedback_data(request):
             'label': f'Apklausa {i + 1}',
             'status': 'empty'
         })
-        
-    # Find the last 'done' and mark it as 'active'
-    last_done_index = next((i for i in range(len(data) - 1, -1, -1) if data[i]['status'] == 'done'), -1)
-    if last_done_index != -1 and data[last_done_index]['id'] is not None:
-        data[last_done_index]['status'] = 'active'
         
     return JsonResponse(data, safe=False)
 

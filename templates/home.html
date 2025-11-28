@@ -401,7 +401,7 @@ const SurveyTimelineChart = () => {
           )}
           {points.map((point, index) => {
             const item = data[index];
-            const isDone = item.status === 'done';
+            const isDone = item.status === 'done' || item.status === 'pending';
             const isActive = item.status === 'active';
             const isHovered = hoveredIndex === index;
             return (
@@ -416,8 +416,8 @@ const SurveyTimelineChart = () => {
                   cx={point.x} 
                   cy={point.y} 
                   r={isHovered ? 14 : 10} 
-                  fill={isDone || isActive ? "#8B5CF6" : "white"}
-                  stroke={isDone || isActive ? "#A855F7" : "#E2E8F0"}
+                  fill={isDone ? "#8B5CF6" : "white"}
+                  stroke={isDone ? "#A855F7" : "#E2E8F0"}
                   strokeWidth={3}
                   className="transition-all duration-300"
                 />
