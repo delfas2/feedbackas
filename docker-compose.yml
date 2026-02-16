@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+      - sqlite_db:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - GEMINI_API_KEY=AIzaSyAROW9qQ7KxUFH96UFQ8rjDe-E9MmEYBkg
+
+volumes:
+  sqlite_db:

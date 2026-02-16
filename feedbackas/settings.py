@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +26,9 @@ SECRET_KEY = 'django-insecure-p5iow3v#5mf)w0-64u9byz1@!5^anc64er!)nz2+8+rox&d!@y
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '172.28.117.18', '*']
+# Allow all hosts for development purposes in Docker.
+# For production, this should be a specific list of domains.
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -74,7 +77,8 @@ WSGI_APPLICATION = 'feedbackas.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
+# Using SQLite for simplicity in this Docker setup.
+# For production, a more robust database like PostgreSQL is recommended.
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -133,4 +137,4 @@ LOGIN_REDIRECT_URL = '/home/'
 LOGIN_URL = '/login/'
 
 # For production, it's recommended to store the API key as an environment variable.
-GEMINI_API_KEY = 'AIzaSyAROW9qQ7KxUFH96UFQ8rjDe-E9MmEYBkg'
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')

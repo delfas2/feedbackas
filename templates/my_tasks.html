@@ -1,218 +1,126 @@
-<!DOCTYPE html>
-<html lang="lt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mano Užduotys - Atsiliepimai+</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts (Inter) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-    </style>
-</head>
-<body class="bg-gray-100">
+{% extends 'base.html' %}
 
-    <div class="flex h-screen">
+{% block title %}Mano Užduotys - Atsiliepimai+{% endblock %}
+
+{% block content %}
+<main class="flex-1 overflow-y-auto">
+    
+    <!-- Viršutinė juosta -->
+    <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800 hidden md:block">
+            Mano Užduotys 📋
+        </h1>
         
-        <!-- 1. Šoninė Navigacijos Juosta -->
-        <aside class="hidden md:flex w-64 flex-col bg-white shadow-lg">
-            <!-- Logotipas -->
-            <div class="px-6 py-5 border-b">
-                <a href="{% url 'index' %}" class="text-2xl font-bold text-purple-600">
-                    Atsiliepimai+
-                </a>
-            </div>
-            
-            <!-- Navigacija -->
-            <nav class="flex-1 space-y-2 py-4 px-4">
-                <a href="{% url 'home' %}" class="flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 hover:bg-purple-50 hover:text-purple-600 font-medium">
-                    <!-- Piktograma -->
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l-3.75 5.25h16.5l-3.75-5.25h-9zM3.75 6.75h.75l.75 1.5h.75l.75-1.5h.75l-.75 1.5h.75l.75 1.5h.75l.75-1.5h.75l-.75 1.5h.75l.75 1.5h.75l.75-1.5h.75l-.75 1.5h.75l.75 1.5h.75l.75-1.5h.75l-.75 1.5h.75l.75 1.5h.75l.75-1.5h.75l-.75 1.5h.75l.75 1.5h.75l.75-1.5h.75" /></svg>
-                    <span>Pagrindinis</span>
-                </a>
-                <a href="{% url 'my_tasks_list' %}" class="flex items-center space-x-3 px-4 py-2 rounded-lg text-white bg-purple-500 font-medium">
-                    <!-- Piktograma -->
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-10.5c-.621 0-1.125-.504-1.125-1.125v-11.25c0-.621.504-1.125 1.125-1.125H9M9 7.5h.008v.008H9V7.5z" /></svg>
-                    <span>Mano Užduotys</span>
-                </a>
-                <a href="{% url 'team_members_list' %}" class="flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 hover:bg-purple-50 hover:text-purple-600 font-medium">
-                    <!-- Piktograma -->
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.182 14.818a4.5 4.5 0 0 1-6.364 0l-2.121-2.121a4.5 4.5 0 0 1 0-6.364l2.121-2.121a4.5 4.5 0 0 1 6.364 0l2.121 2.121a4.5 4.5 0 0 1 0 6.364l-2.121 2.121zM9.172 9.172a.375.375 0 1 1-.53.53l-.354-.354a.375.375 0 0 1 0-.53l.354-.354a.375.375 0 0 1 .53 0z" /></svg>
-                    <span>Mano Komanda</span>
-                </a>
-                <a href="{% url 'results' %}" class="flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 hover:bg-purple-50 hover:text-purple-600 font-medium">
-                    <!-- Piktograma -->
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h15.75c.621 0 1.125.504 1.125 1.125v6.75C21 20.496 20.496 21 19.875 21H4.125A1.125 1.125 0 0 1 3 19.875v-6.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.375c1.036 0 1.875.84 1.875 1.875v.375c0 1.036-.84 1.875-1.875 1.875h-.375A1.875 1.875 0 0 1 9.75 9v-.375z" /></svg>
-                    <span>Rezultatai</span>
-                </a>
-            </nav>
+        <!-- Filtravimas -->
+        <div class="flex space-x-2">
+           <select class="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg text-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+               <option>Naujausi viršuje</option>
+               <option>Pagal terminą</option>
+           </select>
+        </div>
+    </header>
 
-            <!-- Vartotojo profilis ir atsijungimas -->
-            <div class="mt-auto border-t p-4">
-                <div class="flex items-center space-x-3">
-                    <img class="w-10 h-10 rounded-full" src="https://placehold.co/40x40/eee/333?text=VP" alt="Vartotojo profilio nuotrauka">
-                    <div>
-                        <p class="font-medium text-gray-800">Vardenis Pavardenis</p>
-                        <a href="index.html" class="text-sm text-purple-600 hover:text-purple-800">Atsijungti</a>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- 2. Pagrindinis Turinys -->
-        <main class="flex-1 overflow-y-auto">
-            
-            <!-- Viršutinė juosta -->
-            <header class="bg-white shadow-sm p-4 flex justify-between items-center">
-                <!-- Mobilus Meniu Mygtukas -->
-                <button class="md:hidden p-2 text-gray-600">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
-                </button>
-                
-                <h1 class="text-2xl font-bold text-gray-800 hidden md:block">
-                    Mano Užduotys 📋
-                </h1>
-                
-                <!-- Galima pridėti filtrą arba rūšiavimą -->
-                <div class="flex space-x-2">
-                   <select class="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg text-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
-                       <option>Naujausi viršuje</option>
-                       <option>Pagal terminą</option>
-                       <option>Pagal skubumą</option>
-                   </select>
-                </div>
-            </header>
-
-            <!-- Turinys -->
-            <div class="p-6 md:p-8">
-                
-                <!-- Filtravimo kortelės -->
-                <div class="flex space-x-4 mb-6 overflow-x-auto pb-2">
-                    <button class="px-4 py-2 bg-purple-600 text-white rounded-lg font-medium shadow-sm whitespace-nowrap">
-                        Visos (5)
-                    </button>
-                    <button class="px-4 py-2 bg-white text-gray-600 border border-gray-200 rounded-lg font-medium shadow-sm hover:bg-gray-50 whitespace-nowrap">
-                        Laukiančios (3)
-                    </button>
-                    <button class="px-4 py-2 bg-white text-gray-600 border border-gray-200 rounded-lg font-medium shadow-sm hover:bg-gray-50 whitespace-nowrap">
-                        Atliktos (12)
-                    </button>
-                    <button class="px-4 py-2 bg-white text-gray-600 border border-gray-200 rounded-lg font-medium shadow-sm hover:bg-gray-50 whitespace-nowrap">
-                        Vėluojančios (1)
-                    </button>
-                </div>
-
-                <!-- Užduočių Sąrašas -->
-                <div class="space-y-4">
-                    
-                    <!-- Užduotis 1 (Aktyvi) -->
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-purple-100 hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div class="flex items-start space-x-4">
-                            <div class="bg-purple-100 p-3 rounded-lg flex-shrink-0">
-                                <svg class="w-6 h-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-800">Ketvirčio 360° Atsiliepimas</h3>
-                                <p class="text-gray-500 text-sm">Jūs turite įvertinti kolegą: <span class="font-medium text-purple-600">Jonas Antanaitis</span></p>
-                                <div class="flex items-center mt-2 space-x-3 text-xs">
-                                    <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">Nauja</span>
+    <!-- Turinys -->
+    <div class="p-6 md:p-8">
+        
+        <!-- 1. Užduotys, kurias turiu atlikti -->
+        <div class="mb-10">
+            <h2 class="text-xl font-bold text-gray-700 mb-4">Užduotys man ({{ assigned_requests.count }})</h2>
+            <div class="space-y-4">
+                {% for request in assigned_requests %}
+                <div class="bg-white p-5 rounded-xl shadow-sm border hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4 {% if request.status == 'pending' %}border-purple-100{% elif request.status == 'completed' %}border-gray-200 opacity-70{% endif %}">
+                    <div class="flex items-start space-x-4">
+                        <div class="p-3 rounded-lg flex-shrink-0 {% if request.status == 'pending' %}bg-purple-100{% else %}bg-gray-200{% endif %}">
+                            {% if request.status == 'pending' %}
+                            <svg class="w-6 h-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+                            {% else %}
+                             <svg class="w-6 h-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800 {% if request.status == 'completed' %}line-through{% endif %}">{{ request.project_name }}</h3>
+                            <p class="text-gray-500 text-sm">Atsiliepimą inicijavo: <span class="font-medium text-purple-600">{{ request.requester.get_full_name|default:request.requester.username }}</span></p>
+                            {% if request.comment %}<p class="text-sm text-gray-600 mt-1">Komentaras: {{ request.comment }}</p>{% endif %}
+                            <div class="flex items-center mt-2 space-x-3 text-xs">
+                                {% if request.status == 'pending' %}
+                                    <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">Laukiama atsakymo</span>
+                                    {% if request.due_date %}
                                     <span class="text-gray-400 flex items-center">
                                         <svg class="w-3 h-3 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        Liko 3 d.
+                                        Terminas: {{ request.due_date|date:"Y-m-d" }}
                                     </span>
-                                </div>
+                                    {% endif %}
+                                {% else %}
+                                    <span class="bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-medium">Užbaigta</span>
+                                {% endif %}
                             </div>
-                        </div>
-                        <div class="w-full md:w-auto">
-                            <a href="apklausa.html" class="block w-full md:w-auto text-center px-6 py-2 bg-purple-500 text-white font-medium rounded-lg hover:bg-purple-600 transition-colors">
-                                Pradėti
-                            </a>
                         </div>
                     </div>
-
-                    <!-- Užduotis 2 (Aktyvi) -->
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-purple-100 hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div class="flex items-start space-x-4">
-                            <div class="bg-green-100 p-3 rounded-lg flex-shrink-0">
-                                <svg class="w-6 h-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" /></svg>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-800">Įmonės Klimato Tyrimas</h3>
-                                <p class="text-gray-500 text-sm">Metinė apklausa apie darbo aplinką ir kultūrą.</p>
-                                <div class="flex items-center mt-2 space-x-3 text-xs">
-                                    <span class="bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-medium">Svarbu</span>
-                                    <span class="text-gray-400 flex items-center">
-                                        <svg class="w-3 h-3 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>
-                                        Terminas: Lapkričio 20 d.
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="w-full md:w-auto">
-                            <a href="#" class="block w-full md:w-auto text-center px-6 py-2 bg-purple-500 text-white font-medium rounded-lg hover:bg-purple-600 transition-colors">
-                                Pradėti
-                            </a>
-                        </div>
+                    <div class="w-full md:w-auto">
+                        {% if request.status == 'pending' %}
+                        <a href="{% url 'fill_feedback' request.id %}" class="block w-full md:w-auto text-center px-6 py-2 bg-purple-500 text-white font-medium rounded-lg hover:bg-purple-600 transition-colors">
+                            Pildyti atsiliepimą
+                        </a>
+                        {% else %}
+                        <span class="block w-full md:w-auto text-center px-6 py-2 text-gray-400 font-medium cursor-default">Atlikta</span>
+                        {% endif %}
                     </div>
-
-                    <!-- Užduotis 3 (Vėluojanti) -->
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-red-100 hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                        <div class="flex items-start space-x-4 opacity-75">
-                            <div class="bg-red-100 p-3 rounded-lg flex-shrink-0">
-                                <svg class="w-6 h-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" /></svg>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-800">Komandos Projekto Įvertinimas</h3>
-                                <p class="text-gray-500 text-sm">Įvertinkite "Alpha" projekto rezultatus.</p>
-                                <div class="flex items-center mt-2 space-x-3 text-xs">
-                                    <span class="bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">Vėluojama</span>
-                                    <span class="text-red-500 font-medium flex items-center">
-                                        Terminas baigėsi prieš 2 d.
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="w-full md:w-auto">
-                            <a href="#" class="block w-full md:w-auto text-center px-6 py-2 bg-white border border-red-200 text-red-600 font-medium rounded-lg hover:bg-red-50 transition-colors">
-                                Atlikti Dabar
-                            </a>
-                        </div>
-                    </div>
-
-                     <!-- Užduotis 4 (Atlikta) -->
-                    <div class="bg-gray-50 p-5 rounded-xl shadow-sm border border-gray-200 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 opacity-70">
-                        <div class="flex items-start space-x-4">
-                            <div class="bg-gray-200 p-3 rounded-lg flex-shrink-0">
-                                <svg class="w-6 h-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                            </div>
-                            <div>
-                                <h3 class="text-lg font-semibold text-gray-800 line-through">Mėnesio Tikslų Peržiūra</h3>
-                                <p class="text-gray-500 text-sm">Spalio mėnesio asmeninių tikslų peržiūra.</p>
-                                <div class="flex items-center mt-2 space-x-3 text-xs">
-                                    <span class="bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-medium">Atlikta</span>
-                                    <span class="text-gray-400">
-                                        Atlikta: 2025-11-01
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="w-full md:w-auto">
-                            <a href="#" class="block w-full md:w-auto text-center px-6 py-2 text-gray-400 font-medium cursor-default">
-                                Peržiūrėti
-                            </a>
-                        </div>
-                    </div>
-
                 </div>
+                {% empty %}
+                <div class="bg-white p-5 rounded-xl shadow-sm border text-center text-gray-500">
+                    Neturite jums priskirtų užduočių.
+                </div>
+                {% endfor %}
             </div>
-        </main>
-    </div>
+        </div>
 
-</body>
-</html>
+        <!-- 2. Užduotys, kurias aš sukūriau -->
+        <div>
+            <h2 class="text-xl font-bold text-gray-700 mb-4">Mano išsiųsti prašymai ({{ made_requests.count }})</h2>
+            <div class="space-y-4">
+                {% for request in made_requests %}
+                <div class="bg-white p-5 rounded-xl shadow-sm border hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4 {% if request.status == 'completed' %}border-green-100{% else %}border-gray-200{% endif %}">
+                    <div class="flex items-start space-x-4">
+                        <div class="p-3 rounded-lg flex-shrink-0 {% if request.status == 'completed' %}bg-green-100{% else %}bg-gray-100{% endif %}">
+                             {% if request.status == 'completed' %}
+                                <svg class="w-6 h-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            {% else %}
+                                <svg class="w-6 h-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-800">{{ request.project_name }}</h3>
+                            <p class="text-gray-500 text-sm">Atsiliepimo prašoma iš: <span class="font-medium text-purple-600">{{ request.requested_to.get_full_name|default:request.requested_to.username }}</span></p>
+                            <div class="flex items-center mt-2 space-x-3 text-xs">
+                                {% if request.status == 'completed' %}
+                                    <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Gautas atsakymas</span>
+                                {% else %}
+                                    <span class="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full font-medium">Laukiama atsakymo</span>
+                                {% endif %}
+                                {% if request.due_date %}
+                                <span class="text-gray-400">Terminas: {{ request.due_date|date:"Y-m-d" }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                     <div class="w-full md:w-auto">
+                        {% if request.status == 'completed' %}
+                         <a href="#" class="block w-full md:w-auto text-center px-6 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                            Peržiūrėti
+                        </a>
+                        {% else %}
+                        <span class="block w-full md:w-auto text-center px-6 py-2 text-gray-400 font-medium cursor-default">Laukiama</span>
+                        {% endif %}
+                    </div>
+                </div>
+                {% empty %}
+                 <div class="bg-white p-5 rounded-xl shadow-sm border text-center text-gray-500">
+                    Jūs dar nesate išsiuntę jokių prašymų.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</main>
+{% endblock %}
