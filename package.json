@@ -1,0 +1,13 @@
+{
+  "name": "feedbackas",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "npx tailwindcss -i ./static/src/styles.css -o ./static/css/styles.css --minify",
+    "watch": "npx tailwindcss -i ./static/src/styles.css -o ./static/css/styles.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}
