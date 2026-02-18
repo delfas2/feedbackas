@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}Įmonės Valdymas - PowerUp{% endblock %}
+
+{% block content %}
+<main class="flex-1 overflow-y-auto bg-gray-50 h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8">
+        
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">🏢 {{ company_name }} Struktūra</h1>
+            <button onclick="document.getElementById('add-dept-modal').classList.remove('hidden')" 
+                    class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
+                + Pridėti padalinį
+            </button>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">Organizacinis Medis</h2>
+                
+                {% if root_departments %}
+                    <ul class="space-y-4">
+                        {% for dept in root_departments %}
+                            {% include "includes/department_node.html" with node=dept %}
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-gray-500 italic">Struktūra dar nesukurta.</p>
+                {% endif %}
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 h-fit">
+                <h2 class="text-xl font-semibold mb-4 text-gray-800">Nepriskirti Darbuotojai</h2>
+                <div class="space-y-2">
+                    {% for u in unassigned_users %}
+                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs">
+                                {{ u.first_name|first }}{{ u.last_name|first }}
+                            </div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">{{ u.get_full_name }}</p>
+                                <p class="text-xs text-gray-500">{{ u.email }}</p>
+                            </div>
+                        </div>
+                        <button class="text-xs text-blue-600 hover:text-blue-800 font-medium">Priskirti</button>
+                    </div>
+                    {% empty %}
+                    <p class="text-sm text-gray-400">Visi darbuotojai priskirti.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div id="add-dept-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div class="mt-3 text-center">
+            <h3 class="text-lg leading-6 font-medium text-gray-900">Naujas Padalinys</h3>
+            <form method="POST" class="mt-4 text-left">
+                {% csrf_token %}
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Pavadinimas</label>
+                    {{ form.name }}
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Tėvinis padalinys (neprivaloma)</label>
+                    {{ form.parent }}
+                </div>
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Vadovas</label>
+                    {{ form.manager }}
+                </div>
+                <div class="flex justify-end gap-2 mt-6">
+                    <button type="button" onclick="document.getElementById('add-dept-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg">Atšaukti</button>
+                    <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Sukurti</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

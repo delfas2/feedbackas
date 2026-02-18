@@ -7,6 +7,7 @@ from users.models import Profile
 # which acts a bit like a singleton
 class ProfileInline(admin.StackedInline):
     model = Profile
+    fk_name = 'user'
     can_delete = False
     verbose_name_plural = 'Profile'
 

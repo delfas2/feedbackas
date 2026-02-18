@@ -15,6 +15,8 @@ from django.db import models
 import logging
 from datetime import date
 from .services import FeedbackGenerator, FeedbackAnalytics
+from users.models import Department, Company
+from .forms import DepartmentForm
 
 
 logger = logging.getLogger(__name__)
@@ -29,7 +31,8 @@ def home(request):
     feedback_requests = FeedbackRequest.objects.filter(requested_to=request.user, status='pending')
     company_name = ''
     try:
-        company_name = request.user.profile.company
+        if request.user.profile.company_link:
+            company_name = request.user.profile.company_link.name
     except (Profile.DoesNotExist, OperationalError):
         pass
     context = {
@@ -43,8 +46,11 @@ def register(request):
         form = RegistrationForm(request.POST)
         if form.is_valid():
             user = form.save()
-            company = form.cleaned_data.get('company')
-            Profile.objects.create(user=user, company=company)
+            company_name = form.cleaned_data.get('company')
+            company = None
+            if company_name:
+                company, created = Company.objects.get_or_create(name=company_name)
+            Profile.objects.create(user=user, company_link=company)
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('home')
     else:
@@ -60,9 +66,9 @@ def get_team_members(request):
     user = request.user
     team_members_qs = User.objects.none()
     try:
-        user_company = user.profile.company
-        if user_company:
-            team_members_qs = User.objects.filter(profile__company__iexact=user_company).exclude(id=user.id)
+        user_company_link = user.profile.company_link
+        if user_company_link:
+            team_members_qs = User.objects.filter(profile__company_link=user_company_link).exclude(id=user.id)
     except (Profile.DoesNotExist, OperationalError):
         pass  # Jei nėra įmonės, grąžinsime visus vartotojus žemiau
     if not team_members_qs.exists():
@@ -135,13 +141,13 @@ def team_members_list(request):
     team_members_qs = User.objects.none() 
 
     try:
-        user_company = user.profile.company
-        if user_company:
+        user_company_link = user.profile.company_link
+        if user_company_link:
             # Filtruojame pagal įmonę ir atmetame patį vartotoją
-            team_members_qs = User.objects.filter(profile__company__iexact=user_company).exclude(id=user.id)
+            team_members_qs = User.objects.filter(profile__company_link=user_company_link).exclude(id=user.id)
         else:
             # Jei vartotojas neturi įmonės, rodome visus vartotojus be įmonės
-            team_members_qs = User.objects.filter(Q(profile__company__isnull=True) | Q(profile__company='')).exclude(id=user.id)
+            team_members_qs = User.objects.filter(profile__company_link__isnull=True).exclude(id=user.id)
     except Profile.DoesNotExist:
         # Jei vartotojas neturi profilio, rodome visus kitus vartotojus, kurie taip pat neturi profilio
         team_members_qs = User.objects.filter(profile__isnull=True).exclude(id=user.id)
@@ -247,9 +253,13 @@ def results(request):
     user = request.user
     stats = FeedbackAnalytics.get_user_stats(user)
     
+    company_name = ''
+    if hasattr(request.user, 'profile') and request.user.profile.company_link:
+        company_name = request.user.profile.company_link.name
+
     context = {
         **stats,
-        'company_name': request.user.profile.company if hasattr(request.user, 'profile') else '',
+        'company_name': company_name,
     }
     
     return render(request, 'results.html', context)
@@ -267,3 +277,41 @@ def all_feedback_list(request):
         'all_feedback': all_feedback,
     }
     return render(request, 'all_feedback_list.html', context)
+
+@login_required
+def company_management(request):
+    user = request.user
+    try:
+        user_company = user.profile.company_link
+    except AttributeError:
+        # Fallback jei dar nėra susieto Company objekto
+        return render(request, 'company_management.html', {'error': 'Jūs nepriskirtas jokiai įmonei.'})
+
+    if not user_company:
+         return redirect('home') # Arba error page
+
+    # Formos apdorojimas (Pridėti departamentą)
+    if request.method == 'POST':
+        form = DepartmentForm(user, request.POST)
+        if form.is_valid():
+            department = form.save(commit=False)
+            department.company = user_company
+            department.save()
+            return redirect('company_management')
+    else:
+        form = DepartmentForm(user)
+
+    # Gauname tik šaknijinius departamentus (kurie neturi tėvo)
+    # Vaikus gausime template su rekursija arba prefetch_related
+    root_departments = Department.objects.filter(company=user_company, parent__isnull=True).prefetch_related('sub_departments')
+    
+    # Gauname darbuotojus be departamento, kad galėtume juos priskirti
+    unassigned_users = User.objects.filter(profile__company_link=user_company, profile__department__isnull=True)
+
+    context = {
+        'root_departments': root_departments,
+        'form': form,
+        'unassigned_users': unassigned_users,
+        'company_name': user_company.name
+    }
+    return render(request, 'company_management.html', context)

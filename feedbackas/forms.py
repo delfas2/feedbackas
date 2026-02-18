@@ -1,5 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from users.models import Department, Profile
 from django import forms
 from .models import Feedback
 from django.utils.translation import gettext_lazy as _
@@ -37,7 +38,7 @@ class RegistrationForm(UserCreationForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if User.objects.filter(username=email).exists():
+        if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Vartotojas su tokiu el. pašto adresu jau egzistuoja.")
         return email
 
@@ -60,3 +61,24 @@ class FeedbackForm(forms.ModelForm):
             'comments',
             'feedback'
         ]
+
+class DepartmentForm(forms.ModelForm):
+    class Meta:
+        model = Department
+        fields = ['name', 'parent', 'manager']
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 sm:text-sm'}),
+            'parent': forms.Select(attrs={'class': 'block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 sm:text-sm'}),
+            'manager': forms.Select(attrs={'class': 'block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-purple-500 focus:border-purple-500 sm:text-sm'}),
+        }
+
+    def __init__(self, user, *args, **kwargs):
+        super(DepartmentForm, self).__init__(*args, **kwargs)
+        # Filtruojame tėvinius departamentus ir vadovus tik iš tos pačios įmonės
+        # Naudojame getattr, kad išvengtume klaidų, jei vartotojas neturi profilio (pvz. admin)
+        profile = getattr(user, 'profile', None)
+        company_link = profile.company_link if profile else None
+
+        if company_link:
+            self.fields['parent'].queryset = Department.objects.filter(company=company_link)
+            self.fields['manager'].queryset = User.objects.filter(profile__company_link=company_link)

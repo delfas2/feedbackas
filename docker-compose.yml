@@ -1,18 +1,31 @@
 version: '3.8'
 
 services:
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=delfas2
+      - POSTGRES_USER=delfas2
+      - POSTGRES_PASSWORD=Rytas1Visada.
+
   web:
     build: .
-    command: >
-      sh -c "python manage.py migrate &&
-             python manage.py runserver 0.0.0.0:8000"
+    command: sh -c "npm install && npm run build && python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
     volumes:
       - .:/app
-      - sqlite_db:/app
     ports:
       - "8000:8000"
     environment:
       - GEMINI_API_KEY=AIzaSyAROW9qQ7KxUFH96UFQ8rjDe-E9MmEYBkg
+      - DB_NAME=delfas2
+      - DB_USER=delfas2
+      - DB_PASS=Rytas1Visada.
+      - DB_HOST=db
+      - DB_PORT=5432
+    depends_on:
+      - db
 
 volumes:
-  sqlite_db:
+  postgres_data:

@@ -36,4 +36,5 @@ urlpatterns = [
     path('generate_ai_feedback/', views.generate_ai_feedback, name='generate_ai_feedback'),
     path('all_feedback/', views.all_feedback_list, name='all_feedback_list'),
     path('get_feedback_data/', views.get_feedback_data, name='get_feedback_data'),
+    path('management/', views.company_management, name='company_management'),
 ]
