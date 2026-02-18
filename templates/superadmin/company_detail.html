@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ company.name }} - Superadmin{% endblock %}
+
+{% block content %}
+<main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-4 text-gray-500 text-sm">
+            <a href="{% url 'superadmin_companies_list' %}" class="hover:text-purple-600">Įmonės</a>
+            <span class="mx-2">/</span>
+            <span class="text-gray-800">{{ company.name }}</span>
+        </nav>
+
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">{{ company.name }}</h1>
+            <div class="flex space-x-3 mt-4 md:mt-0">
+                <a href="{% url 'superadmin_edit_hierarchy' company.id %}"
+                    class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                    Redaguoti hierarchiją
+                </a>
+                <a href="{% url 'superadmin_edit_employees' company.id %}"
+                    class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
+                    Redaguoti darbuotojus
+                </a>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <p class="text-sm font-medium text-gray-500">Sukurta</p>
+                <p class="text-lg font-bold text-gray-800 mt-1">{{ company.created_at|date:"Y-m-d" }}</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <p class="text-sm font-medium text-gray-500">Darbuotojų skaičius</p>
+                <p class="text-lg font-bold text-gray-800 mt-1">{{ employee_count }}</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                <p class="text-sm font-medium text-gray-500">Departamentų skaičius</p>
+                <p class="text-lg font-bold text-gray-800 mt-1">{{ department_count }}</p>
+            </div>
+        </div>
+
+        <!-- Placeholder for more details if needed -->
+    </div>
+</main>
+{% endblock %}

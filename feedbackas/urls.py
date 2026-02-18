@@ -37,4 +37,12 @@ urlpatterns = [
     path('all_feedback/', views.all_feedback_list, name='all_feedback_list'),
     path('get_feedback_data/', views.get_feedback_data, name='get_feedback_data'),
     path('management/', views.company_management, name='company_management'),
+    path('superadmin/', views.superadmin_dashboard, name='superadmin_dashboard'),
+    path('superadmin/companies/', views.superadmin_companies_list, name='superadmin_companies_list'),
+    path('superadmin/companies/<int:company_id>/', views.superadmin_company_detail, name='superadmin_company_detail'),
+    path('superadmin/companies/<int:company_id>/hierarchy/', views.superadmin_edit_hierarchy, name='superadmin_edit_hierarchy'),
+    path('superadmin/companies/<int:company_id>/employees/', views.superadmin_edit_employees, name='superadmin_edit_employees'),
+    path('superadmin/companies/<int:company_id>/employees/add/', views.superadmin_add_employee, name='superadmin_add_employee'),
+    path('superadmin/companies/<int:company_id>/employees/remove/<int:user_id>/', views.superadmin_remove_employee, name='superadmin_remove_employee'),
+    path('superadmin/companies/<int:company_id>/hierarchy/delete/<int:department_id>/', views.superadmin_delete_department, name='superadmin_delete_department'),
 ]

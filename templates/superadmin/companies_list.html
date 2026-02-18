@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Įmonės - Superadmin{% endblock %}
+
+{% block content %}
+<main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Įmonės</h1>
+            <!-- Future: Add Company Button -->
+            <!-- <a href="#" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                Pridėti įmonę
+            </a> -->
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-gray-600">
+                    <thead class="bg-gray-50 text-gray-500 border-b border-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 font-medium">Pavadinimas</th>
+                            <th class="px-6 py-3 font-medium">Sukurta</th>
+                            <th class="px-6 py-3 font-medium">Darbuotojų sk.</th>
+                            <th class="px-6 py-3 font-medium text-right">Veiksmai</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for company in companies %}
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-3 font-medium text-gray-900">
+                                <a href="{% url 'superadmin_company_detail' company.id %}"
+                                    class="hover:text-purple-600 hover:underline">
+                                    {{ company.name }}
+                                </a>
+                            </td>
+                            <td class="px-6 py-3">{{ company.created_at|date:"Y-m-d" }}</td>
+                            <td class="px-6 py-3">
+                                <span class="px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold">
+                                    {{ company.employee_count }}
+                                </span>
+                            </td>
+                            <td class="px-6 py-3 text-right">
+                                <a href="#" class="text-gray-400 hover:text-purple-600 font-medium">Redaguoti</a>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="px-6 py-4 text-center text-gray-500">Nėra registruotų įmonių</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

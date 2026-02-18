@@ -1,0 +1,97 @@
+{% extends 'base.html' %}
+
+{% block title %}Redaguoti hierarchiją - {{ company.name }}{% endblock %}
+
+{% block content %}
+<main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+    <div class="max-w-7xl mx-auto">
+        <!-- Breadcrumb -->
+        <nav class="flex mb-4 text-gray-500 text-sm">
+            <a href="{% url 'superadmin_companies_list' %}" class="hover:text-purple-600">Įmonės</a>
+            <span class="mx-2">/</span>
+            <a href="{% url 'superadmin_company_detail' company.id %}" class="hover:text-purple-600">{{ company.name
+                }}</a>
+            <span class="mx-2">/</span>
+            <span class="text-gray-800">Hierarchija</span>
+        </nav>
+
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">Redaguoti hierarchiją: {{ company.name }}</h1>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Add Department Form -->
+            <div class="lg:col-span-1">
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 sticky top-6">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Pridėti departamentą</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        {% if form.non_field_errors %}
+                        <div class="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+                            {{ form.non_field_errors.0 }}
+                        </div>
+                        {% endif %}
+
+                        <div class="space-y-4">
+                            <div>
+                                <label for="{{ form.name.id_for_label }}"
+                                    class="block text-sm font-medium text-gray-700 mb-1">
+                                    Pavadinimas
+                                </label>
+                                {{ form.name }}
+                                {% if form.name.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.name.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <label for="{{ form.parent.id_for_label }}"
+                                    class="block text-sm font-medium text-gray-700 mb-1">
+                                    Tėvinis departamentas
+                                </label>
+                                {{ form.parent }}
+                                {% if form.parent.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.parent.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+
+                            <div>
+                                <label for="{{ form.manager.id_for_label }}"
+                                    class="block text-sm font-medium text-gray-700 mb-1">
+                                    Vadovas
+                                </label>
+                                {{ form.manager }}
+                                {% if form.manager.errors %}
+                                <p class="mt-1 text-sm text-red-600">{{ form.manager.errors.0 }}</p>
+                                {% endif %}
+                            </div>
+
+                            <button type="submit"
+                                class="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
+                                Pridėti
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Hierarchy Tree -->
+            <div class="lg:col-span-2">
+                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
+                    <h2 class="text-lg font-semibold text-gray-800 mb-4">Struktūra</h2>
+
+                    {% if root_departments %}
+                    <ul class="space-y-4">
+                        {% for department in root_departments %}
+                        {% include "includes/department_node.html" with node=department %}
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <div class="text-center py-8 text-gray-500">
+                        <p>Departamentų nėra. Pridėkite pirmąjį departamentą.</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

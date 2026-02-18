@@ -1,28 +1,52 @@
 <li class="relative">
     <div class="flex items-center p-3 border border-gray-200 rounded-lg bg-white hover:shadow-md transition-shadow">
         <span class="mr-3 text-purple-500">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                </path>
+            </svg>
         </span>
-        
+
         <div class="flex-1">
             <h3 class="font-bold text-gray-800">{{ node.name }}</h3>
             {% if node.manager %}
-                <p class="text-xs text-gray-500">Vadovas: <span class="font-medium text-purple-600">{{ node.manager.get_full_name }}</span></p>
+            <p class="text-xs text-gray-500">Vadovas: <span class="font-medium text-purple-600">
+                    {% if node.manager.first_name or node.manager.last_name %}
+                    {{ node.manager.first_name }} {{ node.manager.last_name }}
+                    {% else %}
+                    {{ node.manager.username }}
+                    {% endif %}
+                </span></p>
             {% else %}
-                <p class="text-xs text-gray-400">Nėra paskirto vadovo</p>
+            <p class="text-xs text-gray-400">Nėra paskirto vadovo</p>
             {% endif %}
         </div>
-        
-        <span class="ml-2 bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-full">
-            {{ node.members.count }} nariai
-        </span>
+
+        <div class="flex items-center space-x-2">
+            <span class="ml-2 bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-full">
+                {{ node.members.count }} nariai
+            </span>
+            <form action="{% url 'superadmin_delete_department' node.company.id node.id %}" method="post"
+                onsubmit="return confirm('Ar tikrai norite ištrinti departamentą &quot;{{ node.name }}&quot;? Visi sub-departamentai taip pat bus ištrinti.');">
+                {% csrf_token %}
+                <button type="submit" class="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                    title="Ištrinti departamentą">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                        </path>
+                    </svg>
+                </button>
+            </form>
+        </div>
     </div>
 
     {% if node.sub_departments.all %}
-        <ul class="ml-8 mt-2 space-y-2 border-l-2 border-gray-100 pl-4">
-            {% for child in node.sub_departments.all %}
-                {% include "includes/department_node.html" with node=child %}
-            {% endfor %}
-        </ul>
+    <ul class="ml-8 mt-2 space-y-2 border-l-2 border-gray-100 pl-4">
+        {% for child in node.sub_departments.all %}
+        {% include "includes/department_node.html" with node=child %}
+        {% endfor %}
+    </ul>
     {% endif %}
 </li>

@@ -315,3 +315,145 @@ def company_management(request):
         'company_name': user_company.name
     }
     return render(request, 'company_management.html', context)
+
+from django.contrib.auth.decorators import user_passes_test
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_dashboard(request):
+    # Statistics
+    total_users = User.objects.count()
+    total_companies = Company.objects.count()
+    pending_feedback_count = FeedbackRequest.objects.filter(status='pending').count()
+    completed_feedback_count = FeedbackRequest.objects.filter(status='completed').count()
+
+    # Recent Data
+    recent_users = User.objects.order_by('-date_joined')[:5]
+    recent_companies = Company.objects.order_by('-created_at')[:5]
+
+    context = {
+        'total_users': total_users,
+        'total_companies': total_companies,
+        'pending_feedback_count': pending_feedback_count,
+        'completed_feedback_count': completed_feedback_count,
+        'recent_users': recent_users,
+        'recent_companies': recent_companies,
+    }
+    return render(request, 'superadmin/dashboard.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_companies_list(request):
+    companies = Company.objects.annotate(employee_count=Count('profile')).order_by('-created_at')
+    
+    context = {
+        'companies': companies,
+    }
+    return render(request, 'superadmin/companies_list.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_company_detail(request, company_id):
+    company = get_object_or_404(Company, id=company_id)
+    employee_count = company.profile_set.count() # Accessing related profiles via default reverse relation
+    department_count = company.departments.count()
+
+    context = {
+        'company': company,
+        'employee_count': employee_count,
+        'department_count': department_count,
+    }
+    return render(request, 'superadmin/company_detail.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_edit_hierarchy(request, company_id):
+    company = get_object_or_404(Company, id=company_id)
+    
+    # Passing a dummy user to DepartmentForm init is necessary because it expects a user 
+    # to filter queryset for parent departments. 
+    # Ideally DepartmentForm should be refactored to accept querysets directly, 
+    # but for now we can rely on how it filters using user.profile.company_link.
+    # HOWEVER, since we are superadmin, we don't have a company link matching the target company necessarily.
+    # We need to instantiate the form and then manually override the parent queryset.
+    
+    if request.method == 'POST':
+        form = DepartmentForm(request.user, request.POST)
+        # Override parent queryset to target company's departments
+        form.fields['parent'].queryset = Department.objects.filter(company=company)
+        
+        if form.is_valid():
+            department = form.save(commit=False)
+            department.company = company
+            department.save()
+            return redirect('superadmin_edit_hierarchy', company_id=company_id)
+    else:
+        form = DepartmentForm(request.user)
+        form.fields['parent'].queryset = Department.objects.filter(company=company)
+
+    root_departments = Department.objects.filter(company=company, parent__isnull=True).prefetch_related('sub_departments')
+
+    context = {
+        'company': company,
+        'form': form,
+        'root_departments': root_departments,
+    }
+    return render(request, 'superadmin/edit_hierarchy.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_edit_employees(request, company_id):
+    company = get_object_or_404(Company, id=company_id)
+    profiles = Profile.objects.filter(company_link=company).select_related('user', 'department', 'manager')
+    
+    context = {
+        'company': company,
+        'profiles': profiles,
+    }
+    return render(request, 'superadmin/edit_employees.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_add_employee(request, company_id):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+            if hasattr(user, 'profile'):
+                if user.profile.company_link:
+                    messages.error(request, f'Vartotojas {email} jau priklauso įmonei {user.profile.company_link.name}.')
+                else:
+                    company = get_object_or_404(Company, id=company_id)
+                    user.profile.company_link = company
+                    user.profile.save()
+                    messages.success(request, f'Vartotojas {email} sėkmingai pridėtas prie įmonės.')
+            else:
+                 # If user has no profile, create one
+                company = get_object_or_404(Company, id=company_id)
+                Profile.objects.create(user=user, company_link=company)
+                messages.success(request, f'Vartotojas {email} sėkmingai pridėtas prie įmonės.')
+
+        except User.DoesNotExist:
+            messages.error(request, f'Vartotojas su el. paštu {email} nerastas.')
+    
+    return redirect('superadmin_edit_employees', company_id=company_id)
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_delete_department(request, company_id, department_id):
+    if request.method == 'POST':
+        company = get_object_or_404(Company, id=company_id)
+        department = get_object_or_404(Department, id=department_id, company=company)
+        
+        department.delete()
+        messages.success(request, f'Departamentas "{department.name}" sėkmingai ištrintas.')
+            
+    return redirect('superadmin_edit_hierarchy', company_id=company_id)
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_remove_employee(request, company_id, user_id):
+    if request.method == 'POST':
+        user = get_object_or_404(User, id=user_id)
+        if hasattr(user, 'profile') and user.profile.company_link_id == company_id:
+            user.profile.company_link = None
+            user.profile.department = None
+            user.profile.manager = None
+            user.profile.save()
+            messages.success(request, f'Vartotojas {user.email} pašalintas iš įmonės.')
+        else:
+            messages.error(request, 'Vartotojas nepriklauso šiai įmonei.')
+            
+    return redirect('superadmin_edit_employees', company_id=company_id)
