@@ -27,6 +27,18 @@
 
 <body class="bg-gray-100">
 
+    {% if request.session.impersonator_id %}
+    <div class="bg-red-600 text-white px-4 py-2 text-center text-sm font-medium relative z-50">
+        <div class="flex items-center justify-center space-x-4">
+            <span>Jūs peržiūrite sistemą kaip <strong>{{ user.get_full_name|default:user.email }}</strong></span>
+            <a href="{% url 'stop_impersonation' %}"
+                class="bg-white text-red-600 px-3 py-1 rounded hover:bg-red-50 transition-colors text-xs font-bold uppercase">
+                Grįžti į Superadmin
+            </a>
+        </div>
+    </div>
+    {% endif %}
+
     <div class="flex h-screen">
 
         <aside class="hidden md:flex w-64 flex-col bg-white shadow-lg">

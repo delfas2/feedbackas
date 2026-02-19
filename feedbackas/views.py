@@ -457,3 +457,33 @@ def superadmin_remove_employee(request, company_id, user_id):
             messages.error(request, 'Vartotojas nepriklauso šiai įmonei.')
             
     return redirect('superadmin_edit_employees', company_id=company_id)
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_impersonate_user(request, user_id):
+    original_user_id = request.user.id
+    target_user = get_object_or_404(User, id=user_id)
+    
+    # Log in as the target user without authentication backend check
+    # We specify the backend manually to bypass authentication
+    login(request, target_user, backend='django.contrib.auth.backends.ModelBackend')
+
+    # Save the original user's ID in the session AFTER login because login flushes session
+    request.session['impersonator_id'] = original_user_id
+    
+    return redirect('home')
+
+def stop_impersonation(request):
+    impersonator_id = request.session.get('impersonator_id')
+    
+    if impersonator_id:
+        original_user = get_object_or_404(User, id=impersonator_id)
+        
+        # Log in back as the original user
+        login(request, original_user, backend='django.contrib.auth.backends.ModelBackend')
+        
+        # Remove the impersonator ID from the session
+        del request.session['impersonator_id']
+        
+        return redirect('superadmin_dashboard')
+        
+    return redirect('home')

@@ -84,6 +84,11 @@
                                 {% endif %}
                             </td>
                             <td class="px-6 py-3 text-right flex items-center justify-end space-x-3">
+                                <a href="{% url 'superadmin_impersonate_user' profile.user.id %}"
+                                    class="text-blue-500 hover:text-blue-700 font-medium"
+                                    title="Prisijungti kaip šis vartotojas">
+                                    Peržiūrėti
+                                </a>
                                 <a href="/admin/auth/user/{{ profile.user.id }}/change/" target="_blank"
                                     class="text-gray-400 hover:text-purple-600 font-medium">
                                     Redaguoti
