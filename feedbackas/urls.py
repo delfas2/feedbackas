@@ -18,6 +18,7 @@ from django.contrib import admin
 from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
+from users import views as user_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -47,4 +48,11 @@ urlpatterns = [
     path('superadmin/companies/<int:company_id>/hierarchy/delete/<int:department_id>/', views.superadmin_delete_department, name='superadmin_delete_department'),
     path('superadmin/impersonate/<int:user_id>/', views.superadmin_impersonate_user, name='superadmin_impersonate_user'),
     path('stop-impersonation/', views.stop_impersonation, name='stop_impersonation'),
+    path('profile/', user_views.profile, name='profile'),
 ]
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
