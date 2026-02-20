@@ -36,9 +36,46 @@ def home(request):
             company_name = request.user.profile.company_link.name
     except (Profile.DoesNotExist, OperationalError):
         pass
+    
+    # Recent team activity
+    recent_activity = []
+    
+    # Recent feedbacks received about this user
+    recent_received = Feedback.objects.filter(
+        feedback_request__requester=request.user,
+        feedback_request__status='completed'
+    ).select_related('feedback_request__requested_to').order_by('-feedback_request__created_at')[:5]
+    for fb in recent_received:
+        person = fb.feedback_request.requested_to
+        recent_activity.append({
+            'initials': (person.first_name[:1] + person.last_name[:1]).upper() if person.first_name and person.last_name else '??',
+            'name': person.get_full_name(),
+            'action': f'pateikė atsiliepimą apie jus.',
+            'date': fb.feedback_request.created_at,
+        })
+    
+    # Recent pending requests for this user
+    recent_pending = FeedbackRequest.objects.filter(
+        requested_to=request.user,
+        status='pending'
+    ).select_related('requester').order_by('-created_at')[:5]
+    for fr in recent_pending:
+        person = fr.requester
+        recent_activity.append({
+            'initials': (person.first_name[:1] + person.last_name[:1]).upper() if person.first_name and person.last_name else '??',
+            'name': person.get_full_name(),
+            'action': f'paprašė jūsų atsiliepimo.',
+            'date': fr.created_at,
+        })
+    
+    # Sort by date descending, take top 5
+    recent_activity.sort(key=lambda x: x['date'], reverse=True)
+    recent_activity = recent_activity[:5]
+    
     context = {
         'feedback_requests': feedback_requests,
         'company_name': company_name,
+        'recent_activity': recent_activity,
     }
     return render(request, 'home.html', context)
 
@@ -171,16 +208,77 @@ def team_members_list(request):
     try:
         user_department = user.profile.department
         user_company_link = user.profile.company_link
+        
+        # Check if user manages any department with sub-departments
+        managed_departments = Department.objects.filter(manager=user)
+        sub_departments = Department.objects.filter(parent__in=managed_departments)
+        
+        if sub_departments.exists():
+            # Hierarchical mode: show department blocks
+            department_blocks = []
+            for dept in sub_departments.select_related('manager').prefetch_related('members__user'):
+                members_qs = User.objects.filter(profile__department=dept).select_related('profile').annotate(
+                    average_rating=Avg('made_requests__feedback__rating')
+                )
+                dept_avg = Feedback.objects.filter(
+                    feedback_request__requester__in=members_qs,
+                    feedback_request__status='completed'
+                ).aggregate(Avg('rating'))['rating__avg']
+                department_blocks.append({
+                    'department': dept,
+                    'members': members_qs,
+                    'member_count': members_qs.count(),
+                    'avg_rating': round(dept_avg, 2) if dept_avg else None,
+                })
+            
+            # Also include direct members of the managed department (not in sub-depts)
+            for managed_dept in managed_departments:
+                direct_members = User.objects.filter(profile__department=managed_dept).exclude(id=user.id).select_related('profile').annotate(
+                    average_rating=Avg('made_requests__feedback__rating')
+                )
+                if direct_members.exists():
+                    direct_avg = Feedback.objects.filter(
+                        feedback_request__requester__in=direct_members,
+                        feedback_request__status='completed'
+                    ).aggregate(Avg('rating'))['rating__avg']
+                    department_blocks.insert(0, {
+                        'department': managed_dept,
+                        'members': direct_members,
+                        'member_count': direct_members.count(),
+                        'avg_rating': round(direct_avg, 2) if direct_avg else None,
+                    })
+            
+            # Overall stats
+            all_members = User.objects.filter(
+                Q(profile__department__in=sub_departments) | 
+                Q(profile__department__in=managed_departments)
+            ).exclude(id=user.id)
+            overall_avg_rating = Feedback.objects.filter(
+                feedback_request__requester__in=all_members, 
+                feedback_request__status='completed'
+            ).aggregate(Avg('rating'))['rating__avg']
+            pending_feedback_count = FeedbackRequest.objects.filter(
+                requester__in=all_members, status='pending'
+            ).count()
+            
+            context = {
+                'has_sub_departments': True,
+                'department_blocks': department_blocks,
+                'team_members': all_members,
+                'search_query': None,
+                'overall_avg_rating': overall_avg_rating,
+                'pending_feedback_count': pending_feedback_count,
+            }
+            return render(request, 'feedbackas/team_members_list.html', context)
+        
+        # Flat mode: show single department members
         if user_department:
-            # Show only members of the same department
             team_members_qs = User.objects.filter(profile__department=user_department).exclude(id=user.id)
         elif user_company_link:
-            # Fallback: if user has no department, show unassigned company members
             team_members_qs = User.objects.filter(profile__company_link=user_company_link, profile__department__isnull=True).exclude(id=user.id)
         else:
             team_members_qs = User.objects.filter(profile__company_link__isnull=True).exclude(id=user.id)
     except Profile.DoesNotExist:
-        # Jei vartotojas neturi profilio, rodome visus kitus vartotojus, kurie taip pat neturi profilio
         team_members_qs = User.objects.filter(profile__isnull=True).exclude(id=user.id)
 
     # Paieškos logika
@@ -201,6 +299,7 @@ def team_members_list(request):
     pending_feedback_count = FeedbackRequest.objects.filter(requester__in=team_members_qs, status='pending').count()
 
     context = {
+        'has_sub_departments': False,
         'team_members': team_members,
         'search_query': query,
         'overall_avg_rating': overall_avg_rating,
@@ -257,25 +356,27 @@ def generate_ai_feedback(request):
 @login_required
 def get_feedback_data(request):
     user = request.user
-    # Suskaičiuojame tik užpildytas apklausas
-    completed_requests_count = FeedbackRequest.objects.filter(requester=user, status='completed').count()
+    # Get all feedback requests made by this user, ordered by creation date
+    all_requests = FeedbackRequest.objects.filter(
+        requester=user
+    ).select_related('requested_to').order_by('created_at')
     
     data = []
-    # Pirmieji taškai bus 'done' (pilnaviduriai)
-    for i in range(completed_requests_count):
+    for fr in all_requests:
+        respondent = fr.requested_to.get_full_name() or fr.requested_to.username
+        label = f"{fr.project_name} ({respondent})"
+        if fr.status == 'completed':
+            status = 'done'
+        elif fr.status == 'pending':
+            status = 'active'
+        else:
+            status = 'empty'
         data.append({
-            'id': None, # Šiuo atveju ID nereikalingas, nes nekeičiame logikos
-            'label': f'Apklausa {i + 1}',
-            'status': 'done'
+            'id': fr.id,
+            'label': label,
+            'status': status,
         })
-        
-    # Likę taškai bus 'empty' (tušti)
-    for i in range(completed_requests_count, 8):
-        data.append({
-            'id': None,
-            'label': f'Apklausa {i + 1}',
-            'status': 'empty'
-        })
+    
     return JsonResponse(data, safe=False)
 
 
@@ -362,9 +463,22 @@ def team_statistics(request):
 def team_member_detail(request, user_id):
     member = get_object_or_404(User, id=user_id)
     
-    # Verify current user is the manager of the member's department
+    # Verify current user is a manager of the member's department or a parent department
     member_dept = member.profile.department if hasattr(member, 'profile') else None
-    if not member_dept or member_dept.manager != request.user:
+    is_authorized = False
+    if member_dept:
+        # Check direct manager
+        if member_dept.manager == request.user:
+            is_authorized = True
+        else:
+            # Walk up the parent chain
+            parent = member_dept.parent
+            while parent:
+                if parent.manager == request.user:
+                    is_authorized = True
+                    break
+                parent = parent.parent
+    if not is_authorized:
         from django.contrib import messages as django_messages
         django_messages.error(request, 'Jūs neturite teisės peržiūrėti šio darbuotojo informacijos.')
         return redirect('home')
@@ -420,12 +534,14 @@ def team_member_detail(request, user_id):
 
 @login_required
 def all_feedback_list(request):
-    # Fetch all completed feedback, ordered by the newest first.
-    # Using select_related to optimize DB queries by fetching related objects in a single query.
+    # Fetch only feedback received about the current user
     all_feedback = Feedback.objects.select_related(
         'feedback_request__requester', 
         'feedback_request__requested_to'
-    ).filter(feedback_request__status='completed').order_by('-feedback_request__created_at')
+    ).filter(
+        feedback_request__requester=request.user,
+        feedback_request__status='completed'
+    ).order_by('-feedback_request__created_at')
 
     context = {
         'all_feedback': all_feedback,
@@ -530,13 +646,15 @@ def superadmin_companies_list(request):
 @user_passes_test(lambda u: u.is_superuser)
 def superadmin_company_detail(request, company_id):
     company = get_object_or_404(Company, id=company_id)
-    employee_count = company.profile_set.count() # Accessing related profiles via default reverse relation
+    employee_count = company.profile_set.count()
     department_count = company.departments.count()
+    employees = Profile.objects.filter(company_link=company).select_related('user', 'department').order_by('-is_company_admin', 'user__first_name')
 
     context = {
         'company': company,
         'employee_count': employee_count,
         'department_count': department_count,
+        'employees': employees,
     }
     return render(request, 'superadmin/company_detail.html', context)
 
@@ -625,6 +743,18 @@ def superadmin_delete_department(request, company_id, department_id):
         messages.success(request, f'Departamentas "{department.name}" sėkmingai ištrintas.')
             
     return redirect('superadmin_edit_hierarchy', company_id=company_id)
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_toggle_admin(request, company_id, user_id):
+    if request.method == 'POST':
+        company = get_object_or_404(Company, id=company_id)
+        target_user = get_object_or_404(User, id=user_id)
+        if hasattr(target_user, 'profile') and target_user.profile.company_link == company:
+            target_user.profile.is_company_admin = not target_user.profile.is_company_admin
+            target_user.profile.save()
+            status = 'priskirtas' if target_user.profile.is_company_admin else 'pašalintas iš'
+            messages.success(request, f'{target_user.get_full_name()} {status} administratorių.')
+    return redirect('superadmin_company_detail', company_id=company_id)
 
 @user_passes_test(lambda u: u.is_superuser)
 def superadmin_remove_employee(request, company_id, user_id):

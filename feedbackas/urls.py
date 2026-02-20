@@ -50,6 +50,7 @@ urlpatterns = [
     path('superadmin/companies/<int:company_id>/employees/remove/<int:user_id>/', views.superadmin_remove_employee, name='superadmin_remove_employee'),
     path('superadmin/companies/<int:company_id>/hierarchy/delete/<int:department_id>/', views.superadmin_delete_department, name='superadmin_delete_department'),
     path('superadmin/impersonate/<int:user_id>/', views.superadmin_impersonate_user, name='superadmin_impersonate_user'),
+    path('superadmin/companies/<int:company_id>/toggle-admin/<int:user_id>/', views.superadmin_toggle_admin, name='superadmin_toggle_admin'),
     path('stop-impersonation/', views.stop_impersonation, name='stop_impersonation'),
     path('profile/', user_views.profile, name='profile'),
     path('questionnaires/', views.questionnaires_list, name='questionnaires_list'),

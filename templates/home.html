@@ -76,18 +76,14 @@
             <div class="bg-white p-6 rounded-2xl shadow-lg">
                 <h3 class="text-xl font-bold text-gray-800 mb-4">Komandos Aktyvumas</h3>
                 <ul class="space-y-3">
+                    {% for act in recent_activity %}
                     <li class="flex items-center space-x-3">
-                        <img class="w-8 h-8 rounded-full" src="https://placehold.co/40x40/ecc94b/333?text=JA" alt="J.A.">
-                        <p class="text-sm text-gray-600"><span class="font-semibold">Jonas Antanaitis</span> pateikė atsiliepimą apie jus.</p>
+                        <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs flex-shrink-0">{{ act.initials }}</div>
+                        <p class="text-sm text-gray-600"><span class="font-semibold">{{ act.name }}</span> {{ act.action }}</p>
                     </li>
-                    <li class="flex items-center space-x-3">
-                        <img class="w-8 h-8 rounded-full" src="https://placehold.co/40x40/9f7aea/333?text=LP" alt="L.P.">
-                        <p class="text-sm text-gray-600"><span class="font-semibold">Lina Petraitienė</span> pradėjo "Ketvirčio 360°" apklausą.</p>
-                    </li>
-                    <li class="flex items-center space-x-3">
-                        <img class="w-8 h-8 rounded-full" src="https://placehold.co/40x40/48bb78/333?text=KS" alt="K.S.">
-                        <p class="text-sm text-gray-600"><span class="font-semibold">Kęstas S</span> paprašė jūsų atsiliepimo.</p>
-                    </li>
+                    {% empty %}
+                    <li class="text-sm text-gray-400">Kol kas aktyvumo nėra.</li>
+                    {% endfor %}
                 </ul>
             </div>
 

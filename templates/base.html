@@ -87,7 +87,7 @@
                     <span>Individuali forma</span>
                 </a>
 
-                {% if user.profile.company_link %}
+                {% if user.profile.is_company_admin %}
                 <a href="{% url 'company_management' %}"
                     class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'company_management' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
