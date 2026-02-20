@@ -5,11 +5,11 @@
 {% block content %}
 <main class="flex-1 overflow-y-auto bg-gray-50 h-screen">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8">
-        
+
         <header class="flex justify-between items-center mb-8">
             <h1 class="text-3xl font-bold text-gray-900">🏢 {{ company_name }} Struktūra</h1>
-            <button onclick="document.getElementById('add-dept-modal').classList.remove('hidden')" 
-                    class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
+            <button onclick="document.getElementById('add-dept-modal').classList.remove('hidden')"
+                class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
                 + Pridėti padalinį
             </button>
         </header>
@@ -17,15 +17,15 @@
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <div class="lg:col-span-2 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                 <h2 class="text-xl font-semibold mb-4 text-gray-800">Organizacinis Medis</h2>
-                
+
                 {% if root_departments %}
-                    <ul class="space-y-4">
-                        {% for dept in root_departments %}
-                            {% include "includes/department_node.html" with node=dept %}
-                        {% endfor %}
-                    </ul>
+                <ul class="space-y-4">
+                    {% for dept in root_departments %}
+                    {% include "includes/department_node.html" with node=dept %}
+                    {% endfor %}
+                </ul>
                 {% else %}
-                    <p class="text-gray-500 italic">Struktūra dar nesukurta.</p>
+                <p class="text-gray-500 italic">Struktūra dar nesukurta.</p>
                 {% endif %}
             </div>
 
@@ -33,18 +33,30 @@
                 <h2 class="text-xl font-semibold mb-4 text-gray-800">Nepriskirti Darbuotojai</h2>
                 <div class="space-y-2">
                     {% for u in unassigned_users %}
-                    <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div class="flex items-center space-x-3">
-                            <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs">
-                                {{ u.first_name|first }}{{ u.last_name|first }}
-                            </div>
+                    <form method="POST" action="{% url 'assign_to_department' %}" class="p-3 bg-gray-50 rounded-lg">
+                        {% csrf_token %}
+                        <input type="hidden" name="user_id" value="{{ u.id }}">
+                        <div class="flex items-center space-x-3 mb-2">
+                            <div
+                                class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs">
+                                {{ u.first_name|first }}{{ u.last_name|first }}</div>
                             <div>
                                 <p class="text-sm font-medium text-gray-900">{{ u.get_full_name }}</p>
                                 <p class="text-xs text-gray-500">{{ u.email }}</p>
                             </div>
                         </div>
-                        <button class="text-xs text-blue-600 hover:text-blue-800 font-medium">Priskirti</button>
-                    </div>
+                        <div class="flex items-center gap-2">
+                            <select name="department_id" required
+                                class="flex-1 text-xs border border-gray-300 rounded-md px-2 py-1.5 focus:ring-purple-500 focus:border-purple-500">
+                                <option value="">Padalinys...</option>
+                                {% for dept in all_departments %}
+                                <option value="{{ dept.id }}">{{ dept.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <button type="submit"
+                                class="text-xs text-white bg-purple-600 hover:bg-purple-700 px-3 py-1.5 rounded-md font-medium transition flex-shrink-0">Priskirti</button>
+                        </div>
+                    </form>
                     {% empty %}
                     <p class="text-sm text-gray-400">Visi darbuotojai priskirti.</p>
                     {% endfor %}
@@ -73,8 +85,10 @@
                     {{ form.manager }}
                 </div>
                 <div class="flex justify-end gap-2 mt-6">
-                    <button type="button" onclick="document.getElementById('add-dept-modal').classList.add('hidden')" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg">Atšaukti</button>
-                    <button type="submit" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Sukurti</button>
+                    <button type="button" onclick="document.getElementById('add-dept-modal').classList.add('hidden')"
+                        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg">Atšaukti</button>
+                    <button type="submit"
+                        class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700">Sukurti</button>
                 </div>
             </form>
         </div>

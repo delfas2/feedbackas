@@ -212,8 +212,8 @@
                                 class="block w-full rounded-xl border-gray-300 py-3 pl-4 pr-10 text-gray-900 bg-gray-50 shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 sm:text-base appearance-none border cursor-pointer hover:bg-gray-100 transition-colors">
                                 <option value="" disabled selected>-- Pasirinkite kolegą --</option>
                                 {% for colleague in team_members %}
-                                <option value="{{ colleague.id }}">{{ colleague.first_name }} {{
-                                    colleague.last_name }}</option>
+                                <option value="{{ colleague.id }}">{{ colleague.first_name }} {{ colleague.last_name }}
+                                </option>
                                 {% empty %}
                                 <option value="" disabled>Nėra kolegų, kuriems galėtumėte išsiųsti</option>
                                 {% endfor %}

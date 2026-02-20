@@ -6,6 +6,7 @@ class FeedbackRequest(models.Model):
     requester = models.ForeignKey(User, related_name='made_requests', on_delete=models.CASCADE)
     requested_to = models.ForeignKey(User, related_name='received_requests', on_delete=models.CASCADE)
     project_name = models.CharField(max_length=255)
+    questionnaire = models.ForeignKey('Questionnaire', on_delete=models.SET_NULL, null=True, blank=True, related_name='feedback_requests')
     comment = models.TextField(blank=True, null=True)
     due_date = models.DateField()
     status = models.CharField(max_length=20, default='pending')
@@ -46,3 +47,14 @@ class Questionnaire(models.Model):
 
     def __str__(self):
         return self.title
+
+class TraitRating(models.Model):
+    feedback = models.ForeignKey(Feedback, on_delete=models.CASCADE, related_name='trait_ratings')
+    trait = models.ForeignKey(Trait, on_delete=models.CASCADE)
+    rating = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ('feedback', 'trait')
+
+    def __str__(self):
+        return f"{self.trait.name}: {self.rating} (Feedback #{self.feedback.id})"

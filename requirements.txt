@@ -3,3 +3,4 @@ google-generativeai
 psycopg2-binary
 whitenoise
 Pillow
+Faker==20.0.0

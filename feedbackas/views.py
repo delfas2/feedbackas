@@ -124,13 +124,40 @@ def fill_feedback(request, request_id):
             feedback.save()
             feedback_request.status = 'completed'
             feedback_request.save()
+            
+            # Save trait ratings if this is a questionnaire-based feedback
+            if feedback_request.questionnaire:
+                from .models import TraitRating, Trait
+                for trait in feedback_request.questionnaire.traits.all():
+                    trait_rating_value = request.POST.get(f'trait_rating_{trait.id}', 0)
+                    try:
+                        trait_rating_value = int(trait_rating_value)
+                    except (ValueError, TypeError):
+                        trait_rating_value = 0
+                    TraitRating.objects.create(
+                        feedback=feedback,
+                        trait=trait,
+                        rating=trait_rating_value
+                    )
+            
             return redirect('home')
     else:
         form = FeedbackForm()
     
+    # If this feedback request is linked to a questionnaire, pass its traits
+    import json
+    questionnaire_traits = []
+    if feedback_request.questionnaire:
+        questionnaire_traits = [
+            {'id': t.id, 'name': t.name}
+            for t in feedback_request.questionnaire.traits.all()
+        ]
+    
     context = {
         'form': form,
-        'feedback_request': feedback_request
+        'feedback_request': feedback_request,
+        'questionnaire_traits_json': json.dumps(questionnaire_traits),
+        'has_questionnaire': feedback_request.questionnaire is not None,
     }
     return render(request, 'fill_feedback.html', context)
 
@@ -142,12 +169,15 @@ def team_members_list(request):
     team_members_qs = User.objects.none() 
 
     try:
+        user_department = user.profile.department
         user_company_link = user.profile.company_link
-        if user_company_link:
-            # Filtruojame pagal įmonę ir atmetame patį vartotoją
-            team_members_qs = User.objects.filter(profile__company_link=user_company_link).exclude(id=user.id)
+        if user_department:
+            # Show only members of the same department
+            team_members_qs = User.objects.filter(profile__department=user_department).exclude(id=user.id)
+        elif user_company_link:
+            # Fallback: if user has no department, show unassigned company members
+            team_members_qs = User.objects.filter(profile__company_link=user_company_link, profile__department__isnull=True).exclude(id=user.id)
         else:
-            # Jei vartotojas neturi įmonės, rodome visus vartotojus be įmonės
             team_members_qs = User.objects.filter(profile__company_link__isnull=True).exclude(id=user.id)
     except Profile.DoesNotExist:
         # Jei vartotojas neturi profilio, rodome visus kitus vartotojus, kurie taip pat neturi profilio
@@ -266,6 +296,129 @@ def results(request):
     return render(request, 'results.html', context)
 
 @login_required
+def team_statistics(request):
+    user = request.user
+    
+    # Find departments managed by this user
+    managed_departments = Department.objects.filter(manager=user)
+    if not managed_departments.exists():
+        from django.contrib import messages as django_messages
+        django_messages.warning(request, 'Jūs nesate jokio padalinio vadovas.')
+        return redirect('home')
+    
+    department = managed_departments.first()
+    team_members = User.objects.filter(profile__department=department).exclude(id=user.id)
+    
+    # Per-member stats
+    member_stats = []
+    for member in team_members:
+        feedback_qs = Feedback.objects.filter(
+            feedback_request__requester=member,
+            feedback_request__status='completed'
+        )
+        avg_rating = feedback_qs.aggregate(Avg('rating'))['rating__avg']
+        feedback_count = feedback_qs.count()
+        member_stats.append({
+            'user': member,
+            'avg_rating': round(avg_rating, 2) if avg_rating else None,
+            'feedback_count': feedback_count,
+        })
+    
+    # Team-wide aggregated stats
+    all_team_feedback = Feedback.objects.filter(
+        feedback_request__requester__in=team_members,
+        feedback_request__status='completed'
+    )
+    
+    team_avg_rating = all_team_feedback.aggregate(Avg('rating'))['rating__avg'] or 0
+    team_feedback_count = all_team_feedback.count()
+    
+    competency_averages = all_team_feedback.aggregate(
+        teamwork=Avg('teamwork_rating'),
+        communication=Avg('communication_rating'),
+        initiative=Avg('initiative_rating'),
+        technical_skills=Avg('technical_skills_rating'),
+        problem_solving=Avg('problem_solving_rating')
+    )
+    competencies = [
+        {'name': 'Komandinis Darbas', 'score': round(competency_averages.get('teamwork') or 0, 2)},
+        {'name': 'Komunikacija', 'score': round(competency_averages.get('communication') or 0, 2)},
+        {'name': 'Iniciatyvumas', 'score': round(competency_averages.get('initiative') or 0, 2)},
+        {'name': 'Techninės Žinios', 'score': round(competency_averages.get('technical_skills') or 0, 2)},
+        {'name': 'Problemų Sprendimas', 'score': round(competency_averages.get('problem_solving') or 0, 2)},
+    ]
+    
+    context = {
+        'department': department,
+        'member_stats': member_stats,
+        'team_avg_rating': round(team_avg_rating, 2),
+        'team_feedback_count': team_feedback_count,
+        'team_member_count': team_members.count(),
+        'competencies': competencies,
+    }
+    return render(request, 'team_statistics.html', context)
+
+@login_required
+def team_member_detail(request, user_id):
+    member = get_object_or_404(User, id=user_id)
+    
+    # Verify current user is the manager of the member's department
+    member_dept = member.profile.department if hasattr(member, 'profile') else None
+    if not member_dept or member_dept.manager != request.user:
+        from django.contrib import messages as django_messages
+        django_messages.error(request, 'Jūs neturite teisės peržiūrėti šio darbuotojo informacijos.')
+        return redirect('home')
+    
+    # All completed feedback about this member
+    feedbacks = Feedback.objects.filter(
+        feedback_request__requester=member,
+        feedback_request__status='completed'
+    ).select_related('feedback_request', 'feedback_request__requested_to').order_by('-feedback_request__created_at')
+    
+    # Aggregate stats
+    avg_rating = feedbacks.aggregate(Avg('rating'))['rating__avg'] or 0
+    competency_averages = feedbacks.aggregate(
+        teamwork=Avg('teamwork_rating'),
+        communication=Avg('communication_rating'),
+        initiative=Avg('initiative_rating'),
+        technical_skills=Avg('technical_skills_rating'),
+        problem_solving=Avg('problem_solving_rating')
+    )
+    competencies = [
+        {'name': 'Komandinis Darbas', 'score': round(competency_averages.get('teamwork') or 0, 2)},
+        {'name': 'Komunikacija', 'score': round(competency_averages.get('communication') or 0, 2)},
+        {'name': 'Iniciatyvumas', 'score': round(competency_averages.get('initiative') or 0, 2)},
+        {'name': 'Techninės Žinios', 'score': round(competency_averages.get('technical_skills') or 0, 2)},
+        {'name': 'Problemų Sprendimas', 'score': round(competency_averages.get('problem_solving') or 0, 2)},
+    ]
+    
+    # Collect all keywords
+    all_keywords = []
+    for fb in feedbacks:
+        keywords = [kw.strip() for kw in fb.keywords.split(',') if kw.strip()]
+        all_keywords.extend(keywords)
+    
+    # Trait ratings (from questionnaire-based feedback)
+    from .models import TraitRating
+    trait_ratings = TraitRating.objects.filter(
+        feedback__feedback_request__requester=member
+    ).select_related('trait').values('trait__name').annotate(
+        avg_rating=Avg('rating')
+    ).order_by('-avg_rating')
+    
+    context = {
+        'member': member,
+        'department': member_dept,
+        'feedbacks': feedbacks,
+        'avg_rating': round(avg_rating, 2),
+        'feedback_count': feedbacks.count(),
+        'competencies': competencies,
+        'all_keywords': list(set(all_keywords))[:15],
+        'trait_ratings': trait_ratings,
+    }
+    return render(request, 'team_member_detail.html', context)
+
+@login_required
 def all_feedback_list(request):
     # Fetch all completed feedback, ordered by the newest first.
     # Using select_related to optimize DB queries by fetching related objects in a single query.
@@ -298,6 +451,11 @@ def company_management(request):
             department = form.save(commit=False)
             department.company = user_company
             department.save()
+            # Auto-assign manager to this department
+            if department.manager:
+                manager_profile = department.manager.profile
+                manager_profile.department = department
+                manager_profile.save()
             return redirect('company_management')
     else:
         form = DepartmentForm(user)
@@ -309,13 +467,32 @@ def company_management(request):
     # Gauname darbuotojus be departamento, kad galėtume juos priskirti
     unassigned_users = User.objects.filter(profile__company_link=user_company, profile__department__isnull=True)
 
+    # All departments for the assignment dropdown
+    all_departments = Department.objects.filter(company=user_company).order_by('name')
+
     context = {
         'root_departments': root_departments,
         'form': form,
         'unassigned_users': unassigned_users,
-        'company_name': user_company.name
+        'company_name': user_company.name,
+        'all_departments': all_departments,
     }
     return render(request, 'company_management.html', context)
+
+@login_required
+def assign_to_department(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        department_id = request.POST.get('department_id')
+        if user_id and department_id:
+            target_user = get_object_or_404(User, id=user_id)
+            department = get_object_or_404(Department, id=department_id)
+            # Ensure both belong to the same company as the current user
+            user_company = request.user.profile.company_link
+            if department.company == user_company and target_user.profile.company_link == user_company:
+                target_user.profile.department = department
+                target_user.profile.save()
+    return redirect('company_management')
 
 from django.contrib.auth.decorators import user_passes_test
 
@@ -383,6 +560,11 @@ def superadmin_edit_hierarchy(request, company_id):
             department = form.save(commit=False)
             department.company = company
             department.save()
+            # Auto-assign manager to this department
+            if department.manager:
+                manager_profile = department.manager.profile
+                manager_profile.department = department
+                manager_profile.save()
             return redirect('superadmin_edit_hierarchy', company_id=company_id)
     else:
         form = DepartmentForm(request.user)
@@ -482,8 +664,8 @@ def stop_impersonation(request):
         # Log in back as the original user
         login(request, original_user, backend='django.contrib.auth.backends.ModelBackend')
         
-        # Remove the impersonator ID from the session
-        del request.session['impersonator_id']
+        # Remove the impersonator ID from the session safely
+        request.session.pop('impersonator_id', None)
         
         return redirect('superadmin_dashboard')
         
@@ -590,7 +772,8 @@ def send_questionnaire(request):
     FeedbackRequest.objects.create(
         requester=request.user,
         requested_to=requested_to,
-        project_name=questionnaire.title, # Using title as project_name for now
+        project_name=questionnaire.title,
+        questionnaire=questionnaire,
         comment=f"Prašau užpildyti klausimyną: {questionnaire.title}",
         due_date=date.today()
     )
@@ -628,11 +811,11 @@ def questionnaire_statistics(request, questionnaire_id):
     received_feedback_count = feedbacks.count()
     
     competencies = [
-        {'name': 'Komandinis darbas', 'score': feedbacks.aggregate(Avg('teamwork_rating'))['teamwork_rating__avg'] or 0},
-        {'name': 'Komunikacija', 'score': feedbacks.aggregate(Avg('communication_rating'))['communication_rating__avg'] or 0},
-        {'name': 'Iniciatyvumas', 'score': feedbacks.aggregate(Avg('initiative_rating'))['initiative_rating__avg'] or 0},
-        {'name': 'Technologinės žinios', 'score': feedbacks.aggregate(Avg('technical_skills_rating'))['technical_skills_rating__avg'] or 0},
-        {'name': 'Problemų sprendimas', 'score': feedbacks.aggregate(Avg('problem_solving_rating'))['problem_solving_rating__avg'] or 0},
+        {'name': 'Komandinis darbas', 'score': round(feedbacks.aggregate(Avg('teamwork_rating'))['teamwork_rating__avg'] or 0, 2)},
+        {'name': 'Komunikacija', 'score': round(feedbacks.aggregate(Avg('communication_rating'))['communication_rating__avg'] or 0, 2)},
+        {'name': 'Iniciatyvumas', 'score': round(feedbacks.aggregate(Avg('initiative_rating'))['initiative_rating__avg'] or 0, 2)},
+        {'name': 'Technologinės žinios', 'score': round(feedbacks.aggregate(Avg('technical_skills_rating'))['technical_skills_rating__avg'] or 0, 2)},
+        {'name': 'Problemų sprendimas', 'score': round(feedbacks.aggregate(Avg('problem_solving_rating'))['problem_solving_rating__avg'] or 0, 2)},
     ]
 
     all_keywords = []
@@ -670,18 +853,18 @@ def questionnaire_statistics(request, questionnaire_id):
     chart_data = {
         'labels': chart_labels,
         'datasets': [
-            {'label': 'Bendras', 'data': [round(fb['avg_rating'], 1) for fb in chronological_feedbacks], 'borderColor': '#8B5CF6', 'tension': 0.3},
-            {'label': 'Komandinis darbas', 'data': [round(fb['avg_teamwork'], 1) for fb in chronological_feedbacks], 'borderColor': '#3B82F6', 'tension': 0.3, 'hidden': True},
-            {'label': 'Komunikacija', 'data': [round(fb['avg_communication'], 1) for fb in chronological_feedbacks], 'borderColor': '#10B981', 'tension': 0.3, 'hidden': True},
-            {'label': 'Iniciatyvumas', 'data': [round(fb['avg_initiative'], 1) for fb in chronological_feedbacks], 'borderColor': '#F59E0B', 'tension': 0.3, 'hidden': True},
-            {'label': 'Technologinės žinios', 'data': [round(fb['avg_technical'], 1) for fb in chronological_feedbacks], 'borderColor': '#EF4444', 'tension': 0.3, 'hidden': True},
-            {'label': 'Problemų sprendimas', 'data': [round(fb['avg_problem_solving'], 1) for fb in chronological_feedbacks], 'borderColor': '#6366F1', 'tension': 0.3, 'hidden': True},
+            {'label': 'Bendras', 'data': [round(fb['avg_rating'], 2) for fb in chronological_feedbacks], 'borderColor': '#8B5CF6', 'tension': 0.3},
+            {'label': 'Komandinis darbas', 'data': [round(fb['avg_teamwork'], 2) for fb in chronological_feedbacks], 'borderColor': '#3B82F6', 'tension': 0.3, 'hidden': True},
+            {'label': 'Komunikacija', 'data': [round(fb['avg_communication'], 2) for fb in chronological_feedbacks], 'borderColor': '#10B981', 'tension': 0.3, 'hidden': True},
+            {'label': 'Iniciatyvumas', 'data': [round(fb['avg_initiative'], 2) for fb in chronological_feedbacks], 'borderColor': '#F59E0B', 'tension': 0.3, 'hidden': True},
+            {'label': 'Technologinės žinios', 'data': [round(fb['avg_technical'], 2) for fb in chronological_feedbacks], 'borderColor': '#EF4444', 'tension': 0.3, 'hidden': True},
+            {'label': 'Problemų sprendimas', 'data': [round(fb['avg_problem_solving'], 2) for fb in chronological_feedbacks], 'borderColor': '#6366F1', 'tension': 0.3, 'hidden': True},
         ]
     }
 
     context = {
         'questionnaire': questionnaire,
-        'overall_avg_rating': round(overall_avg_rating, 1),
+        'overall_avg_rating': round(overall_avg_rating, 2),
         'received_feedback_count': received_feedback_count,
         'competencies': competencies,
         'all_keywords': all_keywords,

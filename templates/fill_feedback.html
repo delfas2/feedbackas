@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="lt">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,17 +16,21 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+
         /* Slankiklio stilius */
         input[type='range']::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
             width: 20px;
             height: 20px;
-            background: #8B5CF6; /* purple-500 */
+            background: #8B5CF6;
+            /* purple-500 */
             border-radius: 50%;
             cursor: pointer;
-            margin-top: -6px; /* Centravimui */
+            margin-top: -6px;
+            /* Centravimui */
         }
+
         input[type='range']::-moz-range-thumb {
             width: 20px;
             height: 20px;
@@ -38,23 +43,43 @@
         .competency-battery .battery-segment {
             transition: all 0.3s ease-out;
         }
+
         .competency-battery .battery-segment.active {
             color: white;
         }
-        .competency-battery .battery-segment.level-1.active { background-color: #60A5FA; /* blue-400 */ }
-        .competency-battery .battery-segment.level-2.active { background-color: #A3E635; /* lime-400 */ }
-        .competency-battery .battery-segment.level-3.active { background-color: #22C55E; /* green-500 */ }
-        .competency-battery .battery-segment.level-4.active { background-color: #9333EA; /* purple-600 */ }
+
+        .competency-battery .battery-segment.level-1.active {
+            background-color: #60A5FA;
+            /* blue-400 */
+        }
+
+        .competency-battery .battery-segment.level-2.active {
+            background-color: #A3E635;
+            /* lime-400 */
+        }
+
+        .competency-battery .battery-segment.level-3.active {
+            background-color: #22C55E;
+            /* green-500 */
+        }
+
+        .competency-battery .battery-segment.level-4.active {
+            background-color: #9333EA;
+            /* purple-600 */
+        }
 
         .competency-battery .battery-label {
             transition: opacity 0.3s ease-out;
         }
+
         .competency-battery .battery-label.active {
             opacity: 1;
         }
+
         .competency-battery .battery-label.inactive {
             opacity: 0.4;
         }
+
         .competency-battery .battery-label:not(.active):hover {
             opacity: 0.7;
         }
@@ -62,32 +87,49 @@
         .competency-tag {
             transition: all 0.3s ease-out;
         }
+
         .competency-tag.level-1 {
-            background-color: #DBEAFE; /* blue-100 */
-            border-color: #60A5FA; /* blue-400 */
-            color: #1D4ED8; /* blue-700 */
+            background-color: #DBEAFE;
+            /* blue-100 */
+            border-color: #60A5FA;
+            /* blue-400 */
+            color: #1D4ED8;
+            /* blue-700 */
         }
+
         .competency-tag.level-2 {
-            background-color: #ECFCCB; /* lime-100 */
-            border-color: #84CC16; /* lime-500 */
-            color: #3F6212; /* lime-800 */
+            background-color: #ECFCCB;
+            /* lime-100 */
+            border-color: #84CC16;
+            /* lime-500 */
+            color: #3F6212;
+            /* lime-800 */
         }
+
         .competency-tag.level-3 {
-            background-color: #DCFCE7; /* green-100 */
-            border-color: #16A34A; /* green-600 */
-            color: #14532D; /* green-800 */
+            background-color: #DCFCE7;
+            /* green-100 */
+            border-color: #16A34A;
+            /* green-600 */
+            color: #14532D;
+            /* green-800 */
         }
+
         .competency-tag.level-4 {
-            background-color: #F3E8FF; /* purple-100 */
-            border-color: #9333EA; /* purple-600 */
-            color: #581C87; /* purple-900 */
+            background-color: #F3E8FF;
+            /* purple-100 */
+            border-color: #9333EA;
+            /* purple-600 */
+            color: #581C87;
+            /* purple-900 */
         }
     </style>
 </head>
+
 <body class="bg-gray-100">
 
     <div class="flex h-screen">
-        
+
         <!-- 1. Šoninė Navigacijos Juosta -->
         <aside class="hidden md:flex w-64 flex-col bg-white shadow-lg">
             <!-- Logotipas -->
@@ -96,38 +138,108 @@
                     PowerUp
                 </a>
             </div>
-            
+
             <!-- Navigacija -->
             <nav class="flex-1 space-y-2 py-4 px-4">
-                <a href="{% url 'home' %}" class="flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 hover:bg-purple-50 hover:text-purple-600 font-medium">
-                    <!-- Piktograma -->
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l-3.75 5.25h16.5l-3.75-5.25h-9zM3.75 6.75h.75l.75 1.5h.75l.75-1.5h.75l-.75 1.5h.75l.75 1.5h.75l.75-1.5h.75l-.75 1.5h.75l.75 1.5h.75l.75-1.5h.75l-.75 1.5h.75l.75 1.5h.75l.75-1.5h.75" /></svg>
+                {% if not user.is_superuser %}
+                <a href="{% url 'home' %}"
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'home' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3.75 13.5l-3.75 5.25h16.5l-3.75-5.25h-9zM3.75 6.75h.75l.75 1.5h.75l.75-1.5h.75l-.75 1.5h.75l.75 1.5h.75l.75-1.5h.75l-.75 1.5h.75l.75 1.5h.75l.75-1.5h.75l-.75 1.5h.75l.75 1.5h.75l.75-1.5h.75" />
+                    </svg>
                     <span>Pagrindinis</span>
                 </a>
-                <a href="{% url 'my_tasks_list' %}" class="flex items-center space-x-3 px-4 py-2 rounded-lg text-white bg-purple-500 font-medium">
-                    <!-- Piktograma -->
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-10.5c-.621 0-1.125-.504-1.125-1.125v-11.25c0-.621.504-1.125 1.125-1.125H9M9 7.5h.008v.008H9V7.5z" /></svg>
+                <a href="{% url 'my_tasks_list' %}"
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'my_tasks_list' or request.resolver_match.url_name == 'fill_feedback' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M12 7.5h1.5m-1.5 3h1.5m-7.5 3h7.5m-7.5 3h7.5m3-9h3.375c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-10.5c-.621 0-1.125-.504-1.125-1.125v-11.25c0-.621.504-1.125 1.125-1.125H9M9 7.5h.008v.008H9V7.5z" />
+                    </svg>
                     <span>Mano Užduotys</span>
                 </a>
-                <a href="{% url 'team_members_list' %}" class="flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 hover:bg-purple-50 hover:text-purple-600 font-medium">
-                    <!-- Piktograma -->
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.182 14.818a4.5 4.5 0 0 1-6.364 0l-2.121-2.121a4.5 4.5 0 0 1 0-6.364l2.121-2.121a4.5 4.5 0 0 1 6.364 0l2.121 2.121a4.5 4.5 0 0 1 0 6.364l-2.121 2.121zM9.172 9.172a.375.375 0 1 1-.53.53l-.354-.354a.375.375 0 0 1 0-.53l.354-.354a.375.375 0 0 1 .53 0z" /></svg>
+                <a href="{% url 'team_members_list' %}"
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'team_members_list' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M15.182 14.818a4.5 4.5 0 0 1-6.364 0l-2.121-2.121a4.5 4.5 0 0 1 0-6.364l2.121-2.121a4.5 4.5 0 0 1 6.364 0l2.121 2.121a4.5 4.5 0 0 1 0 6.364l-2.121 2.121zM9.172 9.172a.375.375 0 1 1-.53.53l-.354-.354a.375.375 0 0 1 0-.53l.354-.354a.375.375 0 0 1 .53 0z" />
+                    </svg>
                     <span>Mano Komanda</span>
                 </a>
-                <a href="{% url 'results' %}" class="flex items-center space-x-3 px-4 py-2 rounded-lg text-gray-600 hover:bg-purple-50 hover:text-purple-600 font-medium">
-                    <!-- Piktograma -->
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h15.75c.621 0 1.125.504 1.125 1.125v6.75C21 20.496 20.496 21 19.875 21H4.125A1.125 1.125 0 0 1 3 19.875v-6.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.375c1.036 0 1.875.84 1.875 1.875v.375c0 1.036-.84 1.875-1.875 1.875h-.375A1.875 1.875 0 0 1 9.75 9v-.375z" /></svg>
+                <a href="{% url 'questionnaires_list' %}"
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'questionnaires_list' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+                    </svg>
+                    <span>Individuali forma</span>
+                </a>
+                {% if user.profile.company_link %}
+                <a href="{% url 'company_management' %}"
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'company_management' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+                    </svg>
+                    <span>Įmonės valdymas</span>
+                </a>
+                {% endif %}
+                <a href="{% url 'results' %}"
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'results' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 13.125C3 12.504 3.504 12 4.125 12h15.75c.621 0 1.125.504 1.125 1.125v6.75C21 20.496 20.496 21 19.875 21H4.125A1.125 1.125 0 0 1 3 19.875v-6.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.375c1.036 0 1.875.84 1.875 1.875v.375c0 1.036-.84 1.875-1.875 1.875h-.375A1.875 1.875 0 0 1 9.75 9v-.375z" />
+                    </svg>
                     <span>Rezultatai</span>
                 </a>
+                <a href="{% url 'all_feedback_list' %}"
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'all_feedback_list' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" />
+                    </svg>
+                    <span>Visi įvertinimai</span>
+                </a>
+                {% endif %}
+                {% if user.is_superuser %}
+                <a href="{% url 'superadmin_dashboard' %}"
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'superadmin_dashboard' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
+                    </svg>
+                    <span>Statistika</span>
+                </a>
+                <a href="{% url 'superadmin_companies_list' %}"
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'superadmin_companies_list' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                    </svg>
+                    <span>Įmonės</span>
+                </a>
+                {% endif %}
             </nav>
 
             <!-- Vartotojo profilis ir atsijungimas -->
             <div class="mt-auto border-t p-4">
                 <div class="flex items-center space-x-3">
-                    <img class="w-10 h-10 rounded-full" src="https://placehold.co/40x40/eee/333?text=VP" alt="Vartotojo profilio nuotrauka">
+                    <img class="w-10 h-10 rounded-full" src="https://placehold.co/40x40/eee/333?text=VP"
+                        alt="Vartotojo profilio nuotrauka">
                     <div>
                         <p class="font-medium text-gray-800">{{ user.first_name }}</p>
-                        <a href="{% url 'logout' %}" class="text-sm text-purple-600 hover:text-purple-800">Atsijungti</a>
+                        <a href="{% url 'logout' %}"
+                            class="text-sm text-purple-600 hover:text-purple-800">Atsijungti</a>
                     </div>
                 </div>
             </div>
@@ -135,18 +247,22 @@
 
         <!-- 2. Pagrindinis Turinys -->
         <main class="flex-1 overflow-y-auto">
-            
+
             <!-- Viršutinė juosta -->
             <header class="bg-white shadow-sm p-4 flex justify-between items-center">
                 <!-- Mobilus Meniu Mygtukas -->
                 <button class="md:hidden p-2 text-gray-600">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                    </svg>
                 </button>
-                
+
                 <h1 class="text-2xl font-bold text-gray-800 hidden md:block">
                     {{ feedback_request.project_name }}
                 </h1>
-                
+
                 <a href="{% url 'home' %}" class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-500">
                     Atgal į panelę
                 </a>
@@ -159,9 +275,10 @@
                     <h2 class="text-2xl font-bold text-gray-800 mb-6">
                         Atsiliepimas apie: <span class="text-purple-600">{{ feedback_request.requester.first_name }} {{ feedback_request.requester.last_name }}</span>
                     </h2>
-                    
+
                     <form method="POST" class="space-y-6">
-                        <input type="hidden" id="colleague-name" value="{{ feedback_request.requester.first_name }} {{ feedback_request.requester.last_name }}">
+                        <input type="hidden" id="colleague-name"
+                            value="{{ feedback_request.requester.first_name }} {{ feedback_request.requester.last_name }}">
                         {% csrf_token %}
 
                         <!-- Kompetencijų slankikliai -->
@@ -172,72 +289,99 @@
                             <div class="competency-battery" data-competency="rating">
                                 <input type="hidden" name="rating" value="0">
                             </div>
-                            
-                            <!-- Komandinis Darbas -->
-                            <div class="competency-battery" data-competency="teamwork_rating">
-                                <input type="hidden" name="teamwork_rating" value="0">
+
+                            <!-- Hardcoded competencies (hidden when questionnaire has traits) -->
+                            <div id="default-competencies">
+                                <!-- Komandinis Darbas -->
+                                <div class="competency-battery" data-competency="teamwork_rating">
+                                    <input type="hidden" name="teamwork_rating" value="0">
+                                </div>
+
+                                <!-- Komunikacija -->
+                                <div class="competency-battery" data-competency="communication_rating">
+                                    <input type="hidden" name="communication_rating" value="0">
+                                </div>
+
+                                <!-- Iniciatyvumas -->
+                                <div class="competency-battery" data-competency="initiative_rating">
+                                    <input type="hidden" name="initiative_rating" value="0">
+                                </div>
+
+                                <!-- Techninės Žinios -->
+                                <div class="competency-battery" data-competency="technical_skills_rating">
+                                    <input type="hidden" name="technical_skills_rating" value="0">
+                                </div>
+
+                                <!-- Problemų Sprendimas -->
+                                <div class="competency-battery" data-competency="problem_solving_rating">
+                                    <input type="hidden" name="problem_solving_rating" value="0">
+                                </div>
                             </div>
 
-                            <!-- Komunikacija -->
-                            <div class="competency-battery" data-competency="communication_rating">
-                                <input type="hidden" name="communication_rating" value="0">
-                            </div>
-
-                            <!-- Iniciatyvumas -->
-                            <div class="competency-battery" data-competency="initiative_rating">
-                                <input type="hidden" name="initiative_rating" value="0">
-                            </div>
-
-                            <!-- Techninės Žinios -->
-                            <div class="competency-battery" data-competency="technical_skills_rating">
-                                <input type="hidden" name="technical_skills_rating" value="0">
-                            </div>
-
-                            <!-- Problemų Sprendimas -->
-                            <div class="competency-battery" data-competency="problem_solving_rating">
-                                <input type="hidden" name="problem_solving_rating" value="0">
-                            </div>
+                            <!-- Dynamic trait batteries (populated by JS when questionnaire is linked) -->
+                            <div id="dynamic-trait-batteries"></div>
 
                             <!-- Baterijos šablonas (bus klonuojamas su JS) -->
                             <template id="competency-template">
                                 <div class="mb-10 transition-all hover:scale-[1.01] duration-300">
                                     <div class="flex justify-between items-center mb-3 px-1">
                                         <h3 class="font-bold text-slate-700 text-lg competency-label"></h3>
-                                        <span class="text-xs font-bold px-3 py-1 rounded-full border competency-tag shadow-sm" style="display: none;"></span>
+                                        <span
+                                            class="text-xs font-bold px-3 py-1 rounded-full border competency-tag shadow-sm"
+                                            style="display: none;"></span>
                                     </div>
                                     <div class="relative">
-                                        <div class="relative h-20 w-full bg-white rounded-2xl border-[4px] border-slate-300 p-1.5 flex gap-1.5 shadow-sm overflow-hidden group cursor-pointer z-10">
-                                            <button type="button" data-level="1" class="relative flex-1 rounded-lg battery-segment level-1 bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center overflow-hidden">
+                                        <div
+                                            class="relative h-20 w-full bg-white rounded-2xl border-[4px] border-slate-300 p-1.5 flex gap-1.5 shadow-sm overflow-hidden group cursor-pointer z-10">
+                                            <button type="button" data-level="1"
+                                                class="relative flex-1 rounded-lg battery-segment level-1 bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center overflow-hidden">
                                                 <div class="shine-effect"></div>
-                                                <div class="icon-container transform text-slate-300 translate-y-1"><span class="font-black text-xl opacity-20">1</span></div>
+                                                <div class="icon-container transform text-slate-300 translate-y-1"><span
+                                                        class="font-black text-xl opacity-20">1</span></div>
                                             </button>
-                                            <button type="button" data-level="2" class="relative flex-1 rounded-lg battery-segment level-2 bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center overflow-hidden">
+                                            <button type="button" data-level="2"
+                                                class="relative flex-1 rounded-lg battery-segment level-2 bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center overflow-hidden">
                                                 <div class="shine-effect"></div>
-                                                <div class="icon-container transform text-slate-300 translate-y-1"><span class="font-black text-xl opacity-20">2</span></div>
+                                                <div class="icon-container transform text-slate-300 translate-y-1"><span
+                                                        class="font-black text-xl opacity-20">2</span></div>
                                             </button>
-                                            <button type="button" data-level="3" class="relative flex-1 rounded-lg battery-segment level-3 bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center overflow-hidden">
+                                            <button type="button" data-level="3"
+                                                class="relative flex-1 rounded-lg battery-segment level-3 bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center overflow-hidden">
                                                 <div class="shine-effect"></div>
-                                                <div class="icon-container transform text-slate-300 translate-y-1"><span class="font-black text-xl opacity-20">3</span></div>
+                                                <div class="icon-container transform text-slate-300 translate-y-1"><span
+                                                        class="font-black text-xl opacity-20">3</span></div>
                                             </button>
-                                            <button type="button" data-level="4" class="relative flex-1 rounded-lg battery-segment level-4 bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center overflow-hidden">
+                                            <button type="button" data-level="4"
+                                                class="relative flex-1 rounded-lg battery-segment level-4 bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center overflow-hidden">
                                                 <div class="shine-effect"></div>
-                                                <div class="icon-container transform text-slate-300 translate-y-1"><span class="font-black text-xl opacity-20">4</span></div>
+                                                <div class="icon-container transform text-slate-300 translate-y-1"><span
+                                                        class="font-black text-xl opacity-20">4</span></div>
                                             </button>
                                         </div>
-                                        <div class="absolute -right-[12px] top-1/2 -translate-y-1/2 w-4 h-10 bg-slate-300 rounded-r-md border-y-[4px] border-r-[4px] border-l-0 border-slate-300 z-0"></div>
+                                        <div
+                                            class="absolute -right-[12px] top-1/2 -translate-y-1/2 w-4 h-10 bg-slate-300 rounded-r-md border-y-[4px] border-r-[4px] border-l-0 border-slate-300 z-0">
+                                        </div>
                                     </div>
                                     <div class="flex justify-between mt-2 px-1">
-                                        <div data-level="1" class="cursor-pointer w-1/4 text-center battery-label inactive opacity-40 hover:opacity-70">
-                                            <p class="text-xs font-bold text-slate-700">Mokosi</p><p class="text-[10px] text-slate-500 leading-tight">Reikia pagalbos</p>
+                                        <div data-level="1"
+                                            class="cursor-pointer w-1/4 text-center battery-label inactive opacity-40 hover:opacity-70">
+                                            <p class="text-xs font-bold text-slate-700">Mokosi</p>
+                                            <p class="text-[10px] text-slate-500 leading-tight">Reikia pagalbos</p>
                                         </div>
-                                        <div data-level="2" class="cursor-pointer w-1/4 text-center battery-label inactive opacity-40 hover:opacity-70">
-                                            <p class="text-xs font-bold text-slate-700">Daro</p><p class="text-[10px] text-slate-500 leading-tight">Atitinka lūkesčius</p>
+                                        <div data-level="2"
+                                            class="cursor-pointer w-1/4 text-center battery-label inactive opacity-40 hover:opacity-70">
+                                            <p class="text-xs font-bold text-slate-700">Daro</p>
+                                            <p class="text-[10px] text-slate-500 leading-tight">Atitinka lūkesčius</p>
                                         </div>
-                                        <div data-level="3" class="cursor-pointer w-1/4 text-center battery-label inactive opacity-40 hover:opacity-70">
-                                            <p class="text-xs font-bold text-slate-700">Varo</p><p class="text-[10px] text-slate-500 leading-tight">Viršija lūkesčius</p>
+                                        <div data-level="3"
+                                            class="cursor-pointer w-1/4 text-center battery-label inactive opacity-40 hover:opacity-70">
+                                            <p class="text-xs font-bold text-slate-700">Varo</p>
+                                            <p class="text-[10px] text-slate-500 leading-tight">Viršija lūkesčius</p>
                                         </div>
-                                        <div data-level="4" class="cursor-pointer w-1/4 text-center battery-label inactive opacity-40 hover:opacity-70">
-                                            <p class="text-xs font-bold text-slate-700">Pavyzdys</p><p class="text-[10px] text-slate-500 leading-tight">Superžvaigždė</p>
+                                        <div data-level="4"
+                                            class="cursor-pointer w-1/4 text-center battery-label inactive opacity-40 hover:opacity-70">
+                                            <p class="text-xs font-bold text-slate-700">Pavyzdys</p>
+                                            <p class="text-[10px] text-slate-500 leading-tight">Superžvaigždė</p>
                                         </div>
                                     </div>
                                 </div>
@@ -251,26 +395,33 @@
                                 Raktiniai žodžiai
                             </label>
                             <div class="mt-1 flex rounded-md shadow-sm">
-                                <input type="text"
-                                       name="keywords"
-                                       id="keywords"
-                                       placeholder="pvz., komandiškas darbas, iniciatyvumas, analitinis mąstymas..."
-                                       class="flex-1 block w-full rounded-none rounded-l-md px-3 py-2 border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
-                                <button type="button" id="open-keyword-modal" class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm hover:bg-gray-100">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                                <input type="text" name="keywords" id="keywords"
+                                    placeholder="pvz., komandiškas darbas, iniciatyvumas, analitinis mąstymas..."
+                                    class="flex-1 block w-full rounded-none rounded-l-md px-3 py-2 border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm">
+                                <button type="button" id="open-keyword-modal"
+                                    class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-gray-50 text-gray-500 text-sm hover:bg-gray-100">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                                     </svg>
                                 </button>
                             </div>
                         </div>
 
                         <!-- Keyword Modal -->
-                        <div id="keyword-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden" style="z-index: 50;">
+                        <div id="keyword-modal"
+                            class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden"
+                            style="z-index: 50;">
                             <div class="relative top-20 mx-auto p-5 border w-1/2 shadow-lg rounded-md bg-white">
                                 <div class="flex justify-between items-center pb-3">
                                     <p class="text-2xl font-bold">Raktinių žodžių debesis</p>
                                     <div class="cursor-pointer z-50" id="close-keyword-modal">
-                                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round"
+                                                d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
                                     </div>
                                 </div>
                                 <div id="keyword-cloud" class="flex flex-wrap gap-2">
@@ -284,12 +435,9 @@
                             <label for="comments" class="block text-sm font-medium text-gray-700">
                                 Komentarai
                             </label>
-                            <textarea id="comments"
-                                      name="comments"
-                                      rows="4"
-                                      placeholder="Įrašykite laisvos formos komentarus apie kolegą..."
-                                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
-                            ></textarea>
+                            <textarea id="comments" name="comments" rows="4"
+                                placeholder="Įrašykite laisvos formos komentarus apie kolegą..."
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"></textarea>
                         </div>
 
                         <!-- 3. Išsamaus Atsiliepimo Laukas -->
@@ -297,27 +445,27 @@
                             <label for="feedback" class="block text-sm font-medium text-gray-700">
                                 Išsamus atsiliepimas
                             </label>
-                            <textarea id="feedback"
-                                      name="feedback"
-                                      rows="6"
-                                      placeholder="Pateikite išsamesnį komentarą, nurodydami konkrečius pavyzdžius, kas sekėsi puikiai ir kur reikėtų tobulėti..."
-                                      class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
-                            ></textarea>
+                            <textarea id="feedback" name="feedback" rows="6"
+                                placeholder="Pateikite išsamesnį komentarą, nurodydami konkrečius pavyzdžius, kas sekėsi puikiai ir kur reikėtų tobulėti..."
+                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"></textarea>
                         </div>
 
                         <!-- 4. Mygtukai -->
                         <div class="flex justify-end space-x-4 pt-4">
-                            <button type="button"
-                                    id="generate-ai-btn"
-                                    class="inline-flex items-center px-5 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors">
-                                <svg id="ai-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-700 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            <button type="button" id="generate-ai-btn"
+                                class="inline-flex items-center px-5 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors">
+                                <svg id="ai-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-gray-700 hidden"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                        stroke-width="4"></circle>
+                                    <path class="opacity-75" fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                    </path>
                                 </svg>
                                 <span id="ai-btn-text">Generuoti (AI)</span>
                             </button>
                             <button type="submit"
-                                    class="px-5 py-2 text-sm font-medium text-white bg-purple-500 rounded-lg shadow-sm hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors">
+                                class="px-5 py-2 text-sm font-medium text-white bg-purple-500 rounded-lg shadow-sm hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors">
                                 Siųsti Atsiliepimą
                             </button>
                         </div>
@@ -329,8 +477,8 @@
 
     <!-- Slankiklio reikšmės atnaujinimo skriptas -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-             // Naujos "baterijos" logikos inicializavimas
+        document.addEventListener('DOMContentLoaded', function () {
+            // Naujos "baterijos" logikos inicializavimas
             const competencyData = {
                 teamwork_rating: { label: 'Komandinis Darbas' },
                 communication_rating: { label: 'Komunikacija' },
@@ -347,96 +495,138 @@
                 { id: 4, title: "Pavyzdys", icon: "⚡" }
             ];
 
-            document.querySelectorAll('.competency-battery').forEach(container => {
-                const competencyName = container.dataset.competency;
-                const template = document.getElementById('competency-template').content.cloneNode(true);
-                container.appendChild(template);
+            // Check for questionnaire traits and create dynamic batteries
+            const questionnaireTraits = JSON.parse('{{ questionnaire_traits_json|escapejs }}');
+            const hasQuestionnaire = {{ has_questionnaire|yesno:"true,false" }};
 
-                container.querySelector('.competency-label').textContent = competencyData[competencyName].label;
-                const hiddenInput = container.querySelector(`input[name="${competencyName}"]`);
+        if (hasQuestionnaire && questionnaireTraits.length > 0) {
+            // Hide default competencies
+            document.getElementById('default-competencies').style.display = 'none';
 
-                const updateView = (value) => {
-                    hiddenInput.value = value;
+            // Create dynamic trait batteries
+            const dynamicContainer = document.getElementById('dynamic-trait-batteries');
+            questionnaireTraits.forEach(trait => {
+                const div = document.createElement('div');
+                div.className = 'competency-battery';
+                div.dataset.competency = 'trait_rating_' + trait.id;
+                div.innerHTML = '<input type="hidden" name="trait_rating_' + trait.id + '" value="0">';
+                dynamicContainer.appendChild(div);
 
-                    const segments = container.querySelectorAll('.battery-segment');
-                    const labels = container.querySelectorAll('.battery-label');
-                    const tag = container.querySelector('.competency-tag');
+                // Add to competencyData so it gets a proper label
+                competencyData['trait_rating_' + trait.id] = { label: trait.name };
+            });
+        }
 
-                    segments.forEach(segment => {
-                        const level = parseInt(segment.dataset.level, 10);
-                        const iconContainer = segment.querySelector('.icon-container');
-                        const shineEffect = segment.querySelector('.shine-effect');
+        document.querySelectorAll('.competency-battery').forEach(container => {
+            const competencyName = container.dataset.competency;
+            if (!competencyData[competencyName]) return; // skip unknown
+            const template = document.getElementById('competency-template').content.cloneNode(true);
+            container.appendChild(template);
 
-                        const isActive = level <= value;
-                        segment.classList.toggle('active', isActive);
-                        segment.classList.toggle('bg-slate-50', !isActive);
-                        segment.classList.toggle('shadow-inner', isActive);
+            container.querySelector('.competency-label').textContent = competencyData[competencyName].label;
+            const hiddenInput = container.querySelector(`input[name="${competencyName}"]`);
 
-                        if (isActive) {
-                            shineEffect.className = 'shine-effect absolute top-0 left-0 w-full h-1/2 bg-white opacity-20 pointer-events-none';
-                            iconContainer.classList.remove('text-slate-300', 'translate-y-1');
-                            iconContainer.classList.add('text-white', 'scale-110', 'translate-y-0');
-                            iconContainer.innerHTML = level === 4 ? '⚡' : `<span class="text-2xl">${levels[level-1].icon}</span>`;
-                        } else {
-                            shineEffect.className = 'shine-effect'; // Remove classes
-                            iconContainer.classList.add('text-slate-300', 'translate-y-1');
-                            iconContainer.classList.remove('text-white', 'scale-110', 'translate-y-0');
-                            iconContainer.innerHTML = `<span class="font-black text-xl opacity-20">${level}</span>`;
-                        }
-                    });
+            const updateView = (value) => {
+                hiddenInput.value = value;
 
-                    labels.forEach(label => {
-                        const level = parseInt(label.dataset.level, 10);
-                        const p = label.querySelector('p:first-child');
-                        const isActive = level === value;
-                        label.classList.toggle('opacity-100', isActive);
-                        label.classList.toggle('transform', isActive);
-                        label.classList.toggle('-translate-y-1', isActive);
-                        label.classList.toggle('opacity-40', !isActive);
-                        p.classList.toggle('text-slate-800', isActive);
-                        p.classList.toggle('text-slate-500', !isActive);
-                    });
+                const segments = container.querySelectorAll('.battery-segment');
+                const labels = container.querySelectorAll('.battery-label');
+                const tag = container.querySelector('.competency-tag');
 
-                    if (value > 0) {
-                        const levelData = levels[value - 1];
-                        tag.innerHTML = `${levelData.icon} ${levelData.title}`;
-                        tag.className = `text-xs font-bold px-3 py-1 rounded-full border competency-tag shadow-sm level-${value}`;
-                        tag.style.display = 'inline-block';
+                segments.forEach(segment => {
+                    const level = parseInt(segment.dataset.level, 10);
+                    const iconContainer = segment.querySelector('.icon-container');
+                    const shineEffect = segment.querySelector('.shine-effect');
+
+                    const isActive = level <= value;
+                    segment.classList.toggle('active', isActive);
+                    segment.classList.toggle('bg-slate-50', !isActive);
+                    segment.classList.toggle('shadow-inner', isActive);
+
+                    if (isActive) {
+                        shineEffect.className = 'shine-effect absolute top-0 left-0 w-full h-1/2 bg-white opacity-20 pointer-events-none';
+                        iconContainer.classList.remove('text-slate-300', 'translate-y-1');
+                        iconContainer.classList.add('text-white', 'scale-110', 'translate-y-0');
+                        iconContainer.innerHTML = level === 4 ? '⚡' : `<span class="text-2xl">${levels[level - 1].icon}</span>`;
                     } else {
-                        tag.style.display = 'none';
-                    }
-                };
-
-                container.addEventListener('click', (e) => {
-                    const target = e.target.closest('[data-level]');
-                    if (target) {
-                        const level = parseInt(target.dataset.level, 10);
-                        updateView(level);
+                        shineEffect.className = 'shine-effect'; // Remove classes
+                        iconContainer.classList.add('text-slate-300', 'translate-y-1');
+                        iconContainer.classList.remove('text-white', 'scale-110', 'translate-y-0');
+                        iconContainer.innerHTML = `<span class="font-black text-xl opacity-20">${level}</span>`;
                     }
                 });
+
+                labels.forEach(label => {
+                    const level = parseInt(label.dataset.level, 10);
+                    const p = label.querySelector('p:first-child');
+                    const isActive = level === value;
+                    label.classList.toggle('opacity-100', isActive);
+                    label.classList.toggle('transform', isActive);
+                    label.classList.toggle('-translate-y-1', isActive);
+                    label.classList.toggle('opacity-40', !isActive);
+                    p.classList.toggle('text-slate-800', isActive);
+                    p.classList.toggle('text-slate-500', !isActive);
+                });
+
+                if (value > 0) {
+                    const levelData = levels[value - 1];
+                    tag.innerHTML = `${levelData.icon} ${levelData.title}`;
+                    tag.className = `text-xs font-bold px-3 py-1 rounded-full border competency-tag shadow-sm level-${value}`;
+                    tag.style.display = 'inline-block';
+                } else {
+                    tag.style.display = 'none';
+                }
+            };
+
+            container.addEventListener('click', (e) => {
+                const target = e.target.closest('[data-level]');
+                if (target) {
+                    const level = parseInt(target.dataset.level, 10);
+                    updateView(level);
+                }
             });
+        });
 
-            // Keyword Modal
-            const keywordModal = document.getElementById('keyword-modal');
-            const openKeywordModalBtn = document.getElementById('open-keyword-modal');
-            const closeKeywordModalBtn = document.getElementById('close-keyword-modal');
-            const keywordCloud = document.getElementById('keyword-cloud');
-            const keywordsInput = document.getElementById('keywords');
+        // Keyword Modal
+        const keywordModal = document.getElementById('keyword-modal');
+        const openKeywordModalBtn = document.getElementById('open-keyword-modal');
+        const closeKeywordModalBtn = document.getElementById('close-keyword-modal');
+        const keywordCloud = document.getElementById('keyword-cloud');
+        const keywordsInput = document.getElementById('keywords');
 
+        // Keyword cloud: reuse the variables already declared above
+        if (hasQuestionnaire && questionnaireTraits.length > 0) {
+            // Show only the questionnaire's selected traits as keyword chips
+            questionnaireTraits.forEach(trait => {
+                const keywordEl = document.createElement('span');
+                keywordEl.textContent = trait.name;
+                keywordEl.className = 'cursor-pointer bg-purple-100 text-purple-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
+                keywordEl.addEventListener('click', () => {
+                    if (keywordsInput.value) {
+                        keywordsInput.value += ', ' + trait.name;
+                    } else {
+                        keywordsInput.value = trait.name;
+                    }
+                    keywordEl.style.display = 'none';
+                });
+                keywordCloud.appendChild(keywordEl);
+            });
+        } else {
+            // Show the default generic keyword cloud
             const positiveKeywords = [
                 'Komandinis darbas', 'Komunikabilumas', 'Iniciatyvumas', 'Problemų sprendimas', 'Lyderystė',
                 'Analitinis mąstymas', 'Kūrybiškumas', 'Adaptabilumas', 'Atsakingumas', 'Laiko planavimas',
                 'Techninės žinios', 'Strateginis mąstymas', 'Klientų aptarnavimas', 'Derybos', 'Prezentavimo įgūdžiai',
                 'Patikimumas', 'Motyvacija', 'Pozityvumas', 'Efektyvumas', 'Savarankiškumas', 'Mentorystė', 'Pagalba kitiems',
-                'Atvirumas', 'Entuziazmas', 'Profesionalumas', 'Kruopštumas', 'Smalsumas', 'Konstruktyvumas', 'Įžvalgumas', 'Lankstumas', 
-                'Draugiškumas', 'Mandagumas', 'Punktualumas', 'Organizuotumas', 'Empatija', 'Orientacija į rezultą', 'Gebėjimas įkvėpti', 
+                'Atvirumas', 'Entuziazmas', 'Profesionalumas', 'Kruopštumas', 'Smalsumas', 'Konstruktyvumas', 'Įžvalgumas', 'Lankstumas',
+                'Draugiškumas', 'Mandagumas', 'Punktualumas', 'Organizuotumas', 'Empatija', 'Orientacija į rezultą', 'Gebėjimas įkvėpti',
                 'Gebėjimas mokytis', 'Sąžiningumas', 'Atkaklumas'
             ];
 
             const neutralKeywords = [
                 'Tylus', 'Ramus', 'Individualistas', 'Analitikas', 'Stebėtojas', 'Vykdytojas', 'Planuotojas',
                 'Struktūruotas', 'Formalus', 'Neformalus', 'Praktiškas', 'Teoretikas', 'Atsargus', 'Racionalus', 'Intravertas',
-                'Ekstravertas', 'Realistas', 'Pragmmatikas', 'Diplomatas', 'Kritikas', 'Svajotojas', 'Logiškas', 
+                'Ekstravertas', 'Realistas', 'Pragmmatikas', 'Diplomatas', 'Kritikas', 'Svajotojas', 'Logiškas',
                 'Emocionalus', 'Konservatyvus', 'Liberalus', 'Tiesioginis', 'Netiesioginis', 'Detalus', 'Apibendrinantis', 'Koncepualus'
             ];
 
@@ -444,8 +634,8 @@
                 'Vėlavimas', 'Neatsakingumas', 'Pasyvumas', 'Konfliktiškumas', 'Arogancija',
                 'Klaidų slėpimas', 'Neorganizuotumas', 'Nekokybiškas darbas', 'Stresas', 'Negatyvumas',
                 'Nepasitikėjimas', 'Kritikos nepriėmimas', 'Dėmesio stoka', 'Bendradarbiavimo stoka', 'Lėtas darbas',
-                'Nedraugiškumas', 'Chaotiškumas', 'Uždarumas', 'Pesimizmas', 'Abejingumas', 'Išsiblaškymas', 'Paviršutiniškumas', 
-                'Neapdairumas', 'Neryžtingumas', 'Užsispyrimas', 'Ignoravimas', 'Manipuliavimas', 'Pesimizmas', 'Skubotumas', 
+                'Nedraugiškumas', 'Chaotiškumas', 'Uždarumas', 'Pesimizmas', 'Abejingumas', 'Išsiblaškymas', 'Paviršutiniškumas',
+                'Neapdairumas', 'Neryžtingumas', 'Užsispyrimas', 'Ignoravimas', 'Manipuliavimas', 'Pesimizmas', 'Skubotumas',
                 'Neetiškas elgesys', 'Nepagarba', 'Apatija', 'Neigiamas požiūris', 'Komunikacijos stoka', 'Negebėjimas priimti sprendimų'
             ];
 
@@ -493,25 +683,26 @@
                 });
                 keywordCloud.appendChild(keywordEl);
             });
+        }
 
-            openKeywordModalBtn.addEventListener('click', () => {
-                keywordModal.classList.remove('hidden');
-            });
+        openKeywordModalBtn.addEventListener('click', () => {
+            keywordModal.classList.remove('hidden');
+        });
 
-            closeKeywordModalBtn.addEventListener('click', () => {
+        closeKeywordModalBtn.addEventListener('click', () => {
+            keywordModal.classList.add('hidden');
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target == keywordModal) {
                 keywordModal.classList.add('hidden');
-            });
-
-            window.addEventListener('click', (event) => {
-                if (event.target == keywordModal) {
-                    keywordModal.classList.add('hidden');
-                }
-            });
+            }
+        });
         });
     </script>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             function getCookie(name) {
                 let cookieValue = null;
                 if (document.cookie && document.cookie !== '') {
@@ -527,7 +718,7 @@
                 return cookieValue;
             }
 
-            document.getElementById('generate-ai-btn').addEventListener('click', function() {
+            document.getElementById('generate-ai-btn').addEventListener('click', function () {
                 const btn = this;
                 const spinner = document.getElementById('ai-spinner');
                 const btnText = document.getElementById('ai-btn-text');
@@ -567,26 +758,27 @@
                     },
                     body: JSON.stringify(data),
                 })
-                .then(response => response.json())
-                .then(result => {
-                    if (result.generated_feedback) {
-                        document.getElementById('feedback').value = result.generated_feedback;
-                    } else if (result.error) {
-                        console.error('Klaida generuojant atsiliepimą:', result.error);
-                        alert('Atsiprašome, įvyko klaida generuojant atsiliepimą. Bandykite vėliau.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Fetch klaida:', error);
-                    alert('Atsiprašome, įvyko tinklo klaida. Bandykite vėliau.');
-                })
-                .finally(() => {
-                    spinner.classList.add('hidden');
-                    btnText.textContent = 'Generuoti (AI)';
-                    btn.disabled = false;
-                });
+                    .then(response => response.json())
+                    .then(result => {
+                        if (result.generated_feedback) {
+                            document.getElementById('feedback').value = result.generated_feedback;
+                        } else if (result.error) {
+                            console.error('Klaida generuojant atsiliepimą:', result.error);
+                            alert('Atsiprašome, įvyko klaida generuojant atsiliepimą. Bandykite vėliau.');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Fetch klaida:', error);
+                        alert('Atsiprašome, įvyko tinklo klaida. Bandykite vėliau.');
+                    })
+                    .finally(() => {
+                        spinner.classList.add('hidden');
+                        btnText.textContent = 'Generuoti (AI)';
+                        btn.disabled = false;
+                    });
             });
         });
     </script>
 </body>
+
 </html>

@@ -21,10 +21,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-p5iow3v#5mf)w0-64u9byz1@!5^anc64er!)nz2+8+rox&d!@y'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'change-me-in-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
 ALLOWED_HOSTS = ['127.0.0.1', '172.28.117.18', '*']
 
@@ -149,5 +149,5 @@ AUTHENTICATION_BACKENDS = [
 LOGIN_REDIRECT_URL = '/home/'
 LOGIN_URL = '/login/'
 
-# For production, it's recommended to store the API key as an environment variable.
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', 'AIzaSyAROW9qQ7KxUFH96UFQ8rjDe-E9MmEYBkg')
+# API key stored in .env file
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')

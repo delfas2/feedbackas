@@ -95,11 +95,11 @@ class FeedbackAnalytics:
             problem_solving=Avg('problem_solving_rating')
         )
         competencies = [
-            {'name': 'Komandinis Darbas', 'score': round(competency_averages.get('teamwork') or 0, 1)},
-            {'name': 'Komunikacija', 'score': round(competency_averages.get('communication') or 0, 1)},
-            {'name': 'Iniciatyvumas', 'score': round(competency_averages.get('initiative') or 0, 1)},
-            {'name': 'Techninės Žinios', 'score': round(competency_averages.get('technical_skills') or 0, 1)},
-            {'name': 'Problemų Sprendimas', 'score': round(competency_averages.get('problem_solving') or 0, 1)},
+            {'name': 'Komandinis Darbas', 'score': round(competency_averages.get('teamwork') or 0, 2)},
+            {'name': 'Komunikacija', 'score': round(competency_averages.get('communication') or 0, 2)},
+            {'name': 'Iniciatyvumas', 'score': round(competency_averages.get('initiative') or 0, 2)},
+            {'name': 'Techninės Žinios', 'score': round(competency_averages.get('technical_skills') or 0, 2)},
+            {'name': 'Problemų Sprendimas', 'score': round(competency_averages.get('problem_solving') or 0, 2)},
         ]
 
         training_map = {
@@ -119,7 +119,7 @@ class FeedbackAnalytics:
                 })
         
         return {
-            'overall_avg_rating': round(overall_avg_rating, 1),
+            'overall_avg_rating': round(overall_avg_rating, 2),
             'received_feedback_count': completed_feedback.count(),
             'all_keywords': list(set(all_keywords))[:7],
             'competencies': competencies,

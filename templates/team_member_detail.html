@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+{% block title %}{{ member.get_full_name }} — Komandos Statistika{% endblock %}
+
+{% block content %}
+<main class="flex-1 overflow-y-auto">
+    <header class="bg-white shadow-sm p-4">
+        <div class="flex items-center space-x-4">
+            <a href="{% url 'team_statistics' %}" class="text-gray-400 hover:text-purple-600 transition">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                </svg>
+            </a>
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">{{ member.get_full_name }}</h1>
+                <p class="text-sm text-gray-500">{{ department.name }} · {{ member.email }}</p>
+            </div>
+        </div>
+    </header>
+
+    <div class="p-6 md:p-8 space-y-8">
+
+        <!-- 1. Summary -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden">
+                <div
+                    class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-purple-100 rounded-full opacity-50 blur-2xl">
+                </div>
+                <p class="text-gray-500 font-medium text-sm mb-1">Bendras vidurkis</p>
+                <h2 class="text-4xl font-extrabold text-gray-800">{{ avg_rating }}</h2>
+                <p class="text-xs text-gray-400 mt-1">iš 4 galimų</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <p class="text-gray-500 font-medium text-sm mb-1">Atsiliepimų</p>
+                <h2 class="text-4xl font-extrabold text-purple-600">{{ feedback_count }}</h2>
+                <p class="text-xs text-gray-400 mt-1">užbaigtų apklausų</p>
+            </div>
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <p class="text-gray-500 font-medium text-sm mb-1">Raktiniai žodžiai</p>
+                <div class="flex flex-wrap gap-1 mt-2">
+                    {% for kw in all_keywords %}
+                    <span class="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">{{ kw }}</span>
+                    {% empty %}
+                    <span class="text-xs text-gray-400">Kol kas nėra</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. Competencies + Trait Ratings -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Standard competencies -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-5">Kompetencijos</h3>
+                <div class="space-y-4">
+                    {% for comp in competencies %}
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700">{{ comp.name }}</span>
+                            <span class="text-sm font-bold text-purple-600">{{ comp.score }}/4</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-2.5">
+                            <div class="bg-purple-500 h-2.5 rounded-full"
+                                style="width: {% widthratio comp.score 4 100 %}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Trait ratings (from questionnaires) -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h3 class="text-lg font-bold text-gray-800 mb-5">Savybių įvertinimai</h3>
+                {% if trait_ratings %}
+                <div class="space-y-4">
+                    {% for tr in trait_ratings %}
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700">{{ tr.trait__name }}</span>
+                            <span class="text-sm font-bold text-purple-600">{{ tr.avg_rating|floatformat:1 }}/4</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-2.5">
+                            <div class="bg-emerald-500 h-2.5 rounded-full"
+                                style="width: {% widthratio tr.avg_rating 4 100 %}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-sm text-gray-400">Šis darbuotojas dar neturi savybių įvertinimų.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- 3. All feedbacks timeline -->
+        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+            <div class="p-6 border-b border-gray-100">
+                <h3 class="text-lg font-bold text-gray-800">Visi atsiliepimai</h3>
+            </div>
+            <div class="divide-y divide-gray-100">
+                {% for fb in feedbacks %}
+                <div class="p-6 hover:bg-gray-50 transition">
+                    <div class="flex items-start justify-between mb-3">
+                        <div class="flex items-center space-x-3">
+                            <div
+                                class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-bold text-xs">
+                                {{ fb.feedback_request.requested_to.first_name|first }}{{ fb.feedback_request.requested_to.last_name|first }}</div>
+                            <div>
+                                <p class="text-sm font-medium text-gray-900">{{ fb.feedback_request.requested_to.get_full_name }}</p>
+                                <p class="text-xs text-gray-400">{{ fb.feedback_request.created_at|date:"Y-m-d" }}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-lg font-bold text-gray-800">{{ fb.rating }}</span><span
+                                class="text-xs text-gray-400">/4</span>
+                            {% if fb.feedback_request.questionnaire %}
+                            <span
+                                class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-700">📋
+                                {{ fb.feedback_request.questionnaire.name }}</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    {% if fb.feedback %}
+                    <div class="bg-gray-50 rounded-lg p-3 mb-3">
+                        <p class="text-sm text-gray-700 leading-relaxed">{{ fb.feedback }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if fb.comments %}
+                    <div class="bg-yellow-50 border border-yellow-100 rounded-lg p-3 mb-3">
+                        <p class="text-xs font-semibold text-yellow-700 mb-1">💬 Komentaras:</p>
+                        <p class="text-sm text-gray-700">{{ fb.comments }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if fb.keywords %}
+                    <div class="flex flex-wrap gap-1">
+                        <span class="px-2 py-0.5 bg-purple-50 text-purple-600 rounded-full text-xs">{{ fb.keywords }}</span>
+                    </div>
+                    {% endif %}
+
+                    <!-- Competency mini-bars -->
+                    <div class="grid grid-cols-5 gap-2 mt-3">
+                        <div class="text-center">
+                            <div class="text-xs text-gray-400 mb-1">Komanda</div>
+                            <div class="w-full bg-gray-100 rounded-full h-1.5">
+                                <div class="bg-purple-400 h-1.5 rounded-full"
+                                    style="width: {% widthratio fb.teamwork_rating 4 100 %}%"></div>
+                            </div>
+                            <div class="text-xs font-medium text-gray-600 mt-0.5">{{ fb.teamwork_rating }}</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xs text-gray-400 mb-1">Komunik.</div>
+                            <div class="w-full bg-gray-100 rounded-full h-1.5">
+                                <div class="bg-purple-400 h-1.5 rounded-full"
+                                    style="width: {% widthratio fb.communication_rating 4 100 %}%"></div>
+                            </div>
+                            <div class="text-xs font-medium text-gray-600 mt-0.5">{{ fb.communication_rating }}</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xs text-gray-400 mb-1">Iniciat.</div>
+                            <div class="w-full bg-gray-100 rounded-full h-1.5">
+                                <div class="bg-purple-400 h-1.5 rounded-full"
+                                    style="width: {% widthratio fb.initiative_rating 4 100 %}%"></div>
+                            </div>
+                            <div class="text-xs font-medium text-gray-600 mt-0.5">{{ fb.initiative_rating }}</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xs text-gray-400 mb-1">Techn.</div>
+                            <div class="w-full bg-gray-100 rounded-full h-1.5">
+                                <div class="bg-purple-400 h-1.5 rounded-full"
+                                    style="width: {% widthratio fb.technical_skills_rating 4 100 %}%"></div>
+                            </div>
+                            <div class="text-xs font-medium text-gray-600 mt-0.5">{{ fb.technical_skills_rating }}</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-xs text-gray-400 mb-1">Probl.</div>
+                            <div class="w-full bg-gray-100 rounded-full h-1.5">
+                                <div class="bg-purple-400 h-1.5 rounded-full"
+                                    style="width: {% widthratio fb.problem_solving_rating 4 100 %}%"></div>
+                            </div>
+                            <div class="text-xs font-medium text-gray-600 mt-0.5">{{ fb.problem_solving_rating }}</div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="p-8 text-center text-gray-400">
+                    Šis darbuotojas dar neturi jokių atsiliepimų.
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+    </div>
+</main>
+{% endblock %}
