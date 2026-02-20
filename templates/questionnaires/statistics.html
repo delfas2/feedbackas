@@ -1,0 +1,184 @@
+{% extends "base.html" %}
+
+{% block title %}Klausimyno Statistika - PowerUp{% endblock %}
+
+{% block content %}
+<!-- Pagrindinis Turinys -->
+<main class="flex-1 overflow-y-auto">
+
+    <!-- Viršutinė juosta -->
+    <header class="bg-white shadow-sm p-4 flex justify-between items-center">
+        <!-- Mobilus Meniu Mygtukas -->
+        <button class="md:hidden p-2 text-gray-600">
+            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+        </button>
+
+        <div class="flex items-center space-x-4">
+            <a href="{% url 'questionnaires_list' %}" class="text-gray-500 hover:text-purple-600 transition-colors">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                </svg>
+            </a>
+            <h1 class="text-2xl font-bold text-gray-800 hidden md:block">
+                Statistika: {{ questionnaire.title }} 📊
+            </h1>
+        </div>
+
+    </header>
+
+    <!-- Turinys -->
+    <div class="p-6 md:p-8 space-y-8">
+
+        <!-- 1. Apibendrinimo Kortelė -->
+        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 relative overflow-hidden">
+            <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-purple-100 rounded-full opacity-50 blur-2xl">
+            </div>
+
+            <div class="flex flex-col md:flex-row justify-between items-center gap-8 relative z-10">
+                <!-- Įvertinimas -->
+                <div class="text-center md:text-left">
+                    <p class="text-gray-500 font-medium mb-1">Bendras Įvertinimas</p>
+                    <div class="flex items-baseline gap-2 justify-center md:justify-start">
+                        <h2 class="text-5xl font-extrabold text-gray-800">{{ overall_avg_rating }}</h2>
+                    </div>
+                    <p class="text-sm text-gray-400 mt-2">Visų atsakymų vidurkis</p>
+                </div>
+
+                <!-- Statistika -->
+                <div class="flex gap-8">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold text-purple-600">{{ received_feedback_count }}</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide">Gauta Atsakymų</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 1.5 Grafikas -->
+        <div class="bg-white rounded-2xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-gray-800 mb-6">Rezultatų Dinamika</h3>
+            <div class="relative h-64 w-full">
+                <canvas id="statisticsChart"></canvas>
+            </div>
+        </div>
+
+        <!-- 2. Kompetencijų Grafikas ir Detalės -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- Kairė: Kompetencijos (Progress Bars) -->
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">Kompetencijų Vidurkiai</h3>
+                <div class="space-y-6">
+
+                    {% for comp in competencies %}
+                    <div>
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium text-gray-700">{{ comp.name }}</span>
+                            <span class="text-sm font-bold text-purple-600">{{ comp.score }}/4</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-3">
+                            <div class="bg-purple-500 h-3 rounded-full"
+                                style="width: {% widthratio comp.score 4 100 %}%"></div>
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            <!-- Dešinė: Raktiniai Žodžiai -->
+            <div class="bg-white rounded-2xl shadow-lg p-6">
+                <h3 class="text-xl font-bold text-gray-800 mb-6">Kolegų Paminėti Raktiniai Žodžiai</h3>
+                <div class="flex flex-wrap gap-2">
+                    {% for keyword in all_keywords %}
+                    <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">{{ keyword
+                        }}</span>
+                    {% empty %}
+                    <span class="text-sm text-gray-500">Kol kas nėra raktinių žodžių.</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. Kokybiniai Atsiliepimai -->
+        <div class="grid grid-cols-1 gap-6">
+
+            <div class="bg-green-50 border border-green-100 rounded-2xl p-6">
+                <div class="flex items-center mb-4">
+                    <div class="bg-green-100 p-2 rounded-full mr-3">
+                        <svg class="w-6 h-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.247-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.176.405.28.6a3.75 3.75 0 10-4.296-5.75l-.02.02a.75.75 0 01-1.248-.742l.2-.406a5.25 5.25 0 011.683-1.914M5.904 18.75c.098-.237.21-.468.332-.688M5.904 18.75h2.906" />
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-bold text-green-800">Laisvos formos komentarai</h3>
+                </div>
+                <ul class="space-y-4">
+                    {% for feedback_text in strengths %}
+                    <li class="bg-white p-3 rounded-lg shadow-sm text-gray-700 text-sm">
+                        "{{ feedback_text }}"
+                    </li>
+                    {% empty %}
+                    <li class="text-sm text-gray-500">Kol kas nėra atsiliepimų.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+
+        </div>
+
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const chartData = JSON.parse('{{ chart_data_json|escapejs }}');
+
+        if (chartData && chartData.labels.length > 0) {
+            const ctx = document.getElementById('statisticsChart').getContext('2d');
+
+            new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5,
+                            ticks: { stepSize: 1 }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                usePointStyle: true,
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+        } else {
+            document.getElementById('statisticsChart').parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-gray-500">Trūksta duomenų grafiko atvaizdavimui.</div>';
+        }
+    });
+</script>
+{% endblock %}

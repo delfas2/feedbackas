@@ -53,6 +53,7 @@ urlpatterns = [
     path('questionnaires/create/', views.create_questionnaire, name='create_questionnaire'),
     path('questionnaires/delete/<int:questionnaire_id>/', views.delete_questionnaire, name='delete_questionnaire'),
     path('questionnaires/send/', views.send_questionnaire, name='send_questionnaire'),
+    path('questionnaires/<int:questionnaire_id>/statistics/', views.questionnaire_statistics, name='questionnaire_statistics'),
 ]
 
 from django.conf import settings

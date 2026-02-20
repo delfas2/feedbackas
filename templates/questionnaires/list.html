@@ -42,6 +42,8 @@
                         <p class="text-sm text-gray-500 mt-1">Sukurta: {{ q.created_at|date:"Y-m-d H:i" }}</p>
                     </div>
                     <div class="flex space-x-2">
+                        <a href="{% url 'questionnaire_statistics' q.id %}"
+                            class="text-blue-600 hover:text-blue-800 text-sm font-medium mr-4">Statistika</a>
                         <button type="button"
                             class="text-purple-600 hover:text-purple-800 text-sm font-medium open-send-modal mr-4"
                             data-questionnaire-id="{{ q.id }}" data-questionnaire-title="{{ q.title }}">Siųsti</button>

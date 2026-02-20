@@ -604,5 +604,91 @@ def delete_questionnaire(request, questionnaire_id):
     if request.method == 'POST':
         questionnaire = get_object_or_404(Questionnaire, id=questionnaire_id, created_by=request.user)
         questionnaire.delete()
-        messages.success(request, 'Klausimynas ištrintas.')
+        messages.success(request, 'Klausimynas sėkmingai ištrintas.')
     return redirect('questionnaires_list')
+
+@login_required
+def questionnaire_statistics(request, questionnaire_id):
+    from .models import Questionnaire, FeedbackRequest, Feedback
+    from .services import FeedbackAnalytics
+
+    questionnaire = get_object_or_404(Questionnaire, id=questionnaire_id, created_by=request.user)
+
+    # Fetch feedback requests related to this questionnaire
+    # For now, we linked them by using project_name=questionnaire.title
+    feedback_requests = FeedbackRequest.objects.filter(
+        requester=request.user,
+        project_name=questionnaire.title,
+        status='completed'
+    )
+    
+    feedbacks = Feedback.objects.filter(feedback_request__in=feedback_requests)
+    
+    overall_avg_rating = feedbacks.aggregate(Avg('rating'))['rating__avg'] or 0
+    received_feedback_count = feedbacks.count()
+    
+    competencies = [
+        {'name': 'Komandinis darbas', 'score': feedbacks.aggregate(Avg('teamwork_rating'))['teamwork_rating__avg'] or 0},
+        {'name': 'Komunikacija', 'score': feedbacks.aggregate(Avg('communication_rating'))['communication_rating__avg'] or 0},
+        {'name': 'Iniciatyvumas', 'score': feedbacks.aggregate(Avg('initiative_rating'))['initiative_rating__avg'] or 0},
+        {'name': 'Technologinės žinios', 'score': feedbacks.aggregate(Avg('technical_skills_rating'))['technical_skills_rating__avg'] or 0},
+        {'name': 'Problemų sprendimas', 'score': feedbacks.aggregate(Avg('problem_solving_rating'))['problem_solving_rating__avg'] or 0},
+    ]
+
+    all_keywords = []
+    for fb in feedbacks:
+        if fb.keywords:
+            keys = [k.strip() for k in fb.keywords.split(',') if k.strip()]
+            all_keywords.extend(keys)
+
+    all_keywords = list(set(all_keywords)) # Unique keywords
+
+    strengths = []
+    improvements = []
+    
+    # We can separate comments into strengths/improvements if we want, but for now we'll just list comments
+    for fb in feedbacks:
+        if fb.comments:
+            strengths.append(fb.comments) 
+
+    import json
+    from django.db.models.functions import TruncDate
+
+    chronological_feedbacks = feedbacks.annotate(
+        date=TruncDate('feedback_request__created_at')
+    ).values('date').annotate(
+        avg_rating=Avg('rating'),
+        avg_teamwork=Avg('teamwork_rating'),
+        avg_communication=Avg('communication_rating'),
+        avg_initiative=Avg('initiative_rating'),
+        avg_technical=Avg('technical_skills_rating'),
+        avg_problem_solving=Avg('problem_solving_rating')
+    ).order_by('date')
+
+    chart_labels = [fb['date'].strftime('%Y-%m-%d') if fb['date'] else 'Data nežinoma' for fb in chronological_feedbacks]
+    
+    chart_data = {
+        'labels': chart_labels,
+        'datasets': [
+            {'label': 'Bendras', 'data': [round(fb['avg_rating'], 1) for fb in chronological_feedbacks], 'borderColor': '#8B5CF6', 'tension': 0.3},
+            {'label': 'Komandinis darbas', 'data': [round(fb['avg_teamwork'], 1) for fb in chronological_feedbacks], 'borderColor': '#3B82F6', 'tension': 0.3, 'hidden': True},
+            {'label': 'Komunikacija', 'data': [round(fb['avg_communication'], 1) for fb in chronological_feedbacks], 'borderColor': '#10B981', 'tension': 0.3, 'hidden': True},
+            {'label': 'Iniciatyvumas', 'data': [round(fb['avg_initiative'], 1) for fb in chronological_feedbacks], 'borderColor': '#F59E0B', 'tension': 0.3, 'hidden': True},
+            {'label': 'Technologinės žinios', 'data': [round(fb['avg_technical'], 1) for fb in chronological_feedbacks], 'borderColor': '#EF4444', 'tension': 0.3, 'hidden': True},
+            {'label': 'Problemų sprendimas', 'data': [round(fb['avg_problem_solving'], 1) for fb in chronological_feedbacks], 'borderColor': '#6366F1', 'tension': 0.3, 'hidden': True},
+        ]
+    }
+
+    context = {
+        'questionnaire': questionnaire,
+        'overall_avg_rating': round(overall_avg_rating, 1),
+        'received_feedback_count': received_feedback_count,
+        'competencies': competencies,
+        'all_keywords': all_keywords,
+        'strengths': strengths,
+        'improvements': improvements,
+        'chart_data_json': json.dumps(chart_data),
+    }
+
+    
+    return render(request, 'questionnaires/statistics.html', context)
