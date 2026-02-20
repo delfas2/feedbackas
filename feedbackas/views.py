@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
 from django.db.models import Q, Count, Avg
 from .forms import RegistrationForm, FeedbackForm
 from django.contrib.auth import login, logout
@@ -487,3 +488,121 @@ def stop_impersonation(request):
         return redirect('superadmin_dashboard')
         
     return redirect('home')
+
+# === Questionnaires ===
+
+@login_required
+def questionnaires_list(request):
+    from .models import Questionnaire, Trait
+    
+    if not Trait.objects.exists():
+        default_traits = [
+            'Komandinis darbas', 'Komunikabilumas', 'Iniciatyvumas', 'Problemų sprendimas', 'Lyderystė',
+            'Analitinis mąstymas', 'Kūrybiškumas', 'Adaptabilumas', 'Atsakingumas', 'Laiko planavimas',
+            'Techninės žinios', 'Strateginis mąstymas', 'Klientų aptarnavimas', 'Derybos', 'Prezentavimo įgūdžiai',
+            'Patikimumas', 'Motyvacija', 'Pozityvumas', 'Efektyvumas', 'Savarankiškumas'
+        ]
+        for t in default_traits:
+            Trait.objects.get_or_create(name=t)
+            
+    questionnaires = Questionnaire.objects.filter(created_by=request.user).order_by('-created_at')
+    all_traits = Trait.objects.all().order_by('name')
+    
+    # Get team members for sending questionnaires
+    team_members_qs = User.objects.none()
+    try:
+        user_company_link = request.user.profile.company_link
+        if user_company_link:
+            team_members_qs = User.objects.filter(profile__company_link=user_company_link).exclude(id=request.user.id)
+        else:
+             team_members_qs = User.objects.filter(profile__company_link__isnull=True).exclude(id=request.user.id)
+    except Exception:
+        team_members_qs = User.objects.filter(profile__isnull=True).exclude(id=request.user.id)
+        
+    team_members = team_members_qs.order_by('first_name', 'last_name')
+
+    return render(request, 'questionnaires/list.html', {
+        'questionnaires': questionnaires,
+        'all_traits': all_traits,
+        'team_members': team_members,
+    })
+
+@login_required
+def create_questionnaire(request):
+    from .models import Questionnaire, Trait
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        if not title:
+            messages.error(request, 'Klausimyno pavadinimas yra privalomas.')
+            return redirect('questionnaires_list')
+
+        questionnaire = Questionnaire.objects.create(title=title, created_by=request.user)
+
+        # Add existing traits
+        trait_ids = request.POST.getlist('trait_ids')
+        for tid in trait_ids:
+            try:
+                trait = Trait.objects.get(id=int(tid))
+                questionnaire.traits.add(trait)
+            except (Trait.DoesNotExist, ValueError):
+                pass
+
+        # Add custom traits
+        custom_traits = request.POST.getlist('custom_traits')
+        for name in custom_traits:
+            name = name.strip()
+            if name:
+                trait, _ = Trait.objects.get_or_create(name=name, defaults={'created_by': request.user})
+                questionnaire.traits.add(trait)
+
+        messages.success(request, f'Klausimynas "{title}" sėkmingai sukurtas!')
+    return redirect('questionnaires_list')
+
+
+@login_required
+@require_POST
+def send_questionnaire(request):
+    from .models import Questionnaire, FeedbackRequest
+    from django.contrib.auth.models import User
+    
+    questionnaire_id = request.POST.get('questionnaire_id')
+    colleague_id = request.POST.get('colleague_id')
+    
+    if not questionnaire_id or not colleague_id:
+        messages.error(request, 'Trūksta duomenų klausimyno siuntimui.')
+        return redirect('questionnaires_list')
+        
+    questionnaire = get_object_or_404(Questionnaire, id=questionnaire_id, created_by=request.user)
+    requested_to = get_object_or_404(User, id=colleague_id)
+    
+    # Check if a pending request already exists for this questionnaire and colleague
+    existing = FeedbackRequest.objects.filter(
+        requester=request.user,
+        requested_to=requested_to,
+        status='pending',
+        project_name=questionnaire.title
+    ).exists()
+    
+    if existing:
+        messages.warning(request, f'Klausimynas "{questionnaire.title}" jau išsiųstas kolegai {requested_to.first_name} {requested_to.last_name} ir dar neužpildytas.')
+        return redirect('questionnaires_list')
+        
+    FeedbackRequest.objects.create(
+        requester=request.user,
+        requested_to=requested_to,
+        project_name=questionnaire.title, # Using title as project_name for now
+        comment=f"Prašau užpildyti klausimyną: {questionnaire.title}",
+        due_date=date.today()
+    )
+    
+    messages.success(request, f'Klausimynas "{questionnaire.title}" sėkmingai išsiųstas kolegai {requested_to.first_name} {requested_to.last_name}.')
+    return redirect('questionnaires_list')
+
+@login_required
+def delete_questionnaire(request, questionnaire_id):
+    from .models import Questionnaire
+    if request.method == 'POST':
+        questionnaire = get_object_or_404(Questionnaire, id=questionnaire_id, created_by=request.user)
+        questionnaire.delete()
+        messages.success(request, 'Klausimynas ištrintas.')
+    return redirect('questionnaires_list')

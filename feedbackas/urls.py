@@ -49,6 +49,10 @@ urlpatterns = [
     path('superadmin/impersonate/<int:user_id>/', views.superadmin_impersonate_user, name='superadmin_impersonate_user'),
     path('stop-impersonation/', views.stop_impersonation, name='stop_impersonation'),
     path('profile/', user_views.profile, name='profile'),
+    path('questionnaires/', views.questionnaires_list, name='questionnaires_list'),
+    path('questionnaires/create/', views.create_questionnaire, name='create_questionnaire'),
+    path('questionnaires/delete/<int:questionnaire_id>/', views.delete_questionnaire, name='delete_questionnaire'),
+    path('questionnaires/send/', views.send_questionnaire, name='send_questionnaire'),
 ]
 
 from django.conf import settings

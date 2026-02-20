@@ -1,0 +1,384 @@
+{% extends "base.html" %}
+{% block title %}Individuali forma{% endblock %}
+
+{% block style %}
+.trait-tag { transition: all 0.2s; cursor: pointer; }
+.trait-tag:hover { transform: scale(1.05); }
+.trait-tag.selected { ring: 2px solid #8B5CF6; }
+{% endblock %}
+
+{% block content %}
+<main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+    <div class="max-w-5xl mx-auto">
+        <!-- Header -->
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-bold text-gray-800">Individuali forma</h1>
+            <button id="open-create-modal"
+                class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
+                <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                    stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Kurti klausimyną
+            </button>
+        </div>
+
+        {% if messages %}
+        {% for message in messages %}
+        <div
+            class="mb-4 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-50 text-red-700{% else %}bg-green-50 text-green-700{% endif %}">
+            {{ message }}</div>
+        {% endfor %}
+        {% endif %}
+
+        <!-- Questionnaires List -->
+        {% if questionnaires %}
+        <div class="grid gap-4">
+            {% for q in questionnaires %}
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+                <div class="flex justify-between items-start">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-800">{{ q.title }}</h3>
+                        <p class="text-sm text-gray-500 mt-1">Sukurta: {{ q.created_at|date:"Y-m-d H:i" }}</p>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button type="button"
+                            class="text-purple-600 hover:text-purple-800 text-sm font-medium open-send-modal mr-4"
+                            data-questionnaire-id="{{ q.id }}" data-questionnaire-title="{{ q.title }}">Siųsti</button>
+                        <form method="POST" action="{% url 'delete_questionnaire' q.id %}" class="inline">
+                            {% csrf_token %}
+                            <button type="submit" class="text-red-500 hover:text-red-700 text-sm"
+                                onclick="return confirm('Ar tikrai norite ištrinti?')">Ištrinti</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="flex flex-wrap gap-2 mt-3">
+                    {% for trait in q.traits.all %}
+                    <span
+                        class="inline-block px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-semibold">
+                        {{ trait.name }}
+                    </span>
+                    {% empty %}
+                    <span class="text-sm text-gray-400 italic">Nėra savybių</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-center py-16 bg-white rounded-xl shadow-sm border border-gray-100">
+            <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none"
+                viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
+            </svg>
+            <p class="text-gray-500 text-lg">Kol kas neturite klausimynų</p>
+            <p class="text-gray-400 text-sm mt-1">Paspauskite "Kurti klausimyną" norėdami pradėti</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Create Questionnaire Modal -->
+    <div id="create-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div
+                class="bg-white rounded-2xl shadow-xl max-w-2xl w-full text-left overflow-hidden transform transition-all sm:my-8">
+                <div class="p-6 border-b flex justify-between items-center bg-white sticky top-0 z-10">
+                    <h2 class="text-xl font-bold text-gray-800">Naujas klausimynas</h2>
+                    <button id="close-create-modal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <form method="POST" action="{% url 'create_questionnaire' %}"
+                    class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+                    {% csrf_token %}
+
+                    <!-- Title -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Klausimyno pavadinimas</label>
+                        <input type="text" name="title" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                            placeholder="pvz., Komandinio darbo vertinimas">
+                    </div>
+
+                    <!-- Trait Cloud -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Savybių debesis <span
+                                class="text-gray-400 font-normal">(paspauskite norimas savybes)</span></label>
+                        <div id="trait-cloud"
+                            class="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[80px]">
+                            {% for trait in all_traits %}
+                            <span
+                                class="trait-tag inline-block px-3 py-1 bg-white border border-gray-300 rounded-full text-sm text-gray-700 hover:border-purple-500 hover:text-purple-700"
+                                data-trait-id="{{ trait.id }}" data-trait-name="{{ trait.name }}">{{ trait.name }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Custom Trait Input -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Pridėti savo savybę</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="custom-trait-input"
+                                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                                placeholder="Įveskite savybės pavadinimą...">
+                            <button type="button" id="add-custom-trait"
+                                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">Pridėti</button>
+                        </div>
+                    </div>
+
+                    <!-- Selected Traits (hidden inputs container) -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Pasirinktos savybės</label>
+                        <div id="selected-traits" class="flex flex-wrap gap-2 min-h-[40px]">
+                            <span id="no-traits-msg" class="text-sm text-gray-400 italic">Dar nepasirinkta jokia
+                                savybė</span>
+                        </div>
+                        <div id="hidden-inputs"></div>
+                    </div>
+                </form>
+
+                <!-- Submit Footer -->
+                <div
+                    class="p-6 border-t flex justify-end items-center bg-gray-50 sticky bottom-0 z-10 w-full rounded-b-2xl">
+                    <button type="button" id="cancel-modal"
+                        class="px-4 py-2 text-gray-600 hover:text-gray-800 mr-3">Atšaukti</button>
+                    <button type="button" onclick="document.querySelector('#create-modal form').submit()"
+                        class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">Sukurti</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Send Questionnaire Modal -->
+    <div id="send-modal"
+        class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden flex items-center justify-center"
+        style="z-index: 50;">
+        <div
+            class="bg-white rounded-2xl shadow-xl max-w-md w-full mx-auto max-h-[90vh] overflow-y-auto border border-gray-100">
+            <div class="p-6 sm:p-8">
+                <div class="sm:flex sm:items-start">
+                    <div
+                        class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-purple-100 sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+                        </svg>
+                    </div>
+                    <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
+                        <h3 class="text-xl font-bold leading-6 text-gray-900" id="modal-title">Siųsti klausimyną
+                        </h3>
+                        <div class="mt-2 text-left">
+                            <p class="text-sm text-gray-500">Pasirinkite kolegą, kurį norite paprašyti užpildyti
+                                šį klausimyną.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="POST" action="{% url 'send_questionnaire' %}" class="mt-6 space-y-6">
+                    {% csrf_token %}
+                    <input type="hidden" name="questionnaire_id" id="send-questionnaire-id">
+
+                    <!-- Display Questionnaire Name Beautifully -->
+                    <div class="bg-purple-50 rounded-xl p-4 flex items-center border border-purple-100">
+                        <div class="flex-shrink-0">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                            </svg>
+                        </div>
+                        <div class="ml-3 overflow-hidden">
+                            <p class="text-xs font-semibold text-purple-800 uppercase tracking-wider">Jūsų
+                                pasirinktas klausimynas</p>
+                            <p id="send-questionnaire-title" class="text-lg font-bold text-gray-900 mt-1 truncate">
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- User Select -->
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Kam norite jį
+                            išsiųsti?</label>
+                        <div class="relative">
+                            <select name="colleague_id" required
+                                class="block w-full rounded-xl border-gray-300 py-3 pl-4 pr-10 text-gray-900 bg-gray-50 shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 sm:text-base appearance-none border cursor-pointer hover:bg-gray-100 transition-colors">
+                                <option value="" disabled selected>-- Pasirinkite kolegą --</option>
+                                {% for colleague in team_members %}
+                                <option value="{{ colleague.id }}">{{ colleague.first_name }} {{
+                                    colleague.last_name }}</option>
+                                {% empty %}
+                                <option value="" disabled>Nėra kolegų, kuriems galėtumėte išsiųsti</option>
+                                {% endfor %}
+                            </select>
+                            <div
+                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd"
+                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t border-gray-100">
+                        <button type="button" id="cancel-send-modal"
+                            class="inline-flex w-full justify-center rounded-xl bg-white px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:w-auto transition-colors">Atšaukti</button>
+                        <button type="submit"
+                            class="inline-flex w-full justify-center rounded-xl bg-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 sm:w-auto transition-all transform hover:scale-[1.02]">Išsiųsti</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const modal = document.getElementById('create-modal');
+        const openBtn = document.getElementById('open-create-modal');
+        const closeBtn = document.getElementById('close-create-modal');
+        const cancelBtn = document.getElementById('cancel-modal');
+
+        openBtn.addEventListener('click', () => modal.classList.remove('hidden'));
+        closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+        cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+
+        // Send Modal Logic
+        const sendModal = document.getElementById('send-modal');
+        const closeSendBtn = document.getElementById('close-send-modal');
+        const cancelSendBtn = document.getElementById('cancel-send-modal');
+        const sendQuestionnaireIdInput = document.getElementById('send-questionnaire-id');
+        const sendQuestionnaireTitleDisplay = document.getElementById('send-questionnaire-title');
+
+        document.querySelectorAll('.open-send-modal').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const qId = this.dataset.questionnaireId;
+                const qTitle = this.dataset.questionnaireTitle;
+
+                sendQuestionnaireIdInput.value = qId;
+                sendQuestionnaireTitleDisplay.textContent = qTitle;
+
+                sendModal.classList.remove('hidden');
+            });
+        });
+
+        if (closeSendBtn) closeSendBtn.addEventListener('click', () => sendModal.classList.add('hidden'));
+        if (cancelSendBtn) cancelSendBtn.addEventListener('click', () => sendModal.classList.add('hidden'));
+
+        sendModal.addEventListener('click', (e) => {
+            const panel = sendModal.querySelector('.relative.transform');
+            if (panel && !panel.contains(e.target)) {
+                sendModal.classList.add('hidden');
+            }
+        });
+
+        // Trait selection
+        const selectedTraits = new Map(); // id -> name (for existing) or 'custom' -> name
+        const traitCloud = document.getElementById('trait-cloud');
+        const selectedContainer = document.getElementById('selected-traits');
+        const hiddenInputs = document.getElementById('hidden-inputs');
+        const noTraitsMsg = document.getElementById('no-traits-msg');
+        let customCounter = 0;
+
+        function updateSelectedDisplay() {
+            // Clear display
+            selectedContainer.querySelectorAll('.selected-trait-tag').forEach(el => el.remove());
+            hiddenInputs.innerHTML = '';
+
+            if (selectedTraits.size === 0) {
+                noTraitsMsg.style.display = '';
+            } else {
+                noTraitsMsg.style.display = 'none';
+                selectedTraits.forEach((name, key) => {
+                    // Display tag
+                    const tag = document.createElement('span');
+                    tag.className = 'selected-trait-tag inline-flex items-center px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold';
+                    tag.innerHTML = name + ' <button type="button" class="ml-1 text-purple-400 hover:text-purple-600" data-key="' + key + '">&times;</button>';
+                    selectedContainer.appendChild(tag);
+
+                    // Hidden input
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    if (String(key).startsWith('custom_')) {
+                        input.name = 'custom_traits';
+                        input.value = name;
+                    } else {
+                        input.name = 'trait_ids';
+                        input.value = key;
+                    }
+                    hiddenInputs.appendChild(input);
+                });
+            }
+
+            // Update cloud styling
+            traitCloud.querySelectorAll('.trait-tag').forEach(tag => {
+                const id = tag.dataset.traitId;
+                if (selectedTraits.has(id)) {
+                    tag.classList.add('bg-purple-100', 'border-purple-500', 'text-purple-700');
+                    tag.classList.remove('bg-white', 'border-gray-300', 'text-gray-700');
+                } else {
+                    tag.classList.remove('bg-purple-100', 'border-purple-500', 'text-purple-700');
+                    tag.classList.add('bg-white', 'border-gray-300', 'text-gray-700');
+                }
+            });
+        }
+
+        // Click on cloud trait
+        traitCloud.addEventListener('click', (e) => {
+            const tag = e.target.closest('.trait-tag');
+            if (!tag) return;
+            const id = tag.dataset.traitId;
+            const name = tag.dataset.traitName;
+            if (selectedTraits.has(id)) {
+                selectedTraits.delete(id);
+            } else {
+                selectedTraits.set(id, name);
+            }
+            updateSelectedDisplay();
+        });
+
+        // Remove selected trait
+        selectedContainer.addEventListener('click', (e) => {
+            const btn = e.target.closest('button[data-key]');
+            if (!btn) return;
+            selectedTraits.delete(btn.dataset.key);
+            updateSelectedDisplay();
+        });
+
+        // Add custom trait
+        const customInput = document.getElementById('custom-trait-input');
+        const addCustomBtn = document.getElementById('add-custom-trait');
+
+        addCustomBtn.addEventListener('click', () => {
+            const name = customInput.value.trim();
+            if (!name) return;
+            // Check duplicates
+            for (const [, v] of selectedTraits) {
+                if (v.toLowerCase() === name.toLowerCase()) return;
+            }
+            customCounter++;
+            selectedTraits.set('custom_' + customCounter, name);
+            customInput.value = '';
+            updateSelectedDisplay();
+        });
+
+        customInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                addCustomBtn.click();
+            }
+        });
+    });
+</script>
+{% endblock %}

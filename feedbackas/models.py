@@ -30,3 +30,19 @@ class Feedback(models.Model):
 
     def __str__(self):
         return f"Feedback for {self.feedback_request}"
+
+class Trait(models.Model):
+    name = models.CharField(max_length=100, unique=True)
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='created_traits')
+
+    def __str__(self):
+        return self.name
+
+class Questionnaire(models.Model):
+    title = models.CharField(max_length=255)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='questionnaires')
+    traits = models.ManyToManyField(Trait, blank=True, related_name='questionnaires')
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return self.title
