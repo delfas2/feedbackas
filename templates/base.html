@@ -150,8 +150,7 @@
                     </a>
                     <div>
                         <a href="{% url 'profile' %}"
-                            class="font-medium text-gray-800 hover:text-purple-600 transition-colors">{% firstof
-                            request.user.get_full_name request.user.username %}</a>
+                            class="font-medium text-gray-800 hover:text-purple-600 transition-colors">{% firstof request.user.get_full_name request.user.username %}</a>
                         <a href="{% url 'logout' %}"
                             class="block text-sm text-purple-600 hover:text-purple-800">Atsijungti</a>
                     </div>
