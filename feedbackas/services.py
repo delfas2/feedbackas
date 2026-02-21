@@ -10,7 +10,7 @@ class FeedbackGenerator:
         Generuoja grįžtamąjį ryšį naudojant Google Gemini AI.
         """
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        model = genai.GenerativeModel(getattr(settings, 'GEMINI_MODEL', 'gemini-1.5-flash'))
 
         prompt = f"""
         Veik kaip konkretus, kolegiškas komandos narys, būk empatiškas ir teik konstruktyvią kritiką.
