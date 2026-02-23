@@ -644,13 +644,121 @@ def superadmin_companies_list(request):
     return render(request, 'superadmin/companies_list.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
+def superadmin_download_employee_template(request):
+    import csv
+    from django.http import HttpResponse
+    
+    response = HttpResponse(
+        content_type='text/csv',
+        headers={'Content-Disposition': 'attachment; filename="darbuotojai_pavyzdys.csv"'},
+    )
+    # Add BOM for Excel compatibility with UTF-8
+    response.write('\ufeff'.encode('utf8'))
+    
+    writer = csv.writer(response, delimiter=';')
+    writer.writerow(['Vardas', 'Pavardė', 'El. paštas', 'Slaptažodis', 'Komandos pavadinimas'])
+    writer.writerow(['Jonas', 'Jonaitis', 'jonas.jonaitis@imone.lt', 'slaptazodis123', 'IT Skyrius'])
+    writer.writerow(['Petras', 'Petraitis', 'petras.petraitis@imone.lt', 'slaptazodis456', 'Pardavimai'])
+    
+    return response
+
+@user_passes_test(lambda u: u.is_superuser)
 def superadmin_create_company(request):
     if request.method == 'POST':
         name = request.POST.get('name')
         if name:
-            from feedbackas.models import Company
-            company = Company.objects.create(name=name)
-            messages.success(request, f'Įmonė "{name}" sėkmingai sukurta.')
+            from users.models import Company, Department, Profile
+            from django.contrib.auth.models import User
+            from django.db import transaction
+            import csv
+            import io
+
+            try:
+                with transaction.atomic():
+                    company = Company.objects.create(name=name)
+                    employee_file = request.FILES.get('employee_list')
+                    
+                    if employee_file:
+                        file_ext = employee_file.name.split('.')[-1].lower()
+                        if file_ext == 'csv':
+                            file_data = employee_file.read().decode('utf-8-sig')
+                            sniffer = csv.Sniffer()
+                            try:
+                                dialect = sniffer.sniff(file_data[:1024])
+                                csv_data = csv.reader(io.StringIO(file_data), dialect)
+                            except csv.Error:
+                                if ';' in file_data[:1024]:
+                                    csv_data = csv.reader(io.StringIO(file_data), delimiter=';')
+                                else:
+                                    csv_data = csv.reader(io.StringIO(file_data), delimiter=',')
+                                    
+                            next(csv_data, None) # Skip header
+                            for row in csv_data:
+                                if len(row) >= 5:
+                                    first_name = row[0].strip()
+                                    last_name = row[1].strip()
+                                    email = row[2].strip()
+                                    password = row[3].strip()
+                                    team_name = row[4].strip()
+                                    
+                                    if not email: continue
+                                    
+                                    user, created = User.objects.get_or_create(email=email, defaults={
+                                        'username': email,
+                                        'first_name': first_name,
+                                        'last_name': last_name,
+                                    })
+                                    if created or not user.has_usable_password():
+                                        user.set_password(password)
+                                        user.save()
+                                        
+                                    department = None
+                                    if team_name:
+                                        department, _ = Department.objects.get_or_create(name=team_name, company=company)
+                                        
+                                    profile, _ = Profile.objects.get_or_create(user=user)
+                                    profile.company_link = company
+                                    if department:
+                                        profile.department = department
+                                    profile.save()
+                        elif file_ext in ['xlsx', 'xls']:
+                            try:
+                                import openpyxl
+                                wb = openpyxl.load_workbook(employee_file)
+                                sheet = wb.active
+                                for row in sheet.iter_rows(min_row=2, values_only=True):
+                                    if row and len(row) >= 5 and row[2]:
+                                        first_name = str(row[0]).strip() if row[0] else ''
+                                        last_name = str(row[1]).strip() if row[1] else ''
+                                        email = str(row[2]).strip()
+                                        password = str(row[3]).strip() if row[3] else ''
+                                        team_name = str(row[4]).strip() if row[4] else ''
+                                        
+                                        user, created = User.objects.get_or_create(email=email, defaults={
+                                            'username': email,
+                                            'first_name': first_name,
+                                            'last_name': last_name,
+                                        })
+                                        if created or not user.has_usable_password():
+                                            user.set_password(password)
+                                            user.save()
+                                            
+                                        department = None
+                                        if team_name:
+                                            department, _ = Department.objects.get_or_create(name=team_name, company=company)
+                                            
+                                        profile, _ = Profile.objects.get_or_create(user=user)
+                                        profile.company_link = company
+                                        if department:
+                                            profile.department = department
+                                        profile.save()
+                            except ImportError:
+                                messages.warning(request, f'Įmonė "{name}" sukurta, bet nepavyko apdoroti Excel failo. Instaliuokite "openpyxl".')
+                                return redirect('superadmin_companies_list')
+                                
+                    messages.success(request, f'Įmonė "{name}" sėkmingai sukurta.')
+            except Exception as e:
+                messages.error(request, f'Įvyko klaida: {str(e)}')
             return redirect('superadmin_companies_list')
     return render(request, 'superadmin/company_create.html')
 
