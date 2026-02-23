@@ -18,14 +18,20 @@ from datetime import date
 from .services import FeedbackGenerator, FeedbackAnalytics
 from users.models import Department, Company
 from .forms import DepartmentForm
+from django.utils import timezone
 
 
 logger = logging.getLogger(__name__)
 
+def is_company_active(user):
+    if hasattr(user, 'profile') and user.profile.company_link:
+        return user.profile.company_link.is_active
+    return True
+
 def index(request):
     if request.user.is_authenticated:
         return redirect('home')
-    return render(request, "index.html")
+    return render(request, 'feedbackas/index.html')
 
 @login_required
 def home(request):
@@ -76,6 +82,7 @@ def home(request):
         'feedback_requests': feedback_requests,
         'company_name': company_name,
         'recent_activity': recent_activity,
+        'is_company_active': is_company_active(request.user)
     }
     return render(request, 'home.html', context)
 
@@ -116,6 +123,9 @@ def get_team_members(request):
 
 @login_required
 def request_feedback(request):
+    if not is_company_active(request.user):
+        return JsonResponse({'success': False, 'errors': 'Jūsų įmonė yra išjungta. Veiksmas negalimas.'})
+        
     if request.method == 'POST':
         requester = request.user
         requested_to_id = request.POST.get('requested_to')
@@ -137,6 +147,10 @@ def request_feedback(request):
 
 @login_required
 def send_feedback(request, user_id):
+    if not is_company_active(request.user):
+        messages.error(request, 'Jūsų įmonė yra išjungta. Veiksmas negalimas.')
+        return redirect('home')
+        
     requester = get_object_or_404(User, id=user_id)
     requested_to = request.user
     
@@ -152,6 +166,10 @@ def send_feedback(request, user_id):
 
 @login_required
 def fill_feedback(request, request_id):
+    if not is_company_active(request.user):
+        messages.error(request, 'Jūsų įmonė yra išjungta. Veiksmas negalimas.')
+        return redirect('home')
+        
     feedback_request = get_object_or_404(FeedbackRequest, id=request_id)
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
@@ -602,6 +620,14 @@ def assign_to_department(request):
         department_id = request.POST.get('department_id')
         if user_id and department_id:
             target_user = get_object_or_404(User, id=user_id)
+
+@login_required
+def assign_to_department(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        department_id = request.POST.get('department_id')
+        if user_id and department_id:
+            target_user = get_object_or_404(User, id=user_id)
             department = get_object_or_404(Department, id=department_id)
             # Ensure both belong to the same company as the current user
             user_company = request.user.profile.company_link
@@ -776,6 +802,30 @@ def superadmin_company_detail(request, company_id):
         'employees': employees,
     }
     return render(request, 'superadmin/company_detail.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+@require_POST
+def superadmin_toggle_company(request, company_id):
+    company = get_object_or_404(Company, id=company_id)
+    company.is_active = not company.is_active
+    company.save()
+    status = 'įjungta' if company.is_active else 'išjungta'
+    messages.success(request, f'Įmonė "{company.name}" apskaitos būsena pakeista į: {status}.')
+    return redirect('superadmin_companies_list')
+
+@user_passes_test(lambda u: u.is_superuser)
+@require_POST
+def superadmin_delete_company(request, company_id):
+    company = get_object_or_404(Company, id=company_id)
+    name = company.name
+    # Prieš trinant įmonę patikriname, ar reikia išvalyti vartotojus:
+    # Company model is linked to Profile. CASCADE delete will delete profiles if models.CASCADE is set.
+    # But usually it's models.SET_NULL or CASCADE based on users/models.py logic.
+    # In Profile it is models.SET_NULL. Thus users are kept but unlinked.
+    # For now we'll just delete the Company object safely.
+    company.delete()
+    messages.success(request, f'Įmonė "{name}" sėkmingai ištrinta.')
+    return redirect('superadmin_companies_list')
 
 @user_passes_test(lambda u: u.is_superuser)
 def superadmin_edit_hierarchy(request, company_id):
@@ -985,11 +1035,16 @@ def questionnaires_list(request):
         'questionnaires': questionnaires,
         'all_traits': all_traits,
         'team_members': team_members,
+        'is_company_active': is_company_active(request.user)
     })
 
 @login_required
 def create_questionnaire(request):
     from .models import Questionnaire, Trait
+    if not is_company_active(request.user):
+        messages.error(request, 'Jūsų įmonė yra išjungta. Veiksmas negalimas.')
+        return redirect('questionnaires_list')
+        
     if request.method == 'POST':
         title = request.POST.get('title', '').strip()
         if not title:
@@ -1025,6 +1080,10 @@ def send_questionnaire(request):
     from .models import Questionnaire, FeedbackRequest
     from django.contrib.auth.models import User
     
+    if not is_company_active(request.user):
+        messages.error(request, 'Jūsų įmonė yra išjungta. Veiksmas negalimas.')
+        return redirect('questionnaires_list')
+        
     questionnaire_id = request.POST.get('questionnaire_id')
     colleague_id = request.POST.get('colleague_id')
     

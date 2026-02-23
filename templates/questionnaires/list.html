@@ -11,8 +11,9 @@
 <main class="flex-1 overflow-y-auto bg-gray-50 p-6">
     <div class="max-w-5xl mx-auto">
         <!-- Header -->
-        <div class="flex justify-between items-center mb-6">
-            <h1 class="text-2xl font-bold text-gray-800">Individuali forma</h1>
+        <div class="flex justify-between items-center mb-6"
+            data-company-active="{{ is_company_active|yesno:'true,false' }}">
+            <h1 class="text-xl font-bold text-gray-800">Individuali forma</h1>
             <button id="open-create-modal"
                 class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
                 <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -251,7 +252,14 @@
         const closeBtn = document.getElementById('close-create-modal');
         const cancelBtn = document.getElementById('cancel-modal');
 
-        openBtn.addEventListener('click', () => modal.classList.remove('hidden'));
+        openBtn.addEventListener('click', () => {
+            const header = document.querySelector('.mb-6');
+            if (header && header.dataset.companyActive === 'false') {
+                alert('Jūsų įmonė yra išjungta. Veiksmas negalimas.');
+                return;
+            }
+            modal.classList.remove('hidden');
+        });
         closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
         cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
         modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
@@ -265,6 +273,12 @@
 
         document.querySelectorAll('.open-send-modal').forEach(btn => {
             btn.addEventListener('click', function () {
+                const header = document.querySelector('.mb-6');
+                if (header && header.dataset.companyActive === 'false') {
+                    alert('Jūsų įmonė yra išjungta. Veiksmas negalimas.');
+                    return;
+                }
+
                 const qId = this.dataset.questionnaireId;
                 const qTitle = this.dataset.questionnaireTitle;
 
