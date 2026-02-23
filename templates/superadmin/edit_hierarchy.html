@@ -9,8 +9,7 @@
         <nav class="flex mb-4 text-gray-500 text-sm">
             <a href="{% url 'superadmin_companies_list' %}" class="hover:text-purple-600">Įmonės</a>
             <span class="mx-2">/</span>
-            <a href="{% url 'superadmin_company_detail' company.id %}" class="hover:text-purple-600">{{ company.name
-                }}</a>
+            <a href="{% url 'superadmin_company_detail' company.id %}" class="hover:text-purple-600">{{ company.name }}</a>
             <span class="mx-2">/</span>
             <span class="text-gray-800">Hierarchija</span>
         </nav>
