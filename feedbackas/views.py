@@ -864,6 +864,35 @@ def superadmin_delete_department(request, company_id, department_id):
     return redirect('superadmin_edit_hierarchy', company_id=company_id)
 
 @user_passes_test(lambda u: u.is_superuser)
+def superadmin_edit_department(request, company_id, department_id):
+    company = get_object_or_404(Company, id=company_id)
+    department = get_object_or_404(Department, id=department_id, company=company)
+    
+    if request.method == 'POST':
+        form = DepartmentForm(request.user, request.POST, instance=department)
+        # Override parent queryset to target company's departments, excluding self to prevent loop
+        form.fields['parent'].queryset = Department.objects.filter(company=company).exclude(id=department.id)
+        
+        if form.is_valid():
+            dept = form.save()
+            if dept.manager:
+                manager_profile = dept.manager.profile
+                manager_profile.department = dept
+                manager_profile.save()
+            messages.success(request, f'Departamentas "{dept.name}" sėkmingai atnaujintas.')
+            return redirect('superadmin_edit_hierarchy', company_id=company_id)
+    else:
+        form = DepartmentForm(request.user, instance=department)
+        form.fields['parent'].queryset = Department.objects.filter(company=company).exclude(id=department.id)
+
+    context = {
+        'company': company,
+        'department': department,
+        'form': form,
+    }
+    return render(request, 'superadmin/edit_department.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
 def superadmin_toggle_admin(request, company_id, user_id):
     if request.method == 'POST':
         company = get_object_or_404(Company, id=company_id)

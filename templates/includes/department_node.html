@@ -27,6 +27,13 @@
             <span class="ml-2 bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-full">
                 {{ node.members.count }} nariai
             </span>
+            <a href="{% url 'superadmin_edit_department' node.company.id node.id %}"
+                class="p-1 text-gray-400 hover:text-purple-600 transition-colors" title="Redaguoti departamentą">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+            </a>
             <form action="{% url 'superadmin_delete_department' node.company.id node.id %}" method="post"
                 onsubmit="return confirm('Ar tikrai norite ištrinti departamentą &quot;{{ node.name }}&quot;? Visi sub-departamentai taip pat bus ištrinti.');">
                 {% csrf_token %}
