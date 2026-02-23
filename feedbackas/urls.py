@@ -43,6 +43,7 @@ urlpatterns = [
     path('management/assign/', views.assign_to_department, name='assign_to_department'),
     path('superadmin/', views.superadmin_dashboard, name='superadmin_dashboard'),
     path('superadmin/companies/', views.superadmin_companies_list, name='superadmin_companies_list'),
+    path('superadmin/companies/create/', views.superadmin_create_company, name='superadmin_create_company'),
     path('superadmin/companies/<int:company_id>/', views.superadmin_company_detail, name='superadmin_company_detail'),
     path('superadmin/companies/<int:company_id>/hierarchy/', views.superadmin_edit_hierarchy, name='superadmin_edit_hierarchy'),
     path('superadmin/companies/<int:company_id>/employees/', views.superadmin_edit_employees, name='superadmin_edit_employees'),

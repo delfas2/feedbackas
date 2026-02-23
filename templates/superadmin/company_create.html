@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Kurti įmonę - Superadmin{% endblock %}
+
+{% block content %}
+<main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+    <div class="max-w-3xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Kurti įmonę</h1>
+            <a href="{% url 'superadmin_companies_list' %}"
+                class="px-4 py-2 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+                Atgal į sąrašą
+            </a>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden p-6 text-gray-800">
+            <form method="POST" action="{% url 'superadmin_create_company' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="mb-6">
+                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Įmonės pavadinimas *</label>
+                    <input type="text" id="name" name="name" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 shadow-sm transition-colors text-gray-800 bg-white"
+                        placeholder="Įveskite įmonės pavadinimą">
+                </div>
+
+                <div class="mb-8">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Darbuotojų sąrašas (neprivaloma)</label>
+                    <div class="flex items-center gap-4">
+                        <label for="employee_list"
+                            class="cursor-pointer px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium border border-gray-300 shadow-sm flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                            </svg>
+                            Įkelti darbuotojų sąrašą
+                        </label>
+                        <input type="file" id="employee_list" name="employee_list" class="hidden"
+                            accept=".csv, .xlsx, .xls"
+                            onchange="document.getElementById('file-chosen').textContent = this.files[0] ? this.files[0].name : 'Failas nepasirinktas'">
+                        <span id="file-chosen" class="text-sm text-gray-500">Failas nepasirinktas</span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-2">Priimami formatai: CSV, Excel (.xlsx, .xls)</p>
+                </div>
+
+                <div class="flex justify-end pt-4 border-t border-gray-100">
+                    <button type="submit"
+                        class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-sm font-medium">
+                        Sukurti įmonę
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}

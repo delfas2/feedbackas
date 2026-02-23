@@ -7,10 +7,10 @@
     <div class="max-w-7xl mx-auto">
         <div class="flex items-center justify-between mb-8">
             <h1 class="text-3xl font-bold text-gray-800">Įmonės</h1>
-            <!-- Future: Add Company Button -->
-            <!-- <a href="#" class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
-                Pridėti įmonę
-            </a> -->
+            <a href="{% url 'superadmin_create_company' %}"
+                class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-sm font-medium">
+                Kurti įmonę
+            </a>
         </div>
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">

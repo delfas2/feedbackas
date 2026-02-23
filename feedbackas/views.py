@@ -644,6 +644,17 @@ def superadmin_companies_list(request):
     return render(request, 'superadmin/companies_list.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
+def superadmin_create_company(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        if name:
+            from feedbackas.models import Company
+            company = Company.objects.create(name=name)
+            messages.success(request, f'Įmonė "{name}" sėkmingai sukurta.')
+            return redirect('superadmin_companies_list')
+    return render(request, 'superadmin/company_create.html')
+
+@user_passes_test(lambda u: u.is_superuser)
 def superadmin_company_detail(request, company_id):
     company = get_object_or_404(Company, id=company_id)
     employee_count = company.profile_set.count()
