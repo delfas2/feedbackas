@@ -29,6 +29,10 @@ class Feedback(models.Model):
     comments = models.TextField(blank=True)
     feedback = models.TextField()
 
+    # AI išskirtos savybės iš atsiliepimo ir komentaro
+    extracted_strengths = models.JSONField(default=list, blank=True)
+    extracted_improvements = models.JSONField(default=list, blank=True)
+
     def __str__(self):
         return f"Feedback for {self.feedback_request}"
 

@@ -176,6 +176,16 @@ def fill_feedback(request, request_id):
         if form.is_valid():
             feedback = form.save(commit=False)
             feedback.feedback_request = feedback_request
+            
+            # AI Išskyrimas (Stiprybės ir Tobulintinos sritys)
+            try:
+                from .services import FeedbackGenerator
+                extracted_data = FeedbackGenerator.extract_strengths_weaknesses(feedback.feedback, feedback.comments)
+                feedback.extracted_strengths = extracted_data.get("strengths", [])
+                feedback.extracted_improvements = extracted_data.get("improvements", [])
+            except Exception as e:
+                print(f"Failed to extract strengths and improvements: {e}")
+                
             feedback.save()
             feedback_request.status = 'completed'
             feedback_request.save()

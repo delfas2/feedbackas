@@ -10,7 +10,8 @@ class FeedbackGenerator:
         Generuoja grįžtamąjį ryšį naudojant Google Gemini AI.
         """
         genai.configure(api_key=settings.GEMINI_API_KEY)
-        model = genai.GenerativeModel(getattr(settings, 'GEMINI_MODEL', 'gemini-1.5-flash'))
+        model_name = getattr(settings, 'GEMINI_MODEL', 'gemini-pro')
+        model = genai.GenerativeModel(model_name)
 
         prompt = f"""
         Veik kaip konkretus, kolegiškas komandos narys, būk empatiškas ir teik konstruktyvią kritiką.
@@ -67,8 +68,74 @@ class FeedbackGenerator:
         Tekstas turi būti motyvuojantis, profesionalus ir aiškus. Nenaudok Markdown formatavimo.
         """
 
-        response = model.generate_content(prompt)
-        return response.text
+        try:
+            response = model.generate_content(prompt)
+            return response.text
+        except Exception as e:
+            # Fallback for unsupported models or API versions
+            try:
+                fallback_model = genai.GenerativeModel("gemini-pro")
+                response = fallback_model.generate_content(prompt)
+                return response.text
+            except Exception as e2:
+                print(f"Fallback generation also failed: {e2}")
+                raise e
+
+    @staticmethod
+    def extract_strengths_weaknesses(feedback_text, comments_text):
+        """
+        Iš tekstinio atsiliepimo išveda stiprybes ir tobulintinas sritis JSON formatu.
+        """
+        if not feedback_text and not comments_text:
+            return {"strengths": [], "improvements": []}
+            
+        genai.configure(api_key=settings.GEMINI_API_KEY)
+        model_name = getattr(settings, 'GEMINI_MODEL', 'gemini-pro')
+        model = genai.GenerativeModel(model_name)
+        
+        prompt = f"""
+        Išanalizuok žemiau pateiktą darbuotojo atsiliepimą ir išskirk dvi kategorijas:
+        1. Stiprybės (gerosios savybės, ką darbuotojas daro gerai)
+        2. Tobulintinos sritys (kas buvo paminėta kaip silpnybė arba kur galima tobulėti)
+
+        Atsakymą pateik GRIEŽTAI TIK JSON formatu be jokio papildomo teksto, Markdown blokų ar paaiškinimų.
+        Kiekvienas punktas turi būti suformuluotas trumpai (1-2 sakiniai).
+        
+        Pavyzdys:
+        {{
+            "strengths": ["Puikiai sprendžia technines problemas.", "Greitai mokosi naujų technologijų."],
+            "improvements": ["Galėtų dažniau imtis iniciatyvos komandos susirinkimuose.", "Vertėtų tobulinti viešo kalbėjimo įgūdžius."]
+        }}
+
+        Atsiliepimas:
+        {feedback_text}
+        
+        Papildomas komentaras:
+        {comments_text}
+        """
+        
+        try:
+            response = model.generate_content(prompt)
+        except Exception:
+            try:
+                fallback_model = genai.GenerativeModel("gemini-pro")
+                response = fallback_model.generate_content(prompt)
+            except Exception as e:
+                print(f"Failed to extract traits on fallback: {e}")
+                return {"strengths": [], "improvements": []}
+                
+        try:
+            # Bandome išvalyti Markdown kodą iš grąžinto atsakymo, jei AI vis tik jį pridėtų
+            cleaned_text = response.text.replace('```json', '').replace('```', '').strip()
+            import json
+            data = json.loads(cleaned_text)
+            return {
+                "strengths": data.get("strengths", []),
+                "improvements": data.get("improvements", [])
+            }
+        except Exception as e:
+            print(f"Failed to extract traits: {e}")
+            return {"strengths": [], "improvements": []}
 
 class FeedbackAnalytics:
     @staticmethod
@@ -81,11 +148,18 @@ class FeedbackAnalytics:
         overall_avg_rating = completed_feedback.aggregate(Avg('rating'))['rating__avg'] or 0
         
         all_keywords = []
+        all_strengths = []
+        all_improvements = []
+        
         for feedback in completed_feedback:
             keywords = [kw.strip() for kw in feedback.keywords.split(',') if kw.strip()]
             all_keywords.extend(keywords)
-
-        qualitative_feedback = [f.feedback for f in completed_feedback]
+            
+            # Sumuojame AI išskirtas savybes
+            if isinstance(feedback.extracted_strengths, list):
+                all_strengths.extend(feedback.extracted_strengths)
+            if isinstance(feedback.extracted_improvements, list):
+                all_improvements.extend(feedback.extracted_improvements)
 
         competency_averages = completed_feedback.aggregate(
             teamwork=Avg('teamwork_rating'),
@@ -123,7 +197,7 @@ class FeedbackAnalytics:
             'received_feedback_count': completed_feedback.count(),
             'all_keywords': list(set(all_keywords))[:7],
             'competencies': competencies,
-            'strengths': qualitative_feedback[:3],
-            'improvements': qualitative_feedback[3:5],
+            'strengths': all_strengths[:5],
+            'improvements': all_improvements[:5],
             'recommended_trainings': recommended_trainings,
         }
