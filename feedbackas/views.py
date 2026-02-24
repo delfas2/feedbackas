@@ -882,10 +882,12 @@ def superadmin_edit_hierarchy(request, company_id):
 def superadmin_edit_employees(request, company_id):
     company = get_object_or_404(Company, id=company_id)
     profiles = Profile.objects.filter(company_link=company).select_related('user', 'department', 'manager')
+    departments = Department.objects.filter(company=company)
     
     context = {
         'company': company,
         'profiles': profiles,
+        'departments': departments,
     }
     return render(request, 'superadmin/edit_employees.html', context)
 
@@ -893,26 +895,173 @@ def superadmin_edit_employees(request, company_id):
 def superadmin_add_employee(request, company_id):
     if request.method == 'POST':
         email = request.POST.get('email')
+        first_name = request.POST.get('first_name', '')
+        last_name = request.POST.get('last_name', '')
+        password = request.POST.get('password')
+        department_id = request.POST.get('department_id')
+        
+        company = get_object_or_404(Company, id=company_id)
+        department = Department.objects.filter(id=department_id, company=company).first() if department_id else None
+
         try:
             user = User.objects.get(email=email)
+            
+            # Update user details if provided
+            updated = False
+            if first_name:
+                user.first_name = first_name
+                updated = True
+            if last_name:
+                user.last_name = last_name
+                updated = True
+            if password:
+                user.set_password(password)
+                updated = True
+            if updated:
+                user.save()
+
             if hasattr(user, 'profile'):
-                if user.profile.company_link:
-                    messages.error(request, f'Vartotojas {email} jau priklauso įmonei {user.profile.company_link.name}.')
+                if user.profile.company_link and user.profile.company_link != company:
+                    messages.error(request, f'Vartotojas {email} jau priklauso kitai įmonei.')
                 else:
-                    company = get_object_or_404(Company, id=company_id)
                     user.profile.company_link = company
+                    user.profile.department = department
                     user.profile.save()
-                    messages.success(request, f'Vartotojas {email} sėkmingai pridėtas prie įmonės.')
+                    messages.success(request, f'Vartotojas {email} sėkmingai atnaujintas / pridėtas prie įmonės.')
             else:
                  # If user has no profile, create one
-                company = get_object_or_404(Company, id=company_id)
-                Profile.objects.create(user=user, company_link=company)
+                Profile.objects.create(user=user, company_link=company, department=department)
                 messages.success(request, f'Vartotojas {email} sėkmingai pridėtas prie įmonės.')
 
         except User.DoesNotExist:
-            messages.error(request, f'Vartotojas su el. paštu {email} nerastas.')
+            # Create a new user
+            username = email.split('@')[0]
+            # Handle potential username conflicts
+            if User.objects.filter(username=username).exists():
+                import uuid
+                username = f"{username}_{str(uuid.uuid4())[:8]}"
+            
+            user = User.objects.create_user(
+                username=username,
+                email=email,
+                password=password if password else User.objects.make_random_password(),
+                first_name=first_name,
+                last_name=last_name
+            )
+            
+            # The Profile is usually auto-created by signals, so we retrieve or create it to avoid IntegrityError
+            profile, _ = Profile.objects.get_or_create(user=user)
+            profile.company_link = company
+            profile.department = department
+            profile.save()
+            
+            messages.success(request, f'Naujas vartotojas {email} sėkmingai sukurtas ir pridėtas.')
     
     return redirect('superadmin_edit_employees', company_id=company_id)
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_import_employees(request, company_id):
+    if request.method == 'POST':
+        company = get_object_or_404(Company, id=company_id)
+        employee_file = request.FILES.get('employee_list')
+        
+        if employee_file:
+            from django.db import transaction
+            import csv
+            import io
+            
+            try:
+                with transaction.atomic():
+                    file_ext = employee_file.name.split('.')[-1].lower()
+                    added_count = 0
+                    
+                    if file_ext == 'csv':
+                        file_data = employee_file.read().decode('utf-8-sig')
+                        sniffer = csv.Sniffer()
+                        try:
+                            dialect = sniffer.sniff(file_data[:1024])
+                            csv_data = csv.reader(io.StringIO(file_data), dialect)
+                        except csv.Error:
+                            if ';' in file_data[:1024]:
+                                csv_data = csv.reader(io.StringIO(file_data), delimiter=';')
+                            else:
+                                csv_data = csv.reader(io.StringIO(file_data), delimiter=',')
+                                
+                        next(csv_data, None) # Skip header
+                        for row in csv_data:
+                            if len(row) >= 5:
+                                first_name = row[0].strip()
+                                last_name = row[1].strip()
+                                email = row[2].strip()
+                                password = row[3].strip()
+                                team_name = row[4].strip()
+                                
+                                if not email: continue
+                                
+                                user, created = User.objects.get_or_create(email=email, defaults={
+                                    'username': email,
+                                    'first_name': first_name,
+                                    'last_name': last_name,
+                                })
+                                if created or not user.has_usable_password():
+                                    user.set_password(password)
+                                    user.save()
+                                    
+                                department = None
+                                if team_name:
+                                    department, _ = Department.objects.get_or_create(name=team_name, company=company)
+                                    
+                                profile, _ = Profile.objects.get_or_create(user=user)
+                                profile.company_link = company
+                                if department:
+                                    profile.department = department
+                                profile.save()
+                                added_count += 1
+                                
+                    elif file_ext in ['xlsx', 'xls']:
+                        try:
+                            import openpyxl
+                            wb = openpyxl.load_workbook(employee_file)
+                            sheet = wb.active
+                            for row in sheet.iter_rows(min_row=2, values_only=True):
+                                if row and len(row) >= 5 and row[2]:
+                                    first_name = str(row[0]).strip() if row[0] else ''
+                                    last_name = str(row[1]).strip() if row[1] else ''
+                                    email = str(row[2]).strip()
+                                    password = str(row[3]).strip() if row[3] else ''
+                                    team_name = str(row[4]).strip() if row[4] else ''
+                                    
+                                    user, created = User.objects.get_or_create(email=email, defaults={
+                                        'username': email,
+                                        'first_name': first_name,
+                                        'last_name': last_name,
+                                    })
+                                    if created or not user.has_usable_password():
+                                        user.set_password(password)
+                                        user.save()
+                                        
+                                    department = None
+                                    if team_name:
+                                        department, _ = Department.objects.get_or_create(name=team_name, company=company)
+                                        
+                                    profile, _ = Profile.objects.get_or_create(user=user)
+                                    profile.company_link = company
+                                    if department:
+                                        profile.department = department
+                                    profile.save()
+                                    added_count += 1
+                        except ImportError:
+                            messages.warning(request, 'Nepavyko apdoroti Excel failo. Instaliuokite "openpyxl".')
+                            return redirect('superadmin_edit_employees', company_id=company_id)
+                            
+                    messages.success(request, f'Sėkmingai importuota / atnaujinta {added_count} darbuotojų iš sąrašo.')
+            except Exception as e:
+                messages.error(request, f'Klaida apdorojant failą: {str(e)}')
+        else:
+            messages.error(request, 'Nepasirinktas joks failas.')
+            
+    return redirect('superadmin_edit_employees', company_id=company_id)
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def superadmin_delete_department(request, company_id, department_id):

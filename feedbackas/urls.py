@@ -52,6 +52,7 @@ urlpatterns = [
     path('superadmin/companies/<int:company_id>/hierarchy/edit/<int:department_id>/', views.superadmin_edit_department, name='superadmin_edit_department'),
     path('superadmin/companies/<int:company_id>/employees/', views.superadmin_edit_employees, name='superadmin_edit_employees'),
     path('superadmin/companies/<int:company_id>/employees/add/', views.superadmin_add_employee, name='superadmin_add_employee'),
+    path('superadmin/companies/<int:company_id>/employees/import/', views.superadmin_import_employees, name='superadmin_import_employees'),
     path('superadmin/companies/<int:company_id>/employees/remove/<int:user_id>/', views.superadmin_remove_employee, name='superadmin_remove_employee'),
     path('superadmin/companies/<int:company_id>/hierarchy/delete/<int:department_id>/', views.superadmin_delete_department, name='superadmin_delete_department'),
     path('superadmin/impersonate/<int:user_id>/', views.superadmin_impersonate_user, name='superadmin_impersonate_user'),
