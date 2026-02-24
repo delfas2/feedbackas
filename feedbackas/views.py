@@ -31,7 +31,7 @@ def is_company_active(user):
 def index(request):
     if request.user.is_authenticated:
         return redirect('home')
-    return render(request, 'feedbackas/index.html')
+    return render(request, 'index.html')
 
 @login_required
 def home(request):
@@ -78,11 +78,29 @@ def home(request):
     recent_activity.sort(key=lambda x: x['date'], reverse=True)
     recent_activity = recent_activity[:5]
     
+    # Dynamic metrics calculation
+    pending_tasks_count = feedback_requests.count()
+    
+    completed_surveys_count = Feedback.objects.filter(
+        feedback_request__requested_to=request.user, 
+        feedback_request__status='completed'
+    ).count()
+    
+    my_team_count = 0
+    if hasattr(request.user, 'profile') and request.user.profile.department:
+        my_team_count = Profile.objects.filter(
+            department=request.user.profile.department,
+            company_link=request.user.profile.company_link
+        ).exclude(user=request.user).count()
+
     context = {
         'feedback_requests': feedback_requests,
         'company_name': company_name,
         'recent_activity': recent_activity,
-        'is_company_active': is_company_active(request.user)
+        'is_company_active': is_company_active(request.user),
+        'pending_tasks_count': pending_tasks_count,
+        'completed_surveys_count': completed_surveys_count,
+        'my_team_count': my_team_count,
     }
     return render(request, 'home.html', context)
 

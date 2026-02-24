@@ -77,8 +77,16 @@
                         </div>
                     </div>
                     <div class="text-center hidden sm:block relative">
-                        <div class="text-2xl font-bold text-purple-600">Top {% if top_percentile == '--' %}{{
-                            top_percentile }}{% else %}{{ top_percentile }}%{% endif %}</div>
+                        <div class="text-2xl font-bold text-purple-600">
+                            Top
+                            <span>
+                                {% if top_percentile == '--' %}
+                                {{ top_percentile }}
+                                {% else %}
+                                {{ top_percentile }}%
+                                {% endif %}
+                            </span>
+                        </div>
                         <div class="text-xs text-gray-500 uppercase tracking-wide cursor-pointer hover:text-purple-500 transition-colors"
                             onclick="document.getElementById('tooltip-top').classList.toggle('hidden')">
                             Įmonėje
