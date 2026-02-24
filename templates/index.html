@@ -32,9 +32,8 @@
 
             <!-- Navigacijos nuorodos (Desktop) -->
             <div class="hidden md:flex space-x-6 items-center">
-                <a href="#funkcijos" class="text-gray-600 hover:text-purple-500">Funkcijos</a>
-                <a href="#kainodara" class="text-gray-600 hover:text-purple-500">Kainodara</a>
-                <a href="#apie" class="text-gray-600 hover:text-purple-500">Apie mus</a>
+                <a href="{% url 'index' %}#funkcijos" class="text-gray-600 hover:text-purple-500">Pradžia</a>
+                <a href="{% url 'apie_mus' %}" class="text-gray-600 hover:text-purple-500">Apie mus</a>
             </div>
 
             <!-- Prisijungimo mygtukai -->
@@ -57,8 +56,6 @@
                     {% else %}
                     <a href="{% url 'login' %}"
                         class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-500">Prisijungti</a>
-                    <a href="{% url 'register' %}"
-                        class="px-4 py-2 text-sm font-medium text-white bg-purple-500 rounded-lg shadow-sm hover:bg-purple-600 transition-colors">Registruotis</a>
                     {% endif %}
                 </div>
             </div>

@@ -40,6 +40,9 @@ def index(request):
         
     return render(request, 'index.html')
 
+def apie_mus(request):
+    return render(request, 'apie_mus.html')
+
 @login_required
 def home(request):
     feedback_requests = FeedbackRequest.objects.filter(requested_to=request.user, status='pending')
