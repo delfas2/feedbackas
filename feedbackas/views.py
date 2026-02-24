@@ -31,6 +31,13 @@ def is_company_active(user):
 def index(request):
     if request.user.is_authenticated:
         return redirect('home')
+        
+    if request.method == 'POST':
+        # Here we could process request.POST.get('name'), email, message 
+        # and send an email or save to DB. For now we just show success.
+        messages.success(request, 'Ačiū! Jūsų užklausa gauta, netrukus su jumis susisieksime.')
+        return redirect('index')
+        
     return render(request, 'index.html')
 
 @login_required
