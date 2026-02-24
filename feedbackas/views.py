@@ -411,7 +411,8 @@ def get_feedback_data(request):
 @login_required
 def results(request):
     user = request.user
-    stats = FeedbackAnalytics.get_user_stats(user)
+    period = request.GET.get('period', 'all')
+    stats = FeedbackAnalytics.get_user_stats(user, period=period)
     
     company_name = ''
     if hasattr(request.user, 'profile') and request.user.profile.company_link:
@@ -420,6 +421,7 @@ def results(request):
     context = {
         **stats,
         'company_name': company_name,
+        'current_period': period,
     }
     
     return render(request, 'results.html', context)

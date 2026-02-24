@@ -22,12 +22,14 @@
 
         <!-- Laikotarpio pasirinkimas -->
         <div class="flex bg-gray-100 rounded-lg p-1">
-            <button
-                class="px-4 py-1.5 text-sm font-medium text-gray-600 rounded-md hover:bg-white hover:shadow-sm transition-all">Mėnuo</button>
-            <button
-                class="px-4 py-1.5 text-sm font-medium text-purple-600 bg-white shadow-sm rounded-md">Ketvirtis</button>
-            <button
-                class="px-4 py-1.5 text-sm font-medium text-gray-600 rounded-md hover:bg-white hover:shadow-sm transition-all">Metai</button>
+            <a href="?period=all"
+                class="px-4 py-1.5 text-sm font-medium {% if current_period == 'all' %}text-purple-600 bg-white shadow-sm{% else %}text-gray-600 hover:bg-white hover:shadow-sm{% endif %} rounded-md transition-all">Visi</a>
+            <a href="?period=month"
+                class="px-4 py-1.5 text-sm font-medium {% if current_period == 'month' %}text-purple-600 bg-white shadow-sm{% else %}text-gray-600 hover:bg-white hover:shadow-sm{% endif %} rounded-md transition-all">Mėnuo</a>
+            <a href="?period=quarter"
+                class="px-4 py-1.5 text-sm font-medium {% if current_period == 'quarter' %}text-purple-600 bg-white shadow-sm{% else %}text-gray-600 hover:bg-white hover:shadow-sm{% endif %} rounded-md transition-all">Ketvirtis</a>
+            <a href="?period=year"
+                class="px-4 py-1.5 text-sm font-medium {% if current_period == 'year' %}text-purple-600 bg-white shadow-sm{% else %}text-gray-600 hover:bg-white hover:shadow-sm{% endif %} rounded-md transition-all">Metai</a>
         </div>
     </header>
 
@@ -35,7 +37,7 @@
     <div class="p-6 md:p-8 space-y-8">
 
         <!-- 1. Apibendrinimo Kortelė -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 relative overflow-hidden">
+        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 relative">
             <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-purple-100 rounded-full opacity-50 blur-2xl">
             </div>
 
@@ -44,14 +46,13 @@
                 <div class="text-center md:text-left">
                     <p class="text-gray-500 font-medium mb-1">Bendras Įvertinimas</p>
                     <div class="flex items-baseline gap-2 justify-center md:justify-start">
-                        <h2 class="text-5xl font-extrabold text-gray-800">{{ overall_avg_rating }}</h2>
+                        <h2 class="text-5xl font-extrabold text-gray-800">{{ overall_avg_rating|floatformat }}</h2>
                         <!-- Pokytis laikinai paslėptas -->
                         <!-- <span class="text-green-500 font-bold flex items-center">
                                     <svg class="w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 15.293 6.293A1 1 0 0115.293 6.293z" clip-rule="evenodd" /></svg>
                                     +0.4
                                 </span> -->
                     </div>
-                    <p class="text-sm text-gray-400 mt-2">Palyginus su praeitu ketvirčiu</p>
                 </div>
 
                 <!-- Statistika -->
@@ -60,13 +61,37 @@
                         <div class="text-2xl font-bold text-purple-600">{{ received_feedback_count }}</div>
                         <div class="text-xs text-gray-500 uppercase tracking-wide">Gauta Atsiliepimų</div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-2xl font-bold text-purple-600">--%</div>
-                        <div class="text-xs text-gray-500 uppercase tracking-wide">Dalyvavimas</div>
+                    <div class="text-center relative">
+                        <div class="text-2xl font-bold text-purple-600">{{ participation_rate }}%</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide cursor-pointer hover:text-purple-500 transition-colors"
+                            onclick="document.getElementById('tooltip-part').classList.toggle('hidden')">
+                            Dalyvavimas
+                        </div>
+                        <div id="tooltip-part"
+                            class="hidden absolute left-1/2 -translate-x-1/2 top-full mt-2 w-56 p-3 bg-white border border-purple-100 text-gray-700 text-xs rounded-lg shadow-xl z-50 text-left normal-case tracking-normal shadow-purple-900/10">
+                            <strong class="block mb-1 text-purple-700">Dalyvavimas</strong>
+                            Parodo, kokia dalis jūsų išsiųstų prašymų buvo sėkmingai užpildyta kolegų per šį laikotarpį.
+                            <div
+                                class="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-t border-l border-purple-100 transform rotate-45">
+                            </div>
+                        </div>
                     </div>
-                    <div class="text-center hidden sm:block">
-                        <div class="text-2xl font-bold text-purple-600">Top --%</div>
-                        <div class="text-xs text-gray-500 uppercase tracking-wide">Įmonėje</div>
+                    <div class="text-center hidden sm:block relative">
+                        <div class="text-2xl font-bold text-purple-600">Top {% if top_percentile == '--' %}{{
+                            top_percentile }}{% else %}{{ top_percentile }}%{% endif %}</div>
+                        <div class="text-xs text-gray-500 uppercase tracking-wide cursor-pointer hover:text-purple-500 transition-colors"
+                            onclick="document.getElementById('tooltip-top').classList.toggle('hidden')">
+                            Įmonėje
+                        </div>
+                        <div id="tooltip-top"
+                            class="hidden absolute right-0 sm:left-1/2 sm:-translate-x-1/2 top-full mt-2 w-56 p-3 bg-white border border-purple-100 text-gray-700 text-xs rounded-lg shadow-xl z-50 text-left normal-case tracking-normal shadow-purple-900/10">
+                            <strong class="block mb-1 text-purple-700">Top % Įmonėje</strong>
+                            Parodo jūsų bendro įvertinimo poziciją (procentilę) lyginant su visais kitais kolegų
+                            atsiliepimų vidurkiais įmonėje.
+                            <div
+                                class="absolute -top-1.5 right-6 sm:left-1/2 sm:-translate-x-1/2 w-3 h-3 bg-white border-t border-l border-purple-100 transform rotate-45">
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -84,7 +109,7 @@
                     <div>
                         <div class="flex justify-between mb-1">
                             <span class="text-sm font-medium text-gray-700">{{ comp.name }}</span>
-                            <span class="text-sm font-bold text-purple-600">{{ comp.score }}/4</span>
+                            <span class="text-sm font-bold text-purple-600">{{ comp.score|floatformat }}/4</span>
                         </div>
                         <div class="w-full bg-gray-100 rounded-full h-3">
                             <div class="bg-purple-500 h-3 rounded-full"
@@ -101,7 +126,9 @@
                 <h3 class="text-xl font-bold text-gray-800 mb-6">Kaip jus apibūdina</h3>
                 <div class="flex flex-wrap gap-2">
                     {% for keyword in all_keywords %}
-                    <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">{{ keyword }}</span>
+                    <span class="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
+                        {{ keyword }}
+                    </span>
                     {% empty %}
                     <span class="text-sm text-gray-500">Kol kas nėra raktinių žodžių.</span>
                     {% endfor %}
