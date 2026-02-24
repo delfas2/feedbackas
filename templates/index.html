@@ -65,19 +65,141 @@
 
     <!-- 2. Hero (Pagrindinis) skyrius -->
     <main>
-        <section class="bg-purple-50">
-            <div class="container mx-auto px-4 py-20 md:py-32 text-center">
-                <h1 class="text-4xl md:text-5xl font-extrabold text-gray-800 mb-4">
-                    Skatinkite atvirą komandos kultūrą
-                </h1>
-                <p class="text-lg text-gray-600 max-w-2xl mx-auto mb-8">
-                    Mūsų platforma padeda lengvai rinkti ir analizuoti nuoširdžius 360 laipsnių atsiliepimus. Padėkite
-                    savo darbuotojams augti kartu.
-                </p>
-                <button type="button" onclick="openContactModal()"
-                    class="px-8 py-3 text-lg font-medium text-white bg-purple-500 rounded-lg shadow-lg hover:bg-purple-600 transition-colors duration-200">
-                    Susisiekite su mumis
-                </button>
+        <section class="bg-purple-50 overflow-hidden relative">
+            <div class="container mx-auto px-4 py-20 md:py-32">
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <!-- Kairė: Tekstas ir mygtukai -->
+                    <div class="text-center md:text-left z-10 relative">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-800 mb-6 leading-tight">
+                            Skatinkite atvirą<br />
+                            <span class="text-purple-600">komandos kultūrą</span>
+                        </h1>
+                        <p class="text-lg text-gray-600 mb-8 max-w-xl mx-auto md:mx-0">
+                            Mūsų platforma padeda lengvai rinkti ir analizuoti nuoširdžius 360 laipsnių atsiliepimus.
+                            Išryškinkite stiprybes ir padėkite savo darbuotojams augti kartu.
+                        </p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
+                            <button type="button" onclick="openContactModal()"
+                                class="px-8 py-3 text-lg font-medium text-white bg-purple-600 rounded-xl shadow-lg hover:bg-purple-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center">
+                                Susisiekite su mumis
+                            </button>
+                            <a href="#funkcijos"
+                                class="px-8 py-3 text-lg font-medium text-purple-700 bg-white border border-purple-200 rounded-xl shadow-sm hover:bg-purple-50 hover:border-purple-300 transition-colors duration-300 text-center">
+                                Kaip tai veikia?
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Dešinė: Gyvos animacijos / vizualizacija -->
+                    <div class="relative h-[400px] md:h-[500px] w-full hidden md:block select-none">
+                        <!-- Foninis švytėjimas -->
+                        <div
+                            class="absolute inset-0 bg-gradient-to-tr from-purple-300 to-pink-200 rounded-full blur-[80px] opacity-40 transform scale-110">
+                        </div>
+
+                        <!-- Kortelė 1: Apklausos atsiliepimas -->
+                        <div class="absolute top-10 left-4 bg-white/90 backdrop-blur-md p-5 rounded-2xl shadow-xl border border-white/50 w-72"
+                            style="animation: float 6s ease-in-out infinite;">
+                            <div class="flex items-center gap-4 mb-4">
+                                <div
+                                    class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-400 to-purple-600 flex items-center justify-center text-white font-bold shadow-md">
+                                    J</div>
+                                <div>
+                                    <div class="h-3 w-24 bg-gray-200 rounded-full mb-2"></div>
+                                    <div class="h-2 w-16 bg-gray-100 rounded-full"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                <div class="h-2 w-full bg-gray-100 rounded-full"></div>
+                                <div class="h-2 w-5/6 bg-gray-100 rounded-full"></div>
+                                <div class="h-2 w-4/6 bg-gray-100 rounded-full"></div>
+                            </div>
+                            <div class="mt-4 flex gap-2">
+                                <span
+                                    class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold">Iniciatyva</span>
+                                <span
+                                    class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] font-bold">Kūrybiškumas</span>
+                            </div>
+                        </div>
+
+                        <!-- Kortelė 2: AI Analitika / Grafikas -->
+                        <div class="absolute bottom-10 right-0 bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-2xl border border-white/50 w-80 z-10"
+                            style="animation: float 5s ease-in-out infinite reverse;">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-sm font-bold text-gray-800">AI Kompetencijų Profilis</h3>
+                                <svg class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                            <!-- Dinaminio stiliaus stulpeliai -->
+                            <div class="flex items-end gap-3 h-32 mb-4 border-b border-gray-100 pb-2">
+                                <div
+                                    class="w-1/4 bg-purple-200 rounded-t-lg h-[60%] hover:h-[65%] transition-all overflow-hidden relative">
+                                    <div class="absolute bottom-0 w-full bg-purple-300 h-1/2"></div>
+                                </div>
+                                <div
+                                    class="w-1/4 bg-purple-400 rounded-t-lg h-[80%] hover:h-[85%] transition-all overflow-hidden relative">
+                                    <div class="absolute bottom-0 w-full bg-purple-500 h-1/2"></div>
+                                </div>
+                                <div
+                                    class="w-1/4 bg-purple-300 rounded-t-lg h-[40%] hover:h-[45%] transition-all overflow-hidden relative">
+                                    <div class="absolute bottom-0 w-full bg-purple-400 h-1/2"></div>
+                                </div>
+                                <div
+                                    class="w-1/4 bg-gradient-to-t from-purple-600 to-purple-400 rounded-t-lg h-[100%] hover:h-[100%] shadow-lg shadow-purple-500/30">
+                                </div>
+                            </div>
+                            <div class="flex justify-between text-[10px] font-medium text-gray-400 px-1">
+                                <span>Lyd.</span>
+                                <span>Kom.</span>
+                                <span>Tech.</span>
+                                <span class="text-purple-600 font-bold">Inov.</span>
+                            </div>
+                        </div>
+
+                        <!-- Kortelė 3: Pranešimas (Plūduriuojanti etiketė) -->
+                        <div class="absolute top-1/2 right-1/4 translate-x-8 -translate-y-12 bg-green-500 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 z-20"
+                            style="animation: bounce-gentle 4s infinite;">
+                            <div class="bg-white/20 rounded-full p-1">
+                                <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                        d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <span class="text-sm font-semibold tracking-wide">Analizė baigta</span>
+                        </div>
+                    </div>
+
+                    <style>
+                        @keyframes float {
+                            0% {
+                                transform: translateY(0px) rotate(0deg);
+                            }
+
+                            50% {
+                                transform: translateY(-15px) rotate(1deg);
+                            }
+
+                            100% {
+                                transform: translateY(0px) rotate(0deg);
+                            }
+                        }
+
+                        @keyframes bounce-gentle {
+
+                            0%,
+                            100% {
+                                transform: translate(2rem, -3rem) scale(1);
+                            }
+
+                            50% {
+                                transform: translate(2rem, -3.5rem) scale(1.03);
+                            }
+                        }
+                    </style>
+                </div>
             </div>
         </section>
 
