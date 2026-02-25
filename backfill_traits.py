@@ -8,7 +8,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'feedbackas.settings')
 django.setup()
 
 from feedbackas.models import Feedback
-from feedbackas.services import FeedbackGenerator
+from feedbackas.ai_service import FeedbackGenerator
 
 def backfill():
     import time
