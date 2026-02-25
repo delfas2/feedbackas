@@ -21,6 +21,12 @@ db.sqlite3-journal
 # Statinių ir medijos failų aplankai
 /static/
 /media/
+staticfiles/
+
+# Node.js
+node_modules/
+package-lock.json
+yarn.lock
 
 # IDE ir redaktorių konfigūracijos
 .idea/
