@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'users.apps.UsersConfig',
     'feedbackas',
+    'django_q',
 ]
 
 MIDDLEWARE = [
@@ -85,6 +86,7 @@ DATABASES = {
         'PASSWORD': os.environ.get('DB_PASS'),
         'HOST': os.environ.get('DB_HOST'),
         'PORT': os.environ.get('DB_PORT'),
+        'CONN_MAX_AGE': int(os.environ.get('DB_CONN_MAX_AGE', 600)),
     }
 }
 
@@ -152,3 +154,21 @@ LOGIN_URL = '/login/'
 # API key stored in .env file
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 GEMINI_MODEL = os.environ.get('GEMINI_MODEL', 'gemini-1.5-flash')
+
+# Django Q configuration
+Q_CLUSTER = {
+    'name': 'feedbackas_cluster',
+    'workers': 4,
+    'recycle': 500,
+    'timeout': 120,
+    'compress': True,
+    'save_limit': 250,
+    'queue_limit': 50,
+    'cpu_affinity': 1,
+    'label': 'Django Q',
+    'redis': {
+        'host': 'redis',
+        'port': 6379,
+        'db': 0,
+    }
+}

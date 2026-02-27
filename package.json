@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "npx tailwindcss -i ./static/src/styles.css -o ./static/css/styles.css --minify",
-    "watch": "npx tailwindcss -i ./static/src/styles.css -o ./static/css/styles.css --watch"
+    "build": "npx tailwindcss -i ./assets/css/input.css -o ./static/css/styles.css --minify",
+    "watch": "npx tailwindcss -i ./assets/css/input.css -o ./static/css/styles.css --watch"
   },
   "devDependencies": {
-    "tailwindcss": "^3.4.1"
+    "tailwindcss": "^4.0.0",
+    "@tailwindcss/cli": "^4.0.0"
   }
 }

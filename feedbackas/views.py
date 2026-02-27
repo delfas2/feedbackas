@@ -46,7 +46,7 @@ def apie_mus(request):
 
 @login_required
 def home(request):
-    feedback_requests = FeedbackRequest.objects.filter(requested_to=request.user, status='pending')
+    feedback_requests = FeedbackRequest.objects.filter(requested_to=request.user, status='pending').select_related('requester', 'requester__profile')
     company_name = ''
     try:
         if request.user.profile.company_link:
@@ -147,7 +147,7 @@ def get_team_members(request):
         pass  # Jei nėra įmonės, grąžinsime visus vartotojus žemiau
     if not team_members_qs.exists():
         team_members_qs = User.objects.exclude(id=user.id)
-    data = [{'id': member.id, 'name': f'{member.first_name} {member.last_name}'} for member in team_members_qs]
+    data = [{'id': member.id, 'name': member.get_full_name() or member.username} for member in team_members_qs]
     return JsonResponse(data, safe=False)
 
 @login_required
@@ -368,10 +368,10 @@ def team_members_list(request):
 @login_required
 def my_tasks_list(request):
     # Feedback requests made by the current user
-    made_requests = FeedbackRequest.objects.filter(requester=request.user).order_by('-due_date')
+    made_requests = FeedbackRequest.objects.filter(requester=request.user).select_related('requested_to').order_by('-due_date')
 
     # Feedback requests assigned to the current user (tasks to do)
-    assigned_requests = FeedbackRequest.objects.filter(requested_to=request.user).order_by('-due_date')
+    assigned_requests = FeedbackRequest.objects.filter(requested_to=request.user).select_related('requester').order_by('-due_date')
 
     context = {
         'made_requests': made_requests,
@@ -382,8 +382,13 @@ def my_tasks_list(request):
 
 
 
+from django_ratelimit.decorators import ratelimit
+
+from django_q.tasks import async_task, result
+
 @login_required
 @require_POST
+@ratelimit(key='user', rate='10/10m', block=True)
 def generate_ai_feedback(request):
     try:
         data = json.loads(request.body)
@@ -393,7 +398,8 @@ def generate_ai_feedback(request):
         existing_feedback = data.get('existing_feedback', '')
         colleague_name = data.get('colleague_name', 'Kolega')
 
-        generated_text = FeedbackGenerator.generate(
+        task_id = async_task(
+            'feedbackas.services.generate_ai_feedback_task',
             ratings=ratings,
             keywords=keywords,
             comments=comments,
@@ -401,12 +407,31 @@ def generate_ai_feedback(request):
             colleague_name=colleague_name
         )
         
-        return JsonResponse({'generated_feedback': generated_text})
+        return JsonResponse({'task_id': task_id, 'status': 'processing'})
 
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Invalid JSON'}, status=400)
     except Exception as e:
-        logger.error(f"AI feedback generation failed: {e}\n{traceback.format_exc()}")
+        logger.error(f"AI feedback dispatch failed: {e}\n{traceback.format_exc()}")
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+def check_ai_task_status(request):
+    task_id = request.GET.get('task_id')
+    if not task_id:
+        return JsonResponse({'error': 'No task_id provided'}, status=400)
+        
+    try:
+        from django_q.models import Task
+        task = Task.get_task(task_id)
+        if task is None:
+            return JsonResponse({'status': 'processing'})
+            
+        if task.success:
+            return JsonResponse({'status': 'completed', 'generated_feedback': task.result})
+        else:
+            return JsonResponse({'status': 'failed', 'error': 'Task failed to execute'}, status=500)
+    except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
 
@@ -1330,7 +1355,7 @@ def questionnaire_statistics(request, questionnaire_id):
         requester=request.user,
         project_name=questionnaire.title,
         status='completed'
-    )
+    ).select_related('requested_to')
     
     feedbacks = Feedback.objects.filter(feedback_request__in=feedback_requests)
     

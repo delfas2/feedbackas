@@ -273,12 +273,15 @@
                 <!-- Apklausos Forma -->
                 <div class="max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-lg">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6">
-                        Atsiliepimas apie: <span class="text-purple-600">{{ feedback_request.requester.first_name }} {{ feedback_request.requester.last_name }}</span>
+                        Atsiliepimas apie:
+                        <span class="text-purple-600">
+                            {{ feedback_request.requester.get_full_name|default:feedback_request.requester.username }}
+                        </span>
                     </h2>
 
                     <form method="POST" class="space-y-6">
                         <input type="hidden" id="colleague-name"
-                            value="{{ feedback_request.requester.first_name }} {{ feedback_request.requester.last_name }}">
+                            value="{{ feedback_request.requester.get_full_name|default:feedback_request.requester.username }}">
                         {% csrf_token %}
 
                         <!-- Kompetencijų slankikliai -->
@@ -497,207 +500,207 @@
 
             // Check for questionnaire traits and create dynamic batteries
             const questionnaireTraits = JSON.parse('{{ questionnaire_traits_json|escapejs }}');
-            const hasQuestionnaire = {{ has_questionnaire|yesno:"true,false" }};
+            const hasQuestionnaire = '{{ has_questionnaire|yesno:"true,false" }}' === 'true';
 
-        if (hasQuestionnaire && questionnaireTraits.length > 0) {
-            // Hide default competencies
-            document.getElementById('default-competencies').style.display = 'none';
+            if (hasQuestionnaire && questionnaireTraits.length > 0) {
+                // Hide default competencies
+                document.getElementById('default-competencies').style.display = 'none';
 
-            // Create dynamic trait batteries
-            const dynamicContainer = document.getElementById('dynamic-trait-batteries');
-            questionnaireTraits.forEach(trait => {
-                const div = document.createElement('div');
-                div.className = 'competency-battery';
-                div.dataset.competency = 'trait_rating_' + trait.id;
-                div.innerHTML = '<input type="hidden" name="trait_rating_' + trait.id + '" value="0">';
-                dynamicContainer.appendChild(div);
+                // Create dynamic trait batteries
+                const dynamicContainer = document.getElementById('dynamic-trait-batteries');
+                questionnaireTraits.forEach(trait => {
+                    const div = document.createElement('div');
+                    div.className = 'competency-battery';
+                    div.dataset.competency = 'trait_rating_' + trait.id;
+                    div.innerHTML = '<input type="hidden" name="trait_rating_' + trait.id + '" value="0">';
+                    dynamicContainer.appendChild(div);
 
-                // Add to competencyData so it gets a proper label
-                competencyData['trait_rating_' + trait.id] = { label: trait.name };
-            });
-        }
-
-        document.querySelectorAll('.competency-battery').forEach(container => {
-            const competencyName = container.dataset.competency;
-            if (!competencyData[competencyName]) return; // skip unknown
-            const template = document.getElementById('competency-template').content.cloneNode(true);
-            container.appendChild(template);
-
-            container.querySelector('.competency-label').textContent = competencyData[competencyName].label;
-            const hiddenInput = container.querySelector(`input[name="${competencyName}"]`);
-
-            const updateView = (value) => {
-                hiddenInput.value = value;
-
-                const segments = container.querySelectorAll('.battery-segment');
-                const labels = container.querySelectorAll('.battery-label');
-                const tag = container.querySelector('.competency-tag');
-
-                segments.forEach(segment => {
-                    const level = parseInt(segment.dataset.level, 10);
-                    const iconContainer = segment.querySelector('.icon-container');
-                    const shineEffect = segment.querySelector('.shine-effect');
-
-                    const isActive = level <= value;
-                    segment.classList.toggle('active', isActive);
-                    segment.classList.toggle('bg-slate-50', !isActive);
-                    segment.classList.toggle('shadow-inner', isActive);
-
-                    if (isActive) {
-                        shineEffect.className = 'shine-effect absolute top-0 left-0 w-full h-1/2 bg-white opacity-20 pointer-events-none';
-                        iconContainer.classList.remove('text-slate-300', 'translate-y-1');
-                        iconContainer.classList.add('text-white', 'scale-110', 'translate-y-0');
-                        iconContainer.innerHTML = level === 4 ? '⚡' : `<span class="text-2xl">${levels[level - 1].icon}</span>`;
-                    } else {
-                        shineEffect.className = 'shine-effect'; // Remove classes
-                        iconContainer.classList.add('text-slate-300', 'translate-y-1');
-                        iconContainer.classList.remove('text-white', 'scale-110', 'translate-y-0');
-                        iconContainer.innerHTML = `<span class="font-black text-xl opacity-20">${level}</span>`;
-                    }
+                    // Add to competencyData so it gets a proper label
+                    competencyData['trait_rating_' + trait.id] = { label: trait.name };
                 });
-
-                labels.forEach(label => {
-                    const level = parseInt(label.dataset.level, 10);
-                    const p = label.querySelector('p:first-child');
-                    const isActive = level === value;
-                    label.classList.toggle('opacity-100', isActive);
-                    label.classList.toggle('transform', isActive);
-                    label.classList.toggle('-translate-y-1', isActive);
-                    label.classList.toggle('opacity-40', !isActive);
-                    p.classList.toggle('text-slate-800', isActive);
-                    p.classList.toggle('text-slate-500', !isActive);
-                });
-
-                if (value > 0) {
-                    const levelData = levels[value - 1];
-                    tag.innerHTML = `${levelData.icon} ${levelData.title}`;
-                    tag.className = `text-xs font-bold px-3 py-1 rounded-full border competency-tag shadow-sm level-${value}`;
-                    tag.style.display = 'inline-block';
-                } else {
-                    tag.style.display = 'none';
-                }
-            };
-
-            container.addEventListener('click', (e) => {
-                const target = e.target.closest('[data-level]');
-                if (target) {
-                    const level = parseInt(target.dataset.level, 10);
-                    updateView(level);
-                }
-            });
-        });
-
-        // Keyword Modal
-        const keywordModal = document.getElementById('keyword-modal');
-        const openKeywordModalBtn = document.getElementById('open-keyword-modal');
-        const closeKeywordModalBtn = document.getElementById('close-keyword-modal');
-        const keywordCloud = document.getElementById('keyword-cloud');
-        const keywordsInput = document.getElementById('keywords');
-
-        // Keyword cloud: reuse the variables already declared above
-        if (hasQuestionnaire && questionnaireTraits.length > 0) {
-            // Show only the questionnaire's selected traits as keyword chips
-            questionnaireTraits.forEach(trait => {
-                const keywordEl = document.createElement('span');
-                keywordEl.textContent = trait.name;
-                keywordEl.className = 'cursor-pointer bg-purple-100 text-purple-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
-                keywordEl.addEventListener('click', () => {
-                    if (keywordsInput.value) {
-                        keywordsInput.value += ', ' + trait.name;
-                    } else {
-                        keywordsInput.value = trait.name;
-                    }
-                    keywordEl.style.display = 'none';
-                });
-                keywordCloud.appendChild(keywordEl);
-            });
-        } else {
-            // Show the default generic keyword cloud
-            const positiveKeywords = [
-                'Komandinis darbas', 'Komunikabilumas', 'Iniciatyvumas', 'Problemų sprendimas', 'Lyderystė',
-                'Analitinis mąstymas', 'Kūrybiškumas', 'Adaptabilumas', 'Atsakingumas', 'Laiko planavimas',
-                'Techninės žinios', 'Strateginis mąstymas', 'Klientų aptarnavimas', 'Derybos', 'Prezentavimo įgūdžiai',
-                'Patikimumas', 'Motyvacija', 'Pozityvumas', 'Efektyvumas', 'Savarankiškumas', 'Mentorystė', 'Pagalba kitiems',
-                'Atvirumas', 'Entuziazmas', 'Profesionalumas', 'Kruopštumas', 'Smalsumas', 'Konstruktyvumas', 'Įžvalgumas', 'Lankstumas',
-                'Draugiškumas', 'Mandagumas', 'Punktualumas', 'Organizuotumas', 'Empatija', 'Orientacija į rezultą', 'Gebėjimas įkvėpti',
-                'Gebėjimas mokytis', 'Sąžiningumas', 'Atkaklumas'
-            ];
-
-            const neutralKeywords = [
-                'Tylus', 'Ramus', 'Individualistas', 'Analitikas', 'Stebėtojas', 'Vykdytojas', 'Planuotojas',
-                'Struktūruotas', 'Formalus', 'Neformalus', 'Praktiškas', 'Teoretikas', 'Atsargus', 'Racionalus', 'Intravertas',
-                'Ekstravertas', 'Realistas', 'Pragmmatikas', 'Diplomatas', 'Kritikas', 'Svajotojas', 'Logiškas',
-                'Emocionalus', 'Konservatyvus', 'Liberalus', 'Tiesioginis', 'Netiesioginis', 'Detalus', 'Apibendrinantis', 'Koncepualus'
-            ];
-
-            const negativeKeywords = [
-                'Vėlavimas', 'Neatsakingumas', 'Pasyvumas', 'Konfliktiškumas', 'Arogancija',
-                'Klaidų slėpimas', 'Neorganizuotumas', 'Nekokybiškas darbas', 'Stresas', 'Negatyvumas',
-                'Nepasitikėjimas', 'Kritikos nepriėmimas', 'Dėmesio stoka', 'Bendradarbiavimo stoka', 'Lėtas darbas',
-                'Nedraugiškumas', 'Chaotiškumas', 'Uždarumas', 'Pesimizmas', 'Abejingumas', 'Išsiblaškymas', 'Paviršutiniškumas',
-                'Neapdairumas', 'Neryžtingumas', 'Užsispyrimas', 'Ignoravimas', 'Manipuliavimas', 'Pesimizmas', 'Skubotumas',
-                'Neetiškas elgesys', 'Nepagarba', 'Apatija', 'Neigiamas požiūris', 'Komunikacijos stoka', 'Negebėjimas priimti sprendimų'
-            ];
-
-            positiveKeywords.forEach(keyword => {
-                const keywordEl = document.createElement('span');
-                keywordEl.textContent = keyword;
-                keywordEl.className = 'cursor-pointer bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
-                keywordEl.addEventListener('click', () => {
-                    if (keywordsInput.value) {
-                        keywordsInput.value += ', ' + keyword;
-                    } else {
-                        keywordsInput.value = keyword;
-                    }
-                    keywordEl.style.display = 'none';
-                });
-                keywordCloud.appendChild(keywordEl);
-            });
-
-            neutralKeywords.forEach(keyword => {
-                const keywordEl = document.createElement('span');
-                keywordEl.textContent = keyword;
-                keywordEl.className = 'cursor-pointer bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
-                keywordEl.addEventListener('click', () => {
-                    if (keywordsInput.value) {
-                        keywordsInput.value += ', ' + keyword;
-                    } else {
-                        keywordsInput.value = keyword;
-                    }
-                    keywordEl.style.display = 'none';
-                });
-                keywordCloud.appendChild(keywordEl);
-            });
-
-            negativeKeywords.forEach(keyword => {
-                const keywordEl = document.createElement('span');
-                keywordEl.textContent = keyword;
-                keywordEl.className = 'cursor-pointer bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
-                keywordEl.addEventListener('click', () => {
-                    if (keywordsInput.value) {
-                        keywordsInput.value += ', ' + keyword;
-                    } else {
-                        keywordsInput.value = keyword;
-                    }
-                    keywordEl.style.display = 'none';
-                });
-                keywordCloud.appendChild(keywordEl);
-            });
-        }
-
-        openKeywordModalBtn.addEventListener('click', () => {
-            keywordModal.classList.remove('hidden');
-        });
-
-        closeKeywordModalBtn.addEventListener('click', () => {
-            keywordModal.classList.add('hidden');
-        });
-
-        window.addEventListener('click', (event) => {
-            if (event.target == keywordModal) {
-                keywordModal.classList.add('hidden');
             }
-        });
+
+            document.querySelectorAll('.competency-battery').forEach(container => {
+                const competencyName = container.dataset.competency;
+                if (!competencyData[competencyName]) return; // skip unknown
+                const template = document.getElementById('competency-template').content.cloneNode(true);
+                container.appendChild(template);
+
+                container.querySelector('.competency-label').textContent = competencyData[competencyName].label;
+                const hiddenInput = container.querySelector(`input[name="${competencyName}"]`);
+
+                const updateView = (value) => {
+                    hiddenInput.value = value;
+
+                    const segments = container.querySelectorAll('.battery-segment');
+                    const labels = container.querySelectorAll('.battery-label');
+                    const tag = container.querySelector('.competency-tag');
+
+                    segments.forEach(segment => {
+                        const level = parseInt(segment.dataset.level, 10);
+                        const iconContainer = segment.querySelector('.icon-container');
+                        const shineEffect = segment.querySelector('.shine-effect');
+
+                        const isActive = level <= value;
+                        segment.classList.toggle('active', isActive);
+                        segment.classList.toggle('bg-slate-50', !isActive);
+                        segment.classList.toggle('shadow-inner', isActive);
+
+                        if (isActive) {
+                            shineEffect.className = 'shine-effect absolute top-0 left-0 w-full h-1/2 bg-white opacity-20 pointer-events-none';
+                            iconContainer.classList.remove('text-slate-300', 'translate-y-1');
+                            iconContainer.classList.add('text-white', 'scale-110', 'translate-y-0');
+                            iconContainer.innerHTML = level === 4 ? '⚡' : `<span class="text-2xl">${levels[level - 1].icon}</span>`;
+                        } else {
+                            shineEffect.className = 'shine-effect'; // Remove classes
+                            iconContainer.classList.add('text-slate-300', 'translate-y-1');
+                            iconContainer.classList.remove('text-white', 'scale-110', 'translate-y-0');
+                            iconContainer.innerHTML = `<span class="font-black text-xl opacity-20">${level}</span>`;
+                        }
+                    });
+
+                    labels.forEach(label => {
+                        const level = parseInt(label.dataset.level, 10);
+                        const p = label.querySelector('p:first-child');
+                        const isActive = level === value;
+                        label.classList.toggle('opacity-100', isActive);
+                        label.classList.toggle('transform', isActive);
+                        label.classList.toggle('-translate-y-1', isActive);
+                        label.classList.toggle('opacity-40', !isActive);
+                        p.classList.toggle('text-slate-800', isActive);
+                        p.classList.toggle('text-slate-500', !isActive);
+                    });
+
+                    if (value > 0) {
+                        const levelData = levels[value - 1];
+                        tag.innerHTML = `${levelData.icon} ${levelData.title}`;
+                        tag.className = `text-xs font-bold px-3 py-1 rounded-full border competency-tag shadow-sm level-${value}`;
+                        tag.style.display = 'inline-block';
+                    } else {
+                        tag.style.display = 'none';
+                    }
+                };
+
+                container.addEventListener('click', (e) => {
+                    const target = e.target.closest('[data-level]');
+                    if (target) {
+                        const level = parseInt(target.dataset.level, 10);
+                        updateView(level);
+                    }
+                });
+            });
+
+            // Keyword Modal
+            const keywordModal = document.getElementById('keyword-modal');
+            const openKeywordModalBtn = document.getElementById('open-keyword-modal');
+            const closeKeywordModalBtn = document.getElementById('close-keyword-modal');
+            const keywordCloud = document.getElementById('keyword-cloud');
+            const keywordsInput = document.getElementById('keywords');
+
+            // Keyword cloud: reuse the variables already declared above
+            if (hasQuestionnaire && questionnaireTraits.length > 0) {
+                // Show only the questionnaire's selected traits as keyword chips
+                questionnaireTraits.forEach(trait => {
+                    const keywordEl = document.createElement('span');
+                    keywordEl.textContent = trait.name;
+                    keywordEl.className = 'cursor-pointer bg-purple-100 text-purple-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
+                    keywordEl.addEventListener('click', () => {
+                        if (keywordsInput.value) {
+                            keywordsInput.value += ', ' + trait.name;
+                        } else {
+                            keywordsInput.value = trait.name;
+                        }
+                        keywordEl.style.display = 'none';
+                    });
+                    keywordCloud.appendChild(keywordEl);
+                });
+            } else {
+                // Show the default generic keyword cloud
+                const positiveKeywords = [
+                    'Komandinis darbas', 'Komunikabilumas', 'Iniciatyvumas', 'Problemų sprendimas', 'Lyderystė',
+                    'Analitinis mąstymas', 'Kūrybiškumas', 'Adaptabilumas', 'Atsakingumas', 'Laiko planavimas',
+                    'Techninės žinios', 'Strateginis mąstymas', 'Klientų aptarnavimas', 'Derybos', 'Prezentavimo įgūdžiai',
+                    'Patikimumas', 'Motyvacija', 'Pozityvumas', 'Efektyvumas', 'Savarankiškumas', 'Mentorystė', 'Pagalba kitiems',
+                    'Atvirumas', 'Entuziazmas', 'Profesionalumas', 'Kruopštumas', 'Smalsumas', 'Konstruktyvumas', 'Įžvalgumas', 'Lankstumas',
+                    'Draugiškumas', 'Mandagumas', 'Punktualumas', 'Organizuotumas', 'Empatija', 'Orientacija į rezultą', 'Gebėjimas įkvėpti',
+                    'Gebėjimas mokytis', 'Sąžiningumas', 'Atkaklumas'
+                ];
+
+                const neutralKeywords = [
+                    'Tylus', 'Ramus', 'Individualistas', 'Analitikas', 'Stebėtojas', 'Vykdytojas', 'Planuotojas',
+                    'Struktūruotas', 'Formalus', 'Neformalus', 'Praktiškas', 'Teoretikas', 'Atsargus', 'Racionalus', 'Intravertas',
+                    'Ekstravertas', 'Realistas', 'Pragmmatikas', 'Diplomatas', 'Kritikas', 'Svajotojas', 'Logiškas',
+                    'Emocionalus', 'Konservatyvus', 'Liberalus', 'Tiesioginis', 'Netiesioginis', 'Detalus', 'Apibendrinantis', 'Koncepualus'
+                ];
+
+                const negativeKeywords = [
+                    'Vėlavimas', 'Neatsakingumas', 'Pasyvumas', 'Konfliktiškumas', 'Arogancija',
+                    'Klaidų slėpimas', 'Neorganizuotumas', 'Nekokybiškas darbas', 'Stresas', 'Negatyvumas',
+                    'Nepasitikėjimas', 'Kritikos nepriėmimas', 'Dėmesio stoka', 'Bendradarbiavimo stoka', 'Lėtas darbas',
+                    'Nedraugiškumas', 'Chaotiškumas', 'Uždarumas', 'Pesimizmas', 'Abejingumas', 'Išsiblaškymas', 'Paviršutiniškumas',
+                    'Neapdairumas', 'Neryžtingumas', 'Užsispyrimas', 'Ignoravimas', 'Manipuliavimas', 'Pesimizmas', 'Skubotumas',
+                    'Neetiškas elgesys', 'Nepagarba', 'Apatija', 'Neigiamas požiūris', 'Komunikacijos stoka', 'Negebėjimas priimti sprendimų'
+                ];
+
+                positiveKeywords.forEach(keyword => {
+                    const keywordEl = document.createElement('span');
+                    keywordEl.textContent = keyword;
+                    keywordEl.className = 'cursor-pointer bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
+                    keywordEl.addEventListener('click', () => {
+                        if (keywordsInput.value) {
+                            keywordsInput.value += ', ' + keyword;
+                        } else {
+                            keywordsInput.value = keyword;
+                        }
+                        keywordEl.style.display = 'none';
+                    });
+                    keywordCloud.appendChild(keywordEl);
+                });
+
+                neutralKeywords.forEach(keyword => {
+                    const keywordEl = document.createElement('span');
+                    keywordEl.textContent = keyword;
+                    keywordEl.className = 'cursor-pointer bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
+                    keywordEl.addEventListener('click', () => {
+                        if (keywordsInput.value) {
+                            keywordsInput.value += ', ' + keyword;
+                        } else {
+                            keywordsInput.value = keyword;
+                        }
+                        keywordEl.style.display = 'none';
+                    });
+                    keywordCloud.appendChild(keywordEl);
+                });
+
+                negativeKeywords.forEach(keyword => {
+                    const keywordEl = document.createElement('span');
+                    keywordEl.textContent = keyword;
+                    keywordEl.className = 'cursor-pointer bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
+                    keywordEl.addEventListener('click', () => {
+                        if (keywordsInput.value) {
+                            keywordsInput.value += ', ' + keyword;
+                        } else {
+                            keywordsInput.value = keyword;
+                        }
+                        keywordEl.style.display = 'none';
+                    });
+                    keywordCloud.appendChild(keywordEl);
+                });
+            }
+
+            openKeywordModalBtn.addEventListener('click', () => {
+                keywordModal.classList.remove('hidden');
+            });
+
+            closeKeywordModalBtn.addEventListener('click', () => {
+                keywordModal.classList.add('hidden');
+            });
+
+            window.addEventListener('click', (event) => {
+                if (event.target == keywordModal) {
+                    keywordModal.classList.add('hidden');
+                }
+            });
         });
     </script>
 
@@ -760,18 +763,48 @@
                 })
                     .then(response => response.json())
                     .then(result => {
-                        if (result.generated_feedback) {
-                            document.getElementById('feedback').value = result.generated_feedback;
+                        if (result.task_id) {
+                            // Start polling for the result
+                            const taskId = result.task_id;
+                            const checkInterval = setInterval(() => {
+                                fetch(`{% url 'check_ai_task_status' %}?task_id=${taskId}`)
+                                    .then(res => res.json())
+                                    .then(statusResult => {
+                                        if (statusResult.status === 'completed') {
+                                            clearInterval(checkInterval);
+                                            document.getElementById('feedback').value = statusResult.generated_feedback;
+                                            spinner.classList.add('hidden');
+                                            btnText.textContent = 'Generuoti (AI)';
+                                            btn.disabled = false;
+                                        } else if (statusResult.status === 'failed' || statusResult.error) {
+                                            clearInterval(checkInterval);
+                                            console.error('Klaida generuojant atsiliepimą:', statusResult.error);
+                                            alert('Atsiprašome, įvyko klaida generuojant atsiliepimą. Bandykite vėliau.');
+                                            spinner.classList.add('hidden');
+                                            btnText.textContent = 'Generuoti (AI)';
+                                            btn.disabled = false;
+                                        }
+                                        // If status is 'processing', do nothing and let the interval run again
+                                    })
+                                    .catch(err => {
+                                        clearInterval(checkInterval);
+                                        console.error('Polling klaida:', err);
+                                        spinner.classList.add('hidden');
+                                        btnText.textContent = 'Generuoti (AI)';
+                                        btn.disabled = false;
+                                    });
+                            }, 2000); // Check every 2 seconds
                         } else if (result.error) {
-                            console.error('Klaida generuojant atsiliepimą:', result.error);
-                            alert('Atsiprašome, įvyko klaida generuojant atsiliepimą. Bandykite vėliau.');
+                            console.error('Klaida paleidžiant generavimą:', result.error);
+                            alert('Atsiprašome, įvyko klaida. Bandykite vėliau.');
+                            spinner.classList.add('hidden');
+                            btnText.textContent = 'Generuoti (AI)';
+                            btn.disabled = false;
                         }
                     })
                     .catch(error => {
                         console.error('Fetch klaida:', error);
                         alert('Atsiprašome, įvyko tinklo klaida. Bandykite vėliau.');
-                    })
-                    .finally(() => {
                         spinner.classList.add('hidden');
                         btnText.textContent = 'Generuoti (AI)';
                         btn.disabled = false;

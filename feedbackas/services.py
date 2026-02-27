@@ -130,3 +130,13 @@ class FeedbackAnalytics:
             'improvements': all_improvements[:5],
             'recommended_trainings': recommended_trainings,
         }
+
+def generate_ai_feedback_task(ratings, keywords, comments, existing_feedback, colleague_name):
+    from .ai_service import FeedbackGenerator
+    return FeedbackGenerator.generate(
+        ratings=ratings,
+        keywords=keywords,
+        comments=comments,
+        existing_feedback=existing_feedback,
+        colleague_name=colleague_name
+    )

@@ -5,3 +5,8 @@ whitenoise
 Pillow
 Faker==20.0.0
 openpyxl>=3.1.2
+django-ratelimit==4.1.0
+whitenoise==6.7.0
+gunicorn
+django-q2>=1.7.4
+redis<5.0.0

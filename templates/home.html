@@ -84,7 +84,22 @@
                     </div>
                     {% endfor %}
                     {% else %}
-                    <p class="text-gray-500">Neturite jokių užduočių.</p>
+                    <div class="text-center py-8">
+                        <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-purple-100 mb-4">
+                            <svg class="w-8 h-8 text-purple-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375a9 9 0 0 1 9 9v.375M10.125 2.25A3.375 3.375 0 0 1 13.5 5.625v1.5c0 .621.504 1.125 1.125 1.125h1.5a3.375 3.375 0 0 1 3.375 3.375M9 15l2.25 2.25L15 12" />
+                            </svg>
+                        </div>
+                        <h4 class="text-lg font-medium text-gray-900 mb-1">Visos užduotys atliktos!</h4>
+                        <p class="text-sm text-gray-500 mb-4">Šiuo metu neturite jokių laukiančių atsiliepimų prašymų.
+                        </p>
+                        <button onclick="document.getElementById('request-feedback-btn').click()"
+                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-purple-600 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors">
+                            Paprašykite atsiliepimo
+                        </button>
+                    </div>
                     {% endif %}
                 </div>
             </div>
