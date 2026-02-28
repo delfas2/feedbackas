@@ -31,8 +31,8 @@ services:
     command: sh -c "python manage.py qcluster"
     volumes:
       - .:/app
-    env_file:
-      - .env
+    # env_file:
+    #   - .env
     depends_on:
       - db
       - redis
