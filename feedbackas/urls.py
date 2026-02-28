@@ -34,7 +34,10 @@ urlpatterns = [
     path('feedback/fill/<int:request_id>/', views.fill_feedback, name='fill_feedback'),
     path('team/', views.team_members_list, name='team_members_list'),
     path('tasks/dashboard/', views.my_tasks_list, name='my_tasks_list'),
+    path('request/<int:request_id>/cancel/', views.cancel_feedback_request, name='cancel_feedback_request'),
+    path('request/<int:request_id>/edit/', views.edit_feedback_request, name='edit_feedback_request'),
     path('results/', views.results, name='results'),
+    path('api/competency_trend/<str:competency_name>/', views.get_competency_trend, name='competency_trend'),
     path('team-statistics/', views.team_statistics, name='team_statistics'),
     path('team-statistics/member/<int:user_id>/', views.team_member_detail, name='team_member_detail'),
     path('generate_ai_feedback/', views.generate_ai_feedback, name='generate_ai_feedback'),
@@ -66,6 +69,12 @@ urlpatterns = [
     path('questionnaires/delete/<int:questionnaire_id>/', views.delete_questionnaire, name='delete_questionnaire'),
     path('questionnaires/send/', views.send_questionnaire, name='send_questionnaire'),
     path('questionnaires/<int:questionnaire_id>/statistics/', views.questionnaire_statistics, name='questionnaire_statistics'),
+    
+    # Superusers management
+    path('superadmin/superusers/', views.superadmin_superusers_list, name='superadmin_superusers_list'),
+    path('superadmin/superusers/create/', views.superadmin_create_superuser, name='superadmin_create_superuser'),
+    path('superadmin/superusers/<int:user_id>/edit/', views.superadmin_edit_superuser, name='superadmin_edit_superuser'),
+    path('superadmin/superusers/<int:user_id>/delete/', views.superadmin_delete_superuser, name='superadmin_delete_superuser'),
 ]
 
 from django.conf import settings

@@ -1,16 +1,47 @@
-import google.generativeai as genai
+import requests
+import json
 from django.conf import settings
+
 
 class FeedbackGenerator:
     @staticmethod
+    def _call_openrouter(prompt):
+        """
+        Siunčia užklausą į OpenRouter API ir grąžina atsakymą.
+        """
+        api_key = settings.OPENROUTER_API_KEY
+        model = getattr(settings, 'OPENROUTER_MODEL', 'google/gemma-3-27b-it:free')
+
+        headers = {
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json',
+        }
+
+        payload = {
+            'model': model,
+            'messages': [
+                {'role': 'user', 'content': prompt}
+            ],
+            'temperature': 0.7,
+            'max_tokens': 1024,
+        }
+
+        response = requests.post(
+            'https://openrouter.ai/api/v1/chat/completions',
+            headers=headers,
+            json=payload,
+            timeout=60
+        )
+        response.raise_for_status()
+
+        data = response.json()
+        return data['choices'][0]['message']['content']
+
+    @staticmethod
     def generate(ratings, keywords, comments, existing_feedback, colleague_name):
         """
-        Generuoja grįžtamąjį ryšį naudojant Google Gemini AI.
+        Generuoja grįžtamąjį ryšį naudojant OpenRouter API (Gemma).
         """
-        genai.configure(api_key=settings.GEMINI_API_KEY)
-        model_name = getattr(settings, 'GEMINI_MODEL', 'gemini-pro')
-        model = genai.GenerativeModel(model_name)
-
         prompt = f"""
         Veik kaip konkretus, kolegiškas komandos narys, būk empatiškas ir teik konstruktyvią kritiką.
         Eik iš kato prie esmės, nereikia jokių įžangų ir atsisveikinimų.
@@ -66,18 +97,7 @@ class FeedbackGenerator:
         Tekstas turi būti motyvuojantis, profesionalus ir aiškus. Nenaudok Markdown formatavimo.
         """
 
-        try:
-            response = model.generate_content(prompt)
-            return response.text
-        except Exception as e:
-            # Fallback for unsupported models or API versions
-            try:
-                fallback_model = genai.GenerativeModel("gemini-pro")
-                response = fallback_model.generate_content(prompt)
-                return response.text
-            except Exception as e2:
-                print(f"Fallback generation also failed: {e2}")
-                raise e
+        return FeedbackGenerator._call_openrouter(prompt)
 
     @staticmethod
     def extract_strengths_weaknesses(feedback_text, comments_text):
@@ -86,11 +106,7 @@ class FeedbackGenerator:
         """
         if not feedback_text and not comments_text:
             return {"strengths": [], "improvements": []}
-            
-        genai.configure(api_key=settings.GEMINI_API_KEY)
-        model_name = getattr(settings, 'GEMINI_MODEL', 'gemini-pro')
-        model = genai.GenerativeModel(model_name)
-        
+
         prompt = f"""
         Išanalizuok žemiau pateiktą darbuotojo atsiliepimą ir išskirk dvi kategorijas:
         1. Stiprybės (gerosios savybės, ką darbuotojas daro gerai)
@@ -111,26 +127,20 @@ class FeedbackGenerator:
         Papildomas komentaras:
         {comments_text}
         """
-        
+
         try:
-            response = model.generate_content(prompt)
-        except Exception:
-            try:
-                fallback_model = genai.GenerativeModel("gemini-pro")
-                response = fallback_model.generate_content(prompt)
-            except Exception as e:
-                print(f"Failed to extract traits on fallback: {e}")
-                return {"strengths": [], "improvements": []}
-                
+            response_text = FeedbackGenerator._call_openrouter(prompt)
+        except Exception as e:
+            print(f"Failed to extract traits: {e}")
+            return {"strengths": [], "improvements": []}
+
         try:
-            # Bandome išvalyti Markdown kodą iš grąžinto atsakymo, jei AI vis tik jį pridėtų
-            cleaned_text = response.text.replace('```json', '').replace('```', '').strip()
-            import json
+            cleaned_text = response_text.replace('```json', '').replace('```', '').strip()
             data = json.loads(cleaned_text)
             return {
                 "strengths": data.get("strengths", []),
                 "improvements": data.get("improvements", [])
             }
         except Exception as e:
-            print(f"Failed to extract traits: {e}")
+            print(f"Failed to parse extracted traits: {e}")
             return {"strengths": [], "improvements": []}

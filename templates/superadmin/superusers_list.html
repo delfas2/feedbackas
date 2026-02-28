@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}Supervartotojai - Superadmin{% endblock %}
+
+{% block content %}
+<main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+    <div class="max-w-7xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+            <h1 class="text-3xl font-bold text-gray-800">Supervartotojai</h1>
+            <a href="{% url 'superadmin_create_superuser' %}"
+                class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-sm font-medium">
+                Sukurti supervartotoją
+            </a>
+        </div>
+
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-gray-600">
+                    <thead class="bg-gray-50 text-gray-500 border-b border-gray-100">
+                        <tr>
+                            <th class="px-6 py-3 font-medium">Vardas, Pavardė</th>
+                            <th class="px-6 py-3 font-medium">El. paštas / Prisijungimo vardas</th>
+                            <th class="px-6 py-3 font-medium">Sukūrimo data</th>
+                            <th class="px-6 py-3 font-medium text-right">Veiksmai</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for superuser in superusers %}
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-6 py-3 font-medium text-gray-900">
+                                {{ superuser.first_name }} {{ superuser.last_name }}
+                            </td>
+                            <td class="px-6 py-3">{{ superuser.email|default:superuser.username }}</td>
+                            <td class="px-6 py-3">{{ superuser.date_joined|date:"Y-m-d" }}</td>
+                            <td class="px-6 py-3 text-right flex justify-end space-x-3 items-center">
+                                <a href="{% url 'superadmin_edit_superuser' superuser.id %}"
+                                    class="text-gray-400 hover:text-purple-600 font-medium">Redaguoti</a>
+
+                                {% if superuser.id != request.user.id %}
+                                <form method="post" action="{% url 'superadmin_delete_superuser' superuser.id %}"
+                                    class="inline"
+                                    onsubmit="return confirm('Ar tikrai norite ištrinti šį supervartotoją?');">
+                                    {% csrf_token %}
+                                    <button type="submit" class="text-red-400 hover:text-red-600 font-medium text-sm">
+                                        Ištrinti
+                                    </button>
+                                </form>
+                                {% else %}
+                                <span class="text-gray-300 pointer-events-none font-medium text-sm"
+                                    title="Savęs ištrinti negalima">Ištrinti</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="px-6 py-4 text-center text-gray-500">Nėra jokių supervartotojų</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

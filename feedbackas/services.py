@@ -140,3 +140,127 @@ def generate_ai_feedback_task(ratings, keywords, comments, existing_feedback, co
         existing_feedback=existing_feedback,
         colleague_name=colleague_name
     )
+
+class TeamAnalytics:
+    @staticmethod
+    def get_team_stats(team_members):
+        """
+        Apskaičiuoja visos komandos statistiką.
+        """
+        from django.db.models import Avg, Count, Q
+        
+        # Per-member stats using annotation instead of N+1 queries
+        annotated_members = team_members.annotate(
+            avg_rating=Avg('received_requests__feedback__rating', filter=Q(received_requests__status='completed')),
+            feedback_count=Count('received_requests__feedback', filter=Q(received_requests__status='completed'))
+        )
+
+        member_stats = []
+        for member in annotated_members:
+            member_stats.append({
+                'user': member,
+                'avg_rating': round(member.avg_rating, 2) if member.avg_rating else None,
+                'feedback_count': member.feedback_count,
+            })
+        
+        # Team-wide aggregated stats
+        all_team_feedback = Feedback.objects.filter(
+            feedback_request__requester__in=team_members,
+            feedback_request__status='completed'
+        )
+        
+        team_avg_rating = all_team_feedback.aggregate(Avg('rating'))['rating__avg'] or 0
+        team_feedback_count = all_team_feedback.count()
+        
+        competency_averages = all_team_feedback.aggregate(
+            teamwork=Avg('teamwork_rating'),
+            communication=Avg('communication_rating'),
+            initiative=Avg('initiative_rating'),
+            technical_skills=Avg('technical_skills_rating'),
+            problem_solving=Avg('problem_solving_rating')
+        )
+        
+        competencies = [
+            {'name': 'Komandinis Darbas', 'score': round(competency_averages.get('teamwork') or 0, 2)},
+            {'name': 'Komunikacija', 'score': round(competency_averages.get('communication') or 0, 2)},
+            {'name': 'Iniciatyvumas', 'score': round(competency_averages.get('initiative') or 0, 2)},
+            {'name': 'Techninės Žinios', 'score': round(competency_averages.get('technical_skills') or 0, 2)},
+            {'name': 'Problemų Sprendimas', 'score': round(competency_averages.get('problem_solving') or 0, 2)},
+        ]
+        
+        return {
+            'member_stats': member_stats,
+            'team_avg_rating': team_avg_rating,
+            'team_feedback_count': team_feedback_count,
+            'team_member_count': team_members.count(),
+            'competencies': competencies,
+        }
+
+    @staticmethod
+    def get_member_detailed_stats(feedbacks):
+        """
+        Apskaičiuoja individualaus nario detalią statistiką valdytojui pagal nario feedbakus.
+        """
+        from django.db.models import Avg
+        
+        # Aggregate stats
+        avg_rating = feedbacks.aggregate(Avg('rating'))['rating__avg'] or 0
+        competency_averages = feedbacks.aggregate(
+            teamwork=Avg('teamwork_rating'),
+            communication=Avg('communication_rating'),
+            initiative=Avg('initiative_rating'),
+            technical_skills=Avg('technical_skills_rating'),
+            problem_solving=Avg('problem_solving_rating')
+        )
+        competencies = [
+            {'name': 'Komandinis Darbas', 'score': round(competency_averages.get('teamwork') or 0, 2)},
+            {'name': 'Komunikacija', 'score': round(competency_averages.get('communication') or 0, 2)},
+            {'name': 'Iniciatyvumas', 'score': round(competency_averages.get('initiative') or 0, 2)},
+            {'name': 'Techninės Žinios', 'score': round(competency_averages.get('technical_skills') or 0, 2)},
+            {'name': 'Problemų Sprendimas', 'score': round(competency_averages.get('problem_solving') or 0, 2)},
+        ]
+        
+        # Collect all keywords
+        all_keywords = []
+        for fb in feedbacks:
+            keywords = [kw.strip() for kw in fb.keywords.split(',') if kw.strip()]
+            all_keywords.extend(keywords)
+            
+        return {
+            'avg_rating': round(avg_rating, 2),
+            'competencies': competencies,
+            'keywords': list(set(all_keywords)),
+        }
+
+def extract_feedback_features_task(feedback_id):
+    """
+    Foninė užduotis, skirta AI išskirti stiprybes ir silpnybes iš atsiliepimo 
+    naudojant Google Gemini ir išsaugoti jas atgal į Feedback modelį.
+    """
+    from .models import Feedback
+    from .ai_service import FeedbackGenerator
+    import logging
+    
+    logger = logging.getLogger(__name__)
+    
+    try:
+        feedback = Feedback.objects.get(id=feedback_id)
+        
+        extracted_data = FeedbackGenerator.extract_strengths_weaknesses(
+            feedback.feedback, 
+            feedback.comments
+        )
+        
+        # Update the feedback object with extracted data
+        feedback.extracted_strengths = extracted_data.get("strengths", [])
+        feedback.extracted_improvements = extracted_data.get("improvements", [])
+        feedback.save(update_fields=['extracted_strengths', 'extracted_improvements'])
+        
+        logger.info(f"AI extraction completed successfully for feedback ID {feedback_id}")
+        return True
+    except Feedback.DoesNotExist:
+        logger.error(f"Feedback ID {feedback_id} not found during AI extraction.")
+        return False
+    except Exception as e:
+        logger.error(f"Failed to extract strengths and improvements in background task for feedback {feedback_id}: {e}")
+        return False

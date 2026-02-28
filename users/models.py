@@ -31,3 +31,18 @@ class Profile(models.Model):
 
     def __str__(self):
         return f'{self.user.username} Profile'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+
+        try:
+            from PIL import Image
+            img = Image.open(self.image.path)
+
+            # Jei nuotrauka didesnė nei 300x300 pikselių, sumažiname ją
+            if img.height > 300 or img.width > 300:
+                output_size = (300, 300)
+                img.thumbnail(output_size)
+                img.save(self.image.path)
+        except Exception:
+            pass # Jei trūksta Pillow arba paveikslėlis nerastas atmintyje (pvz., testų metu)

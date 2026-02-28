@@ -4,65 +4,92 @@
 
 {% block content %}
 <main class="flex-1 overflow-y-auto">
-    
+
     <!-- Viršutinė juosta -->
     <header class="bg-white shadow-sm p-4 flex justify-between items-center">
         <h1 class="text-2xl font-bold text-gray-800 hidden md:block">
             Mano Užduotys 📋
         </h1>
-        
+
         <!-- Filtravimas -->
         <div class="flex space-x-2">
-           <select class="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg text-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
-               <option>Naujausi viršuje</option>
-               <option>Pagal terminą</option>
-           </select>
+            <select
+                class="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg text-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                <option>Naujausi viršuje</option>
+                <option>Pagal terminą</option>
+            </select>
         </div>
     </header>
 
     <!-- Turinys -->
     <div class="p-6 md:p-8">
-        
+
         <!-- 1. Užduotys, kurias turiu atlikti -->
         <div class="mb-10">
             <h2 class="text-xl font-bold text-gray-700 mb-4">Užduotys man ({{ assigned_requests.count }})</h2>
             <div class="space-y-4">
                 {% for request in assigned_requests %}
-                <div class="bg-white p-5 rounded-xl shadow-sm border hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4 {% if request.status == 'pending' %}border-purple-100{% elif request.status == 'completed' %}border-gray-200 opacity-70{% endif %}">
+                <div
+                    class="bg-white p-5 rounded-xl shadow-sm border hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4 {% if request.status == 'pending' %}border-purple-100{% elif request.status == 'completed' %}border-gray-200 opacity-70{% endif %}">
                     <div class="flex items-start space-x-4">
-                        <div class="p-3 rounded-lg flex-shrink-0 {% if request.status == 'pending' %}bg-purple-100{% else %}bg-gray-200{% endif %}">
+                        <div
+                            class="p-3 rounded-lg flex-shrink-0 {% if request.status == 'pending' %}bg-purple-100{% else %}bg-gray-200{% endif %}">
                             {% if request.status == 'pending' %}
-                            <svg class="w-6 h-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg>
+                            <svg class="w-6 h-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                            </svg>
                             {% else %}
-                             <svg class="w-6 h-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <svg class="w-6 h-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                             {% endif %}
                         </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-800 {% if request.status == 'completed' %}line-through{% endif %}">{{ request.project_name }}</h3>
-                            <p class="text-gray-500 text-sm">Atsiliepimą inicijavo: <span class="font-medium text-purple-600">{{ request.requester.get_full_name|default:request.requester.username }}</span></p>
-                            {% if request.comment %}<p class="text-sm text-gray-600 mt-1">Komentaras: {{ request.comment }}</p>{% endif %}
+                            <h3
+                                class="text-lg font-semibold text-gray-800 {% if request.status == 'completed' %}line-through{% endif %}">
+                                {{ request.project_name }}</h3>
+                            {% with req=request.requester %}
+                            {% with name=req.get_full_name|default:req.username %}
+                            <p class="text-gray-500 text-sm">Atsiliepimą inicijavo: <span
+                                    class="font-medium text-purple-600">{{ name }}</span></p>
+                            {% endwith %}
+                            {% endwith %}
+                            {% if request.comment %}<p class="text-sm text-gray-600 mt-1">Komentaras: {{ request.comment
+                                }}</p>{% endif %}
                             <div class="flex items-center mt-2 space-x-3 text-xs">
                                 {% if request.status == 'pending' %}
-                                    <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">Laukiama atsakymo</span>
-                                    {% if request.due_date %}
-                                    <span class="text-gray-400 flex items-center">
-                                        <svg class="w-3 h-3 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                                        Terminas: {{ request.due_date|date:"Y-m-d" }}
-                                    </span>
-                                    {% endif %}
+                                <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">Laukiama
+                                    atsakymo</span>
+                                {% if request.due_date %}
+                                <span class="text-gray-400 flex items-center">
+                                    <svg class="w-3 h-3 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                            d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Terminas: {{ request.due_date|date:"Y-m-d" }}
+                                </span>
+                                {% endif %}
                                 {% else %}
-                                    <span class="bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-medium">Užbaigta</span>
+                                <span
+                                    class="bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-medium">Užbaigta</span>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
                     <div class="w-full md:w-auto">
                         {% if request.status == 'pending' %}
-                        <a href="{% url 'fill_feedback' request.id %}" class="block w-full md:w-auto text-center px-6 py-2 bg-purple-500 text-white font-medium rounded-lg hover:bg-purple-600 transition-colors">
+                        <a href="{% url 'fill_feedback' request.id %}"
+                            class="block w-full md:w-auto text-center px-6 py-2 bg-purple-500 text-white font-medium rounded-lg hover:bg-purple-600 transition-colors">
                             Pildyti atsiliepimą
                         </a>
                         {% else %}
-                        <span class="block w-full md:w-auto text-center px-6 py-2 text-gray-400 font-medium cursor-default">Atlikta</span>
+                        <span
+                            class="block w-full md:w-auto text-center px-6 py-2 text-gray-400 font-medium cursor-default">Atlikta</span>
                         {% endif %}
                     </div>
                 </div>
@@ -79,23 +106,41 @@
             <h2 class="text-xl font-bold text-gray-700 mb-4">Mano išsiųsti prašymai ({{ made_requests.count }})</h2>
             <div class="space-y-4">
                 {% for request in made_requests %}
-                <div class="bg-white p-5 rounded-xl shadow-sm border hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4 {% if request.status == 'completed' %}border-green-100{% else %}border-gray-200{% endif %}">
+                <div
+                    class="bg-white p-5 rounded-xl shadow-sm border hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4 {% if request.status == 'completed' %}border-green-100{% else %}border-gray-200{% endif %}">
                     <div class="flex items-start space-x-4">
-                        <div class="p-3 rounded-lg flex-shrink-0 {% if request.status == 'completed' %}bg-green-100{% else %}bg-gray-100{% endif %}">
-                             {% if request.status == 'completed' %}
-                                <svg class="w-6 h-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <div
+                            class="p-3 rounded-lg flex-shrink-0 {% if request.status == 'completed' %}bg-green-100{% else %}bg-gray-100{% endif %}">
+                            {% if request.status == 'completed' %}
+                            <svg class="w-6 h-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                             {% else %}
-                                <svg class="w-6 h-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                            <svg class="w-6 h-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
                             {% endif %}
                         </div>
                         <div>
                             <h3 class="text-lg font-semibold text-gray-800">{{ request.project_name }}</h3>
-                            <p class="text-gray-500 text-sm">Atsiliepimo prašoma iš: <span class="font-medium text-purple-600">{{ request.requested_to.get_full_name|default:request.requested_to.username }}</span></p>
+                            {% with reqto=request.requested_to %}
+                            {% with name=reqto.get_full_name|default:reqto.username %}
+                            <p class="text-gray-500 text-sm">Atsiliepimo prašoma iš: <span
+                                    class="font-medium text-purple-600">{{ name }}</span></p>
+                            {% endwith %}
+                            {% endwith %}
                             <div class="flex items-center mt-2 space-x-3 text-xs">
                                 {% if request.status == 'completed' %}
-                                    <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Gautas atsakymas</span>
+                                <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Gautas
+                                    atsakymas</span>
                                 {% else %}
-                                    <span class="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full font-medium">Laukiama atsakymo</span>
+                                <span
+                                    class="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full font-medium">Laukiama
+                                    atsakymo</span>
                                 {% endif %}
                                 {% if request.due_date %}
                                 <span class="text-gray-400">Terminas: {{ request.due_date|date:"Y-m-d" }}</span>
@@ -103,18 +148,44 @@
                             </div>
                         </div>
                     </div>
-                     <div class="w-full md:w-auto">
+                    <div class="w-full md:w-auto">
                         {% if request.status == 'completed' %}
-                         <a href="#" class="block w-full md:w-auto text-center px-6 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                        <button type="button" data-project="{{ request.project_name }}"
+                            data-rname="{{ request.requested_to.get_full_name|default:request.requested_to.username }}"
+                            data-rating="{{ request.feedback.rating }}"
+                            data-date="{{ request.feedback.created_at|date:'Y-m-d' }}"
+                            data-feedback="{{ request.feedback.feedback|default:'' }}"
+                            data-comments="{{ request.feedback.comments|default:'' }}" onclick="openViewModal(this)"
+                            class="block w-full md:w-auto text-center px-6 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
                             Peržiūrėti
-                        </a>
+                        </button>
                         {% else %}
-                        <span class="block w-full md:w-auto text-center px-6 py-2 text-gray-400 font-medium cursor-default">Laukiama</span>
+                        <div class="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
+                            {% with reqto=request.requested_to %}
+                            <button type="button" data-id="{{ request.id }}" data-project="{{ request.project_name }}"
+                                data-comment="{{ request.comment|default:'' }}"
+                                data-date="{{ request.due_date|date:'Y-m-d' }}"
+                                data-rname="{{ reqto.get_full_name|default:reqto.username }}"
+                                onclick="openEditModal(this)"
+                                class="block w-full md:w-auto text-center px-4 py-2 bg-purple-50 text-purple-600 font-medium rounded-lg hover:bg-purple-100 transition-colors transition">
+                                Redaguoti
+                            </button>
+                            {% endwith %}
+                            <form action="{% url 'cancel_feedback_request' request.id %}" method="POST"
+                                class="w-full md:w-auto"
+                                onsubmit="return confirm('Ar tikrai norite atšaukti šį prašymą?');">
+                                {% csrf_token %}
+                                <button type="submit"
+                                    class="block w-full h-full text-center px-4 py-2 bg-red-50 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors">
+                                    Atšaukti
+                                </button>
+                            </form>
+                        </div>
                         {% endif %}
                     </div>
                 </div>
                 {% empty %}
-                 <div class="bg-white p-5 rounded-xl shadow-sm border text-center text-gray-500">
+                <div class="bg-white p-5 rounded-xl shadow-sm border text-center text-gray-500">
                     Jūs dar nesate išsiuntę jokių prašymų.
                 </div>
                 {% endfor %}
@@ -123,4 +194,72 @@
 
     </div>
 </main>
+
+<!-- Edit Modal -->
+<div id="editModal" class="fixed inset-0 overflow-y-auto h-full w-full hidden transition-opacity"
+    style="background-color: rgba(75, 85, 99, 0.5); z-index: 50;">
+    <div class="relative top-20 mx-auto w-11/12 sm:max-w-xl border shadow-xl rounded-xl bg-white overflow-hidden">
+        <form id="editForm" method="POST" action="">
+            {% csrf_token %}
+            <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                <h3 class="text-xl font-bold text-gray-900 mb-4" id="modal-title">Redaguoti Užklausą ✏️</h3>
+                <p class="text-gray-600 mb-5 text-sm border-b pb-4">
+                    Redaguojate atsiliepimo prašymą, kurį išsiuntėte naudotojui <span id="modalReceiverName"
+                        class="font-semibold"></span>.
+                </p>
+
+                <div class="space-y-4">
+                    <div>
+                        <label for="modal_project_name" class="block text-sm font-medium text-gray-700 mb-1">Projekto
+                            pavadinimas
+                            *</label>
+                        <input type="text" id="modal_project_name" name="project_name" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+
+                    <div>
+                        <label for="modal_comment" class="block text-sm font-medium text-gray-700 mb-1">Jūsų
+                            žinutė / komentaras</label>
+                        <textarea id="modal_comment" name="comment" rows="3"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"></textarea>
+                    </div>
+
+                    <div>
+                        <label for="modal_due_date" class="block text-sm font-medium text-gray-700 mb-1">Terminas
+                            *</label>
+                        <input type="date" id="modal_due_date" name="due_date" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
+                    </div>
+                </div>
+            </div>
+            <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+                <button type="submit"
+                    class="inline-flex w-full justify-center rounded-lg bg-purple-600 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 sm:ml-3 sm:w-auto border border-transparent">
+                    Saugoti pakeitimus
+                </button>
+                <button type="button" onclick="closeEditModal()"
+                    class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-5 py-2 text-sm font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                    Atšaukti
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% include 'includes/view_feedback_modal.html' %}
+
+<script>
+    function openEditModal(btn) {
+        document.getElementById('editModal').classList.remove('hidden');
+        document.getElementById('editForm').action = `/request/${btn.dataset.id}/edit/`;
+        document.getElementById('modal_project_name').value = btn.dataset.project;
+        document.getElementById('modal_comment').value = btn.dataset.comment;
+        document.getElementById('modal_due_date').value = btn.dataset.date;
+        document.getElementById('modalReceiverName').textContent = btn.dataset.rname;
+    }
+
+    function closeEditModal() {
+        document.getElementById('editModal').classList.add('hidden');
+    }
+</script>
 {% endblock %}

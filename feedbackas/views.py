@@ -51,8 +51,10 @@ def home(request):
     try:
         if request.user.profile.company_link:
             company_name = request.user.profile.company_link.name
-    except (Profile.DoesNotExist, OperationalError):
+    except Profile.DoesNotExist:
         pass
+    except OperationalError as e:
+        logger.error(f"Database operational error fetching company for {request.user.username}: {e}")
     
     # Recent team activity
     recent_activity = []
@@ -143,8 +145,10 @@ def get_team_members(request):
         user_company_link = user.profile.company_link
         if user_company_link:
             team_members_qs = User.objects.filter(profile__company_link=user_company_link).exclude(id=user.id)
-    except (Profile.DoesNotExist, OperationalError):
+    except Profile.DoesNotExist:
         pass  # Jei nėra įmonės, grąžinsime visus vartotojus žemiau
+    except OperationalError as e:
+        logger.error(f"Database error fetching team_members for {user.username}: {e}")
     if not team_members_qs.exists():
         team_members_qs = User.objects.exclude(id=user.id)
     data = [{'id': member.id, 'name': member.get_full_name() or member.username} for member in team_members_qs]
@@ -206,18 +210,14 @@ def fill_feedback(request, request_id):
             feedback = form.save(commit=False)
             feedback.feedback_request = feedback_request
             
-            # AI Išskyrimas (Stiprybės ir Tobulintinos sritys)
-            try:
-                from .ai_service import FeedbackGenerator
-                extracted_data = FeedbackGenerator.extract_strengths_weaknesses(feedback.feedback, feedback.comments)
-                feedback.extracted_strengths = extracted_data.get("strengths", [])
-                feedback.extracted_improvements = extracted_data.get("improvements", [])
-            except Exception as e:
-                print(f"Failed to extract strengths and improvements: {e}")
-                
+            # Išsaugome atsiliepimą, kad turėtume jo ID
             feedback.save()
             feedback_request.status = 'completed'
             feedback_request.save()
+            
+            # AI Išskyrimas (Stiprybės ir Tobulintinos sritys) - Foninė užduotis
+            from django_q.tasks import async_task
+            async_task('feedbackas.services.extract_feedback_features_task', feedback.id)
             
             # Save trait ratings if this is a questionnaire-based feedback
             if feedback_request.questionnaire:
@@ -273,14 +273,19 @@ def team_members_list(request):
         if sub_departments.exists():
             # Hierarchical mode: show department blocks
             department_blocks = []
+            
+            # Sub-departments loop optimization
             for dept in sub_departments.select_related('manager').prefetch_related('members__user'):
                 members_qs = User.objects.filter(profile__department=dept).select_related('profile').annotate(
                     average_rating=Avg('made_requests__feedback__rating')
                 )
+                
+                # Fetch department avg with a single database hit using filter instead of evaluating qs
                 dept_avg = Feedback.objects.filter(
-                    feedback_request__requester__in=members_qs,
+                    feedback_request__requester__profile__department=dept,
                     feedback_request__status='completed'
                 ).aggregate(Avg('rating'))['rating__avg']
+                
                 department_blocks.append({
                     'department': dept,
                     'members': members_qs,
@@ -295,9 +300,10 @@ def team_members_list(request):
                 )
                 if direct_members.exists():
                     direct_avg = Feedback.objects.filter(
-                        feedback_request__requester__in=direct_members,
+                        feedback_request__requester__profile__department=managed_dept,
                         feedback_request__status='completed'
-                    ).aggregate(Avg('rating'))['rating__avg']
+                    ).exclude(feedback_request__requester=user).aggregate(Avg('rating'))['rating__avg']
+                    
                     department_blocks.insert(0, {
                         'department': managed_dept,
                         'members': direct_members,
@@ -368,7 +374,7 @@ def team_members_list(request):
 @login_required
 def my_tasks_list(request):
     # Feedback requests made by the current user
-    made_requests = FeedbackRequest.objects.filter(requester=request.user).select_related('requested_to').order_by('-due_date')
+    made_requests = FeedbackRequest.objects.filter(requester=request.user).select_related('requested_to', 'feedback').order_by('-due_date')
 
     # Feedback requests assigned to the current user (tasks to do)
     assigned_requests = FeedbackRequest.objects.filter(requested_to=request.user).select_related('requester').order_by('-due_date')
@@ -378,6 +384,62 @@ def my_tasks_list(request):
         'assigned_requests': assigned_requests,
     }
     return render(request, 'my_tasks.html', context)
+
+@login_required
+@require_POST
+def cancel_feedback_request(request, request_id):
+    """
+    Suteikia galimybę atšaukti (ištrinti) prašymą, kol jis dar nėra 'completed'.
+    """
+    feedback_request = get_object_or_404(FeedbackRequest, id=request_id)
+
+    # Patikriname ar esamas vartotojas yra prašymo autorius
+    if feedback_request.requester != request.user:
+        messages.error(request, 'Neturite teisių atšaukti šio prašymo.')
+        return redirect('my_tasks_list')
+        
+    # Patikriname ar prašymas dar nebaigtas (galima atšaukti tik 'pending')
+    if feedback_request.status != 'pending':
+        messages.error(request, 'Negalima atšaukti jau įvertinto arba užbaigto prašymo.')
+        return redirect('my_tasks_list')
+
+    # Jei viskas gerai - triname
+    feedback_request.delete()
+    messages.success(request, 'Atsiliepimo prašymas sėkmingai atšauktas.')
+    
+    return redirect('my_tasks_list')
+
+@login_required
+def edit_feedback_request(request, request_id):
+    """
+    Leidžia vartotojui paredaguoti prašymo projekto pavadinimą, komentarą ir terminą.
+    """
+    feedback_request = get_object_or_404(FeedbackRequest, id=request_id)
+
+    # Autoriaus ir statuso patikrinimai
+    if feedback_request.requester != request.user:
+        messages.error(request, 'Neturite teisių redaguoti šio prašymo.')
+        return redirect('my_tasks_list')
+        
+    if feedback_request.status != 'pending':
+        messages.error(request, 'Begalima redaguoti jau įvertinto arba užbaigto prašymo.')
+        return redirect('my_tasks_list')
+        
+    if request.method == 'POST':
+        project_name = request.POST.get('project_name')
+        comment = request.POST.get('comment')
+        due_date = request.POST.get('due_date')
+        
+        if project_name and due_date:
+            feedback_request.project_name = project_name
+            feedback_request.comment = comment
+            feedback_request.due_date = due_date
+            feedback_request.save()
+            messages.success(request, 'Atsiliepimo prašymas sėkmingai atnaujintas.')
+        else:
+            messages.error(request, 'Užpildykite visus privalomus laukus (Projekto pavadinimas, Terminas).')
+
+    return redirect('my_tasks_list')
 
 
 
@@ -441,22 +503,39 @@ def get_feedback_data(request):
     # Get all feedback requests made by this user, ordered by creation date
     all_requests = FeedbackRequest.objects.filter(
         requester=user
-    ).select_related('requested_to').order_by('created_at')
+    ).select_related('requested_to', 'feedback').order_by('created_at')
     
     data = []
     for fr in all_requests:
         respondent = fr.requested_to.get_full_name() or fr.requested_to.username
         label = f"{fr.project_name} ({respondent})"
+        
+        feedback_details = None
         if fr.status == 'completed':
             status = 'done'
+            try:
+                # Accessing a missing OneToOneField can raise RelatedObjectDoesNotExist
+                if fr.feedback:
+                    feedback_details = {
+                        'project': fr.project_name,
+                        'rname': respondent,
+                        'rating': fr.feedback.rating,
+                        'date': fr.feedback.created_at.strftime('%Y-%m-%d'),
+                        'feedback': fr.feedback.feedback,
+                        'comments': fr.feedback.comments,
+                    }
+            except Exception:
+                pass
         elif fr.status == 'pending':
             status = 'active'
         else:
             status = 'empty'
+            
         data.append({
             'id': fr.id,
             'label': label,
             'status': status,
+            'feedback_details': feedback_details
         })
     
     return JsonResponse(data, safe=False)
@@ -480,6 +559,47 @@ def results(request):
     
     return render(request, 'results.html', context)
 
+
+@login_required
+def get_competency_trend(request, competency_name):
+    """
+    Returns the historical evaluation scores for a specific competency for the current user.
+    Uses the actual DB rating fields (teamwork_rating, communication_rating, etc.)
+    """
+    user = request.user
+
+    # Map Lithuanian competency display names to DB field names
+    competency_field_map = {
+        'komandinis darbas': 'teamwork_rating',
+        'komunikacija': 'communication_rating',
+        'iniciatyvumas': 'initiative_rating',
+        'techninės žinios': 'technical_skills_rating',
+        'problemų sprendimas': 'problem_solving_rating',
+    }
+
+    field_name = competency_field_map.get(competency_name.strip().lower())
+    if not field_name:
+        return JsonResponse({'competency': competency_name, 'trend': []})
+
+    # Get all completed feedback for this user (they are the requester)
+    feedbacks = Feedback.objects.filter(
+        feedback_request__requester=user,
+        feedback_request__status='completed'
+    ).select_related('feedback_request').order_by('feedback_request__created_at')
+
+    trend_data = []
+    for fb in feedbacks:
+        score_val = getattr(fb, field_name, None)
+        if score_val is not None:
+            trend_data.append({
+                'date': fb.feedback_request.created_at.strftime('%Y-%m-%d'),
+                'score': float(score_val),
+                'project': fb.feedback_request.project_name
+            })
+
+    return JsonResponse({'competency': competency_name, 'trend': trend_data})
+
+
 @login_required
 def team_statistics(request):
     user = request.user
@@ -494,52 +614,17 @@ def team_statistics(request):
     department = managed_departments.first()
     team_members = User.objects.filter(profile__department=department).exclude(id=user.id)
     
-    # Per-member stats
-    member_stats = []
-    for member in team_members:
-        feedback_qs = Feedback.objects.filter(
-            feedback_request__requester=member,
-            feedback_request__status='completed'
-        )
-        avg_rating = feedback_qs.aggregate(Avg('rating'))['rating__avg']
-        feedback_count = feedback_qs.count()
-        member_stats.append({
-            'user': member,
-            'avg_rating': round(avg_rating, 2) if avg_rating else None,
-            'feedback_count': feedback_count,
-        })
-    
-    # Team-wide aggregated stats
-    all_team_feedback = Feedback.objects.filter(
-        feedback_request__requester__in=team_members,
-        feedback_request__status='completed'
-    )
-    
-    team_avg_rating = all_team_feedback.aggregate(Avg('rating'))['rating__avg'] or 0
-    team_feedback_count = all_team_feedback.count()
-    
-    competency_averages = all_team_feedback.aggregate(
-        teamwork=Avg('teamwork_rating'),
-        communication=Avg('communication_rating'),
-        initiative=Avg('initiative_rating'),
-        technical_skills=Avg('technical_skills_rating'),
-        problem_solving=Avg('problem_solving_rating')
-    )
-    competencies = [
-        {'name': 'Komandinis Darbas', 'score': round(competency_averages.get('teamwork') or 0, 2)},
-        {'name': 'Komunikacija', 'score': round(competency_averages.get('communication') or 0, 2)},
-        {'name': 'Iniciatyvumas', 'score': round(competency_averages.get('initiative') or 0, 2)},
-        {'name': 'Techninės Žinios', 'score': round(competency_averages.get('technical_skills') or 0, 2)},
-        {'name': 'Problemų Sprendimas', 'score': round(competency_averages.get('problem_solving') or 0, 2)},
-    ]
-    
+    # Aggregate stats using TeamAnalytics service
+    from .services import TeamAnalytics
+    stats = TeamAnalytics.get_team_stats(team_members)
+
     context = {
         'department': department,
-        'member_stats': member_stats,
-        'team_avg_rating': round(team_avg_rating, 2),
-        'team_feedback_count': team_feedback_count,
-        'team_member_count': team_members.count(),
-        'competencies': competencies,
+        'member_stats': stats['member_stats'],
+        'team_avg_rating': round(stats['team_avg_rating'], 2),
+        'team_feedback_count': stats['team_feedback_count'],
+        'team_member_count': stats['team_member_count'],
+        'competencies': stats['competencies'],
     }
     return render(request, 'team_statistics.html', context)
 
@@ -573,28 +658,9 @@ def team_member_detail(request, user_id):
         feedback_request__status='completed'
     ).select_related('feedback_request', 'feedback_request__requested_to').order_by('-feedback_request__created_at')
     
-    # Aggregate stats
-    avg_rating = feedbacks.aggregate(Avg('rating'))['rating__avg'] or 0
-    competency_averages = feedbacks.aggregate(
-        teamwork=Avg('teamwork_rating'),
-        communication=Avg('communication_rating'),
-        initiative=Avg('initiative_rating'),
-        technical_skills=Avg('technical_skills_rating'),
-        problem_solving=Avg('problem_solving_rating')
-    )
-    competencies = [
-        {'name': 'Komandinis Darbas', 'score': round(competency_averages.get('teamwork') or 0, 2)},
-        {'name': 'Komunikacija', 'score': round(competency_averages.get('communication') or 0, 2)},
-        {'name': 'Iniciatyvumas', 'score': round(competency_averages.get('initiative') or 0, 2)},
-        {'name': 'Techninės Žinios', 'score': round(competency_averages.get('technical_skills') or 0, 2)},
-        {'name': 'Problemų Sprendimas', 'score': round(competency_averages.get('problem_solving') or 0, 2)},
-    ]
-    
-    # Collect all keywords
-    all_keywords = []
-    for fb in feedbacks:
-        keywords = [kw.strip() for kw in fb.keywords.split(',') if kw.strip()]
-        all_keywords.extend(keywords)
+    # Aggregate stats using TeamAnalytics service
+    from .services import TeamAnalytics
+    stats = TeamAnalytics.get_member_detailed_stats(feedbacks)
     
     # Trait ratings (from questionnaire-based feedback)
     from .models import TraitRating
@@ -608,10 +674,10 @@ def team_member_detail(request, user_id):
         'member': member,
         'department': member_dept,
         'feedbacks': feedbacks,
-        'avg_rating': round(avg_rating, 2),
+        'avg_rating': stats['avg_rating'],
         'feedback_count': feedbacks.count(),
-        'competencies': competencies,
-        'all_keywords': list(set(all_keywords))[:15],
+        'competencies': stats['competencies'],
+        'all_keywords': list(stats['keywords'])[:15],
         'trait_ratings': trait_ratings,
     }
     return render(request, 'team_member_detail.html', context)
@@ -635,6 +701,13 @@ def all_feedback_list(request):
 @login_required
 def company_management(request):
     user = request.user
+    
+    # Saugumas: Patikrinimas ar vartotojas turi teises
+    if not user.is_superuser and not getattr(user.profile, 'is_company_admin', False):
+        from django.contrib import messages
+        messages.error(request, 'Neturite teisių valdyti įmonės struktūros.')
+        return redirect('home')
+
     try:
         user_company = user.profile.company_link
     except AttributeError:
@@ -682,14 +755,14 @@ def company_management(request):
 @login_required
 def assign_to_department(request):
     if request.method == 'POST':
-        user_id = request.POST.get('user_id')
-        department_id = request.POST.get('department_id')
-        if user_id and department_id:
-            target_user = get_object_or_404(User, id=user_id)
-
-@login_required
-def assign_to_department(request):
-    if request.method == 'POST':
+        user = request.user
+        
+        # Saugumas: Patikrinimas ar vartotojas turi teises
+        if not user.is_superuser and not getattr(user.profile, 'is_company_admin', False):
+            from django.contrib import messages
+            messages.error(request, 'Neturite teisių atlikti šio veiksmo.')
+            return redirect('home')
+            
         user_id = request.POST.get('user_id')
         department_id = request.POST.get('department_id')
         if user_id and department_id:
@@ -1427,3 +1500,73 @@ def questionnaire_statistics(request, questionnaire_id):
 
     
     return render(request, 'questionnaires/statistics.html', context)
+
+
+# ==========================================
+# SUPERUSERS MANAGEMENT (SUPERADMIN)
+# ==========================================
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_superusers_list(request):
+    superusers = User.objects.filter(is_superuser=True).order_by('-date_joined')
+    return render(request, 'superadmin/superusers_list.html', {'superusers': superusers})
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_create_superuser(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        password = request.POST.get('password')
+
+        if not email or not password:
+            messages.error(request, 'El. paštas ir slaptažodis yra privalomi.')
+            return render(request, 'superadmin/superuser_form.html')
+
+        if User.objects.filter(username=email).exists() or User.objects.filter(email=email).exists():
+            messages.error(request, 'Vartotojas su tokiu el. paštu jau egzistuoja.')
+            return render(request, 'superadmin/superuser_form.html')
+
+        user = User.objects.create_superuser(
+            username=email,
+            email=email,
+            password=password,
+            first_name=first_name,
+            last_name=last_name
+        )
+        messages.success(request, f'Supervartotojas {email} sėkmingai sukurtas.')
+        return redirect('superadmin_superusers_list')
+
+    return render(request, 'superadmin/superuser_form.html')
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_edit_superuser(request, user_id):
+    superuser = get_object_or_404(User, id=user_id, is_superuser=True)
+    
+    if request.method == 'POST':
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        password = request.POST.get('password')
+
+        superuser.first_name = first_name
+        superuser.last_name = last_name
+        
+        if password:
+            superuser.set_password(password)
+            
+        superuser.save()
+        messages.success(request, f'Supervartotojo {superuser.email} duomenys atnaujinti.')
+        return redirect('superadmin_superusers_list')
+
+    return render(request, 'superadmin/superuser_form.html', {'superuser': superuser})
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_delete_superuser(request, user_id):
+    if request.method == 'POST':
+        superuser = get_object_or_404(User, id=user_id, is_superuser=True)
+        if superuser == request.user:
+            messages.error(request, 'Negalite ištrinti patys savęs.')
+        else:
+            superuser.delete()
+            messages.success(request, 'Supervartotojas sėkmingai ištrintas.')
+    return redirect('superadmin_superusers_list')
