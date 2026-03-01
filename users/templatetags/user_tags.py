@@ -17,4 +17,9 @@ def user_avatar(user):
         pass
     
     # Return a safe default placeholder if anything fails
-    return f"https://placehold.co/40x40/eee/333?text={user.username[0].upper()}"
+    if isinstance(user, str):
+        initial = user[0].upper() if user else '?'
+    else:
+        initial = getattr(user, 'username', '?')[0].upper() if getattr(user, 'username', '') else '?'
+        
+    return f"https://placehold.co/40x40/eee/333?text={initial}"

@@ -75,6 +75,7 @@ urlpatterns = [
     path('superadmin/superusers/create/', views.superadmin_create_superuser, name='superadmin_create_superuser'),
     path('superadmin/superusers/<int:user_id>/edit/', views.superadmin_edit_superuser, name='superadmin_edit_superuser'),
     path('superadmin/superusers/<int:user_id>/delete/', views.superadmin_delete_superuser, name='superadmin_delete_superuser'),
+    path('superadmin/users/', views.superadmin_users_list, name='superadmin_users_list'),
 ]
 
 from django.conf import settings

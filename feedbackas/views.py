@@ -979,8 +979,9 @@ def superadmin_edit_hierarchy(request, company_id):
     
     if request.method == 'POST':
         form = DepartmentForm(request.user, request.POST)
-        # Override parent queryset to target company's departments
+        # Override parent and manager querysets to target company
         form.fields['parent'].queryset = Department.objects.filter(company=company)
+        form.fields['manager'].queryset = User.objects.filter(profile__company_link=company)
         
         if form.is_valid():
             department = form.save(commit=False)
@@ -995,6 +996,7 @@ def superadmin_edit_hierarchy(request, company_id):
     else:
         form = DepartmentForm(request.user)
         form.fields['parent'].queryset = Department.objects.filter(company=company)
+        form.fields['manager'].queryset = User.objects.filter(profile__company_link=company)
 
     root_departments = Department.objects.filter(company=company, parent__isnull=True).prefetch_related('sub_departments')
 
@@ -1208,8 +1210,9 @@ def superadmin_edit_department(request, company_id, department_id):
     
     if request.method == 'POST':
         form = DepartmentForm(request.user, request.POST, instance=department)
-        # Override parent queryset to target company's departments, excluding self to prevent loop
+        # Override parent and manager querysets to target company's departments, excluding self to prevent loop
         form.fields['parent'].queryset = Department.objects.filter(company=company).exclude(id=department.id)
+        form.fields['manager'].queryset = User.objects.filter(profile__company_link=company)
         
         if form.is_valid():
             dept = form.save()
@@ -1222,6 +1225,7 @@ def superadmin_edit_department(request, company_id, department_id):
     else:
         form = DepartmentForm(request.user, instance=department)
         form.fields['parent'].queryset = Department.objects.filter(company=company).exclude(id=department.id)
+        form.fields['manager'].queryset = User.objects.filter(profile__company_link=company)
 
     context = {
         'company': company,
@@ -1570,3 +1574,34 @@ def superadmin_delete_superuser(request, user_id):
             superuser.delete()
             messages.success(request, 'Supervartotojas sėkmingai ištrintas.')
     return redirect('superadmin_superusers_list')
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_users_list(request):
+    if request.method == 'POST':
+        user_id = request.POST.get('user_id')
+        company_id = request.POST.get('company_id')
+        
+        if user_id and company_id:
+            target_user = get_object_or_404(User, id=user_id, is_superuser=False)
+            
+            if company_id == 'none':
+                target_user.profile.company_link = None
+            else:
+                company = get_object_or_404(Company, id=company_id)
+                target_user.profile.company_link = company
+                
+            target_user.profile.save()
+            messages.success(request, f'Vartotojo {target_user.email} įmonė atnaujinta.')
+            
+        return redirect('superadmin_users_list')
+
+    sys_users = User.objects.filter(is_superuser=False).select_related('profile', 'profile__company_link').order_by('-date_joined')
+    companies = Company.objects.all().order_by('name')
+    
+    context = {
+        'users': sys_users,
+        'companies': companies
+    }
+    
+    return render(request, 'superadmin/users_list.html', context)
+
