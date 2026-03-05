@@ -492,7 +492,7 @@ def check_ai_task_status(request):
         if task.success:
             return JsonResponse({'status': 'completed', 'generated_feedback': task.result})
         else:
-            return JsonResponse({'status': 'failed', 'error': 'Task failed to execute'}, status=500)
+            return JsonResponse({'status': 'failed', 'error': 'Task failed to execute'})
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
 
