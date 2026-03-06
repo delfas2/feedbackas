@@ -100,12 +100,10 @@
             <div
                 class="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-shadow duration-300 overflow-hidden flex flex-col">
                 <div class="p-6 flex flex-col items-center text-center flex-grow">
-                    <div class="relative">
+                    <div>
                         <img class="w-24 h-24 rounded-full object-cover mb-4 border-4 border-purple-50"
                             src="https://placehold.co/100x100/ecc94b/333?text={{ member.first_name|first|upper }}{{ member.last_name|first|upper }}"
                             alt="{{ member.first_name }} {{ member.last_name }}">
-                        <span
-                            class="absolute bottom-4 right-0 w-5 h-5 bg-green-400 border-2 border-white rounded-full"></span>
                     </div>
                     <h3 class="text-lg font-bold text-gray-800">{{ member.first_name }} {{ member.last_name }}</h3>
                     <p class="text-sm text-purple-600 font-medium mb-2">-- Pozicija --</p>
