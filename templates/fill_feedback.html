@@ -295,9 +295,6 @@
 
                         <!-- Kompetencijų slankikliai -->
                         <div class="space-y-2 pt-4 border-t">
-                            <p class="text-sm text-slate-500 text-center italic">
-                                "Pasirinkite baterijos lygį. Nėra vidurio - yra tik augimo etapai."
-                            </p>
                             <div class="competency-battery" data-competency="rating">
                                 <input type="hidden" name="rating" value="0">
                             </div>
@@ -335,65 +332,89 @@
 
                             <!-- Baterijos šablonas (bus klonuojamas su JS) -->
                             <template id="competency-template">
-                                <div class="mb-10 transition-all hover:scale-[1.01] duration-300">
-                                    <div class="flex justify-between items-center mb-3 px-1">
-                                        <h3 class="font-bold text-slate-700 text-lg competency-label"></h3>
+                                <div class="mb-4 transition-all hover:scale-[1.01] duration-300">
+                                    <div class="flex justify-between items-center mb-1 px-1">
+                                        <h3 class="font-bold text-slate-700 text-sm md:text-base competency-label"></h3>
                                         <span
-                                            class="text-xs font-bold px-3 py-1 rounded-full border competency-tag shadow-sm"
+                                            class="text-[10px] md:text-xs font-bold px-3 py-1 rounded-full border competency-tag shadow-sm transition-all duration-300"
                                             style="display: none;"></span>
                                     </div>
-                                    <div class="relative">
+                                    <div
+                                        class="relative bg-slate-100/80 p-1.5 rounded-[2rem] flex items-stretch h-20 md:h-24 shadow-inner border border-white">
+                                        <!-- Slankantis fonas pasirinkimui -->
                                         <div
-                                            class="relative h-20 w-full bg-white rounded-2xl border-[4px] border-slate-300 p-1.5 flex gap-1.5 shadow-sm overflow-hidden group cursor-pointer z-10">
-                                            <button type="button" data-level="1"
-                                                class="relative flex-1 rounded-lg battery-segment level-1 bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center overflow-hidden">
-                                                <div class="shine-effect"></div>
-                                                <div class="icon-container transform text-slate-300 translate-y-1"><span
-                                                        class="font-black text-xl opacity-20">1</span></div>
-                                            </button>
-                                            <button type="button" data-level="2"
-                                                class="relative flex-1 rounded-lg battery-segment level-2 bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center overflow-hidden">
-                                                <div class="shine-effect"></div>
-                                                <div class="icon-container transform text-slate-300 translate-y-1"><span
-                                                        class="font-black text-xl opacity-20">2</span></div>
-                                            </button>
-                                            <button type="button" data-level="3"
-                                                class="relative flex-1 rounded-lg battery-segment level-3 bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center overflow-hidden">
-                                                <div class="shine-effect"></div>
-                                                <div class="icon-container transform text-slate-300 translate-y-1"><span
-                                                        class="font-black text-xl opacity-20">3</span></div>
-                                            </button>
-                                            <button type="button" data-level="4"
-                                                class="relative flex-1 rounded-lg battery-segment level-4 bg-slate-50 hover:bg-slate-100 flex flex-col items-center justify-center overflow-hidden">
-                                                <div class="shine-effect"></div>
-                                                <div class="icon-container transform text-slate-300 translate-y-1"><span
-                                                        class="font-black text-xl opacity-20">4</span></div>
-                                            </button>
+                                            class="slider-bg absolute top-1.5 bottom-1.5 rounded-[1.75rem] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-xl hidden z-0">
                                         </div>
-                                        <div
-                                            class="absolute -right-[12px] top-1/2 -translate-y-1/2 w-4 h-10 bg-slate-300 rounded-r-md border-y-[4px] border-r-[4px] border-l-0 border-slate-300 z-0">
-                                        </div>
+
+                                        <button type="button" data-level="1"
+                                            class="relative z-10 flex-1 flex flex-col items-center justify-center transition-all duration-300 group battery-segment text-slate-400 hover:text-slate-600">
+                                            <div
+                                                class="mb-1 transition-transform duration-500 icon-wrapper group-hover:scale-110">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="w-5 h-5 md:w-6 md:h-6">
+                                                    <path
+                                                        d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+                                                </svg>
+                                            </div>
+                                            <span
+                                                class="text-[10px] md:text-xs font-black uppercase tracking-wider transition-opacity duration-300 opacity-60 label-text">Mokosi</span>
+                                        </button>
+                                        <button type="button" data-level="2"
+                                            class="relative z-10 flex-1 flex flex-col items-center justify-center transition-all duration-300 group battery-segment text-slate-400 hover:text-slate-600">
+                                            <div
+                                                class="mb-1 transition-transform duration-500 icon-wrapper group-hover:scale-110">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="w-5 h-5 md:w-6 md:h-6">
+                                                    <line x1="22" y1="11" x2="22" y2="11" />
+                                                    <path d="M5 12l5 5L20 7" />
+                                                </svg>
+                                            </div>
+                                            <span
+                                                class="text-[10px] md:text-xs font-black uppercase tracking-wider transition-opacity duration-300 opacity-60 label-text">Daro</span>
+                                        </button>
+                                        <button type="button" data-level="3"
+                                            class="relative z-10 flex-1 flex flex-col items-center justify-center transition-all duration-300 group battery-segment text-slate-400 hover:text-slate-600">
+                                            <div
+                                                class="mb-1 transition-transform duration-500 icon-wrapper group-hover:scale-110">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="w-5 h-5 md:w-6 md:h-6">
+                                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
+                                                </svg>
+                                            </div>
+                                            <span
+                                                class="text-[10px] md:text-xs font-black uppercase tracking-wider transition-opacity duration-300 opacity-60 label-text">Varo</span>
+                                        </button>
+                                        <button type="button" data-level="4"
+                                            class="relative z-10 flex-1 flex flex-col items-center justify-center transition-all duration-300 group battery-segment text-slate-400 hover:text-slate-600">
+                                            <div
+                                                class="mb-1 transition-transform duration-500 icon-wrapper group-hover:scale-110">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="w-5 h-5 md:w-6 md:h-6">
+                                                    <polygon
+                                                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                                </svg>
+                                            </div>
+                                            <span
+                                                class="text-[10px] md:text-xs font-black uppercase tracking-wider transition-opacity duration-300 opacity-60 label-text">Pavyzdys</span>
+                                        </button>
                                     </div>
-                                    <div class="flex justify-between mt-2 px-1">
-                                        <div data-level="1"
-                                            class="cursor-pointer w-1/4 text-center battery-label inactive opacity-40 hover:opacity-70">
-                                            <p class="text-xs font-bold text-slate-700">Mokosi</p>
-                                            <p class="text-[10px] text-slate-500 leading-tight">Reikia pagalbos</p>
+                                    <div class="mt-2 h-8 flex items-center justify-center info-panel overflow-hidden">
+                                        <div class="flex flex-col items-center animate-pulse empty-state">
+                                            <div class="w-12 h-1 bg-slate-200 rounded-full mb-1"></div>
+                                            <p class="text-slate-400 text-xs font-medium">Pasirinkite vieną iš lygių
+                                                aukščiau</p>
                                         </div>
-                                        <div data-level="2"
-                                            class="cursor-pointer w-1/4 text-center battery-label inactive opacity-40 hover:opacity-70">
-                                            <p class="text-xs font-bold text-slate-700">Daro</p>
-                                            <p class="text-[10px] text-slate-500 leading-tight">Atitinka lūkesčius</p>
-                                        </div>
-                                        <div data-level="3"
-                                            class="cursor-pointer w-1/4 text-center battery-label inactive opacity-40 hover:opacity-70">
-                                            <p class="text-xs font-bold text-slate-700">Varo</p>
-                                            <p class="text-[10px] text-slate-500 leading-tight">Viršija lūkesčius</p>
-                                        </div>
-                                        <div data-level="4"
-                                            class="cursor-pointer w-1/4 text-center battery-label inactive opacity-40 hover:opacity-70">
-                                            <p class="text-xs font-bold text-slate-700">Pavyzdys</p>
-                                            <p class="text-[10px] text-slate-500 leading-tight">Superžvaigždė</p>
+                                        <div
+                                            class="text-center transition-all duration-500 transform translate-y-4 opacity-0 selected-state hidden">
+                                            <p class="text-slate-500 text-sm font-semibold active-desc"></p>
                                         </div>
                                     </div>
                                 </div>
@@ -501,10 +522,38 @@
             };
 
             const levels = [
-                { id: 1, title: "Mokosi", icon: "🌱" },
-                { id: 2, title: "Daro", icon: "🏃" },
-                { id: 3, title: "Varo", icon: "🚀" },
-                { id: 4, title: "Pavyzdys", icon: "⚡" }
+                {
+                    id: 1,
+                    label: "Mokosi",
+                    fullLabel: "Mokosi",
+                    description: "Reikia pagalbos",
+                    colorClass: "from-orange-400 to-orange-500",
+                    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 md:w-6 md:h-6"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>'
+                },
+                {
+                    id: 2,
+                    label: "Daro",
+                    fullLabel: "Daro",
+                    description: "Atitinka lūkesčius",
+                    colorClass: "from-yellow-400 to-yellow-500",
+                    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 md:w-6 md:h-6"><line x1="22" y1="11" x2="22" y2="11"/><path d="M5 12l5 5L20 7"/></svg>'
+                },
+                {
+                    id: 3,
+                    label: "Varo",
+                    fullLabel: "Varo",
+                    description: "Viršija lūkesčius",
+                    colorClass: "from-blue-400 to-blue-500",
+                    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 md:w-6 md:h-6"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>'
+                },
+                {
+                    id: 4,
+                    label: "Pavyzdys",
+                    fullLabel: "Pavyzdys",
+                    description: "Superžvaigždė",
+                    colorClass: "from-emerald-400 to-emerald-500",
+                    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 md:w-6 md:h-6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'
+                }
             ];
 
             // Check for questionnaire traits and create dynamic batteries
@@ -542,52 +591,53 @@
                     hiddenInput.value = value;
 
                     const segments = container.querySelectorAll('.battery-segment');
-                    const labels = container.querySelectorAll('.battery-label');
-                    const tag = container.querySelector('.competency-tag');
-
-                    segments.forEach(segment => {
-                        const level = parseInt(segment.dataset.level, 10);
-                        const iconContainer = segment.querySelector('.icon-container');
-                        const shineEffect = segment.querySelector('.shine-effect');
-
-                        const isActive = level <= value;
-                        segment.classList.toggle('active', isActive);
-                        segment.classList.toggle('bg-slate-50', !isActive);
-                        segment.classList.toggle('shadow-inner', isActive);
-
-                        if (isActive) {
-                            shineEffect.className = 'shine-effect absolute top-0 left-0 w-full h-1/2 bg-white opacity-20 pointer-events-none';
-                            iconContainer.classList.remove('text-slate-300', 'translate-y-1');
-                            iconContainer.classList.add('text-white', 'scale-110', 'translate-y-0');
-                            iconContainer.innerHTML = level === 4 ? '⚡' : `<span class="text-2xl">${levels[level - 1].icon}</span>`;
-                        } else {
-                            shineEffect.className = 'shine-effect'; // Remove classes
-                            iconContainer.classList.add('text-slate-300', 'translate-y-1');
-                            iconContainer.classList.remove('text-white', 'scale-110', 'translate-y-0');
-                            iconContainer.innerHTML = `<span class="font-black text-xl opacity-20">${level}</span>`;
-                        }
-                    });
-
-                    labels.forEach(label => {
-                        const level = parseInt(label.dataset.level, 10);
-                        const p = label.querySelector('p:first-child');
-                        const isActive = level === value;
-                        label.classList.toggle('opacity-100', isActive);
-                        label.classList.toggle('transform', isActive);
-                        label.classList.toggle('-translate-y-1', isActive);
-                        label.classList.toggle('opacity-40', !isActive);
-                        p.classList.toggle('text-slate-800', isActive);
-                        p.classList.toggle('text-slate-500', !isActive);
-                    });
+                    const sliderBg = container.querySelector('.slider-bg');
+                    const emptyState = container.querySelector('.empty-state');
+                    const selectedState = container.querySelector('.selected-state');
 
                     if (value > 0) {
                         const levelData = levels[value - 1];
-                        tag.innerHTML = `${levelData.icon} ${levelData.title}`;
-                        tag.className = `text-xs font-bold px-3 py-1 rounded-full border competency-tag shadow-sm level-${value}`;
-                        tag.style.display = 'inline-block';
+
+                        // Update Slider Background
+                        sliderBg.className = `slider-bg absolute top-1.5 bottom-1.5 rounded-[1.75rem] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-xl bg-gradient-to-br ${levelData.colorClass} z-0 block`;
+                        sliderBg.style.left = `calc(${(value - 1) * 25}% + 6px)`;
+                        sliderBg.style.width = `calc(25% - 12px)`;
+
+                        // Show selected state and hide empty state
+                        emptyState.classList.add('hidden');
+                        selectedState.classList.remove('hidden');
+                        selectedState.classList.remove('opacity-0', 'translate-y-4');
+                        selectedState.querySelector('.active-desc').textContent = levelData.description;
+
                     } else {
-                        tag.style.display = 'none';
+                        // Reset to no selection
+                        sliderBg.classList.add('hidden');
+                        sliderBg.style.width = '0px';
+
+                        emptyState.classList.remove('hidden');
+                        selectedState.classList.add('hidden', 'opacity-0', 'translate-y-4');
                     }
+
+                    segments.forEach(segment => {
+                        const level = parseInt(segment.dataset.level, 10);
+                        const isActive = level === value;
+                        const iconWrapper = segment.querySelector('.icon-wrapper');
+                        const labelText = segment.querySelector('.label-text');
+
+                        if (isActive) {
+                            segment.classList.add('text-white', 'scale-105');
+                            segment.classList.remove('text-slate-400');
+                            iconWrapper.classList.add('scale-110', 'rotate-0');
+                            labelText.classList.replace('opacity-60', 'opacity-100');
+                            labelText.textContent = levels[level - 1].label;
+                        } else {
+                            segment.classList.remove('text-white', 'scale-105');
+                            segment.classList.add('text-slate-400');
+                            iconWrapper.classList.remove('scale-110', 'rotate-0');
+                            labelText.classList.replace('opacity-100', 'opacity-60');
+                            labelText.textContent = levels[level - 1].label;
+                        }
+                    });
                 };
 
                 container.addEventListener('click', (e) => {
