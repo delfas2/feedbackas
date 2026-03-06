@@ -66,6 +66,7 @@ urlpatterns = [
     path('profile/', user_views.profile, name='profile'),
     path('questionnaires/', views.questionnaires_list, name='questionnaires_list'),
     path('questionnaires/create/', views.create_questionnaire, name='create_questionnaire'),
+    path('questionnaires/<int:questionnaire_id>/edit/', views.edit_questionnaire, name='edit_questionnaire'),
     path('questionnaires/delete/<int:questionnaire_id>/', views.delete_questionnaire, name='delete_questionnaire'),
     path('questionnaires/send/', views.send_questionnaire, name='send_questionnaire'),
     path('questionnaires/<int:questionnaire_id>/statistics/', views.questionnaire_statistics, name='questionnaire_statistics'),

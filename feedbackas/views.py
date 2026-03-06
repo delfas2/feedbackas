@@ -1411,6 +1411,50 @@ def send_questionnaire(request):
     return redirect('questionnaires_list')
 
 @login_required
+def edit_questionnaire(request, questionnaire_id):
+    from .models import Questionnaire, Trait # Added import here for edit_questionnaire
+    questionnaire = get_object_or_404(Questionnaire, id=questionnaire_id, created_by=request.user)
+    
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        trait_ids = request.POST.getlist('trait_ids')
+        custom_traits = request.POST.getlist('custom_traits')
+        
+        if not title:
+            messages.error(request, 'Klausimyno pavadinimas yra privalomas.')
+            return redirect('questionnaires_list')
+            
+        questionnaire.title = title
+        questionnaire.save()
+        
+        # Clear existing traits
+        questionnaire.traits.clear()
+        
+        # Add selected existing traits
+        for trait_id in trait_ids:
+            try:
+                trait = Trait.objects.get(id=trait_id)
+                questionnaire.traits.add(trait)
+            except Trait.DoesNotExist:
+                continue
+                
+        # Add new custom traits
+        for trait_name in custom_traits:
+            name = trait_name.strip()
+            if name:
+                trait, created = Trait.objects.get_or_create(
+                    name=name,
+                    defaults={'created_by': request.user}
+                )
+                questionnaire.traits.add(trait)
+                
+        messages.success(request, 'Klausimynas sėkmingai atnaujintas.')
+        return redirect('questionnaires_list')
+        
+    messages.error(request, 'Klaida atnaujinant klausimyną.')
+    return redirect('questionnaires_list')
+
+@login_required
 def delete_questionnaire(request, questionnaire_id):
     from .models import Questionnaire
     if request.method == 'POST':
@@ -1439,13 +1483,27 @@ def questionnaire_statistics(request, questionnaire_id):
     overall_avg_rating = feedbacks.aggregate(Avg('rating'))['rating__avg'] or 0
     received_feedback_count = feedbacks.count()
     
-    competencies = [
-        {'name': 'Komandinis darbas', 'score': round(feedbacks.aggregate(Avg('teamwork_rating'))['teamwork_rating__avg'] or 0, 2)},
-        {'name': 'Komunikacija', 'score': round(feedbacks.aggregate(Avg('communication_rating'))['communication_rating__avg'] or 0, 2)},
-        {'name': 'Iniciatyvumas', 'score': round(feedbacks.aggregate(Avg('initiative_rating'))['initiative_rating__avg'] or 0, 2)},
-        {'name': 'Technologinės žinios', 'score': round(feedbacks.aggregate(Avg('technical_skills_rating'))['technical_skills_rating__avg'] or 0, 2)},
-        {'name': 'Problemų sprendimas', 'score': round(feedbacks.aggregate(Avg('problem_solving_rating'))['problem_solving_rating__avg'] or 0, 2)},
-    ]
+    from .models import TraitRating
+    from collections import defaultdict
+
+    traits = questionnaire.traits.all()
+    trait_ratings = TraitRating.objects.filter(feedback__in=feedbacks)
+    
+    competencies = []
+    
+    # Pre-fetch trait ratings per date for chart
+    trait_ratings_by_date = defaultdict(lambda: defaultdict(list))
+    for tr in trait_ratings.select_related('feedback__feedback_request'):
+        d = tr.feedback.feedback_request.created_at.date()
+        trait_ratings_by_date[tr.trait_id][d].append(tr.rating)
+
+    for trait in traits:
+        # Average score for this trait
+        avg = trait_ratings.filter(trait=trait).aggregate(Avg('rating'))['rating__avg'] or 0
+        competencies.append({
+            'name': trait.name,
+            'score': round(avg, 2)
+        })
 
     all_keywords = []
     for fb in feedbacks:
@@ -1469,26 +1527,37 @@ def questionnaire_statistics(request, questionnaire_id):
     chronological_feedbacks = feedbacks.annotate(
         date=TruncDate('feedback_request__created_at')
     ).values('date').annotate(
-        avg_rating=Avg('rating'),
-        avg_teamwork=Avg('teamwork_rating'),
-        avg_communication=Avg('communication_rating'),
-        avg_initiative=Avg('initiative_rating'),
-        avg_technical=Avg('technical_skills_rating'),
-        avg_problem_solving=Avg('problem_solving_rating')
+        avg_rating=Avg('rating')
     ).order_by('date')
 
     chart_labels = [fb['date'].strftime('%Y-%m-%d') if fb['date'] else 'Data nežinoma' for fb in chronological_feedbacks]
     
+    chart_datasets = [
+        {'label': 'Bendras', 'data': [round(fb['avg_rating'], 2) for fb in chronological_feedbacks], 'borderColor': '#8B5CF6', 'tension': 0.3},
+    ]
+    
+    colors = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#6366F1', '#EC4899', '#14B8A6', '#F43F5E']
+    
+    for i, trait in enumerate(traits):
+        data = []
+        for fb_dict in chronological_feedbacks:
+            d = fb_dict['date']
+            # if d is None, fallback
+            ratings = trait_ratings_by_date[trait.id].get(d, [])
+            avg = sum(ratings) / len(ratings) if ratings else 0.0
+            data.append(round(avg, 2))
+            
+        chart_datasets.append({
+            'label': trait.name,
+            'data': data,
+            'borderColor': colors[i % len(colors)],
+            'tension': 0.3,
+            'hidden': True
+        })
+
     chart_data = {
         'labels': chart_labels,
-        'datasets': [
-            {'label': 'Bendras', 'data': [round(fb['avg_rating'], 2) for fb in chronological_feedbacks], 'borderColor': '#8B5CF6', 'tension': 0.3},
-            {'label': 'Komandinis darbas', 'data': [round(fb['avg_teamwork'], 2) for fb in chronological_feedbacks], 'borderColor': '#3B82F6', 'tension': 0.3, 'hidden': True},
-            {'label': 'Komunikacija', 'data': [round(fb['avg_communication'], 2) for fb in chronological_feedbacks], 'borderColor': '#10B981', 'tension': 0.3, 'hidden': True},
-            {'label': 'Iniciatyvumas', 'data': [round(fb['avg_initiative'], 2) for fb in chronological_feedbacks], 'borderColor': '#F59E0B', 'tension': 0.3, 'hidden': True},
-            {'label': 'Technologinės žinios', 'data': [round(fb['avg_technical'], 2) for fb in chronological_feedbacks], 'borderColor': '#EF4444', 'tension': 0.3, 'hidden': True},
-            {'label': 'Problemų sprendimas', 'data': [round(fb['avg_problem_solving'], 2) for fb in chronological_feedbacks], 'borderColor': '#6366F1', 'tension': 0.3, 'hidden': True},
-        ]
+        'datasets': chart_datasets
     }
 
     context = {

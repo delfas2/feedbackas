@@ -606,97 +606,77 @@
             const keywordCloud = document.getElementById('keyword-cloud');
             const keywordsInput = document.getElementById('keywords');
 
-            // Keyword cloud: reuse the variables already declared above
-            if (hasQuestionnaire && questionnaireTraits.length > 0) {
-                // Show only the questionnaire's selected traits as keyword chips
-                questionnaireTraits.forEach(trait => {
-                    const keywordEl = document.createElement('span');
-                    keywordEl.textContent = trait.name;
-                    keywordEl.className = 'cursor-pointer bg-purple-100 text-purple-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
-                    keywordEl.addEventListener('click', () => {
-                        if (keywordsInput.value) {
-                            keywordsInput.value += ', ' + trait.name;
-                        } else {
-                            keywordsInput.value = trait.name;
-                        }
-                        keywordEl.style.display = 'none';
-                    });
-                    keywordCloud.appendChild(keywordEl);
+            // Keyword cloud: always show the default generic keyword cloud
+            const positiveKeywords = [
+                'Komandinis darbas', 'Komunikabilumas', 'Iniciatyvumas', 'Problemų sprendimas', 'Lyderystė',
+                'Analitinis mąstymas', 'Kūrybiškumas', 'Adaptabilumas', 'Atsakingumas', 'Laiko planavimas',
+                'Techninės žinios', 'Strateginis mąstymas', 'Klientų aptarnavimas', 'Derybos', 'Prezentavimo įgūdžiai',
+                'Patikimumas', 'Motyvacija', 'Pozityvumas', 'Efektyvumas', 'Savarankiškumas', 'Mentorystė', 'Pagalba kitiems',
+                'Atvirumas', 'Entuziazmas', 'Profesionalumas', 'Kruopštumas', 'Smalsumas', 'Konstruktyvumas', 'Įžvalgumas', 'Lankstumas',
+                'Draugiškumas', 'Mandagumas', 'Punktualumas', 'Organizuotumas', 'Empatija', 'Orientacija į rezultą', 'Gebėjimas įkvėpti',
+                'Gebėjimas mokytis', 'Sąžiningumas', 'Atkaklumas'
+            ];
+
+            const neutralKeywords = [
+                'Tylus', 'Ramus', 'Individualistas', 'Analitikas', 'Stebėtojas', 'Vykdytojas', 'Planuotojas',
+                'Struktūruotas', 'Formalus', 'Neformalus', 'Praktiškas', 'Teoretikas', 'Atsargus', 'Racionalus', 'Intravertas',
+                'Ekstravertas', 'Realistas', 'Pragmmatikas', 'Diplomatas', 'Kritikas', 'Svajotojas', 'Logiškas',
+                'Emocionalus', 'Konservatyvus', 'Liberalus', 'Tiesioginis', 'Netiesioginis', 'Detalus', 'Apibendrinantis', 'Koncepualus'
+            ];
+
+            const negativeKeywords = [
+                'Vėlavimas', 'Neatsakingumas', 'Pasyvumas', 'Konfliktiškumas', 'Arogancija',
+                'Klaidų slėpimas', 'Neorganizuotumas', 'Nekokybiškas darbas', 'Stresas', 'Negatyvumas',
+                'Nepasitikėjimas', 'Kritikos nepriėmimas', 'Dėmesio stoka', 'Bendradarbiavimo stoka', 'Lėtas darbas',
+                'Nedraugiškumas', 'Chaotiškumas', 'Uždarumas', 'Pesimizmas', 'Abejingumas', 'Išsiblaškymas', 'Paviršutiniškumas',
+                'Neapdairumas', 'Neryžtingumas', 'Užsispyrimas', 'Ignoravimas', 'Manipuliavimas', 'Pesimizmas', 'Skubotumas',
+                'Neetiškas elgesys', 'Nepagarba', 'Apatija', 'Neigiamas požiūris', 'Komunikacijos stoka', 'Negebėjimas priimti sprendimų'
+            ];
+
+            positiveKeywords.forEach(keyword => {
+                const keywordEl = document.createElement('span');
+                keywordEl.textContent = keyword;
+                keywordEl.className = 'cursor-pointer bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
+                keywordEl.addEventListener('click', () => {
+                    if (keywordsInput.value) {
+                        keywordsInput.value += ', ' + keyword;
+                    } else {
+                        keywordsInput.value = keyword;
+                    }
+                    keywordEl.style.display = 'none';
                 });
-            } else {
-                // Show the default generic keyword cloud
-                const positiveKeywords = [
-                    'Komandinis darbas', 'Komunikabilumas', 'Iniciatyvumas', 'Problemų sprendimas', 'Lyderystė',
-                    'Analitinis mąstymas', 'Kūrybiškumas', 'Adaptabilumas', 'Atsakingumas', 'Laiko planavimas',
-                    'Techninės žinios', 'Strateginis mąstymas', 'Klientų aptarnavimas', 'Derybos', 'Prezentavimo įgūdžiai',
-                    'Patikimumas', 'Motyvacija', 'Pozityvumas', 'Efektyvumas', 'Savarankiškumas', 'Mentorystė', 'Pagalba kitiems',
-                    'Atvirumas', 'Entuziazmas', 'Profesionalumas', 'Kruopštumas', 'Smalsumas', 'Konstruktyvumas', 'Įžvalgumas', 'Lankstumas',
-                    'Draugiškumas', 'Mandagumas', 'Punktualumas', 'Organizuotumas', 'Empatija', 'Orientacija į rezultą', 'Gebėjimas įkvėpti',
-                    'Gebėjimas mokytis', 'Sąžiningumas', 'Atkaklumas'
-                ];
+                keywordCloud.appendChild(keywordEl);
+            });
 
-                const neutralKeywords = [
-                    'Tylus', 'Ramus', 'Individualistas', 'Analitikas', 'Stebėtojas', 'Vykdytojas', 'Planuotojas',
-                    'Struktūruotas', 'Formalus', 'Neformalus', 'Praktiškas', 'Teoretikas', 'Atsargus', 'Racionalus', 'Intravertas',
-                    'Ekstravertas', 'Realistas', 'Pragmmatikas', 'Diplomatas', 'Kritikas', 'Svajotojas', 'Logiškas',
-                    'Emocionalus', 'Konservatyvus', 'Liberalus', 'Tiesioginis', 'Netiesioginis', 'Detalus', 'Apibendrinantis', 'Koncepualus'
-                ];
-
-                const negativeKeywords = [
-                    'Vėlavimas', 'Neatsakingumas', 'Pasyvumas', 'Konfliktiškumas', 'Arogancija',
-                    'Klaidų slėpimas', 'Neorganizuotumas', 'Nekokybiškas darbas', 'Stresas', 'Negatyvumas',
-                    'Nepasitikėjimas', 'Kritikos nepriėmimas', 'Dėmesio stoka', 'Bendradarbiavimo stoka', 'Lėtas darbas',
-                    'Nedraugiškumas', 'Chaotiškumas', 'Uždarumas', 'Pesimizmas', 'Abejingumas', 'Išsiblaškymas', 'Paviršutiniškumas',
-                    'Neapdairumas', 'Neryžtingumas', 'Užsispyrimas', 'Ignoravimas', 'Manipuliavimas', 'Pesimizmas', 'Skubotumas',
-                    'Neetiškas elgesys', 'Nepagarba', 'Apatija', 'Neigiamas požiūris', 'Komunikacijos stoka', 'Negebėjimas priimti sprendimų'
-                ];
-
-                positiveKeywords.forEach(keyword => {
-                    const keywordEl = document.createElement('span');
-                    keywordEl.textContent = keyword;
-                    keywordEl.className = 'cursor-pointer bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
-                    keywordEl.addEventListener('click', () => {
-                        if (keywordsInput.value) {
-                            keywordsInput.value += ', ' + keyword;
-                        } else {
-                            keywordsInput.value = keyword;
-                        }
-                        keywordEl.style.display = 'none';
-                    });
-                    keywordCloud.appendChild(keywordEl);
+            neutralKeywords.forEach(keyword => {
+                const keywordEl = document.createElement('span');
+                keywordEl.textContent = keyword;
+                keywordEl.className = 'cursor-pointer bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
+                keywordEl.addEventListener('click', () => {
+                    if (keywordsInput.value) {
+                        keywordsInput.value += ', ' + keyword;
+                    } else {
+                        keywordsInput.value = keyword;
+                    }
+                    keywordEl.style.display = 'none';
                 });
+                keywordCloud.appendChild(keywordEl);
+            });
 
-                neutralKeywords.forEach(keyword => {
-                    const keywordEl = document.createElement('span');
-                    keywordEl.textContent = keyword;
-                    keywordEl.className = 'cursor-pointer bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
-                    keywordEl.addEventListener('click', () => {
-                        if (keywordsInput.value) {
-                            keywordsInput.value += ', ' + keyword;
-                        } else {
-                            keywordsInput.value = keyword;
-                        }
-                        keywordEl.style.display = 'none';
-                    });
-                    keywordCloud.appendChild(keywordEl);
+            negativeKeywords.forEach(keyword => {
+                const keywordEl = document.createElement('span');
+                keywordEl.textContent = keyword;
+                keywordEl.className = 'cursor-pointer bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
+                keywordEl.addEventListener('click', () => {
+                    if (keywordsInput.value) {
+                        keywordsInput.value += ', ' + keyword;
+                    } else {
+                        keywordsInput.value = keyword;
+                    }
+                    keywordEl.style.display = 'none';
                 });
-
-                negativeKeywords.forEach(keyword => {
-                    const keywordEl = document.createElement('span');
-                    keywordEl.textContent = keyword;
-                    keywordEl.className = 'cursor-pointer bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
-                    keywordEl.addEventListener('click', () => {
-                        if (keywordsInput.value) {
-                            keywordsInput.value += ', ' + keyword;
-                        } else {
-                            keywordsInput.value = keyword;
-                        }
-                        keywordEl.style.display = 'none';
-                    });
-                    keywordCloud.appendChild(keywordEl);
-                });
-            }
-
+                keywordCloud.appendChild(keywordEl);
+            });
             openKeywordModalBtn.addEventListener('click', () => {
                 keywordModal.classList.remove('hidden');
             });
