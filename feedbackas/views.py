@@ -249,11 +249,16 @@ def fill_feedback(request, request_id):
             for t in feedback_request.questionnaire.traits.all()
         ]
     
+    is_team_form = False
+    if feedback_request.questionnaire and ' (' in feedback_request.project_name and feedback_request.project_name.endswith(')'):
+        is_team_form = True
+
     context = {
         'form': form,
         'feedback_request': feedback_request,
         'questionnaire_traits_json': json.dumps(questionnaire_traits),
         'has_questionnaire': feedback_request.questionnaire is not None,
+        'is_team_form': is_team_form,
     }
     return render(request, 'fill_feedback.html', context)
 
@@ -1298,6 +1303,7 @@ def stop_impersonation(request):
 @login_required
 def questionnaires_list(request):
     from .models import Questionnaire, Trait
+    from users.models import Department
     
     if not Trait.objects.exists():
         default_traits = [
@@ -1325,10 +1331,16 @@ def questionnaires_list(request):
         
     team_members = team_members_qs.order_by('first_name', 'last_name')
 
+    managed_departments = list(Department.objects.filter(manager=request.user).order_by('name'))
+    sub_departments = list(Department.objects.filter(parent__in=managed_departments).order_by('name'))
+    all_managed = list({d.id: d for d in managed_departments + sub_departments}.values())
+    all_managed.sort(key=lambda x: x.name)
+
     return render(request, 'questionnaires/list.html', {
         'questionnaires': questionnaires,
         'all_traits': all_traits,
         'team_members': team_members,
+        'managed_departments': all_managed,
         'is_company_active': is_company_active(request.user)
     })
 
@@ -1369,48 +1381,116 @@ def create_questionnaire(request):
 
 
 @login_required
+def create_team_questionnaire(request):
+    from .models import Questionnaire, Trait, FeedbackRequest
+    from users.models import Department
+    if not is_company_active(request.user):
+        messages.error(request, 'Jūsų įmonė yra išjungta. Veiksmas negalimas.')
+        return redirect('questionnaires_list')
+        
+    if request.method == 'POST':
+        title = request.POST.get('title', '').strip()
+        department_id = request.POST.get('department_id')
+        
+        if not title or not department_id:
+            messages.error(request, 'Pavadinimas ir komanda yra privalomi.')
+            return redirect('questionnaires_list')
+
+        try:
+            department = Department.objects.get(id=int(department_id))
+            # Just ensuring user can manage it or its parent
+            managed_ids = list(Department.objects.filter(manager=request.user).values_list('id', flat=True))
+            sub_ids = list(Department.objects.filter(parent_id__in=managed_ids).values_list('id', flat=True))
+            if department.id not in managed_ids and department.id not in sub_ids:
+                raise ValueError
+        except (Department.DoesNotExist, ValueError):
+            messages.error(request, 'Nepavyko rasti pasirinktos komandos arba neturite jai teisių.')
+            return redirect('questionnaires_list')
+
+        questionnaire = Questionnaire.objects.create(title=title, created_by=request.user, is_team=True, target_department=department)
+
+        # Add existing traits
+        trait_ids = request.POST.getlist('trait_ids')
+        for tid in trait_ids:
+            try:
+                trait = Trait.objects.get(id=int(tid))
+                questionnaire.traits.add(trait)
+            except (Trait.DoesNotExist, ValueError):
+                pass
+
+        # Add custom traits
+        custom_traits = request.POST.getlist('custom_traits')
+        for name in custom_traits:
+            name = name.strip()
+            if name:
+                trait, _ = Trait.objects.get_or_create(name=name, defaults={'created_by': request.user})
+                questionnaire.traits.add(trait)
+
+        messages.success(request, f'Komandinė forma "{title}" sėkmingai sukurta!')
+    return redirect('questionnaires_list')
+
+
+@login_required
 @require_POST
 def send_questionnaire(request):
     from .models import Questionnaire, FeedbackRequest
     from django.contrib.auth.models import User
+    from datetime import date, timedelta
     
     if not is_company_active(request.user):
         messages.error(request, 'Jūsų įmonė yra išjungta. Veiksmas negalimas.')
         return redirect('questionnaires_list')
         
     questionnaire_id = request.POST.get('questionnaire_id')
-    colleague_id = request.POST.get('colleague_id')
+    colleague_ids = request.POST.getlist('colleague_ids')
     
-    if not questionnaire_id or not colleague_id:
-        messages.error(request, 'Trūksta duomenų klausimyno siuntimui.')
+    if not questionnaire_id or not colleague_ids:
+        messages.error(request, 'Trūksta duomenų klausimyno siuntimui. Įsitikinkite, kad pasirinkote bent vieną kolegą.')
         return redirect('questionnaires_list')
         
     questionnaire = get_object_or_404(Questionnaire, id=questionnaire_id, created_by=request.user)
-    requested_to = get_object_or_404(User, id=colleague_id)
     
-    # Check if a pending request already exists for this questionnaire and colleague
-    existing = FeedbackRequest.objects.filter(
-        requester=request.user,
-        requested_to=requested_to,
-        status='pending',
-        project_name=questionnaire.title
-    ).exists()
-    
-    if existing:
-        messages.warning(request, f'Klausimynas "{questionnaire.title}" jau išsiųstas kolegai {requested_to.first_name} {requested_to.last_name} ir dar neužpildytas.')
-        return redirect('questionnaires_list')
+    project_name = questionnaire.title
+    if questionnaire.is_team and getattr(questionnaire, 'target_department', None):
+        project_name = f"{questionnaire.title} ({questionnaire.target_department.name})"
+
+    sent_count = 0
+    skipped_count = 0
+
+    for c_id in colleague_ids:
+        requested_to = get_object_or_404(User, id=c_id)
         
-    FeedbackRequest.objects.create(
-        requester=request.user,
-        requested_to=requested_to,
-        project_name=questionnaire.title,
-        questionnaire=questionnaire,
-        comment=f"Prašau užpildyti klausimyną: {questionnaire.title}",
-        due_date=date.today()
-    )
-    
-    messages.success(request, f'Klausimynas "{questionnaire.title}" sėkmingai išsiųstas kolegai {requested_to.first_name} {requested_to.last_name}.')
+        # Check if a pending request already exists for this questionnaire and this colleague
+        existing = FeedbackRequest.objects.filter(
+            requester=request.user,
+            requested_to=requested_to,
+            status='pending',
+            project_name=project_name
+        ).exists()
+        
+        if existing:
+            skipped_count += 1
+            continue
+            
+        FeedbackRequest.objects.create(
+            requester=request.user,
+            requested_to=requested_to,
+            project_name=project_name,
+            questionnaire=questionnaire,
+            comment=f"Prašau užpildyti klausimyną: {questionnaire.title}",
+            due_date=date.today() + timedelta(days=7)
+        )
+        sent_count += 1
+        
+    if sent_count > 0 and skipped_count == 0:
+        messages.success(request, f'Klausimynas "{questionnaire.title}" sėkmingai išsiųstas pasirinktiems ({sent_count}) kolegoms!')
+    elif sent_count > 0 and skipped_count > 0:
+        messages.success(request, f'Klausimynas išsiųstas {sent_count} kolegom(s). Praleisti {skipped_count}, nes jie jau turi aktyvią šios formos užklausą.')
+    elif sent_count == 0 and skipped_count > 0:
+        messages.warning(request, f'Klausimynas nebuvo išsiųstas, nes visi pasirinkti kolegos jau turi aktyvią šios formos užklausą.')
+        
     return redirect('questionnaires_list')
+
 
 @login_required
 def edit_questionnaire(request, questionnaire_id):

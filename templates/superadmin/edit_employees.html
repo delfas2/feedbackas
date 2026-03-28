@@ -17,16 +17,7 @@
 
         <h1 class="text-3xl font-bold text-gray-800 mb-8">Redaguoti darbuotojus: {{ company.name }}</h1>
 
-        {% if messages %}
-        <div class="mb-8">
-            {% for message in messages %}
-            <div
-                class="p-4 rounded-lg {% if message.tags == 'error' %}bg-red-50 text-red-700{% else %}bg-green-50 text-green-700{% endif %}">
-                {{ message }}
-            </div>
-            {% endfor %}
-        </div>
-        {% endif %}
+
 
         <!-- Add Employee Form -->
         <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-8">

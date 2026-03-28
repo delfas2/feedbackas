@@ -281,12 +281,14 @@
             <div class="p-6 md:p-8">
                 <!-- Apklausos Forma -->
                 <div class="max-w-2xl mx-auto bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+                    {% if not is_team_form %}
                     <h2 class="text-2xl font-bold text-gray-800 mb-6">
                         Atsiliepimas apie:
                         <span class="text-purple-600">
                             {{ feedback_request.requester.get_full_name|default:feedback_request.requester.username }}
                         </span>
                     </h2>
+                    {% endif %}
 
                     <form method="POST" class="space-y-6">
                         <input type="hidden" id="colleague-name"

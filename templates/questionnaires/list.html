@@ -14,23 +14,29 @@
         <div class="flex justify-between items-center mb-6"
             data-company-active="{{ is_company_active|yesno:'true,false' }}">
             <h1 class="text-xl font-bold text-gray-800">Individuali forma</h1>
-            <button id="open-create-modal"
-                class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
-                <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                Kurti klausimyną
-            </button>
+            <div class="flex items-center space-x-3">
+                {% if managed_departments %}
+                <button id="open-create-team-modal"
+                    class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium shadow-sm">
+                    <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                    </svg>
+                    Kurti komandinę formą
+                </button>
+                {% endif %}
+                <button id="open-create-modal"
+                    class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium shadow-sm">
+                    <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                        stroke-width="1.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                    </svg>
+                    Kurti klausimyną
+                </button>
+            </div>
         </div>
 
-        {% if messages %}
-        {% for message in messages %}
-        <div
-            class="mb-4 p-4 rounded-lg {% if message.tags == 'error' %}bg-red-50 text-red-700{% else %}bg-green-50 text-green-700{% endif %}">
-            {{ message }}</div>
-        {% endfor %}
-        {% endif %}
+
 
         <!-- Questionnaires List -->
         {% if questionnaires %}
@@ -39,7 +45,18 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
                 <div class="flex justify-between items-start">
                     <div>
-                        <h3 class="text-lg font-semibold text-gray-800">{{ q.title }}</h3>
+                        <div class="flex items-center space-x-2">
+                            <h3 class="text-lg font-semibold text-gray-800">{{ q.title }}</h3>
+                            {% if q.is_team %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
+                                Komandinė
+                            </span>
+                            {% else %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                Asmeninė
+                            </span>
+                            {% endif %}
+                        </div>
                         <p class="text-sm text-gray-500 mt-1">Sukurta: {{ q.created_at|date:"Y-m-d" }}</p>
                     </div>
                     <div class="flex space-x-2">
@@ -191,6 +208,95 @@
         </div>
     </div>
 
+    <!-- Create Team Questionnaire Modal -->
+    <div id="create-team-modal" class="fixed inset-0 overflow-y-auto h-full w-full hidden z-50" style="background-color: rgba(75, 85, 99, 0.5);">
+        <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+            <div
+                class="bg-white rounded-2xl shadow-xl max-w-2xl w-full text-left overflow-hidden transform transition-all sm:my-8">
+                <div class="p-6 border-b flex justify-between items-center bg-white sticky top-0 z-10">
+                    <h2 class="text-xl font-bold text-indigo-700">Nauja komandinė forma</h2>
+                    <button id="close-create-team-modal" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="1.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <form id="create-team-form" method="POST" action="{% url 'create_team_questionnaire' %}"
+                    class="p-6 space-y-6 max-h-[70vh] overflow-y-auto">
+                    {% csrf_token %}
+
+                    <!-- Title -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Klausimyno pavadinimas</label>
+                        <input type="text" name="title" required
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                            placeholder="pvz., Komandos efektyvumo vertinimas">
+                    </div>
+
+                    <!-- Department Select (NEW) -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Pasirinkite komandą</label>
+                        <select name="department_id" required
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none bg-white">
+                            <option value="" disabled selected>-- Pasirinkite komandą --</option>
+                            {% for dept in managed_departments %}
+                            <option value="{{ dept.id }}">{{ dept.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Trait Cloud -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Savybių debesis <span
+                                class="text-gray-400 font-normal">(paspauskite norimas savybes)</span></label>
+                        <div id="team-trait-cloud"
+                            class="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[80px]">
+                            {% for trait in all_traits %}
+                            <span
+                                class="team-trait-tag inline-block px-3 py-1 bg-white border border-gray-300 rounded-full text-sm text-gray-700 hover:border-indigo-500 hover:text-indigo-700 cursor-pointer transition-all"
+                                data-trait-id="{{ trait.id }}" data-trait-name="{{ trait.name }}">{{ trait.name }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Custom Trait Input -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Pridėti savo savybę</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="team-custom-trait-input"
+                                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                placeholder="Įveskite savybės pavadinimą...">
+                            <button type="button" id="team-add-custom-trait"
+                                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">Pridėti</button>
+                        </div>
+                    </div>
+
+                    <!-- Selected Traits (hidden inputs container) -->
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Pasirinktos savybės</label>
+                        <div id="team-selected-traits" class="flex flex-wrap gap-2 min-h-[40px]">
+                            <span id="team-no-traits-msg" class="text-sm text-gray-400 italic">Dar nepasirinkta jokia
+                                savybė</span>
+                        </div>
+                        <div id="team-hidden-inputs"></div>
+                    </div>
+                </form>
+
+                <!-- Submit Footer -->
+                <div
+                    class="p-6 border-t flex justify-end items-center bg-gray-50 sticky bottom-0 z-10 w-full rounded-b-2xl">
+                    <button type="button" id="cancel-team-modal"
+                        class="px-4 py-2 text-gray-600 hover:text-gray-800 mr-3">Atšaukti</button>
+                    <button type="submit" form="create-team-form"
+                        class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">Sukurti</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
     <!-- Edit Questionnaire Modal -->
     <div id="edit-modal" class="fixed inset-0 overflow-y-auto h-full w-full hidden z-50" style="background-color: rgba(75, 85, 99, 0.5);">
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
@@ -313,30 +419,37 @@
                         </div>
                     </div>
 
-                    <!-- User Select -->
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Kam norite jį
-                            išsiųsti?</label>
-                        <div class="relative">
-                            <select name="colleague_id" required
-                                class="block w-full rounded-xl border-gray-300 py-3 pl-4 pr-10 text-gray-900 bg-gray-50 shadow-sm focus:ring-2 focus:ring-purple-500 focus:border-purple-500 sm:text-base appearance-none border cursor-pointer hover:bg-gray-100 transition-colors">
-                                <option value="" disabled selected>-- Pasirinkite kolegą --</option>
+                    <!-- User Select with Search -->
+                    <div class="relative">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Kam norite jį išsiųsti?</label>
+                        
+                        <div class="relative w-full">
+                            <!-- Input/Tags Container -->
+                            <div id="colleague-select-container" class="flex flex-wrap items-center gap-1.5 w-full min-h-[48px] px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl shadow-sm focus-within:ring-2 focus-within:ring-purple-500 focus-within:border-purple-500 cursor-text transition-colors">
+                                <div id="selected-colleagues-tags" class="flex flex-wrap gap-1.5"></div>
+                                <input type="text" id="colleague-search" class="flex-1 min-w-[120px] bg-transparent border-none text-sm text-gray-900 placeholder-gray-500 focus:ring-0 p-0" placeholder="Ieškoti kolegų..." autocomplete="off">
+                            </div>
+
+                            <!-- Dropdown List -->
+                            <div id="colleague-dropdown" class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-56 overflow-y-auto hidden">
                                 {% for colleague in team_members %}
-                                <option value="{{ colleague.id }}">{{ colleague.first_name }} {{ colleague.last_name }}
-                                </option>
+                                <label class="colleague-option flex items-center p-3 hover:bg-purple-50 cursor-pointer border-b border-gray-50 last:border-0 transition-colors" data-search-text="{{ colleague.first_name|lower }} {{ colleague.last_name|lower }}">
+                                    <input type="checkbox" name="colleague_ids" value="{{ colleague.id }}" class="colleague-checkbox w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 transition-shadow" data-name="{{ colleague.first_name }} {{ colleague.last_name }}">
+                                    <div class="ml-3 flex flex-col">
+                                        <span class="text-sm font-medium text-gray-900">{{ colleague.first_name }} {{ colleague.last_name }}</span>
+                                        <span class="text-xs text-gray-500">{{ colleague.profile.department.name|default:'Nėra komandos' }}</span>
+                                    </div>
+                                    <!-- Selected Checkmark -->
+                                    <svg class="w-5 h-5 ml-auto text-purple-600 hidden checkmark-icon" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                                    </svg>
+                                </label>
                                 {% empty %}
-                                <option value="" disabled>Nėra kolegų, kuriems galėtumėte išsiųsti</option>
+                                <div class="p-4 text-sm text-gray-500 italic text-center">Nėra kolegų, kuriems galėtumėte išsiųsti</div>
                                 {% endfor %}
-                            </select>
-                            <div
-                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
-                                <svg class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fill-rule="evenodd"
-                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                        clip-rule="evenodd" />
-                                </svg>
                             </div>
                         </div>
+                        <p id="colleague-error-msg" class="text-xs text-red-500 mt-2 hidden">Turite pasirinkti bent vieną kolegą.</p>
                     </div>
 
                     <div
@@ -373,6 +486,124 @@
         cancelBtn.addEventListener('click', () => modal.classList.add('hidden'));
         modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
 
+        // Team Modal Logic
+        const teamModal = document.getElementById('create-team-modal');
+        const openTeamBtn = document.getElementById('open-create-team-modal');
+        const closeTeamBtn = document.getElementById('close-create-team-modal');
+        const cancelTeamBtn = document.getElementById('cancel-team-modal');
+
+        if (openTeamBtn) {
+            openTeamBtn.addEventListener('click', () => {
+                const header = document.querySelector('.mb-6');
+                if (header && header.dataset.companyActive === 'false') {
+                    alert('Jūsų įmonė yra išjungta. Veiksmas negalimas.');
+                    return;
+                }
+                teamModal.classList.remove('hidden');
+            });
+        }
+        if (closeTeamBtn) closeTeamBtn.addEventListener('click', () => teamModal.classList.add('hidden'));
+        if (cancelTeamBtn) cancelTeamBtn.addEventListener('click', () => teamModal.classList.add('hidden'));
+        if (teamModal) teamModal.addEventListener('click', (e) => { if (e.target === teamModal) teamModal.classList.add('hidden'); });
+
+        // Trait selection for team modal
+        const teamSelectedTraits = new Map();
+        const teamTraitCloud = document.getElementById('team-trait-cloud');
+        const teamSelectedContainer = document.getElementById('team-selected-traits');
+        const teamHiddenInputs = document.getElementById('team-hidden-inputs');
+        const teamNoTraitsMsg = document.getElementById('team-no-traits-msg');
+        let teamCustomCounter = 0;
+
+        function updateTeamSelectedDisplay() {
+            if (!teamSelectedContainer) return;
+            teamSelectedContainer.querySelectorAll('.selected-trait-tag').forEach(el => el.remove());
+            teamHiddenInputs.innerHTML = '';
+
+            if (teamSelectedTraits.size === 0) {
+                teamNoTraitsMsg.style.display = '';
+            } else {
+                teamNoTraitsMsg.style.display = 'none';
+                teamSelectedTraits.forEach((name, key) => {
+                    const tag = document.createElement('span');
+                    tag.className = 'selected-trait-tag inline-flex items-center px-3 py-1 bg-indigo-100 text-indigo-700 rounded-full text-sm font-semibold';
+                    tag.innerHTML = name + ' <button type="button" class="ml-1 text-indigo-400 hover:text-indigo-600" data-key="' + key + '">&times;</button>';
+                    teamSelectedContainer.appendChild(tag);
+
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    if (String(key).startsWith('custom_')) {
+                        input.name = 'custom_traits';
+                        input.value = name;
+                    } else {
+                        input.name = 'trait_ids';
+                        input.value = key;
+                    }
+                    teamHiddenInputs.appendChild(input);
+                });
+            }
+
+            teamTraitCloud.querySelectorAll('.team-trait-tag').forEach(tag => {
+                const id = tag.dataset.traitId;
+                if (teamSelectedTraits.has(id)) {
+                    tag.classList.add('bg-indigo-100', 'border-indigo-500', 'text-indigo-700');
+                    tag.classList.remove('bg-white', 'border-gray-300', 'text-gray-700');
+                } else {
+                    tag.classList.remove('bg-indigo-100', 'border-indigo-500', 'text-indigo-700');
+                    tag.classList.add('bg-white', 'border-gray-300', 'text-gray-700');
+                }
+            });
+        }
+
+        if (teamTraitCloud) {
+            teamTraitCloud.addEventListener('click', (e) => {
+                const tag = e.target.closest('.team-trait-tag');
+                if (!tag) return;
+                const id = tag.dataset.traitId;
+                const name = tag.dataset.traitName;
+                if (teamSelectedTraits.has(id)) {
+                    teamSelectedTraits.delete(id);
+                } else {
+                    teamSelectedTraits.set(id, name);
+                }
+                updateTeamSelectedDisplay();
+            });
+        }
+
+        if (teamSelectedContainer) {
+            teamSelectedContainer.addEventListener('click', (e) => {
+                const btn = e.target.closest('button[data-key]');
+                if (!btn) return;
+                teamSelectedTraits.delete(btn.dataset.key);
+                updateTeamSelectedDisplay();
+            });
+        }
+
+        const teamCustomInput = document.getElementById('team-custom-trait-input');
+        const teamAddCustomBtn = document.getElementById('team-add-custom-trait');
+
+        if (teamAddCustomBtn) {
+            teamAddCustomBtn.addEventListener('click', () => {
+                const name = teamCustomInput.value.trim();
+                if (!name) return;
+                for (const [, v] of teamSelectedTraits) {
+                    if (v.toLowerCase() === name.toLowerCase()) return;
+                }
+                teamCustomCounter++;
+                teamSelectedTraits.set('custom_' + teamCustomCounter, name);
+                teamCustomInput.value = '';
+                updateTeamSelectedDisplay();
+            });
+        }
+
+        if (teamCustomInput) {
+            teamCustomInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    teamAddCustomBtn.click();
+                }
+            });
+        }
+
         // Send Modal Logic
         const sendModal = document.getElementById('send-modal');
         const closeSendBtn = document.getElementById('close-send-modal');
@@ -407,6 +638,8 @@
                 sendModal.classList.add('hidden');
             }
         });
+
+
 
         // Trait selection
         const selectedTraits = new Map(); // id -> name (for existing) or 'custom' -> name
@@ -637,6 +870,102 @@
                 editAddCustomBtn.click();
             }
         });
+
+        // Searchable Multi-select Colleague Dropdown Logic
+        const colleagueSearchInput = document.getElementById('colleague-search');
+        if (colleagueSearchInput) {
+            const colleagueDropdown = document.getElementById('colleague-dropdown');
+            const tagsContainer = document.getElementById('selected-colleagues-tags');
+            const colleagueOptions = document.querySelectorAll('.colleague-option');
+            const colleagueCheckboxes = document.querySelectorAll('.colleague-checkbox');
+            const selectContainer = document.getElementById('colleague-select-container');
+            const errorMsg = document.getElementById('colleague-error-msg');
+            const sendForm = colleagueSearchInput.closest('form');
+
+            // Show dropdown on click/focus
+            selectContainer.addEventListener('click', () => {
+                colleagueDropdown.classList.remove('hidden');
+                colleagueSearchInput.focus();
+            });
+            colleagueSearchInput.addEventListener('focus', () => colleagueDropdown.classList.remove('hidden'));
+            
+            // Hide dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!selectContainer.contains(e.target) && !colleagueDropdown.contains(e.target)) {
+                    colleagueDropdown.classList.add('hidden');
+                }
+            });
+
+            // Filtering
+            colleagueSearchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                let hasVisible = false;
+                colleagueOptions.forEach(opt => {
+                    if (opt.dataset.searchText.includes(term)) {
+                        opt.style.display = 'flex';
+                        hasVisible = true;
+                    } else {
+                        opt.style.display = 'none';
+                    }
+                });
+            });
+
+            // Updating tags and checkboxes
+            function updateTags() {
+                tagsContainer.innerHTML = '';
+                let checkedCount = 0;
+                colleagueCheckboxes.forEach(cb => {
+                    const icon = cb.closest('.colleague-option').querySelector('.checkmark-icon');
+                    if (cb.checked) {
+                        checkedCount++;
+                        icon.classList.remove('hidden');
+                        
+                        const tag = document.createElement('span');
+                        tag.className = 'inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-purple-100 text-purple-700 mb-1';
+                        tag.innerHTML = cb.dataset.name + ' <button type="button" class="ml-1 text-purple-400 hover:text-purple-600 focus:outline-none">&times;</button>';
+                        
+                        tag.querySelector('button').addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            cb.checked = false;
+                            updateTags();
+                        });
+                        
+                        tagsContainer.appendChild(tag);
+                    } else {
+                        icon.classList.add('hidden');
+                    }
+                });
+                
+                colleagueSearchInput.placeholder = checkedCount > 0 ? '' : 'Ieškoti kolegų...';
+                if (checkedCount > 0) errorMsg.classList.add('hidden');
+            }
+
+            colleagueCheckboxes.forEach(cb => {
+                cb.addEventListener('change', updateTags);
+            });
+
+            // Clear on modal open
+            document.querySelectorAll('.open-send-modal').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    colleagueCheckboxes.forEach(cb => cb.checked = false);
+                    colleagueSearchInput.value = '';
+                    colleagueSearchInput.dispatchEvent(new Event('input'));
+                    updateTags();
+                    errorMsg.classList.add('hidden');
+                });
+            });
+
+            // Validate on submit
+            if (sendForm) {
+                sendForm.addEventListener('submit', (e) => {
+                    const checkedCount = Array.from(colleagueCheckboxes).filter(cb => cb.checked).length;
+                    if (checkedCount === 0) {
+                        e.preventDefault();
+                        errorMsg.classList.remove('hidden');
+                    }
+                });
+            }
+        }
     });
 </script>
 {% endblock %}

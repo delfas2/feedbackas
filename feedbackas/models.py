@@ -47,6 +47,8 @@ class Questionnaire(models.Model):
     title = models.CharField(max_length=255)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='questionnaires')
     traits = models.ManyToManyField(Trait, blank=True, related_name='questionnaires')
+    is_team = models.BooleanField(default=False)
+    target_department = models.ForeignKey('users.Department', null=True, blank=True, on_delete=models.SET_NULL, related_name='team_questionnaires')
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):
