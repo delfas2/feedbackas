@@ -206,6 +206,47 @@
     </div>
 
     {% block scripts %}{% endblock %}
+    <!-- Sisteminės žinutės (pvz. sėkmingai išsiųsta forma) -->
+    {% if messages %}
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
+        {% for message in messages %}
+        <div class="bg-purple-600 text-white px-6 py-4 rounded-xl shadow-2xl flex items-start gap-4 animate-fade-in-up">
+            <svg class="w-6 h-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+            <div>
+                <p class="font-medium">{{ message }}</p>
+            </div>
+            <button onclick="this.parentElement.remove()" class="text-white hover:text-purple-200 focus:outline-none">
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                    </path>
+                </svg>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    <script>setTimeout(() => { const t = document.getElementById('toast-container'); if (t) t.remove(); }, 6000);</script>
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.3s ease-out forwards;
+        }
+    </style>
+    {% endif %}
+
 </body>
 
 </html>

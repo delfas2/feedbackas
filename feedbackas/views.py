@@ -234,6 +234,8 @@ def fill_feedback(request, request_id):
                         rating=trait_rating_value
                     )
             
+            messages.success(request, 'Jūsų įvertinimas išsiųstas.')
+            
             return redirect('home')
     else:
         form = FeedbackForm()
