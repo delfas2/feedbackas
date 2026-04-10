@@ -17,7 +17,7 @@ fake = Faker('lt_LT')
 def run():
     print("Starting fake data generation...")
     # 1. Create a Company
-    company, _ = Company.objects.get_or_create(name='UAB PowerUp Fakers')
+    company, _ = Company.objects.get_or_create(name='UAB Kudosly.lt Fakers')
     
     # Pre-create some traits
     trait_names = ['Komunikabilus', 'Iniciatyvus', 'Atsakingas', 'Greitas', 'Kruopštus', 'Lyderis', 'Analitiškas', 'Lankstus', 'Inovatyvus', 'Empatiškas']
@@ -32,7 +32,7 @@ def run():
         first_name = fake.first_name()
         last_name = fake.last_name()
         username = f"{first_name.lower()}.{last_name.lower()}{random.randint(1, 99999)}"
-        email = f"{username}@powerup.lt"
+        email = f"{username}@kudosly.lt"
         
         user = User.objects.create_user(username=username, email=email, password='password123', first_name=first_name, last_name=last_name)
         # Profile is auto-created by signals, we just update it
