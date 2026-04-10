@@ -5,37 +5,44 @@ services:
     image: postgres:13
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    # env_file:
-    #   - .env
 
   web:
     build: .
     command: sh -c "npm install && npm run build && python manage.py collectstatic --noinput && gunicorn feedbackas.wsgi:application --bind 0.0.0.0:8000 --workers 3"
     volumes:
       - .:/app
-    ports:
-      - "8015:8000"
-    # env_file:
-    #   - .env
+    # Port mapping no longer needed; Traefik will route to the container directly
+    expose:
+      - "8000"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.kudosly.rule=Host(`kudosly.lt`) || Host(`www.kudosly.lt`)
+      - traefik.http.routers.kudosly.entrypoints=websecure
+      - traefik.http.routers.kudosly.tls.certresolver=letsencrypt
+      - traefik.http.services.kudosly.loadbalancer.server.port=8000
+    networks:
+      - traefik-proxy
+      - default
     depends_on:
       - db
       - redis
 
   redis:
     image: redis:7-alpine
-    ports:
-      - "6379:6379"
+    # Do not publish Redis publicly
 
   worker:
     build: .
     command: sh -c "python manage.py qcluster"
     volumes:
       - .:/app
-    # env_file:
-    #   - .env
     depends_on:
       - db
       - redis
 
 volumes:
   postgres_data:
+
+networks:
+  traefik-proxy:
+    external: true
