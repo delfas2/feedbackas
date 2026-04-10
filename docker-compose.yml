@@ -3,6 +3,7 @@ version: '3.8'
 services:
   db:
     image: postgres:13
+    restart: unless-stopped
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
@@ -26,9 +27,11 @@ services:
     depends_on:
       - db
       - redis
+    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
+    restart: unless-stopped
     # Do not publish Redis publicly
 
   worker:
@@ -39,6 +42,7 @@ services:
     depends_on:
       - db
       - redis
+    restart: unless-stopped
 
 volumes:
   postgres_data:
