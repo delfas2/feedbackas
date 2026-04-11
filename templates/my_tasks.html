@@ -24,9 +24,22 @@
     <!-- Turinys -->
     <div class="p-6 md:p-8">
 
+        <!-- Tabs -->
+        <div class="border-b border-gray-200 mb-6 pb-2">
+            <nav class="flex space-x-6 text-sm font-medium" aria-label="Tabs">
+                <button id="btn-tab-assigned" class="flex items-center gap-2 border-b-2 border-purple-600 text-purple-600 pb-2 px-1 hover:text-purple-700 transition">
+                    Užduotys man
+                    <span class="bg-purple-100 text-purple-600 py-0.5 px-2 rounded-full text-xs font-semibold">{{ assigned_requests.count }}</span>
+                </button>
+                <button id="btn-tab-made" class="flex items-center gap-2 border-b-2 border-transparent text-gray-500 pb-2 px-1 hover:text-gray-700 hover:border-gray-300 transition">
+                    Mano išsiųsti prašymai
+                    <span class="bg-gray-100 text-gray-600 py-0.5 px-2 rounded-full text-xs font-semibold">{{ made_requests.count }}</span>
+                </button>
+            </nav>
+        </div>
+
         <!-- 1. Užduotys, kurias turiu atlikti -->
-        <div class="mb-10">
-            <h2 class="text-xl font-bold text-gray-700 mb-4">Užduotys man ({{ assigned_requests.count }})</h2>
+        <div id="tab-assigned" class="mb-10">
             <div class="space-y-4">
                 {% for request in assigned_requests %}
                 <div
@@ -58,8 +71,7 @@
                                     class="font-medium text-purple-600">{{ name }}</span></p>
                             {% endwith %}
                             {% endwith %}
-                            {% if request.comment %}<p class="text-sm text-gray-600 mt-1">Komentaras: {{ request.comment
-                                }}</p>{% endif %}
+                            {% if request.comment %}<p class="text-sm text-gray-600 mt-1">Komentaras: {{ request.comment }}</p>{% endif %}
                             <div class="flex items-center mt-2 space-x-3 text-xs">
                                 {% if request.status == 'pending' %}
                                 <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">Laukiama
@@ -102,8 +114,7 @@
         </div>
 
         <!-- 2. Užduotys, kurias aš sukūriau -->
-        <div>
-            <h2 class="text-xl font-bold text-gray-700 mb-4">Mano išsiųsti prašymai ({{ made_requests.count }})</h2>
+        <div id="tab-made" class="hidden">
             <div class="space-y-4">
                 {% for request in made_requests %}
                 <div
@@ -261,5 +272,42 @@
     function closeEditModal() {
         document.getElementById('editModal').classList.add('hidden');
     }
+    
+    // Tabs functionality
+    document.addEventListener('DOMContentLoaded', () => {
+        const btnAssigned = document.getElementById('btn-tab-assigned');
+        const btnMade = document.getElementById('btn-tab-made');
+        const tabAssigned = document.getElementById('tab-assigned');
+        const tabMade = document.getElementById('tab-made');
+        const badgeAssigned = btnAssigned.querySelector('span');
+        const badgeMade = btnMade.querySelector('span');
+
+        function switchTab(showAssigned) {
+            // Content
+            if (showAssigned) {
+                tabAssigned.classList.remove('hidden');
+                tabMade.classList.add('hidden');
+            } else {
+                tabAssigned.classList.add('hidden');
+                tabMade.classList.remove('hidden');
+            }
+
+            // Buttons
+            if (showAssigned) {
+                btnAssigned.className = 'flex items-center gap-2 border-b-2 border-purple-600 text-purple-600 pb-2 px-1 hover:text-purple-700 transition';
+                badgeAssigned.className = 'bg-purple-100 text-purple-600 py-0.5 px-2 rounded-full text-xs font-semibold';
+                btnMade.className = 'flex items-center gap-2 border-b-2 border-transparent text-gray-500 pb-2 px-1 hover:text-gray-700 hover:border-gray-300 transition';
+                badgeMade.className = 'bg-gray-100 text-gray-600 py-0.5 px-2 rounded-full text-xs font-semibold';
+            } else {
+                btnAssigned.className = 'flex items-center gap-2 border-b-2 border-transparent text-gray-500 pb-2 px-1 hover:text-gray-700 hover:border-gray-300 transition';
+                badgeAssigned.className = 'bg-gray-100 text-gray-600 py-0.5 px-2 rounded-full text-xs font-semibold';
+                btnMade.className = 'flex items-center gap-2 border-b-2 border-purple-600 text-purple-600 pb-2 px-1 hover:text-purple-700 transition';
+                badgeMade.className = 'bg-purple-100 text-purple-600 py-0.5 px-2 rounded-full text-xs font-semibold';
+            }
+        }
+
+        btnAssigned.addEventListener('click', () => switchTab(true));
+        btnMade.addEventListener('click', () => switchTab(false));
+    });
 </script>
 {% endblock %}

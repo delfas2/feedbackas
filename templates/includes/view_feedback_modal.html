@@ -24,11 +24,6 @@
                     <p id="viewModalFeedback" class="text-gray-800 whitespace-pre-wrap"></p>
                 </div>
 
-                <div class="bg-gray-50 p-4 rounded-lg" id="viewModalCommentsContainer">
-                    <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Papildomi komentarai:
-                    </h4>
-                    <p id="viewModalComments" class="text-gray-800 whitespace-pre-wrap italic"></p>
-                </div>
             </div>
         </div>
         <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
@@ -48,15 +43,6 @@
         document.getElementById('viewModalDate').textContent = data.date || data.dataset?.date;
         document.getElementById('viewModalRating').textContent = (data.rating || data.dataset?.rating) + '/4';
         document.getElementById('viewModalFeedback').textContent = data.feedback || data.dataset?.feedback;
-
-        const comments = data.comments || data.dataset?.comments;
-        const commentsContainer = document.getElementById('viewModalCommentsContainer');
-        if (comments && comments.trim() !== 'None' && comments.trim() !== '') {
-            document.getElementById('viewModalComments').textContent = comments;
-            commentsContainer.classList.remove('hidden');
-        } else {
-            commentsContainer.classList.add('hidden');
-        }
     }
 
     function closeViewModal() {
