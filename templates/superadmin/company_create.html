@@ -3,31 +3,31 @@
 {% block title %}Kurti įmonę - Superadmin{% endblock %}
 
 {% block content %}
-<main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+<main class="flex-1 overflow-y-auto bg-bg-secondary p-6">
     <div class="max-w-3xl mx-auto">
         <div class="flex items-center justify-between mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">Kurti įmonę</h1>
+            <h1 class="text-3xl font-bold text-text-main">Kurti įmonę</h1>
             <a href="{% url 'superadmin_companies_list' %}"
-                class="px-4 py-2 border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-100 transition-colors">
+                class="px-4 py-2 border border-gray-200 text-text-muted rounded-lg hover:bg-bg-secondary transition-colors">
                 Atgal į sąrašą
             </a>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden p-6 text-gray-800">
+        <div class="bg-bg-main rounded-xl shadow-sm border border-gray-100 overflow-hidden p-6 text-text-main">
             <form method="POST" action="{% url 'superadmin_create_company' %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="mb-6">
-                    <label for="name" class="block text-sm font-medium text-gray-700 mb-2">Įmonės pavadinimas *</label>
+                    <label for="name" class="block text-sm font-medium text-text-main mb-2">Įmonės pavadinimas *</label>
                     <input type="text" id="name" name="name" required
-                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500 shadow-sm transition-colors text-gray-800 bg-white"
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-purple-500 shadow-sm transition-colors text-text-main bg-bg-main"
                         placeholder="Įveskite įmonės pavadinimą">
                 </div>
 
                 <div class="mb-8">
                     <div class="flex items-center justify-between mb-2">
-                        <label class="block text-sm font-medium text-gray-700">Darbuotojų sąrašas (neprivaloma)</label>
+                        <label class="block text-sm font-medium text-text-main">Darbuotojų sąrašas (neprivaloma)</label>
                         <a href="{% url 'superadmin_download_employee_template' %}"
-                            class="text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1 transition-colors">
+                            class="text-sm text-primary hover:text-primary font-medium flex items-center gap-1 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -38,8 +38,8 @@
                     </div>
                     <div class="flex items-center gap-4">
                         <label for="employee_list"
-                            class="cursor-pointer px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium border border-gray-300 shadow-sm flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none"
+                            class="cursor-pointer px-4 py-2 bg-bg-secondary text-text-main rounded-lg hover:bg-gray-200 transition-colors font-medium border border-gray-300 shadow-sm flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-text-muted" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -49,14 +49,14 @@
                         <input type="file" id="employee_list" name="employee_list" class="hidden"
                             accept=".csv, .xlsx, .xls"
                             onchange="document.getElementById('file-chosen').textContent = this.files[0] ? this.files[0].name : 'Failas nepasirinktas'">
-                        <span id="file-chosen" class="text-sm text-gray-500">Failas nepasirinktas</span>
+                        <span id="file-chosen" class="text-sm text-text-muted">Failas nepasirinktas</span>
                     </div>
-                    <p class="text-xs text-gray-500 mt-2">Priimami formatai: CSV, Excel (.xlsx, .xls)</p>
+                    <p class="text-xs text-text-muted mt-2">Priimami formatai: CSV, Excel (.xlsx, .xls)</p>
                 </div>
 
                 <div class="flex justify-end pt-4 border-t border-gray-100">
                     <button type="submit"
-                        class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-sm font-medium">
+                        class="px-6 py-2 bg-primary/90 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-sm font-medium">
                         Sukurti įmonę
                     </button>
                 </div>

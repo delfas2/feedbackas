@@ -27,14 +27,14 @@
     </style>
 </head>
 
-<body class="bg-gray-100">
+<body class="bg-bg-secondary">
 
     {% if request.session.impersonator_id %}
     <div class="bg-red-600 text-white px-4 py-2 text-center text-sm font-medium relative z-50">
         <div class="flex items-center justify-center space-x-4">
             <span>Jūs peržiūrite sistemą kaip <strong>{{ user.get_full_name|default:user.email }}</strong></span>
             <a href="{% url 'stop_impersonation' %}"
-                class="bg-white text-red-600 px-3 py-1 rounded hover:bg-red-50 transition-colors text-xs font-bold uppercase">
+                class="bg-bg-main text-red-600 px-3 py-1 rounded hover:bg-red-50 transition-colors text-xs font-bold uppercase">
                 Grįžti į Superadmin
             </a>
         </div>
@@ -43,17 +43,17 @@
 
     <div class="flex h-screen">
 
-        <aside class="hidden md:flex w-64 flex-col bg-white shadow-lg">
+        <aside class="hidden md:flex w-64 flex-col bg-bg-main shadow-lg">
             <div class="px-6 py-5 border-b">
-                <a href="{% url 'home' %}" class="text-2xl font-bold text-purple-600">
-                    Kudosly.lt
+                <a href="{% url 'home' %}" class="block outline-none flex items-center">
+                    <img src="{% static 'images/logo.png' %}" alt="Kudosly.lt" class="h-8 w-auto object-contain">
                 </a>
             </div>
 
             <nav class="flex-1 space-y-2 py-4 px-4">
                 {% if not user.is_superuser %}
                 <a href="{% url 'home' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'home' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'home' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -62,7 +62,7 @@
                     <span>Pagrindinis</span>
                 </a>
                 <a href="{% url 'my_tasks_list' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'my_tasks_list' or request.resolver_match.url_name == 'fill_feedback' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'my_tasks_list' or request.resolver_match.url_name == 'fill_feedback' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -71,7 +71,7 @@
                     <span>Mano Užduotys</span>
                 </a>
                 <a href="{% url 'team_members_list' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'team_members_list' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'team_members_list' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -80,7 +80,7 @@
                     <span>Mano Komanda</span>
                 </a>
                 <a href="{% url 'questionnaires_list' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'questionnaires_list' or request.resolver_match.url_name == 'create_questionnaire' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'questionnaires_list' or request.resolver_match.url_name == 'create_questionnaire' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -91,7 +91,7 @@
 
                 {% if user.profile.is_company_admin %}
                 <a href="{% url 'company_management' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'company_management' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'company_management' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -102,7 +102,7 @@
                 {% endif %}
 
                 <a href="{% url 'results' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'results' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'results' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -112,7 +112,7 @@
                 </a>
                 {% if user.managed_departments.exists %}
                 <a href="{% url 'team_statistics' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'team_statistics' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'team_statistics' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -126,7 +126,7 @@
 
                 {% if user.is_superuser %}
                 <a href="{% url 'superadmin_dashboard' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'superadmin_dashboard' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'superadmin_dashboard' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
@@ -136,7 +136,7 @@
                     <span>Statistika</span>
                 </a>
                 <a href="{% url 'superadmin_companies_list' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'superadmin_companies_list' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'superadmin_companies_list' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -145,7 +145,7 @@
                     <span>Įmonės</span>
                 </a>
                 <a href="{% url 'superadmin_superusers_list' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if 'superusers' in request.path %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if 'superusers' in request.path %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -154,7 +154,7 @@
                     <span>Supervartotojai</span>
                 </a>
                 <a href="{% url 'superadmin_users_list' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'superadmin_users_list' %}text-white bg-purple-500{% else %}text-gray-600 hover:bg-purple-50 hover:text-purple-600{% endif %} font-medium">
+                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'superadmin_users_list' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -173,19 +173,19 @@
                     </a>
                     <div>
                         <a href="{% url 'profile' %}"
-                            class="font-medium text-gray-800 hover:text-purple-600 transition-colors">
+                            class="font-medium text-text-main hover:text-primary transition-colors">
                             {{ request.user.get_full_name|default:request.user.username }}
                         </a>
                         <a href="{% url 'logout' %}"
-                            class="block text-sm text-purple-600 hover:text-purple-800">Atsijungti</a>
+                            class="block text-sm text-primary hover:text-primary">Atsijungti</a>
                     </div>
                 </div>
                 <div class="px-4 pt-4 mt-4 border-t">
                     <div class="flex items-center space-x-2">
-                        <a href="#" class="flex items-center p-1 rounded-md bg-gray-100">
+                        <a href="#" class="flex items-center p-1 rounded-md bg-bg-secondary">
                             <img src="https://flagcdn.com/lt.svg" class="w-6 h-4 rounded-sm" alt="Lietuvių">
                         </a>
-                        <a href="#" class="flex items-center p-1 rounded-md hover:bg-gray-100">
+                        <a href="#" class="flex items-center p-1 rounded-md hover:bg-bg-secondary">
                             <img src="https://flagcdn.com/gb.svg" class="w-6 h-4 rounded-sm" alt="English">
                         </a>
                     </div>
@@ -202,7 +202,7 @@
     {% if messages %}
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
         {% for message in messages %}
-        <div class="bg-purple-600 text-white px-6 py-4 rounded-xl shadow-2xl flex items-start gap-4 animate-fade-in-up">
+        <div class="bg-primary/90 text-white px-6 py-4 rounded-xl shadow-2xl flex items-start gap-4 animate-fade-in-up">
             <svg class="w-6 h-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>

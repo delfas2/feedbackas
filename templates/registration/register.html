@@ -18,12 +18,12 @@
         }
     </style>
 </head>
-<body class="bg-purple-50 flex items-center justify-center min-h-screen px-4">
+<body class="bg-bg-secondary flex items-center justify-center min-h-screen px-4">
 
-    <div class="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
+    <div class="bg-bg-main p-8 rounded-2xl shadow-lg w-full max-w-md">
         
         <!-- Formos Antraštė -->
-        <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">
+        <h2 class="text-3xl font-bold text-center text-text-main mb-6">
             Sukurti Paskyrą ✨
         </h2>
         
@@ -46,7 +46,7 @@
             
             <!-- Vardas -->
             <div>
-                <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-text-main">
                     Vardas
                 </label>
                 {{ form.first_name }}
@@ -54,7 +54,7 @@
 
             <!-- Pavardė -->
             <div>
-                <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-text-main">
                     Pavardė
                 </label>
                 {{ form.last_name }}
@@ -62,7 +62,7 @@
 
             <!-- Įmonė -->
             <div>
-                <label for="{{ form.company.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                <label for="{{ form.company.id_for_label }}" class="block text-sm font-medium text-text-main">
                     Įmonė (Nebūtina)
                 </label>
                 {{ form.company }}
@@ -70,7 +70,7 @@
 
             <!-- El. paštas -->
             <div>
-                <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                <label for="{{ form.email.id_for_label }}" class="block text-sm font-medium text-text-main">
                     El. paštas
                 </label>
                 {{ form.email }}
@@ -78,7 +78,7 @@
 
             <!-- Slaptažodis -->
             <div>
-                <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                <label for="{{ form.password1.id_for_label }}" class="block text-sm font-medium text-text-main">
                     Slaptažodis
                 </label>
                 {{ form.password1 }}
@@ -86,7 +86,7 @@
 
             <!-- Pakartoti Slaptažodį -->
             <div>
-                <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-gray-700">
+                <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-text-main">
                     Pakartokite slaptažodį
                 </label>
                 {{ form.password2 }}
@@ -95,16 +95,16 @@
             <!-- Registracijos Mygtukas -->
             <div>
                 <button type="submit"
-                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-purple-500 hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200">
+                        class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-primary hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors duration-200">
                     Registruotis
                 </button>
             </div>
         </form>
 
         <!-- Prisijungimo Nuoroda -->
-        <p class="mt-6 text-center text-sm text-gray-600">
+        <p class="mt-6 text-center text-sm text-text-muted">
             Jau turite paskyrą?
-            <a href="{% url 'login' %}" class="font-medium text-purple-600 hover:text-purple-500">
+            <a href="{% url 'login' %}" class="font-medium text-primary hover:text-primary">
                 Prisijunkite
             </a>
         </p>

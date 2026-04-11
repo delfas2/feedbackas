@@ -3,54 +3,54 @@
 {% block title %}Redaguoti darbuotojus - {{ company.name }}{% endblock %}
 
 {% block content %}
-<main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+<main class="flex-1 overflow-y-auto bg-bg-secondary p-6">
     <div class="max-w-7xl mx-auto">
         <!-- Breadcrumb -->
-        <nav class="flex mb-4 text-gray-500 text-sm">
-            <a href="{% url 'superadmin_companies_list' %}" class="hover:text-purple-600">Įmonės</a>
+        <nav class="flex mb-4 text-text-muted text-sm">
+            <a href="{% url 'superadmin_companies_list' %}" class="hover:text-primary">Įmonės</a>
             <span class="mx-2">/</span>
-            <a href="{% url 'superadmin_company_detail' company.id %}" class="hover:text-purple-600">{{ company.name
+            <a href="{% url 'superadmin_company_detail' company.id %}" class="hover:text-primary">{{ company.name
                 }}</a>
             <span class="mx-2">/</span>
-            <span class="text-gray-800">Darbuotojai</span>
+            <span class="text-text-main">Darbuotojai</span>
         </nav>
 
-        <h1 class="text-3xl font-bold text-gray-800 mb-8">Redaguoti darbuotojus: {{ company.name }}</h1>
+        <h1 class="text-3xl font-bold text-text-main mb-8">Redaguoti darbuotojus: {{ company.name }}</h1>
 
 
 
         <!-- Add Employee Form -->
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4">Pridėti darbuotoją</h2>
+        <div class="bg-bg-main rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
+            <h2 class="text-lg font-semibold text-text-main mb-4">Pridėti darbuotoją</h2>
             <form action="{% url 'superadmin_add_employee' company.id %}" method="post" class="space-y-4">
                 {% csrf_token %}
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     <div>
                         <input type="text" name="first_name" placeholder="Vardas"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-purple-500">
                     </div>
                     <div>
                         <input type="text" name="last_name" placeholder="Pavardė"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-purple-500">
                     </div>
                     <div>
                         <input type="email" name="email" required placeholder="El. paštas *"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-purple-500">
                     </div>
                     <div>
                         <input type="password" name="password" placeholder="Pradinis slaptažodis"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-purple-500">
                     </div>
                     <div class="lg:col-span-2 flex gap-4">
                         <select name="department_id"
-                            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 bg-white">
+                            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-purple-500 bg-bg-main">
                             <option value="">Nepriskirta komandai (Bendra įmonė)</option>
                             {% for dept in departments %}
                             <option value="{{ dept.id }}">{{ dept.name }}</option>
                             {% endfor %}
                         </select>
                         <button type="submit"
-                            class="px-8 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium whitespace-nowrap shadow-sm">
+                            class="px-8 py-2 bg-primary/90 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium whitespace-nowrap shadow-sm">
                             Sukurti / Pridėti
                         </button>
                     </div>
@@ -59,11 +59,11 @@
         </div>
 
         <!-- Import Employees Form -->
-        <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
+        <div class="bg-bg-main rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-gray-800">Importuoti darbuotojus iš sąrašo</h2>
+                <h2 class="text-lg font-semibold text-text-main">Importuoti darbuotojus iš sąrašo</h2>
                 <a href="{% url 'superadmin_download_employee_template' %}"
-                    class="text-sm text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1 transition-colors">
+                    class="text-sm text-primary hover:text-primary font-medium flex items-center gap-1 transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
                         stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -79,8 +79,8 @@
                 <div class="flex-1">
                     <div class="flex items-center gap-4">
                         <label for="employee_list"
-                            class="cursor-pointer px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium border border-gray-300 shadow-sm flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none"
+                            class="cursor-pointer px-4 py-2 bg-bg-secondary text-text-main rounded-lg hover:bg-gray-200 transition-colors font-medium border border-gray-300 shadow-sm flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-text-muted" fill="none"
                                 viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
@@ -90,22 +90,22 @@
                         <input type="file" id="employee_list" name="employee_list" class="hidden" required
                             accept=".csv, .xlsx, .xls"
                             onchange="document.getElementById('file-chosen-import').textContent = this.files[0] ? this.files[0].name : 'Failas nepasirinktas'">
-                        <span id="file-chosen-import" class="text-sm text-gray-500 truncate max-w-xs">Failas
+                        <span id="file-chosen-import" class="text-sm text-text-muted truncate max-w-xs">Failas
                             nepasirinktas</span>
                     </div>
-                    <p class="text-xs text-gray-500 mt-2">Priimami formatai: CSV, Excel (.xlsx, .xls)</p>
+                    <p class="text-xs text-text-muted mt-2">Priimami formatai: CSV, Excel (.xlsx, .xls)</p>
                 </div>
                 <button type="submit"
-                    class="px-8 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium whitespace-nowrap shadow-sm mt-4 sm:mt-0">
+                    class="px-8 py-2 bg-primary/90 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium whitespace-nowrap shadow-sm mt-4 sm:mt-0">
                     Importuoti
                 </button>
             </form>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-bg-main rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-gray-600">
-                    <thead class="bg-gray-50 text-gray-500 border-b border-gray-100">
+                <table class="w-full text-left text-sm text-text-muted">
+                    <thead class="bg-bg-secondary text-text-muted border-b border-gray-100">
                         <tr>
                             <th class="px-6 py-3 font-medium">Vardas</th>
                             <th class="px-6 py-3 font-medium">El. paštas</th>
@@ -116,8 +116,8 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         {% for profile in profiles %}
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-3 font-medium text-gray-900">
+                        <tr class="hover:bg-bg-secondary transition-colors">
+                            <td class="px-6 py-3 font-medium text-text-main">
                                 {% if profile.user.first_name or profile.user.last_name %}
                                 {{ profile.user.first_name }} {{ profile.user.last_name }}
                                 {% else %}
@@ -127,28 +127,28 @@
                             <td class="px-6 py-3">{{ profile.user.email }}</td>
                             <td class="px-6 py-3">
                                 {% if profile.department %}
-                                <span class="px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold">
+                                <span class="px-2 py-1 bg-bg-secondary text-secondary rounded-full text-xs font-semibold">
                                     {{ profile.department.name }}
                                 </span>
                                 {% else %}
-                                <span class="text-gray-400">-</span>
+                                <span class="text-text-muted">-</span>
                                 {% endif %}
                             </td>
                             <td class="px-6 py-3">
                                 {% if profile.manager %}
                                 {{ profile.manager.get_full_name }}
                                 {% else %}
-                                <span class="text-gray-400">-</span>
+                                <span class="text-text-muted">-</span>
                                 {% endif %}
                             </td>
                             <td class="px-6 py-3 text-right flex items-center justify-end space-x-3">
                                 <a href="{% url 'superadmin_impersonate_user' profile.user.id %}"
-                                    class="text-blue-500 hover:text-blue-700 font-medium"
+                                    class="text-secondary hover:text-secondary font-medium"
                                     title="Prisijungti kaip šis vartotojas">
                                     Peržiūrėti
                                 </a>
                                 <a href="/admin/auth/user/{{ profile.user.id }}/change/" target="_blank"
-                                    class="text-gray-400 hover:text-purple-600 font-medium">
+                                    class="text-text-muted hover:text-primary font-medium">
                                     Redaguoti
                                 </a>
                                 <form action="{% url 'superadmin_remove_employee' company.id profile.user.id %}"
@@ -163,7 +163,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">Nėra darbuotojų</td>
+                            <td colspan="5" class="px-6 py-4 text-center text-text-muted">Nėra darbuotojų</td>
                         </tr>
                         {% endfor %}
                     </tbody>

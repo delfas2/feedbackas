@@ -16,13 +16,13 @@
 </head>
 
 <body
-    class="bg-gray-50 text-gray-800 antialiased selection:bg-purple-200 selection:text-purple-900 scroll-smooth flex flex-col min-h-screen">
+    class="bg-bg-secondary text-text-main antialiased selection:bg-purple-200 selection:text-purple-900 scroll-smooth flex flex-col min-h-screen">
 
     <!-- Navigacija (Supaprastinta) -->
-    <header class="bg-white shadow-md sticky top-0 z-50">
+    <header class="bg-bg-main shadow-md sticky top-0 z-50">
         <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <a href="{% url 'index' %}" class="flex items-center text-xl font-bold text-gray-800">
-                <svg class="w-8 h-8 mr-2 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+            <a href="{% url 'index' %}" class="flex items-center text-xl font-bold text-text-main">
+                <svg class="w-8 h-8 mr-2 text-primary" fill="currentColor" viewBox="0 0 20 20">
                     <path fill-rule="evenodd"
                         d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
                         clip-rule="evenodd"></path>
@@ -30,18 +30,18 @@
                 Kudosly.lt
             </a>
             <div class="hidden md:flex space-x-6 items-center">
-                <a href="{% url 'index' %}#funkcijos" class="text-gray-600 hover:text-purple-500">Pradžia</a>
-                <a href="{% url 'apie_mus' %}" class="text-purple-600 font-semibold border-b-2 border-purple-600">Apie
+                <a href="{% url 'index' %}#funkcijos" class="text-text-muted hover:text-primary">Pradžia</a>
+                <a href="{% url 'apie_mus' %}" class="text-primary font-semibold border-b-2 border-purple-600">Apie
                     mus</a>
             </div>
             <div class="flex items-center space-x-4">
                 {% if user.is_authenticated %}
                 <a href="{% url 'home' %}"
-                    class="px-4 py-2 text-sm font-medium text-white bg-purple-500 rounded-lg shadow-sm hover:bg-purple-600 transition-colors">Prietaisų
+                    class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg shadow-sm hover:bg-primary/90 transition-colors">Prietaisų
                     skydelis</a>
                 {% else %}
                 <a href="{% url 'login' %}"
-                    class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-500">Prisijungti</a>
+                    class="px-4 py-2 text-sm font-medium text-text-muted hover:text-primary">Prisijungti</a>
                 {% endif %}
             </div>
         </nav>
@@ -50,7 +50,7 @@
     <!-- Pagrindinis Turinys -->
     <main class="flex-grow">
         <!-- Hero Section -->
-        <section class="bg-purple-600 text-white py-20">
+        <section class="bg-primary/90 text-white py-20">
             <div class="container mx-auto px-4 text-center">
                 <h1 class="text-4xl md:text-5xl font-extrabold mb-4">Apie Mūsų Komandą</h1>
                 <p class="text-lg text-purple-100 max-w-2xl mx-auto">
@@ -61,40 +61,40 @@
         </section>
 
         <!-- Turinys / Istorija -->
-        <section class="py-16 bg-white">
+        <section class="py-16 bg-bg-main">
             <div class="container mx-auto px-4 max-w-3xl">
-                <h2 class="text-3xl font-bold text-gray-800 mb-6 border-b border-gray-200 pb-2">Mūsų Misija</h2>
-                <p class="text-gray-600 mb-6 leading-relaxed">
+                <h2 class="text-3xl font-bold text-text-main mb-6 border-b border-gray-200 pb-2">Mūsų Misija</h2>
+                <p class="text-text-muted mb-6 leading-relaxed">
                     Tikime, kad nuolatinis ir atviras kolegų vertinimas yra pagrindinis komandos tobulėjimo variklis.
                     Dažnai grįžtamasis ryšys įmonėse būna pamirštamas, paliekamas tik metiniams pokalbiams arba
                     anoniminis, kas trukdo konstruktyviam dialogui.
                 </p>
-                <p class="text-gray-600 mb-6 leading-relaxed">
+                <p class="text-text-muted mb-6 leading-relaxed">
                     Mūsų platforma sprendžia šią problemą siūlydama patogų, vardinį ir struktūrizuotą atsiliepimų
                     rinkimo procesą, kurį papildo modernus dirbtinis intelektas (AI), išryškinantis esmines stiprybes
                     bei pastangas.
                 </p>
 
-                <h2 class="text-3xl font-bold text-gray-800 mb-6 mt-12 border-b border-gray-200 pb-2">Mūsų Vertybės</h2>
+                <h2 class="text-3xl font-bold text-text-main mb-6 mt-12 border-b border-gray-200 pb-2">Mūsų Vertybės</h2>
                 <div class="grid md:grid-cols-2 gap-8 mt-6">
                     <div>
-                        <h4 class="text-xl font-semibold text-purple-600 mb-2">Skaidrumas</h4>
-                        <p class="text-gray-600 text-sm">Mes nesislepiame už anonimiškumo. Tikime, kad tikras
+                        <h4 class="text-xl font-semibold text-primary mb-2">Skaidrumas</h4>
+                        <p class="text-text-muted text-sm">Mes nesislepiame už anonimiškumo. Tikime, kad tikras
                             tobulėjimas prasideda nuo atviro ir nuoširdaus grįžtamojo ryšio.</p>
                     </div>
                     <div>
-                        <h4 class="text-xl font-semibold text-purple-600 mb-2">Inovacijos</h4>
-                        <p class="text-gray-600 text-sm">AI integracija leidžia sutaupyti valandas laiko analizuojant
+                        <h4 class="text-xl font-semibold text-primary mb-2">Inovacijos</h4>
+                        <p class="text-text-muted text-sm">AI integracija leidžia sutaupyti valandas laiko analizuojant
                             dešimtis komentarų, paverčiant juos aiškiomis įžvalgomis.</p>
                     </div>
                     <div>
-                        <h4 class="text-xl font-semibold text-purple-600 mb-2">Paprastumas</h4>
-                        <p class="text-gray-600 text-sm">Platforma sukurta taip, kad prašyti ir suteikti grįžtamąjį ryšį
+                        <h4 class="text-xl font-semibold text-primary mb-2">Paprastumas</h4>
+                        <p class="text-text-muted text-sm">Platforma sukurta taip, kad prašyti ir suteikti grįžtamąjį ryšį
                             užtruktų vos kelis paspaudimus.</p>
                     </div>
                     <div>
-                        <h4 class="text-xl font-semibold text-purple-600 mb-2">Palaikymas</h4>
-                        <p class="text-gray-600 text-sm">Mūsų tikslas ne kritikuoti, o auginti. Viskas orientuota į
+                        <h4 class="text-xl font-semibold text-primary mb-2">Palaikymas</h4>
+                        <p class="text-text-muted text-sm">Mūsų tikslas ne kritikuoti, o auginti. Viskas orientuota į
                             komandos nario stiprybių ugdymą.</p>
                     </div>
                 </div>
@@ -103,8 +103,8 @@
     </main>
 
     <!-- Poraštė -->
-    <footer class="bg-gray-50 py-8 border-t mt-auto">
-        <div class="container mx-auto px-4 text-center text-sm text-gray-500">
+    <footer class="bg-bg-secondary py-8 border-t mt-auto">
+        <div class="container mx-auto px-4 text-center text-sm text-text-muted">
             <p>&copy; 2026 Kudosly.lt. Visos teisės saugomos.</p>
         </div>
     </footer>

@@ -3,20 +3,20 @@
 {% block title %}Įmonės - Superadmin{% endblock %}
 
 {% block content %}
-<main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+<main class="flex-1 overflow-y-auto bg-bg-secondary p-6">
     <div class="max-w-7xl mx-auto">
         <div class="flex items-center justify-between mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">Įmonės</h1>
+            <h1 class="text-3xl font-bold text-text-main">Įmonės</h1>
             <a href="{% url 'superadmin_create_company' %}"
-                class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-sm font-medium">
+                class="px-4 py-2 bg-primary/90 text-white rounded-lg hover:bg-purple-700 transition-colors shadow-sm font-medium">
                 Kurti įmonę
             </a>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-bg-main rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-gray-600">
-                    <thead class="bg-gray-50 text-gray-500 border-b border-gray-100">
+                <table class="w-full text-left text-sm text-text-muted">
+                    <thead class="bg-bg-secondary text-text-muted border-b border-gray-100">
                         <tr>
                             <th class="px-6 py-3 font-medium">Pavadinimas</th>
                             <th class="px-6 py-3 font-medium">Sukurta</th>
@@ -27,16 +27,16 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         {% for company in companies %}
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-3 font-medium text-gray-900">
+                        <tr class="hover:bg-bg-secondary transition-colors">
+                            <td class="px-6 py-3 font-medium text-text-main">
                                 <a href="{% url 'superadmin_company_detail' company.id %}"
-                                    class="hover:text-purple-600 hover:underline">
+                                    class="hover:text-primary hover:underline">
                                     {{ company.name }}
                                 </a>
                             </td>
                             <td class="px-6 py-3">{{ company.created_at|date:"Y-m-d" }}</td>
                             <td class="px-6 py-3">
-                                <span class="px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold">
+                                <span class="px-2 py-1 bg-bg-secondary text-secondary rounded-full text-xs font-semibold">
                                     {{ company.employee_count }}
                                 </span>
                             </td>
@@ -46,18 +46,18 @@
                                     class="px-2 py-1 bg-green-50 text-green-700 rounded-full text-xs font-semibold">Aktyvi</span>
                                 {% else %}
                                 <span
-                                    class="px-2 py-1 bg-gray-100 text-gray-500 rounded-full text-xs font-semibold">Išjungta</span>
+                                    class="px-2 py-1 bg-bg-secondary text-text-muted rounded-full text-xs font-semibold">Išjungta</span>
                                 {% endif %}
                             </td>
                             <td class="px-6 py-3 text-right flex justify-end space-x-3 items-center">
                                 <a href="{% url 'superadmin_company_detail' company.id %}"
-                                    class="text-gray-400 hover:text-purple-600 font-medium">Redaguoti</a>
+                                    class="text-text-muted hover:text-primary font-medium">Redaguoti</a>
 
                                 <form method="post" action="{% url 'superadmin_toggle_company' company.id %}"
                                     class="inline">
                                     {% csrf_token %}
                                     <button type="submit"
-                                        class="text-xs font-medium px-2 py-1 rounded border {% if company.is_active %}text-orange-600 border-orange-200 hover:bg-orange-50{% else %}text-green-600 border-green-200 hover:bg-green-50{% endif %} transition">
+                                        class="text-xs font-medium px-2 py-1 rounded border {% if company.is_active %}text-orange-600 border-orange-200 hover:bg-orange-50{% else %}text-accent border-green-200 hover:bg-green-50{% endif %} transition">
                                         {% if company.is_active %}Išjungti{% else %}Įjungti{% endif %}
                                     </button>
                                 </form>
@@ -74,7 +74,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" class="px-6 py-4 text-center text-gray-500">Nėra registruotų įmonių</td>
+                            <td colspan="5" class="px-6 py-4 text-center text-text-muted">Nėra registruotų įmonių</td>
                         </tr>
                         {% endfor %}
                     </tbody>

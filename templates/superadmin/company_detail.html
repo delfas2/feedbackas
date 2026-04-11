@@ -3,52 +3,52 @@
 {% block title %}{{ company.name }} - Superadmin{% endblock %}
 
 {% block content %}
-<main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+<main class="flex-1 overflow-y-auto bg-bg-secondary p-6">
     <div class="max-w-7xl mx-auto">
         <!-- Breadcrumb -->
-        <nav class="flex mb-4 text-gray-500 text-sm">
-            <a href="{% url 'superadmin_companies_list' %}" class="hover:text-purple-600">Įmonės</a>
+        <nav class="flex mb-4 text-text-muted text-sm">
+            <a href="{% url 'superadmin_companies_list' %}" class="hover:text-primary">Įmonės</a>
             <span class="mx-2">/</span>
-            <span class="text-gray-800">{{ company.name }}</span>
+            <span class="text-text-main">{{ company.name }}</span>
         </nav>
 
         <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">{{ company.name }}</h1>
+            <h1 class="text-3xl font-bold text-text-main">{{ company.name }}</h1>
             <div class="flex space-x-3 mt-4 md:mt-0">
                 <a href="{% url 'superadmin_edit_hierarchy' company.id %}"
-                    class="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors font-medium">
+                    class="px-4 py-2 bg-bg-main border border-gray-300 text-text-main rounded-lg hover:bg-bg-secondary transition-colors font-medium">
                     Redaguoti hierarchiją
                 </a>
                 <a href="{% url 'superadmin_edit_employees' company.id %}"
-                    class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
+                    class="px-4 py-2 bg-primary/90 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
                     Redaguoti darbuotojus
                 </a>
             </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <p class="text-sm font-medium text-gray-500">Sukurta</p>
-                <p class="text-lg font-bold text-gray-800 mt-1">{{ company.created_at|date:"Y-m-d" }}</p>
+            <div class="bg-bg-main rounded-xl shadow-sm p-6 border border-gray-100">
+                <p class="text-sm font-medium text-text-muted">Sukurta</p>
+                <p class="text-lg font-bold text-text-main mt-1">{{ company.created_at|date:"Y-m-d" }}</p>
             </div>
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <p class="text-sm font-medium text-gray-500">Darbuotojų skaičius</p>
-                <p class="text-lg font-bold text-gray-800 mt-1">{{ employee_count }}</p>
+            <div class="bg-bg-main rounded-xl shadow-sm p-6 border border-gray-100">
+                <p class="text-sm font-medium text-text-muted">Darbuotojų skaičius</p>
+                <p class="text-lg font-bold text-text-main mt-1">{{ employee_count }}</p>
             </div>
-            <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                <p class="text-sm font-medium text-gray-500">Departamentų skaičius</p>
-                <p class="text-lg font-bold text-gray-800 mt-1">{{ department_count }}</p>
+            <div class="bg-bg-main rounded-xl shadow-sm p-6 border border-gray-100">
+                <p class="text-sm font-medium text-text-muted">Departamentų skaičius</p>
+                <p class="text-lg font-bold text-text-main mt-1">{{ department_count }}</p>
             </div>
         </div>
 
         <!-- Admin Management -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-bg-main rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="p-6 border-b border-gray-100 flex items-center justify-between">
-                <h2 class="text-xl font-bold text-gray-800">Įmonės administratoriai</h2>
-                <p class="text-sm text-gray-500">Administratoriai mato "Įmonės valdymas" puslapį</p>
+                <h2 class="text-xl font-bold text-text-main">Įmonės administratoriai</h2>
+                <p class="text-sm text-text-muted">Administratoriai mato "Įmonės valdymas" puslapį</p>
             </div>
             <table class="w-full text-left text-sm">
-                <thead class="bg-gray-50 text-gray-500 border-b">
+                <thead class="bg-bg-secondary text-text-muted border-b">
                     <tr>
                         <th class="px-6 py-3 font-medium">Darbuotojas</th>
                         <th class="px-6 py-3 font-medium">El. paštas</th>
@@ -59,24 +59,24 @@
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     {% for emp in employees %}
-                    <tr class="hover:bg-gray-50 transition">
+                    <tr class="hover:bg-bg-secondary transition">
                         <td class="px-6 py-3">
                             <div class="flex items-center space-x-3">
                                 <div
-                                    class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs">
+                                    class="w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center text-primary font-bold text-xs">
                                     {{ emp.user.first_name|first }}{{ emp.user.last_name|first }}</div>
-                                <span class="font-medium text-gray-900">{{ emp.user.get_full_name }}</span>
+                                <span class="font-medium text-text-main">{{ emp.user.get_full_name }}</span>
                             </div>
                         </td>
-                        <td class="px-6 py-3 text-gray-600">{{ emp.user.email }}</td>
-                        <td class="px-6 py-3 text-gray-600">{{ emp.department.name|default:"—" }}</td>
+                        <td class="px-6 py-3 text-text-muted">{{ emp.user.email }}</td>
+                        <td class="px-6 py-3 text-text-muted">{{ emp.department.name|default:"—" }}</td>
                         <td class="px-6 py-3 text-center">
                             {% if emp.is_company_admin %}
                             <span
                                 class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700">Admin</span>
                             {% else %}
                             <span
-                                class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-500">Darbuotojas</span>
+                                class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-bg-secondary text-text-muted">Darbuotojas</span>
                             {% endif %}
                         </td>
                         <td class="px-6 py-3 text-right">
@@ -89,7 +89,7 @@
                                     admin</button>
                                 {% else %}
                                 <button type="submit"
-                                    class="px-3 py-1.5 text-xs font-medium text-purple-600 bg-purple-50 border border-purple-200 rounded-lg hover:bg-purple-100 transition">Priskirti
+                                    class="px-3 py-1.5 text-xs font-medium text-primary bg-bg-secondary border border-purple-200 rounded-lg hover:bg-bg-secondary transition">Priskirti
                                     admin</button>
                                 {% endif %}
                             </form>
@@ -97,7 +97,7 @@
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="5" class="px-6 py-4 text-center text-gray-500">Nėra darbuotojų</td>
+                        <td colspan="5" class="px-6 py-4 text-center text-text-muted">Nėra darbuotojų</td>
                     </tr>
                     {% endfor %}
                 </tbody>

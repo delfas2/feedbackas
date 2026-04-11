@@ -3,46 +3,46 @@
 
 {% block content %}
 <main class="flex-1 overflow-y-auto">
-    <header class="bg-white shadow-sm p-4 flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-gray-800">📊 Komandos Statistika — {{ department.name }}</h1>
+    <header class="bg-bg-main shadow-sm p-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-text-main">📊 Komandos Statistika — {{ department.name }}</h1>
     </header>
 
     <div class="p-6 md:p-8 space-y-8">
 
         <!-- 1. Summary Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-white rounded-2xl shadow-lg p-6 relative overflow-hidden">
+            <div class="bg-bg-main rounded-2xl shadow-lg p-6 relative overflow-hidden">
                 <div
-                    class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-purple-100 rounded-full opacity-50 blur-2xl">
+                    class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-bg-secondary rounded-full opacity-50 blur-2xl">
                 </div>
-                <p class="text-gray-500 font-medium text-sm mb-1">Komandos vidurkis</p>
-                <h2 class="text-4xl font-extrabold text-gray-800">{{ team_avg_rating }}</h2>
-                <p class="text-xs text-gray-400 mt-1">iš 4 galimų</p>
+                <p class="text-text-muted font-medium text-sm mb-1">Komandos vidurkis</p>
+                <h2 class="text-4xl font-extrabold text-text-main">{{ team_avg_rating }}</h2>
+                <p class="text-xs text-text-muted mt-1">iš 4 galimų</p>
             </div>
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <p class="text-gray-500 font-medium text-sm mb-1">Narių skaičius</p>
-                <h2 class="text-4xl font-extrabold text-purple-600">{{ team_member_count }}</h2>
-                <p class="text-xs text-gray-400 mt-1">padalinio nariai</p>
+            <div class="bg-bg-main rounded-2xl shadow-lg p-6">
+                <p class="text-text-muted font-medium text-sm mb-1">Narių skaičius</p>
+                <h2 class="text-4xl font-extrabold text-primary">{{ team_member_count }}</h2>
+                <p class="text-xs text-text-muted mt-1">padalinio nariai</p>
             </div>
-            <div class="bg-white rounded-2xl shadow-lg p-6">
-                <p class="text-gray-500 font-medium text-sm mb-1">Gauta atsiliepimų</p>
-                <h2 class="text-4xl font-extrabold text-purple-600">{{ team_feedback_count }}</h2>
-                <p class="text-xs text-gray-400 mt-1">iš viso komandai</p>
+            <div class="bg-bg-main rounded-2xl shadow-lg p-6">
+                <p class="text-text-muted font-medium text-sm mb-1">Gauta atsiliepimų</p>
+                <h2 class="text-4xl font-extrabold text-primary">{{ team_feedback_count }}</h2>
+                <p class="text-xs text-text-muted mt-1">iš viso komandai</p>
             </div>
         </div>
 
         <!-- 2. Competency Bars -->
-        <div class="bg-white rounded-2xl shadow-lg p-6">
-            <h3 class="text-xl font-bold text-gray-800 mb-6">Komandos Kompetencijos</h3>
+        <div class="bg-bg-main rounded-2xl shadow-lg p-6">
+            <h3 class="text-xl font-bold text-text-main mb-6">Komandos Kompetencijos</h3>
             <div class="space-y-5">
                 {% for comp in competencies %}
                 <div>
                     <div class="flex justify-between mb-1">
-                        <span class="text-sm font-medium text-gray-700">{{ comp.name }}</span>
-                        <span class="text-sm font-bold text-purple-600">{{ comp.score }}/4</span>
+                        <span class="text-sm font-medium text-text-main">{{ comp.name }}</span>
+                        <span class="text-sm font-bold text-primary">{{ comp.score }}/4</span>
                     </div>
-                    <div class="w-full bg-gray-100 rounded-full h-3">
-                        <div class="bg-purple-500 h-3 rounded-full transition-all"
+                    <div class="w-full bg-bg-secondary rounded-full h-3">
+                        <div class="bg-primary h-3 rounded-full transition-all"
                             style="width: {% widthratio comp.score 4 100 %}%"></div>
                     </div>
                 </div>
@@ -51,45 +51,45 @@
         </div>
 
         <!-- 3. Per-member table -->
-        <div class="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div class="bg-bg-main rounded-2xl shadow-lg overflow-hidden">
             <div class="p-6 border-b border-gray-100">
-                <h3 class="text-xl font-bold text-gray-800">Narių Įvertinimai</h3>
+                <h3 class="text-xl font-bold text-text-main">Narių Įvertinimai</h3>
             </div>
             <table class="w-full">
-                <thead class="bg-gray-50">
+                <thead class="bg-bg-secondary">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">
                             Darbuotojas</th>
-                        <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3 text-center text-xs font-semibold text-text-muted uppercase tracking-wider">
                             Atsiliepimų</th>
-                        <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3 text-center text-xs font-semibold text-text-muted uppercase tracking-wider">
                             Vidurkis</th>
-                        <th class="px-6 py-3 text-center text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                        <th class="px-6 py-3 text-center text-xs font-semibold text-text-muted uppercase tracking-wider">
                             Lygis</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     {% for ms in member_stats %}
-                    <tr class="hover:bg-purple-50 transition cursor-pointer"
+                    <tr class="hover:bg-bg-secondary transition cursor-pointer"
                         data-url="{% url 'team_member_detail' ms.user.id %}" onclick="window.location.href=this.dataset.url">
                         <td class="px-6 py-4">
                             <div class="flex items-center space-x-3">
                                 <div
-                                    class="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 font-bold text-xs">
+                                    class="w-9 h-9 rounded-full bg-bg-secondary flex items-center justify-center text-primary font-bold text-xs">
                                     {{ ms.user.first_name|first }}{{ ms.user.last_name|first }}</div>
                                 <div>
-                                    <p class="text-sm font-medium text-gray-900">{{ ms.user.get_full_name }}</p>
-                                    <p class="text-xs text-gray-400">{{ ms.user.email }}</p>
+                                    <p class="text-sm font-medium text-text-main">{{ ms.user.get_full_name }}</p>
+                                    <p class="text-xs text-text-muted">{{ ms.user.email }}</p>
                                 </div>
                             </div>
                         </td>
-                        <td class="px-6 py-4 text-center text-sm text-gray-600">{{ ms.feedback_count }}</td>
+                        <td class="px-6 py-4 text-center text-sm text-text-muted">{{ ms.feedback_count }}</td>
                         <td class="px-6 py-4 text-center">
                             {% if ms.avg_rating %}
-                            <span class="text-lg font-bold text-gray-800">{{ ms.avg_rating }}</span><span
-                                class="text-xs text-gray-400">/4</span>
+                            <span class="text-lg font-bold text-text-main">{{ ms.avg_rating }}</span><span
+                                class="text-xs text-text-muted">/4</span>
                             {% else %}
-                            <span class="text-sm text-gray-400">—</span>
+                            <span class="text-sm text-text-muted">—</span>
                             {% endif %}
                         </td>
                         <td class="px-6 py-4 text-center">
@@ -108,17 +108,17 @@
                                 Daro</span>
                             {% else %}
                             <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">🌱
+                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-bg-secondary text-secondary">🌱
                                 Mokosi</span>
                             {% endif %}
                             {% else %}
-                            <span class="text-sm text-gray-400">—</span>
+                            <span class="text-sm text-text-muted">—</span>
                             {% endif %}
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="4" class="px-6 py-8 text-center text-gray-400">Komandoje kol kas nėra narių su
+                        <td colspan="4" class="px-6 py-8 text-center text-text-muted">Komandoje kol kas nėra narių su
                             atsiliepimais.</td>
                     </tr>
                     {% endfor %}

@@ -2,8 +2,13 @@
 @source "../../templates";
 
 @theme {
-  /* Extend your theme configuration here if needed */
-  /* --font-sans: 'Inter', sans-serif; */
+  --color-primary: #2A5384;
+  --color-secondary: #4A8E9E;
+  --color-accent: #94C98D;
+  --color-bg-main: #FFFFFF;
+  --color-bg-secondary: #F5F7FA;
+  --color-text-main: #333333;
+  --color-text-muted: #666666;
 }
 
 /* Base styles */

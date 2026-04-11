@@ -20,42 +20,42 @@
     </style>
 </head>
 
-<body class="bg-white text-gray-700">
+<body class="bg-bg-main text-text-main">
 
     <!-- 1. Navigacija (Header) -->
-    <header class="bg-white shadow-sm sticky top-0 z-50">
+    <header class="bg-bg-main shadow-sm sticky top-0 z-50">
         <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
             <!-- Logotipas -->
-            <a href="{% url 'index' %}" class="text-2xl font-bold text-purple-600">
+            <a href="{% url 'index' %}" class="text-2xl font-bold text-primary">
                 Kudosly.lt
             </a>
 
             <!-- Navigacijos nuorodos (Desktop) -->
             <div class="hidden md:flex space-x-6 items-center">
-                <a href="{% url 'index' %}#funkcijos" class="text-gray-600 hover:text-purple-500">Pradžia</a>
-                <a href="{% url 'apie_mus' %}" class="text-gray-600 hover:text-purple-500">Apie mus</a>
+                <a href="{% url 'index' %}#funkcijos" class="text-text-muted hover:text-primary">Pradžia</a>
+                <a href="{% url 'apie_mus' %}" class="text-text-muted hover:text-primary">Apie mus</a>
             </div>
 
             <!-- Prisijungimo mygtukai -->
             <div class="flex items-center space-x-4">
                 <!-- Kalbos pasirinkimas -->
                 <div class="hidden md:flex items-center space-x-1">
-                    <a href="#" class="p-1 rounded-md bg-gray-100">
+                    <a href="#" class="p-1 rounded-md bg-bg-secondary">
                         <img src="https://flagcdn.com/lt.svg" class="w-6 h-4 rounded-sm" alt="Lietuvių">
                     </a>
-                    <a href="#" class="p-1 rounded-md hover:bg-gray-100">
+                    <a href="#" class="p-1 rounded-md hover:bg-bg-secondary">
                         <img src="https://flagcdn.com/gb.svg" class="w-6 h-4 rounded-sm" alt="English">
                     </a>
                 </div>
                 <div class="space-x-2">
                     {% if user.is_authenticated %}
                     <a href="{% url 'home' %}"
-                        class="px-4 py-2 text-sm font-medium text-white bg-purple-500 rounded-lg shadow-sm hover:bg-purple-600 transition-colors">
+                        class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg shadow-sm hover:bg-primary/90 transition-colors">
                         Prietaisų skydelis
                     </a>
                     {% else %}
                     <a href="{% url 'login' %}"
-                        class="px-4 py-2 text-sm font-medium text-gray-600 hover:text-purple-500">Prisijungti</a>
+                        class="px-4 py-2 text-sm font-medium text-text-muted hover:text-primary">Prisijungti</a>
                     {% endif %}
                 </div>
             </div>
@@ -65,26 +65,26 @@
 
     <!-- 2. Hero (Pagrindinis) skyrius -->
     <main>
-        <section class="bg-purple-50 overflow-hidden relative">
+        <section class="bg-bg-secondary overflow-hidden relative">
             <div class="container mx-auto px-4 py-20 md:py-32">
                 <div class="grid md:grid-cols-2 gap-12 items-center">
                     <!-- Kairė: Tekstas ir mygtukai -->
                     <div class="text-center md:text-left z-10 relative">
-                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-800 mb-6 leading-tight">
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-main mb-6 leading-tight">
                             Skatinkite atvirą<br />
-                            <span class="text-purple-600">komandos kultūrą</span>
+                            <span class="text-primary">komandos kultūrą</span>
                         </h1>
-                        <p class="text-lg text-gray-600 mb-8 max-w-xl mx-auto md:mx-0">
+                        <p class="text-lg text-text-muted mb-8 max-w-xl mx-auto md:mx-0">
                             Mūsų platforma padeda lengvai rinkti ir analizuoti atsiliepimus.
                             Išryškinkite stiprybes ir padėkite savo darbuotojams augti kartu.
                         </p>
                         <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                             <button type="button" onclick="openContactModal()"
-                                class="px-8 py-3 text-lg font-medium text-white bg-purple-600 rounded-xl shadow-lg hover:bg-purple-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center">
+                                class="px-8 py-3 text-lg font-medium text-white bg-primary/90 rounded-xl shadow-lg hover:bg-purple-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center">
                                 Susisiekite su mumis
                             </button>
                             <a href="#funkcijos"
-                                class="px-8 py-3 text-lg font-medium text-purple-700 bg-white border border-purple-200 rounded-xl shadow-sm hover:bg-purple-50 hover:border-purple-300 transition-colors duration-300 text-center">
+                                class="px-8 py-3 text-lg font-medium text-primary bg-bg-main border border-purple-200 rounded-xl shadow-sm hover:bg-bg-secondary hover:border-purple-300 transition-colors duration-300 text-center">
                                 Kaip tai veikia?
                             </a>
                         </div>
@@ -98,7 +98,7 @@
                         </div>
 
                         <!-- Kortelė 1: Apklausos atsiliepimas -->
-                        <div class="absolute top-10 left-4 bg-white/90 backdrop-blur-md p-5 rounded-2xl shadow-xl border border-white/50 w-72"
+                        <div class="absolute top-10 left-4 bg-bg-main/90 backdrop-blur-md p-5 rounded-2xl shadow-xl border border-white/50 w-72"
                             style="animation: float 6s ease-in-out infinite;">
                             <div class="flex items-center gap-4 mb-4">
                                 <div
@@ -106,28 +106,28 @@
                                     J</div>
                                 <div>
                                     <div class="h-3 w-24 bg-gray-200 rounded-full mb-2"></div>
-                                    <div class="h-2 w-16 bg-gray-100 rounded-full"></div>
+                                    <div class="h-2 w-16 bg-bg-secondary rounded-full"></div>
                                 </div>
                             </div>
                             <div class="space-y-3">
-                                <div class="h-2 w-full bg-gray-100 rounded-full"></div>
-                                <div class="h-2 w-5/6 bg-gray-100 rounded-full"></div>
-                                <div class="h-2 w-4/6 bg-gray-100 rounded-full"></div>
+                                <div class="h-2 w-full bg-bg-secondary rounded-full"></div>
+                                <div class="h-2 w-5/6 bg-bg-secondary rounded-full"></div>
+                                <div class="h-2 w-4/6 bg-bg-secondary rounded-full"></div>
                             </div>
                             <div class="mt-4 flex gap-2">
                                 <span
                                     class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[10px] font-bold">Iniciatyva</span>
                                 <span
-                                    class="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] font-bold">Kūrybiškumas</span>
+                                    class="px-3 py-1 bg-bg-secondary text-secondary rounded-full text-[10px] font-bold">Kūrybiškumas</span>
                             </div>
                         </div>
 
                         <!-- Kortelė 2: AI Analitika / Grafikas -->
-                        <div class="absolute bottom-10 right-0 bg-white/95 backdrop-blur-md p-6 rounded-2xl shadow-2xl border border-white/50 w-80 z-10"
+                        <div class="absolute bottom-10 right-0 bg-bg-main/95 backdrop-blur-md p-6 rounded-2xl shadow-2xl border border-white/50 w-80 z-10"
                             style="animation: float 5s ease-in-out infinite reverse;">
                             <div class="flex justify-between items-center mb-6">
-                                <h3 class="text-sm font-bold text-gray-800">AI Kompetencijų Profilis</h3>
-                                <svg class="w-5 h-5 text-purple-500" fill="none" viewBox="0 0 24 24"
+                                <h3 class="text-sm font-bold text-text-main">AI Kompetencijų Profilis</h3>
+                                <svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -141,7 +141,7 @@
                                 </div>
                                 <div
                                     class="w-1/4 bg-purple-400 rounded-t-lg h-[80%] hover:h-[85%] transition-all overflow-hidden relative">
-                                    <div class="absolute bottom-0 w-full bg-purple-500 h-1/2"></div>
+                                    <div class="absolute bottom-0 w-full bg-primary h-1/2"></div>
                                 </div>
                                 <div
                                     class="w-1/4 bg-purple-300 rounded-t-lg h-[40%] hover:h-[45%] transition-all overflow-hidden relative">
@@ -151,18 +151,18 @@
                                     class="w-1/4 bg-gradient-to-t from-purple-600 to-purple-400 rounded-t-lg h-[100%] hover:h-[100%] shadow-lg shadow-purple-500/30">
                                 </div>
                             </div>
-                            <div class="flex justify-between text-[10px] font-medium text-gray-400 px-1">
+                            <div class="flex justify-between text-[10px] font-medium text-text-muted px-1">
                                 <span>Lyd.</span>
                                 <span>Kom.</span>
                                 <span>Tech.</span>
-                                <span class="text-purple-600 font-bold">Inov.</span>
+                                <span class="text-primary font-bold">Inov.</span>
                             </div>
                         </div>
 
                         <!-- Kortelė 3: Pranešimas (Plūduriuojanti etiketė) -->
-                        <div class="absolute top-1/2 right-1/4 translate-x-8 -translate-y-12 bg-green-500 text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 z-20"
+                        <div class="absolute top-1/2 right-1/4 translate-x-8 -translate-y-12 bg-accent text-white px-4 py-2.5 rounded-xl shadow-xl flex items-center gap-2 z-20"
                             style="animation: bounce-gentle 4s infinite;">
-                            <div class="bg-white/20 rounded-full p-1">
+                            <div class="bg-bg-main/20 rounded-full p-1">
                                 <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
                                         d="M5 13l4 4L19 7" />
@@ -206,47 +206,47 @@
         <!-- 3. Funkcijų skyrius -->
         <section id="funkcijos" class="py-20">
             <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">
+                <h2 class="text-3xl font-bold text-center text-text-main mb-12">
                     Kodėl verta rinktis mus?
                 </h2>
                 <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
 
                     <!-- Funkcija 1 -->
-                    <div class="bg-gray-50 p-6 rounded-2xl shadow-lg text-center">
+                    <div class="bg-bg-secondary p-6 rounded-2xl shadow-lg text-center">
                         <!-- Piktograma (Inline SVG) -->
-                        <svg class="w-12 h-12 text-purple-500 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg"
+                        <svg class="w-12 h-12 text-primary mx-auto mb-4" xmlns="http://www.w3.org/2000/svg"
                             fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-7.5 0m7.5 0a12.06 12.06 0 0 0 7.5 0m-7.5 0a12.06 12.06 0 0 1 7.5 0m-7.5 0a12.06 12.06 0 0 0-7.5 0m7.5 0a6.01 6.01 0 0 0-1.5-.189m1.5.189a6.01 6.01 0 0 1-1.5-.189m0 0A23.978 23.978 0 0 1 6 15.75m12 0c.358.06.71.128 1.06.201m-1.06-.201a23.978 23.978 0 0 0-1.06.201m0 0A23.978 23.978 0 0 1 12 15.75m0 0a23.978 23.978 0 0 0-1.06.201M15 15.75a23.978 23.978 0 0 1-1.06.201m0 0a23.978 23.978 0 0 0-1.06.201m3.75 6.478A12.06 12.06 0 0 1 12 21.75m0 0a12.06 12.06 0 0 1-7.5-3.522m7.5 3.522a12.06 12.06 0 0 0 7.5-3.522m-7.5 3.522v-5.25" />
                         </svg>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Atviras Grįžtamasis Ryšys</h3>
-                        <p class="text-gray-600">Skatinkite skaidrumą ir asmeninį augimą su atvirais, vardiniais kolegų
+                        <h3 class="text-xl font-semibold text-text-main mb-2">Atviras Grįžtamasis Ryšys</h3>
+                        <p class="text-text-muted">Skatinkite skaidrumą ir asmeninį augimą su atvirais, vardiniais kolegų
                             atsiliepimais bei vertinimais.</p>
                     </div>
 
                     <!-- Funkcija 2 -->
-                    <div class="bg-gray-50 p-6 rounded-2xl shadow-lg text-center">
+                    <div class="bg-bg-secondary p-6 rounded-2xl shadow-lg text-center">
                         <!-- Piktograma (Inline SVG) -->
-                        <svg class="w-12 h-12 text-purple-500 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg"
+                        <svg class="w-12 h-12 text-primary mx-auto mb-4" xmlns="http://www.w3.org/2000/svg"
                             fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M3 13.125C3 12.504 3.504 12 4.125 12h15.75c.621 0 1.125.504 1.125 1.125v6.75C21 20.496 20.496 21 19.875 21H4.125A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.375c1.036 0 1.875.84 1.875 1.875v.375c0 1.036-.84 1.875-1.875 1.875h-.375A1.875 1.875 0 0 1 9.75 9v-.375ZM14.25 8.625c0-1.036.84-1.875 1.875-1.875h.375c1.036 0 1.875.84 1.875 1.875v.375c0 1.036-.84 1.875-1.875 1.875h-.375A1.875 1.875 0 0 1 14.25 9v-.375ZM5.25 8.625c0-1.036.84-1.875 1.875-1.875h.375c1.036 0 1.875.84 1.875 1.875v.375c0 1.036-.84 1.875-1.875 1.875H7.125A1.875 1.875 0 0 1 5.25 9v-.375Z" />
                         </svg>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Dirbtinio Intelekto Įžvalgos</h3>
-                        <p class="text-gray-600">AI algoritmai sistemina gautus atsiliepimus, išryškindami asmenines
+                        <h3 class="text-xl font-semibold text-text-main mb-2">Dirbtinio Intelekto Įžvalgos</h3>
+                        <p class="text-text-muted">AI algoritmai sistemina gautus atsiliepimus, išryškindami asmenines
                             stiprybes ir aiškias sritis, kuriose vertėtų tobulėti.</p>
                     </div>
 
                     <!-- Funkcija 3 -->
-                    <div class="bg-gray-50 p-6 rounded-2xl shadow-lg text-center">
+                    <div class="bg-bg-secondary p-6 rounded-2xl shadow-lg text-center">
                         <!-- Piktograma (Inline SVG) -->
-                        <svg class="w-12 h-12 text-purple-500 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg"
+                        <svg class="w-12 h-12 text-primary mx-auto mb-4" xmlns="http://www.w3.org/2000/svg"
                             fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
                         </svg>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Paprasta Naudoti</h3>
-                        <p class="text-gray-600">Intuityvi sąsaja tiek administratoriams, tiek darbuotojams. Pradėkite
+                        <h3 class="text-xl font-semibold text-text-main mb-2">Paprasta Naudoti</h3>
+                        <p class="text-text-muted">Intuityvi sąsaja tiek administratoriams, tiek darbuotojams. Pradėkite
                             per kelias minutes.</p>
                     </div>
                 </div>
@@ -254,9 +254,9 @@
         </section>
 
         <!-- 4. "Kaip tai veikia" skyrius -->
-        <section id="apie" class="bg-purple-50 py-20">
+        <section id="apie" class="bg-bg-secondary py-20">
             <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold text-center text-gray-800 mb-12">
+                <h2 class="text-3xl font-bold text-center text-text-main mb-12">
                     Kaip tai veikia?
                 </h2>
                 <div class="flex flex-col md:flex-row justify-center gap-8 md:gap-12">
@@ -264,30 +264,30 @@
                     <!-- Žingsnis 1 -->
                     <div class="text-center max-w-xs mx-auto">
                         <div
-                            class="bg-purple-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+                            class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
                             1</div>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Paprašykite Atsiliepimo</h3>
-                        <p class="text-gray-600">Pasirinkite kolegą ir išsiųskite prašymą įvertinti jūsų darbą keliais
+                        <h3 class="text-xl font-semibold text-text-main mb-2">Paprašykite Atsiliepimo</h3>
+                        <p class="text-text-muted">Pasirinkite kolegą ir išsiųskite prašymą įvertinti jūsų darbą keliais
                             paspaudimais.</p>
                     </div>
 
                     <!-- Žingsnis 2 -->
                     <div class="text-center max-w-xs mx-auto">
                         <div
-                            class="bg-purple-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+                            class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
                             2</div>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Gaukite Įvertinimą</h3>
-                        <p class="text-gray-600">Kolegos atvirai atsako į išsamius kompetencijų ir asmeninių savybių
+                        <h3 class="text-xl font-semibold text-text-main mb-2">Gaukite Įvertinimą</h3>
+                        <p class="text-text-muted">Kolegos atvirai atsako į išsamius kompetencijų ir asmeninių savybių
                             klausimus.</p>
                     </div>
 
                     <!-- Žingsnis 3 -->
                     <div class="text-center max-w-xs mx-auto">
                         <div
-                            class="bg-purple-500 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+                            class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
                             3</div>
-                        <h3 class="text-xl font-semibold text-gray-800 mb-2">Analizuokite su AI</h3>
-                        <p class="text-gray-600">Dirbtinis intelektas praskenuoja komentarus ir pateikia aiškias
+                        <h3 class="text-xl font-semibold text-text-main mb-2">Analizuokite su AI</h3>
+                        <p class="text-text-muted">Dirbtinis intelektas praskenuoja komentarus ir pateikia aiškias
                             stiprybes bei tobulėjimo sritis.</p>
                     </div>
 
@@ -296,7 +296,7 @@
         </section>
 
         <!-- 5. Kvietimas veikti (CTA) skyrius -->
-        <section class="bg-purple-600 text-white">
+        <section class="bg-primary/90 text-white">
             <div class="container mx-auto px-4 py-20 text-center">
                 <h2 class="text-3xl md:text-4xl font-bold mb-4">
                     Pasiruošę pagerinti komandos ryšį?
@@ -306,7 +306,7 @@
                     bandomąjį laikotarpį šiandien.
                 </p>
                 <button type="button" onclick="openContactModal()"
-                    class="px-8 py-3 text-lg font-bold text-purple-600 bg-white rounded-lg shadow-lg hover:bg-gray-100 transition-colors duration-200">
+                    class="px-8 py-3 text-lg font-bold text-primary bg-bg-main rounded-lg shadow-lg hover:bg-bg-secondary transition-colors duration-200">
                     Susisiekite su mumis
                 </button>
             </div>
@@ -314,8 +314,8 @@
     </main>
 
     <!-- 6. Poraštė (Footer) -->
-    <footer class="bg-white py-8 border-t">
-        <div class="container mx-auto px-4 text-center text-sm text-gray-500">
+    <footer class="bg-bg-main py-8 border-t">
+        <div class="container mx-auto px-4 text-center text-sm text-text-muted">
             <p>&copy; 2026 Kudosly.lt. Visos teisės saugomos.</p>
         </div>
     </footer>
@@ -324,7 +324,7 @@
     {% if messages %}
     <div id="toast-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2">
         {% for message in messages %}
-        <div class="bg-purple-600 text-white px-6 py-4 rounded-xl shadow-2xl flex items-start gap-4 animate-fade-in-up">
+        <div class="bg-primary/90 text-white px-6 py-4 rounded-xl shadow-2xl flex items-start gap-4 animate-fade-in-up">
             <svg class="w-6 h-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
@@ -368,40 +368,40 @@
             style="background-color: rgba(75, 85, 99, 0.5);" onclick="closeContactModal()">
         </div>
 
-        <div class="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 sm:p-8 transform transition-all duration-300 scale-95 opacity-0"
+        <div class="relative bg-bg-main rounded-2xl shadow-xl w-full max-w-md p-6 sm:p-8 transform transition-all duration-300 scale-95 opacity-0"
             id="contactModalPanel">
             <!-- Uždarymo mygtukas -->
             <button onclick="closeContactModal()"
-                class="absolute top-4 z-10 text-gray-400 hover:text-gray-600 transition-colors"
+                class="absolute top-4 z-10 text-text-muted hover:text-text-muted transition-colors"
                 style="right: 1.5rem; left: auto;">
                 <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                 </svg>
             </button>
 
-            <h3 class="text-2xl font-bold text-gray-800 mb-2" style="padding-right: 3.5rem;">Susisiekite su mumis</h3>
-            <p class="text-gray-600 mb-6">Užpildykite formą ir mes netrukus su jumis susisieksime!</p>
+            <h3 class="text-2xl font-bold text-text-main mb-2" style="padding-right: 3.5rem;">Susisiekite su mumis</h3>
+            <p class="text-text-muted mb-6">Užpildykite formą ir mes netrukus su jumis susisieksime!</p>
 
             <form method="POST" action="{% url 'index' %}" class="space-y-4">
                 {% csrf_token %}
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Jūsų Vardas</label>
+                    <label class="block text-sm font-medium text-text-main mb-1">Jūsų Vardas</label>
                     <input type="text" name="name" required placeholder="Vardenis"
-                        class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all">
+                        class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-purple-500 outline-none transition-all">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">El. paštas</label>
+                    <label class="block text-sm font-medium text-text-main mb-1">El. paštas</label>
                     <input type="email" name="email" required placeholder="vardas@imone.lt"
-                        class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all">
+                        class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-purple-500 outline-none transition-all">
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Jūsų Žinutė</label>
+                    <label class="block text-sm font-medium text-text-main mb-1">Jūsų Žinutė</label>
                     <textarea name="message" required rows="3" placeholder="Trumpai apibūdinkite savo poreikius..."
-                        class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none transition-all resize-none"></textarea>
+                        class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-purple-500 outline-none transition-all resize-none"></textarea>
                 </div>
 
                 <button type="submit"
-                    class="w-full py-3 px-4 bg-purple-600 hover:bg-purple-700 text-white font-semibold rounded-xl transition-colors shadow-sm mt-2">
+                    class="w-full py-3 px-4 bg-primary/90 hover:bg-purple-700 text-white font-semibold rounded-xl transition-colors shadow-sm mt-2">
                     Siųsti užklausą
                 </button>
             </form>

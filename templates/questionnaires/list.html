@@ -8,12 +8,12 @@
 {% endblock %}
 
 {% block content %}
-<main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+<main class="flex-1 overflow-y-auto bg-bg-secondary p-6">
     <div class="max-w-5xl mx-auto">
         <!-- Header -->
         <div class="flex justify-between items-center mb-6"
             data-company-active="{{ is_company_active|yesno:'true,false' }}">
-            <h1 class="text-xl font-bold text-gray-800">Individuali forma</h1>
+            <h1 class="text-xl font-bold text-text-main">Individuali forma</h1>
             <div class="flex items-center space-x-3">
                 {% if managed_departments %}
                 <button id="open-create-team-modal"
@@ -26,7 +26,7 @@
                 </button>
                 {% endif %}
                 <button id="open-create-modal"
-                    class="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium shadow-sm">
+                    class="inline-flex items-center px-4 py-2 bg-primary/90 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium shadow-sm">
                     <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -42,26 +42,26 @@
         {% if questionnaires %}
         <div class="grid gap-4">
             {% for q in questionnaires %}
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
+            <div class="bg-bg-main rounded-xl shadow-sm border border-gray-100 p-6 hover:shadow-md transition-shadow">
                 <div class="flex justify-between items-start">
                     <div>
                         <div class="flex items-center space-x-2">
-                            <h3 class="text-lg font-semibold text-gray-800">{{ q.title }}</h3>
+                            <h3 class="text-lg font-semibold text-text-main">{{ q.title }}</h3>
                             {% if q.is_team %}
                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800">
                                 Komandinė
                             </span>
                             {% else %}
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-bg-secondary text-primary">
                                 Asmeninė
                             </span>
                             {% endif %}
                         </div>
-                        <p class="text-sm text-gray-500 mt-1">Sukurta: {{ q.created_at|date:"Y-m-d" }}</p>
+                        <p class="text-sm text-text-muted mt-1">Sukurta: {{ q.created_at|date:"Y-m-d" }}</p>
                     </div>
                     <div class="flex space-x-2">
                         <a href="{% url 'questionnaire_statistics' q.id %}"
-                            class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 rounded-lg text-sm font-medium transition-colors">
+                            class="inline-flex items-center px-3 py-1.5 bg-bg-secondary text-secondary hover:bg-bg-secondary rounded-lg text-sm font-medium transition-colors">
                             <svg class="w-4 h-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round"
@@ -70,7 +70,7 @@
                             Statistika
                         </a>
                         <button type="button"
-                            class="inline-flex items-center px-3 py-1.5 bg-gray-50 text-gray-700 hover:bg-gray-100 rounded-lg text-sm font-medium transition-colors open-edit-modal"
+                            class="inline-flex items-center px-3 py-1.5 bg-bg-secondary text-text-main hover:bg-bg-secondary rounded-lg text-sm font-medium transition-colors open-edit-modal"
                             data-questionnaire-id="{{ q.id }}" data-questionnaire-title="{{ q.title }}"
                             data-questionnaire-traits="{% for t in q.traits.all %}{{ t.id }}{% if not forloop.last %},{% endif %}{% endfor %}">
                             <svg class="w-4 h-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none"
@@ -81,7 +81,7 @@
                             Redaguoti
                         </button>
                         <button type="button"
-                            class="inline-flex items-center px-3 py-1.5 bg-purple-50 text-purple-600 hover:bg-purple-100 rounded-lg text-sm font-medium transition-colors open-send-modal"
+                            class="inline-flex items-center px-3 py-1.5 bg-bg-secondary text-primary hover:bg-bg-secondary rounded-lg text-sm font-medium transition-colors open-send-modal"
                             data-questionnaire-id="{{ q.id }}" data-questionnaire-title="{{ q.title }}">
                             <svg class="w-4 h-4 mr-1.5" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -108,25 +108,25 @@
                 <div class="flex flex-wrap gap-2 mt-3">
                     {% for trait in q.traits.all %}
                     <span
-                        class="inline-block px-3 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-semibold">
+                        class="inline-block px-3 py-1 bg-bg-secondary text-primary rounded-full text-xs font-semibold">
                         {{ trait.name }}
                     </span>
                     {% empty %}
-                    <span class="text-sm text-gray-400 italic">Nėra savybių</span>
+                    <span class="text-sm text-text-muted italic">Nėra savybių</span>
                     {% endfor %}
                 </div>
             </div>
             {% endfor %}
         </div>
         {% else %}
-        <div class="text-center py-16 bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="text-center py-16 bg-bg-main rounded-xl shadow-sm border border-gray-100">
             <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round"
                     d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
             </svg>
-            <p class="text-gray-500 text-lg">Kol kas neturite klausimynų</p>
-            <p class="text-gray-400 text-sm mt-1">Paspauskite "Kurti klausimyną" norėdami pradėti</p>
+            <p class="text-text-muted text-lg">Kol kas neturite klausimynų</p>
+            <p class="text-text-muted text-sm mt-1">Paspauskite "Kurti klausimyną" norėdami pradėti</p>
         </div>
         {% endif %}
     </div>
@@ -135,10 +135,10 @@
     <div id="create-modal" class="fixed inset-0 overflow-y-auto h-full w-full hidden z-50" style="background-color: rgba(75, 85, 99, 0.5);">
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <div
-                class="bg-white rounded-2xl shadow-xl max-w-2xl w-full text-left overflow-hidden transform transition-all sm:my-8">
-                <div class="p-6 border-b flex justify-between items-center bg-white sticky top-0 z-10">
-                    <h2 class="text-xl font-bold text-gray-800">Naujas klausimynas</h2>
-                    <button id="close-create-modal" class="text-gray-400 hover:text-gray-600">
+                class="bg-bg-main rounded-2xl shadow-xl max-w-2xl w-full text-left overflow-hidden transform transition-all sm:my-8">
+                <div class="p-6 border-b flex justify-between items-center bg-bg-main sticky top-0 z-10">
+                    <h2 class="text-xl font-bold text-text-main">Naujas klausimynas</h2>
+                    <button id="close-create-modal" class="text-text-muted hover:text-text-muted">
                         <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                             stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -151,21 +151,21 @@
 
                     <!-- Title -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Klausimyno pavadinimas</label>
+                        <label class="block text-sm font-medium text-text-main mb-1">Klausimyno pavadinimas</label>
                         <input type="text" name="title" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-purple-500"
                             placeholder="pvz., Komandinio darbo vertinimas">
                     </div>
 
                     <!-- Trait Cloud -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Savybių debesis <span
-                                class="text-gray-400 font-normal">(paspauskite norimas savybes)</span></label>
+                        <label class="block text-sm font-medium text-text-main mb-2">Savybių debesis <span
+                                class="text-text-muted font-normal">(paspauskite norimas savybes)</span></label>
                         <div id="trait-cloud"
-                            class="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[80px]">
+                            class="flex flex-wrap gap-2 p-4 bg-bg-secondary rounded-lg border border-gray-200 min-h-[80px]">
                             {% for trait in all_traits %}
                             <span
-                                class="trait-tag inline-block px-3 py-1 bg-white border border-gray-300 rounded-full text-sm text-gray-700 hover:border-purple-500 hover:text-purple-700"
+                                class="trait-tag inline-block px-3 py-1 bg-bg-main border border-gray-300 rounded-full text-sm text-text-main hover:border-purple-500 hover:text-primary"
                                 data-trait-id="{{ trait.id }}" data-trait-name="{{ trait.name }}">{{ trait.name }}
                             </span>
                             {% endfor %}
@@ -174,21 +174,21 @@
 
                     <!-- Custom Trait Input -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Pridėti savo savybę</label>
+                        <label class="block text-sm font-medium text-text-main mb-1">Pridėti savo savybę</label>
                         <div class="flex gap-2">
                             <input type="text" id="custom-trait-input"
-                                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-purple-500"
                                 placeholder="Įveskite savybės pavadinimą...">
                             <button type="button" id="add-custom-trait"
-                                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">Pridėti</button>
+                                class="px-4 py-2 bg-bg-secondary text-text-main rounded-lg hover:bg-gray-200 transition-colors font-medium">Pridėti</button>
                         </div>
                     </div>
 
                     <!-- Selected Traits (hidden inputs container) -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Pasirinktos savybės</label>
+                        <label class="block text-sm font-medium text-text-main mb-2">Pasirinktos savybės</label>
                         <div id="selected-traits" class="flex flex-wrap gap-2 min-h-[40px]">
-                            <span id="no-traits-msg" class="text-sm text-gray-400 italic">Dar nepasirinkta jokia
+                            <span id="no-traits-msg" class="text-sm text-text-muted italic">Dar nepasirinkta jokia
                                 savybė</span>
                         </div>
                         <div id="hidden-inputs"></div>
@@ -197,11 +197,11 @@
 
                 <!-- Submit Footer -->
                 <div
-                    class="p-6 border-t flex justify-end items-center bg-gray-50 sticky bottom-0 z-10 w-full rounded-b-2xl">
+                    class="p-6 border-t flex justify-end items-center bg-bg-secondary sticky bottom-0 z-10 w-full rounded-b-2xl">
                     <button type="button" id="cancel-modal"
-                        class="px-4 py-2 text-gray-600 hover:text-gray-800 mr-3">Atšaukti</button>
+                        class="px-4 py-2 text-text-muted hover:text-text-main mr-3">Atšaukti</button>
                     <button type="button" onclick="document.querySelector('#create-modal form').submit()"
-                        class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">Sukurti</button>
+                        class="px-6 py-2 bg-primary/90 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">Sukurti</button>
                 </div>
 
             </div>
@@ -212,10 +212,10 @@
     <div id="create-team-modal" class="fixed inset-0 overflow-y-auto h-full w-full hidden z-50" style="background-color: rgba(75, 85, 99, 0.5);">
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <div
-                class="bg-white rounded-2xl shadow-xl max-w-2xl w-full text-left overflow-hidden transform transition-all sm:my-8">
-                <div class="p-6 border-b flex justify-between items-center bg-white sticky top-0 z-10">
+                class="bg-bg-main rounded-2xl shadow-xl max-w-2xl w-full text-left overflow-hidden transform transition-all sm:my-8">
+                <div class="p-6 border-b flex justify-between items-center bg-bg-main sticky top-0 z-10">
                     <h2 class="text-xl font-bold text-indigo-700">Nauja komandinė forma</h2>
-                    <button id="close-create-team-modal" class="text-gray-400 hover:text-gray-600">
+                    <button id="close-create-team-modal" class="text-text-muted hover:text-text-muted">
                         <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                             stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -228,7 +228,7 @@
 
                     <!-- Title -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Klausimyno pavadinimas</label>
+                        <label class="block text-sm font-medium text-text-main mb-1">Klausimyno pavadinimas</label>
                         <input type="text" name="title" required
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                             placeholder="pvz., Komandos efektyvumo vertinimas">
@@ -236,9 +236,9 @@
 
                     <!-- Department Select (NEW) -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Pasirinkite komandą</label>
+                        <label class="block text-sm font-medium text-text-main mb-1">Pasirinkite komandą</label>
                         <select name="department_id" required
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none bg-white">
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 appearance-none bg-bg-main">
                             <option value="" disabled selected>-- Pasirinkite komandą --</option>
                             {% for dept in managed_departments %}
                             <option value="{{ dept.id }}">{{ dept.name }}</option>
@@ -248,13 +248,13 @@
 
                     <!-- Trait Cloud -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Savybių debesis <span
-                                class="text-gray-400 font-normal">(paspauskite norimas savybes)</span></label>
+                        <label class="block text-sm font-medium text-text-main mb-2">Savybių debesis <span
+                                class="text-text-muted font-normal">(paspauskite norimas savybes)</span></label>
                         <div id="team-trait-cloud"
-                            class="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[80px]">
+                            class="flex flex-wrap gap-2 p-4 bg-bg-secondary rounded-lg border border-gray-200 min-h-[80px]">
                             {% for trait in all_traits %}
                             <span
-                                class="team-trait-tag inline-block px-3 py-1 bg-white border border-gray-300 rounded-full text-sm text-gray-700 hover:border-indigo-500 hover:text-indigo-700 cursor-pointer transition-all"
+                                class="team-trait-tag inline-block px-3 py-1 bg-bg-main border border-gray-300 rounded-full text-sm text-text-main hover:border-indigo-500 hover:text-indigo-700 cursor-pointer transition-all"
                                 data-trait-id="{{ trait.id }}" data-trait-name="{{ trait.name }}">{{ trait.name }}
                             </span>
                             {% endfor %}
@@ -263,21 +263,21 @@
 
                     <!-- Custom Trait Input -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Pridėti savo savybę</label>
+                        <label class="block text-sm font-medium text-text-main mb-1">Pridėti savo savybę</label>
                         <div class="flex gap-2">
                             <input type="text" id="team-custom-trait-input"
                                 class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                 placeholder="Įveskite savybės pavadinimą...">
                             <button type="button" id="team-add-custom-trait"
-                                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">Pridėti</button>
+                                class="px-4 py-2 bg-bg-secondary text-text-main rounded-lg hover:bg-gray-200 transition-colors font-medium">Pridėti</button>
                         </div>
                     </div>
 
                     <!-- Selected Traits (hidden inputs container) -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Pasirinktos savybės</label>
+                        <label class="block text-sm font-medium text-text-main mb-2">Pasirinktos savybės</label>
                         <div id="team-selected-traits" class="flex flex-wrap gap-2 min-h-[40px]">
-                            <span id="team-no-traits-msg" class="text-sm text-gray-400 italic">Dar nepasirinkta jokia
+                            <span id="team-no-traits-msg" class="text-sm text-text-muted italic">Dar nepasirinkta jokia
                                 savybė</span>
                         </div>
                         <div id="team-hidden-inputs"></div>
@@ -286,9 +286,9 @@
 
                 <!-- Submit Footer -->
                 <div
-                    class="p-6 border-t flex justify-end items-center bg-gray-50 sticky bottom-0 z-10 w-full rounded-b-2xl">
+                    class="p-6 border-t flex justify-end items-center bg-bg-secondary sticky bottom-0 z-10 w-full rounded-b-2xl">
                     <button type="button" id="cancel-team-modal"
-                        class="px-4 py-2 text-gray-600 hover:text-gray-800 mr-3">Atšaukti</button>
+                        class="px-4 py-2 text-text-muted hover:text-text-main mr-3">Atšaukti</button>
                     <button type="submit" form="create-team-form"
                         class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">Sukurti</button>
                 </div>
@@ -301,10 +301,10 @@
     <div id="edit-modal" class="fixed inset-0 overflow-y-auto h-full w-full hidden z-50" style="background-color: rgba(75, 85, 99, 0.5);">
         <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
             <div
-                class="bg-white rounded-2xl shadow-xl max-w-2xl w-full text-left overflow-hidden transform transition-all sm:my-8">
-                <div class="p-6 border-b flex justify-between items-center bg-white sticky top-0 z-10">
-                    <h2 class="text-xl font-bold text-gray-800">Redaguoti klausimyną</h2>
-                    <button id="close-edit-modal" class="text-gray-400 hover:text-gray-600">
+                class="bg-bg-main rounded-2xl shadow-xl max-w-2xl w-full text-left overflow-hidden transform transition-all sm:my-8">
+                <div class="p-6 border-b flex justify-between items-center bg-bg-main sticky top-0 z-10">
+                    <h2 class="text-xl font-bold text-text-main">Redaguoti klausimyną</h2>
+                    <button id="close-edit-modal" class="text-text-muted hover:text-text-muted">
                         <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
                             stroke-width="1.5" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -317,20 +317,20 @@
 
                     <!-- Title -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Klausimyno pavadinimas</label>
+                        <label class="block text-sm font-medium text-text-main mb-1">Klausimyno pavadinimas</label>
                         <input type="text" name="title" id="edit-title" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-purple-500">
                     </div>
 
                     <!-- Trait Cloud -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Savybių debesis <span
-                                class="text-gray-400 font-normal">(paspauskite norimas savybes)</span></label>
+                        <label class="block text-sm font-medium text-text-main mb-2">Savybių debesis <span
+                                class="text-text-muted font-normal">(paspauskite norimas savybes)</span></label>
                         <div id="edit-trait-cloud"
-                            class="flex flex-wrap gap-2 p-4 bg-gray-50 rounded-lg border border-gray-200 min-h-[80px]">
+                            class="flex flex-wrap gap-2 p-4 bg-bg-secondary rounded-lg border border-gray-200 min-h-[80px]">
                             {% for trait in all_traits %}
                             <span
-                                class="edit-trait-tag inline-block px-3 py-1 bg-white border border-gray-300 rounded-full text-sm text-gray-700 hover:border-purple-500 hover:text-purple-700 cursor-pointer transition-all"
+                                class="edit-trait-tag inline-block px-3 py-1 bg-bg-main border border-gray-300 rounded-full text-sm text-text-main hover:border-purple-500 hover:text-primary cursor-pointer transition-all"
                                 data-trait-id="{{ trait.id }}" data-trait-name="{{ trait.name }}">{{ trait.name }}
                             </span>
                             {% endfor %}
@@ -339,21 +339,21 @@
 
                     <!-- Custom Trait Input -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Pridėti savo savybę</label>
+                        <label class="block text-sm font-medium text-text-main mb-1">Pridėti savo savybę</label>
                         <div class="flex gap-2">
                             <input type="text" id="edit-custom-trait-input"
-                                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                                class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-purple-500"
                                 placeholder="Įveskite savybės pavadinimą...">
                             <button type="button" id="edit-add-custom-trait"
-                                class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors font-medium">Pridėti</button>
+                                class="px-4 py-2 bg-bg-secondary text-text-main rounded-lg hover:bg-gray-200 transition-colors font-medium">Pridėti</button>
                         </div>
                     </div>
 
                     <!-- Selected Traits (hidden inputs container) -->
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Pasirinktos savybės</label>
+                        <label class="block text-sm font-medium text-text-main mb-2">Pasirinktos savybės</label>
                         <div id="edit-selected-traits" class="flex flex-wrap gap-2 min-h-[40px]">
-                            <span id="edit-no-traits-msg" class="text-sm text-gray-400 italic">Dar nepasirinkta jokia
+                            <span id="edit-no-traits-msg" class="text-sm text-text-muted italic">Dar nepasirinkta jokia
                                 savybė</span>
                         </div>
                         <div id="edit-hidden-inputs"></div>
@@ -362,11 +362,11 @@
 
                 <!-- Submit Footer -->
                 <div
-                    class="p-6 border-t flex justify-end items-center bg-gray-50 sticky bottom-0 z-10 w-full rounded-b-2xl">
+                    class="p-6 border-t flex justify-end items-center bg-bg-secondary sticky bottom-0 z-10 w-full rounded-b-2xl">
                     <button type="button" id="cancel-edit-modal"
-                        class="px-4 py-2 text-gray-600 hover:text-gray-800 mr-3">Atšaukti</button>
+                        class="px-4 py-2 text-text-muted hover:text-text-main mr-3">Atšaukti</button>
                     <button type="button" onclick="document.querySelector('#edit-modal form').submit()"
-                        class="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">Išsaugoti</button>
+                        class="px-6 py-2 bg-primary/90 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">Išsaugoti</button>
                 </div>
 
             </div>
@@ -377,22 +377,22 @@
         class="fixed inset-0 overflow-y-auto h-full w-full hidden flex items-center justify-center" style="background-color: rgba(75, 85, 99, 0.5);"
         style="z-index: 50;">
         <div
-            class="bg-white rounded-2xl shadow-xl max-w-md w-full mx-auto max-h-[90vh] overflow-y-auto border border-gray-100">
+            class="bg-bg-main rounded-2xl shadow-xl max-w-md w-full mx-auto max-h-[90vh] overflow-y-auto border border-gray-100">
             <div class="p-6 sm:p-8">
                 <div class="sm:flex sm:items-start">
                     <div
-                        class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-purple-100 sm:mx-0 sm:h-10 sm:w-10">
-                        <svg class="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-bg-secondary sm:mx-0 sm:h-10 sm:w-10">
+                        <svg class="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
                         </svg>
                     </div>
                     <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left w-full">
-                        <h3 class="text-xl font-bold leading-6 text-gray-900" id="modal-title">Siųsti klausimyną
+                        <h3 class="text-xl font-bold leading-6 text-text-main" id="modal-title">Siųsti klausimyną
                         </h3>
                         <div class="mt-2 text-left">
-                            <p class="text-sm text-gray-500">Pasirinkite kolegą, kurį norite paprašyti užpildyti
+                            <p class="text-sm text-text-muted">Pasirinkite kolegą, kurį norite paprašyti užpildyti
                                 šį klausimyną.</p>
                         </div>
                     </div>
@@ -403,49 +403,49 @@
                     <input type="hidden" name="questionnaire_id" id="send-questionnaire-id">
 
                     <!-- Display Questionnaire Name Beautifully -->
-                    <div class="bg-purple-50 rounded-xl p-4 flex items-center border border-purple-100">
+                    <div class="bg-bg-secondary rounded-xl p-4 flex items-center border border-purple-100">
                         <div class="flex-shrink-0">
-                            <svg class="w-6 h-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            <svg class="w-6 h-6 text-primary" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                                 stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                             </svg>
                         </div>
                         <div class="ml-3 overflow-hidden">
-                            <p class="text-xs font-semibold text-purple-800 uppercase tracking-wider">Jūsų
+                            <p class="text-xs font-semibold text-primary uppercase tracking-wider">Jūsų
                                 pasirinktas klausimynas</p>
-                            <p id="send-questionnaire-title" class="text-lg font-bold text-gray-900 mt-1 truncate">
+                            <p id="send-questionnaire-title" class="text-lg font-bold text-text-main mt-1 truncate">
                             </p>
                         </div>
                     </div>
 
                     <!-- User Select with Search -->
                     <div class="relative">
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Kam norite jį išsiųsti?</label>
+                        <label class="block text-sm font-semibold text-text-main mb-2">Kam norite jį išsiųsti?</label>
                         
                         <div class="relative w-full">
                             <!-- Input/Tags Container -->
-                            <div id="colleague-select-container" class="flex flex-wrap items-center gap-1.5 w-full min-h-[48px] px-3 py-2 bg-gray-50 border border-gray-300 rounded-xl shadow-sm focus-within:ring-2 focus-within:ring-purple-500 focus-within:border-purple-500 cursor-text transition-colors">
+                            <div id="colleague-select-container" class="flex flex-wrap items-center gap-1.5 w-full min-h-[48px] px-3 py-2 bg-bg-secondary border border-gray-300 rounded-xl shadow-sm focus-within:ring-2 focus-within:ring-primary focus-within:border-purple-500 cursor-text transition-colors">
                                 <div id="selected-colleagues-tags" class="flex flex-wrap gap-1.5"></div>
-                                <input type="text" id="colleague-search" class="flex-1 min-w-[120px] bg-transparent border-none text-sm text-gray-900 placeholder-gray-500 focus:ring-0 p-0" placeholder="Ieškoti kolegų..." autocomplete="off">
+                                <input type="text" id="colleague-search" class="flex-1 min-w-[120px] bg-transparent border-none text-sm text-text-main placeholder-gray-500 focus:ring-0 p-0" placeholder="Ieškoti kolegų..." autocomplete="off">
                             </div>
 
                             <!-- Dropdown List -->
-                            <div id="colleague-dropdown" class="absolute z-10 w-full mt-1 bg-white border border-gray-200 rounded-xl shadow-lg max-h-56 overflow-y-auto hidden">
+                            <div id="colleague-dropdown" class="absolute z-10 w-full mt-1 bg-bg-main border border-gray-200 rounded-xl shadow-lg max-h-56 overflow-y-auto hidden">
                                 {% for colleague in team_members %}
-                                <label class="colleague-option flex items-center p-3 hover:bg-purple-50 cursor-pointer border-b border-gray-50 last:border-0 transition-colors" data-search-text="{{ colleague.first_name|lower }} {{ colleague.last_name|lower }}">
-                                    <input type="checkbox" name="colleague_ids" value="{{ colleague.id }}" class="colleague-checkbox w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 transition-shadow" data-name="{{ colleague.first_name }} {{ colleague.last_name }}">
+                                <label class="colleague-option flex items-center p-3 hover:bg-bg-secondary cursor-pointer border-b border-gray-50 last:border-0 transition-colors" data-search-text="{{ colleague.first_name|lower }} {{ colleague.last_name|lower }}">
+                                    <input type="checkbox" name="colleague_ids" value="{{ colleague.id }}" class="colleague-checkbox w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary transition-shadow" data-name="{{ colleague.first_name }} {{ colleague.last_name }}">
                                     <div class="ml-3 flex flex-col">
-                                        <span class="text-sm font-medium text-gray-900">{{ colleague.first_name }} {{ colleague.last_name }}</span>
-                                        <span class="text-xs text-gray-500">{{ colleague.profile.department.name|default:'Nėra komandos' }}</span>
+                                        <span class="text-sm font-medium text-text-main">{{ colleague.first_name }} {{ colleague.last_name }}</span>
+                                        <span class="text-xs text-text-muted">{{ colleague.profile.department.name|default:'Nėra komandos' }}</span>
                                     </div>
                                     <!-- Selected Checkmark -->
-                                    <svg class="w-5 h-5 ml-auto text-purple-600 hidden checkmark-icon" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+                                    <svg class="w-5 h-5 ml-auto text-primary hidden checkmark-icon" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                                     </svg>
                                 </label>
                                 {% empty %}
-                                <div class="p-4 text-sm text-gray-500 italic text-center">Nėra kolegų, kuriems galėtumėte išsiųsti</div>
+                                <div class="p-4 text-sm text-text-muted italic text-center">Nėra kolegų, kuriems galėtumėte išsiųsti</div>
                                 {% endfor %}
                             </div>
                         </div>
@@ -455,9 +455,9 @@
                     <div
                         class="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-3 pt-4 border-t border-gray-100">
                         <button type="button" id="cancel-send-modal"
-                            class="inline-flex w-full justify-center rounded-xl bg-white px-4 py-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:w-auto transition-colors">Atšaukti</button>
+                            class="inline-flex w-full justify-center rounded-xl bg-bg-main px-4 py-3 text-sm font-semibold text-text-main shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-bg-secondary sm:w-auto transition-colors">Atšaukti</button>
                         <button type="submit"
-                            class="inline-flex w-full justify-center rounded-xl bg-purple-600 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 sm:w-auto transition-all transform hover:scale-[1.02]">Išsiųsti</button>
+                            class="inline-flex w-full justify-center rounded-xl bg-primary/90 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-primary sm:w-auto transition-all transform hover:scale-[1.02]">Išsiųsti</button>
                     </div>
                 </form>
             </div>
@@ -546,10 +546,10 @@
                 const id = tag.dataset.traitId;
                 if (teamSelectedTraits.has(id)) {
                     tag.classList.add('bg-indigo-100', 'border-indigo-500', 'text-indigo-700');
-                    tag.classList.remove('bg-white', 'border-gray-300', 'text-gray-700');
+                    tag.classList.remove('bg-bg-main', 'border-gray-300', 'text-text-main');
                 } else {
                     tag.classList.remove('bg-indigo-100', 'border-indigo-500', 'text-indigo-700');
-                    tag.classList.add('bg-white', 'border-gray-300', 'text-gray-700');
+                    tag.classList.add('bg-bg-main', 'border-gray-300', 'text-text-main');
                 }
             });
         }
@@ -661,8 +661,8 @@
                 selectedTraits.forEach((name, key) => {
                     // Display tag
                     const tag = document.createElement('span');
-                    tag.className = 'selected-trait-tag inline-flex items-center px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold';
-                    tag.innerHTML = name + ' <button type="button" class="ml-1 text-purple-400 hover:text-purple-600" data-key="' + key + '">&times;</button>';
+                    tag.className = 'selected-trait-tag inline-flex items-center px-3 py-1 bg-bg-secondary text-primary rounded-full text-sm font-semibold';
+                    tag.innerHTML = name + ' <button type="button" class="ml-1 text-purple-400 hover:text-primary" data-key="' + key + '">&times;</button>';
                     selectedContainer.appendChild(tag);
 
                     // Hidden input
@@ -683,11 +683,11 @@
             traitCloud.querySelectorAll('.trait-tag').forEach(tag => {
                 const id = tag.dataset.traitId;
                 if (selectedTraits.has(id)) {
-                    tag.classList.add('bg-purple-100', 'border-purple-500', 'text-purple-700');
-                    tag.classList.remove('bg-white', 'border-gray-300', 'text-gray-700');
+                    tag.classList.add('bg-bg-secondary', 'border-purple-500', 'text-primary');
+                    tag.classList.remove('bg-bg-main', 'border-gray-300', 'text-text-main');
                 } else {
-                    tag.classList.remove('bg-purple-100', 'border-purple-500', 'text-purple-700');
-                    tag.classList.add('bg-white', 'border-gray-300', 'text-gray-700');
+                    tag.classList.remove('bg-bg-secondary', 'border-purple-500', 'text-primary');
+                    tag.classList.add('bg-bg-main', 'border-gray-300', 'text-text-main');
                 }
             });
         }
@@ -762,8 +762,8 @@
                 editNoTraitsMsg.style.display = 'none';
                 editSelectedTraits.forEach((name, key) => {
                     const tag = document.createElement('span');
-                    tag.className = 'selected-trait-tag inline-flex items-center px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-semibold';
-                    tag.innerHTML = name + ' <button type="button" class="ml-1 text-purple-400 hover:text-purple-600" data-key="' + key + '">&times;</button>';
+                    tag.className = 'selected-trait-tag inline-flex items-center px-3 py-1 bg-bg-secondary text-primary rounded-full text-sm font-semibold';
+                    tag.innerHTML = name + ' <button type="button" class="ml-1 text-purple-400 hover:text-primary" data-key="' + key + '">&times;</button>';
                     editSelectedContainer.appendChild(tag);
 
                     const input = document.createElement('input');
@@ -782,11 +782,11 @@
             editTraitCloud.querySelectorAll('.edit-trait-tag').forEach(tag => {
                 const id = tag.dataset.traitId;
                 if (editSelectedTraits.has(id)) {
-                    tag.classList.add('bg-purple-100', 'border-purple-500', 'text-purple-700');
-                    tag.classList.remove('bg-white', 'border-gray-300', 'text-gray-700');
+                    tag.classList.add('bg-bg-secondary', 'border-purple-500', 'text-primary');
+                    tag.classList.remove('bg-bg-main', 'border-gray-300', 'text-text-main');
                 } else {
-                    tag.classList.remove('bg-purple-100', 'border-purple-500', 'text-purple-700');
-                    tag.classList.add('bg-white', 'border-gray-300', 'text-gray-700');
+                    tag.classList.remove('bg-bg-secondary', 'border-purple-500', 'text-primary');
+                    tag.classList.add('bg-bg-main', 'border-gray-300', 'text-text-main');
                 }
             });
         }
@@ -921,8 +921,8 @@
                         icon.classList.remove('hidden');
                         
                         const tag = document.createElement('span');
-                        tag.className = 'inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-purple-100 text-purple-700 mb-1';
-                        tag.innerHTML = cb.dataset.name + ' <button type="button" class="ml-1 text-purple-400 hover:text-purple-600 focus:outline-none">&times;</button>';
+                        tag.className = 'inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-bg-secondary text-primary mb-1';
+                        tag.innerHTML = cb.dataset.name + ' <button type="button" class="ml-1 text-purple-400 hover:text-primary focus:outline-none">&times;</button>';
                         
                         tag.querySelector('button').addEventListener('click', (e) => {
                             e.stopPropagation();

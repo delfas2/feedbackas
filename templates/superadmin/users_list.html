@@ -3,18 +3,18 @@
 {% block title %}Vartotojai - Superadmin{% endblock %}
 
 {% block content %}
-<main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+<main class="flex-1 overflow-y-auto bg-bg-secondary p-6">
     <div class="max-w-7xl mx-auto">
         <div class="flex items-center justify-between mb-8">
-            <h1 class="text-3xl font-bold text-gray-800">Sistemos Vartotojai</h1>
+            <h1 class="text-3xl font-bold text-text-main">Sistemos Vartotojai</h1>
         </div>
 
 
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="bg-bg-main rounded-xl shadow-sm border border-gray-100 overflow-hidden">
             <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-gray-600">
-                    <thead class="bg-gray-50 text-gray-500 border-b border-gray-100">
+                <table class="w-full text-left text-sm text-text-muted">
+                    <thead class="bg-bg-secondary text-text-muted border-b border-gray-100">
                         <tr>
                             <th class="px-6 py-3 font-medium">Vardas, Pavardė</th>
                             <th class="px-6 py-3 font-medium">El. paštas / Prisijungimo vardas</th>
@@ -24,20 +24,20 @@
                     </thead>
                     <tbody class="divide-y divide-gray-100">
                         {% for sys_user in users %}
-                        <tr class="hover:bg-gray-50 transition-colors">
-                            <td class="px-6 py-3 font-medium text-gray-900">
+                        <tr class="hover:bg-bg-secondary transition-colors">
+                            <td class="px-6 py-3 font-medium text-text-main">
                                 {{ sys_user.first_name }} {{ sys_user.last_name }}
                             </td>
                             <td class="px-6 py-3">{{ sys_user.email|default:sys_user.username }}</td>
                             <td class="px-6 py-3">
                                 {% if sys_user.profile.company_link %}
                                 <span
-                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-bg-secondary text-primary">
                                     {{ sys_user.profile.company_link.name }}
                                 </span>
                                 {% else %}
                                 <span
-                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-bg-secondary text-text-main">
                                     Nepriskirta
                                 </span>
                                 {% endif %}
@@ -48,7 +48,7 @@
                                     {% csrf_token %}
                                     <input type="hidden" name="user_id" value="{{ sys_user.id }}">
                                     <select name="company_id"
-                                        class="text-sm border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"
+                                        class="text-sm border-gray-300 rounded-lg focus:ring-primary focus:border-purple-500"
                                         required>
                                         <option value="">Pasirinkti įmonę...</option>
                                         {% for company in companies %}
@@ -65,7 +65,7 @@
                                         <option value="none">-- Pašalinti priskyrimą --</option>
                                     </select>
                                     <button type="submit"
-                                        class="px-3 py-1.5 bg-purple-50 text-purple-600 rounded-md hover:bg-purple-100 font-medium transition-colors">
+                                        class="px-3 py-1.5 bg-bg-secondary text-primary rounded-md hover:bg-bg-secondary font-medium transition-colors">
                                         Išsaugoti
                                     </button>
                                 </form>
@@ -73,7 +73,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="4" class="px-6 py-4 text-center text-gray-500">Nėra jokių registruotų paprastų
+                            <td colspan="4" class="px-6 py-4 text-center text-text-muted">Nėra jokių registruotų paprastų
                                 vartotojų</td>
                         </tr>
                         {% endfor %}

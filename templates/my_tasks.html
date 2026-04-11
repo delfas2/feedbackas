@@ -6,15 +6,15 @@
 <main class="flex-1 overflow-y-auto">
 
     <!-- Viršutinė juosta -->
-    <header class="bg-white shadow-sm p-4 flex justify-between items-center">
-        <h1 class="text-2xl font-bold text-gray-800 hidden md:block">
+    <header class="bg-bg-main shadow-sm p-4 flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-text-main hidden md:block">
             Mano Užduotys 📋
         </h1>
 
         <!-- Filtravimas -->
         <div class="flex space-x-2">
             <select
-                class="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg text-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500">
+                class="bg-bg-main border border-gray-300 text-text-main py-2 px-4 rounded-lg text-sm focus:outline-none focus:ring-primary focus:border-purple-500">
                 <option>Naujausi viršuje</option>
                 <option>Pagal terminą</option>
             </select>
@@ -27,13 +27,13 @@
         <!-- Tabs -->
         <div class="border-b border-gray-200 mb-6 pb-2">
             <nav class="flex space-x-6 text-sm font-medium" aria-label="Tabs">
-                <button id="btn-tab-assigned" class="flex items-center gap-2 border-b-2 border-purple-600 text-purple-600 pb-2 px-1 hover:text-purple-700 transition">
+                <button id="btn-tab-assigned" class="flex items-center gap-2 border-b-2 border-purple-600 text-primary pb-2 px-1 hover:text-primary transition">
                     Užduotys man
-                    <span class="bg-purple-100 text-purple-600 py-0.5 px-2 rounded-full text-xs font-semibold">{{ assigned_requests.count }}</span>
+                    <span class="bg-bg-secondary text-primary py-0.5 px-2 rounded-full text-xs font-semibold">{{ assigned_requests.count }}</span>
                 </button>
-                <button id="btn-tab-made" class="flex items-center gap-2 border-b-2 border-transparent text-gray-500 pb-2 px-1 hover:text-gray-700 hover:border-gray-300 transition">
+                <button id="btn-tab-made" class="flex items-center gap-2 border-b-2 border-transparent text-text-muted pb-2 px-1 hover:text-text-main hover:border-gray-300 transition">
                     Mano išsiųsti prašymai
-                    <span class="bg-gray-100 text-gray-600 py-0.5 px-2 rounded-full text-xs font-semibold">{{ made_requests.count }}</span>
+                    <span class="bg-bg-secondary text-text-muted py-0.5 px-2 rounded-full text-xs font-semibold">{{ made_requests.count }}</span>
                 </button>
             </nav>
         </div>
@@ -43,18 +43,18 @@
             <div class="space-y-4">
                 {% for request in assigned_requests %}
                 <div
-                    class="bg-white p-5 rounded-xl shadow-sm border hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4 {% if request.status == 'pending' %}border-purple-100{% elif request.status == 'completed' %}border-gray-200 opacity-70{% endif %}">
+                    class="bg-bg-main p-5 rounded-xl shadow-sm border hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4 {% if request.status == 'pending' %}border-purple-100{% elif request.status == 'completed' %}border-gray-200 opacity-70{% endif %}">
                     <div class="flex items-start space-x-4">
                         <div
-                            class="p-3 rounded-lg flex-shrink-0 {% if request.status == 'pending' %}bg-purple-100{% else %}bg-gray-200{% endif %}">
+                            class="p-3 rounded-lg flex-shrink-0 {% if request.status == 'pending' %}bg-bg-secondary{% else %}bg-gray-200{% endif %}">
                             {% if request.status == 'pending' %}
-                            <svg class="w-6 h-6 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            <svg class="w-6 h-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                             </svg>
                             {% else %}
-                            <svg class="w-6 h-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            <svg class="w-6 h-6 text-text-muted" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -63,21 +63,21 @@
                         </div>
                         <div>
                             <h3
-                                class="text-lg font-semibold text-gray-800 {% if request.status == 'completed' %}line-through{% endif %}">
+                                class="text-lg font-semibold text-text-main {% if request.status == 'completed' %}line-through{% endif %}">
                                 {{ request.project_name }}</h3>
                             {% with req=request.requester %}
                             {% with name=req.get_full_name|default:req.username %}
-                            <p class="text-gray-500 text-sm">Atsiliepimą inicijavo: <span
-                                    class="font-medium text-purple-600">{{ name }}</span></p>
+                            <p class="text-text-muted text-sm">Atsiliepimą inicijavo: <span
+                                    class="font-medium text-primary">{{ name }}</span></p>
                             {% endwith %}
                             {% endwith %}
-                            {% if request.comment %}<p class="text-sm text-gray-600 mt-1">Komentaras: {{ request.comment }}</p>{% endif %}
+                            {% if request.comment %}<p class="text-sm text-text-muted mt-1">Komentaras: {{ request.comment }}</p>{% endif %}
                             <div class="flex items-center mt-2 space-x-3 text-xs">
                                 {% if request.status == 'pending' %}
-                                <span class="bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-medium">Laukiama
+                                <span class="bg-bg-secondary text-secondary px-2 py-0.5 rounded-full font-medium">Laukiama
                                     atsakymo</span>
                                 {% if request.due_date %}
-                                <span class="text-gray-400 flex items-center">
+                                <span class="text-text-muted flex items-center">
                                     <svg class="w-3 h-3 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none"
                                         viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -88,7 +88,7 @@
                                 {% endif %}
                                 {% else %}
                                 <span
-                                    class="bg-gray-200 text-gray-600 px-2 py-0.5 rounded-full font-medium">Užbaigta</span>
+                                    class="bg-gray-200 text-text-muted px-2 py-0.5 rounded-full font-medium">Užbaigta</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -96,17 +96,17 @@
                     <div class="w-full md:w-auto">
                         {% if request.status == 'pending' %}
                         <a href="{% url 'fill_feedback' request.id %}"
-                            class="block w-full md:w-auto text-center px-6 py-2 bg-purple-500 text-white font-medium rounded-lg hover:bg-purple-600 transition-colors">
+                            class="block w-full md:w-auto text-center px-6 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors">
                             Pildyti atsiliepimą
                         </a>
                         {% else %}
                         <span
-                            class="block w-full md:w-auto text-center px-6 py-2 text-gray-400 font-medium cursor-default">Atlikta</span>
+                            class="block w-full md:w-auto text-center px-6 py-2 text-text-muted font-medium cursor-default">Atlikta</span>
                         {% endif %}
                     </div>
                 </div>
                 {% empty %}
-                <div class="bg-white p-5 rounded-xl shadow-sm border text-center text-gray-500">
+                <div class="bg-bg-main p-5 rounded-xl shadow-sm border text-center text-text-muted">
                     Neturite jums priskirtų užduočių.
                 </div>
                 {% endfor %}
@@ -118,18 +118,18 @@
             <div class="space-y-4">
                 {% for request in made_requests %}
                 <div
-                    class="bg-white p-5 rounded-xl shadow-sm border hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4 {% if request.status == 'completed' %}border-green-100{% else %}border-gray-200{% endif %}">
+                    class="bg-bg-main p-5 rounded-xl shadow-sm border hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4 {% if request.status == 'completed' %}border-green-100{% else %}border-gray-200{% endif %}">
                     <div class="flex items-start space-x-4">
                         <div
-                            class="p-3 rounded-lg flex-shrink-0 {% if request.status == 'completed' %}bg-green-100{% else %}bg-gray-100{% endif %}">
+                            class="p-3 rounded-lg flex-shrink-0 {% if request.status == 'completed' %}bg-green-100{% else %}bg-bg-secondary{% endif %}">
                             {% if request.status == 'completed' %}
-                            <svg class="w-6 h-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            <svg class="w-6 h-6 text-accent" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             {% else %}
-                            <svg class="w-6 h-6 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            <svg class="w-6 h-6 text-text-muted" xmlns="http://www.w3.org/2000/svg" fill="none"
                                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round"
                                     d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -137,11 +137,11 @@
                             {% endif %}
                         </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-gray-800">{{ request.project_name }}</h3>
+                            <h3 class="text-lg font-semibold text-text-main">{{ request.project_name }}</h3>
                             {% with reqto=request.requested_to %}
                             {% with name=reqto.get_full_name|default:reqto.username %}
-                            <p class="text-gray-500 text-sm">Atsiliepimo prašoma iš: <span
-                                    class="font-medium text-purple-600">{{ name }}</span></p>
+                            <p class="text-text-muted text-sm">Atsiliepimo prašoma iš: <span
+                                    class="font-medium text-primary">{{ name }}</span></p>
                             {% endwith %}
                             {% endwith %}
                             <div class="flex items-center mt-2 space-x-3 text-xs">
@@ -154,7 +154,7 @@
                                     atsakymo</span>
                                 {% endif %}
                                 {% if request.due_date %}
-                                <span class="text-gray-400">Terminas: {{ request.due_date|date:"Y-m-d" }}</span>
+                                <span class="text-text-muted">Terminas: {{ request.due_date|date:"Y-m-d" }}</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -167,7 +167,7 @@
                             data-date="{{ request.feedback.created_at|date:'Y-m-d' }}"
                             data-feedback="{{ request.feedback.feedback|default:'' }}"
                             data-comments="{{ request.feedback.comments|default:'' }}" onclick="openViewModal(this)"
-                            class="block w-full md:w-auto text-center px-6 py-2 bg-white border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors">
+                            class="block w-full md:w-auto text-center px-6 py-2 bg-bg-main border border-gray-300 text-text-main font-medium rounded-lg hover:bg-bg-secondary transition-colors">
                             Peržiūrėti
                         </button>
                         {% else %}
@@ -178,7 +178,7 @@
                                 data-date="{{ request.due_date|date:'Y-m-d' }}"
                                 data-rname="{{ reqto.get_full_name|default:reqto.username }}"
                                 onclick="openEditModal(this)"
-                                class="block w-full md:w-auto text-center px-4 py-2 bg-purple-50 text-purple-600 font-medium rounded-lg hover:bg-purple-100 transition-colors transition">
+                                class="block w-full md:w-auto text-center px-4 py-2 bg-bg-secondary text-primary font-medium rounded-lg hover:bg-bg-secondary transition-colors transition">
                                 Redaguoti
                             </button>
                             {% endwith %}
@@ -196,7 +196,7 @@
                     </div>
                 </div>
                 {% empty %}
-                <div class="bg-white p-5 rounded-xl shadow-sm border text-center text-gray-500">
+                <div class="bg-bg-main p-5 rounded-xl shadow-sm border text-center text-text-muted">
                     Jūs dar nesate išsiuntę jokių prašymų.
                 </div>
                 {% endfor %}
@@ -209,47 +209,47 @@
 <!-- Edit Modal -->
 <div id="editModal" class="fixed inset-0 overflow-y-auto h-full w-full hidden transition-opacity"
     style="background-color: rgba(75, 85, 99, 0.5); z-index: 50;">
-    <div class="relative top-20 mx-auto w-11/12 sm:max-w-xl border shadow-xl rounded-xl bg-white overflow-hidden">
+    <div class="relative top-20 mx-auto w-11/12 sm:max-w-xl border shadow-xl rounded-xl bg-bg-main overflow-hidden">
         <form id="editForm" method="POST" action="">
             {% csrf_token %}
-            <div class="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                <h3 class="text-xl font-bold text-gray-900 mb-4" id="modal-title">Redaguoti Užklausą ✏️</h3>
-                <p class="text-gray-600 mb-5 text-sm border-b pb-4">
+            <div class="bg-bg-main px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
+                <h3 class="text-xl font-bold text-text-main mb-4" id="modal-title">Redaguoti Užklausą ✏️</h3>
+                <p class="text-text-muted mb-5 text-sm border-b pb-4">
                     Redaguojate atsiliepimo prašymą, kurį išsiuntėte naudotojui <span id="modalReceiverName"
                         class="font-semibold"></span>.
                 </p>
 
                 <div class="space-y-4">
                     <div>
-                        <label for="modal_project_name" class="block text-sm font-medium text-gray-700 mb-1">Projekto
+                        <label for="modal_project_name" class="block text-sm font-medium text-text-main mb-1">Projekto
                             pavadinimas
                             *</label>
                         <input type="text" id="modal_project_name" name="project_name" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-purple-500">
                     </div>
 
                     <div>
-                        <label for="modal_comment" class="block text-sm font-medium text-gray-700 mb-1">Jūsų
+                        <label for="modal_comment" class="block text-sm font-medium text-text-main mb-1">Jūsų
                             žinutė / komentaras</label>
                         <textarea id="modal_comment" name="comment" rows="3"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500"></textarea>
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-purple-500"></textarea>
                     </div>
 
                     <div>
-                        <label for="modal_due_date" class="block text-sm font-medium text-gray-700 mb-1">Terminas
+                        <label for="modal_due_date" class="block text-sm font-medium text-text-main mb-1">Terminas
                             *</label>
                         <input type="date" id="modal_due_date" name="due_date" required
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-purple-500 focus:border-purple-500">
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-primary focus:border-purple-500">
                     </div>
                 </div>
             </div>
-            <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
+            <div class="bg-bg-secondary px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                 <button type="submit"
-                    class="inline-flex w-full justify-center rounded-lg bg-purple-600 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 sm:ml-3 sm:w-auto border border-transparent">
+                    class="inline-flex w-full justify-center rounded-lg bg-primary/90 px-5 py-2 text-sm font-medium text-white shadow-sm hover:bg-purple-700 sm:ml-3 sm:w-auto border border-transparent">
                     Saugoti pakeitimus
                 </button>
                 <button type="button" onclick="closeEditModal()"
-                    class="mt-3 inline-flex w-full justify-center rounded-lg bg-white px-5 py-2 text-sm font-medium text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto">
+                    class="mt-3 inline-flex w-full justify-center rounded-lg bg-bg-main px-5 py-2 text-sm font-medium text-text-main shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-bg-secondary sm:mt-0 sm:w-auto">
                     Atšaukti
                 </button>
             </div>
@@ -294,15 +294,15 @@
 
             // Buttons
             if (showAssigned) {
-                btnAssigned.className = 'flex items-center gap-2 border-b-2 border-purple-600 text-purple-600 pb-2 px-1 hover:text-purple-700 transition';
-                badgeAssigned.className = 'bg-purple-100 text-purple-600 py-0.5 px-2 rounded-full text-xs font-semibold';
-                btnMade.className = 'flex items-center gap-2 border-b-2 border-transparent text-gray-500 pb-2 px-1 hover:text-gray-700 hover:border-gray-300 transition';
-                badgeMade.className = 'bg-gray-100 text-gray-600 py-0.5 px-2 rounded-full text-xs font-semibold';
+                btnAssigned.className = 'flex items-center gap-2 border-b-2 border-purple-600 text-primary pb-2 px-1 hover:text-primary transition';
+                badgeAssigned.className = 'bg-bg-secondary text-primary py-0.5 px-2 rounded-full text-xs font-semibold';
+                btnMade.className = 'flex items-center gap-2 border-b-2 border-transparent text-text-muted pb-2 px-1 hover:text-text-main hover:border-gray-300 transition';
+                badgeMade.className = 'bg-bg-secondary text-text-muted py-0.5 px-2 rounded-full text-xs font-semibold';
             } else {
-                btnAssigned.className = 'flex items-center gap-2 border-b-2 border-transparent text-gray-500 pb-2 px-1 hover:text-gray-700 hover:border-gray-300 transition';
-                badgeAssigned.className = 'bg-gray-100 text-gray-600 py-0.5 px-2 rounded-full text-xs font-semibold';
-                btnMade.className = 'flex items-center gap-2 border-b-2 border-purple-600 text-purple-600 pb-2 px-1 hover:text-purple-700 transition';
-                badgeMade.className = 'bg-purple-100 text-purple-600 py-0.5 px-2 rounded-full text-xs font-semibold';
+                btnAssigned.className = 'flex items-center gap-2 border-b-2 border-transparent text-text-muted pb-2 px-1 hover:text-text-main hover:border-gray-300 transition';
+                badgeAssigned.className = 'bg-bg-secondary text-text-muted py-0.5 px-2 rounded-full text-xs font-semibold';
+                btnMade.className = 'flex items-center gap-2 border-b-2 border-purple-600 text-primary pb-2 px-1 hover:text-primary transition';
+                badgeMade.className = 'bg-bg-secondary text-primary py-0.5 px-2 rounded-full text-xs font-semibold';
             }
         }
 

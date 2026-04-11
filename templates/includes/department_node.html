@@ -1,6 +1,6 @@
 <li class="relative">
-    <div class="flex items-center p-3 border border-gray-200 rounded-lg bg-white hover:shadow-md transition-shadow">
-        <span class="mr-3 text-purple-500">
+    <div class="flex items-center p-3 border border-gray-200 rounded-lg bg-bg-main hover:shadow-md transition-shadow">
+        <span class="mr-3 text-primary">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                     d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
@@ -9,9 +9,9 @@
         </span>
 
         <div class="flex-1">
-            <h3 class="font-bold text-gray-800">{{ node.name }}</h3>
+            <h3 class="font-bold text-text-main">{{ node.name }}</h3>
             {% if node.manager %}
-            <p class="text-xs text-gray-500">Vadovas: <span class="font-medium text-purple-600">
+            <p class="text-xs text-text-muted">Vadovas: <span class="font-medium text-primary">
                     {% if node.manager.first_name or node.manager.last_name %}
                     {{ node.manager.first_name }} {{ node.manager.last_name }}
                     {% else %}
@@ -19,16 +19,16 @@
                     {% endif %}
                 </span></p>
             {% else %}
-            <p class="text-xs text-gray-400">Nėra paskirto vadovo</p>
+            <p class="text-xs text-text-muted">Nėra paskirto vadovo</p>
             {% endif %}
         </div>
 
         <div class="flex items-center space-x-2">
-            <span class="ml-2 bg-gray-100 text-gray-600 text-xs font-bold px-2 py-1 rounded-full">
+            <span class="ml-2 bg-bg-secondary text-text-muted text-xs font-bold px-2 py-1 rounded-full">
                 {{ node.members.count }} nariai
             </span>
             <a href="{% url 'superadmin_edit_department' node.company.id node.id %}"
-                class="p-1 text-gray-400 hover:text-purple-600 transition-colors" title="Redaguoti departamentą">
+                class="p-1 text-text-muted hover:text-primary transition-colors" title="Redaguoti departamentą">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                         d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -37,7 +37,7 @@
             <form action="{% url 'superadmin_delete_department' node.company.id node.id %}" method="post"
                 onsubmit="return confirm('Ar tikrai norite ištrinti departamentą &quot;{{ node.name }}&quot;? Visi sub-departamentai taip pat bus ištrinti.');">
                 {% csrf_token %}
-                <button type="submit" class="p-1 text-gray-400 hover:text-red-500 transition-colors"
+                <button type="submit" class="p-1 text-text-muted hover:text-red-500 transition-colors"
                     title="Ištrinti departamentą">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
