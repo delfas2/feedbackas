@@ -38,6 +38,8 @@ ALLOWED_HOSTS = ['127.0.0.1', '172.28.117.18', '*', 'home-lab.taild43829.ts.net'
 CSRF_TRUSTED_ORIGINS = [
     'https://home-lab.taild43829.ts.net',
     'http://192.168.32.84:8001',
+    'https://kudosly.lt',
+    'https://www.kudosly.lt',
 ]
 
 # Application definition

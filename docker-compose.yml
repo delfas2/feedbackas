@@ -1,15 +1,15 @@
-version: '3.8'
-
 services:
   db:
     image: postgres:13
     restart: unless-stopped
+    env_file:
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data/
 
   web:
     build: .
-    command: sh -c "npm install && npm run build && python manage.py collectstatic --noinput && gunicorn feedbackas.wsgi:application --bind 0.0.0.0:8000 --workers 3"
+    command: sh -c "npm install && npm run build && python manage.py collectstatic --noinput && python manage.py migrate && gunicorn feedbackas.wsgi:application --bind 0.0.0.0:8000 --workers 3"
     volumes:
       - .:/app
     # Port mapping no longer needed; Traefik will route to the container directly
@@ -21,6 +21,7 @@ services:
       - traefik.http.routers.kudosly.entrypoints=websecure
       - traefik.http.routers.kudosly.tls.certresolver=letsencrypt
       - traefik.http.services.kudosly.loadbalancer.server.port=8000
+      - traefik.docker.network=traefik-proxy
     networks:
       - traefik-proxy
       - default
@@ -28,10 +29,14 @@ services:
       - db
       - redis
     restart: unless-stopped
+    env_file:
+      - .env
 
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    env_file:
+      - .env
     # Do not publish Redis publicly
 
   worker:
@@ -43,6 +48,8 @@ services:
       - db
       - redis
     restart: unless-stopped
+    env_file:
+      - .env
 
 volumes:
   postgres_data:

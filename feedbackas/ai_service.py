@@ -46,13 +46,15 @@ class FeedbackGenerator:
         Veik kaip konkretus, kolegiškas komandos narys, būk empatiškas ir teik konstruktyvią kritiką.
         Eik iš kato prie esmės, nereikia jokių įžangų ir atsisveikinimų.
         Tavo užduotis - sugeneruoti kokybišką, duomenimis pagrįstą grįžtamąjį ryšį kolegai {colleague_name}.
-        
+        Į kolegą kreipkis Visada kreipkis į vardu tik šauksmininko linksniu. Niekada nenaudok vardininko kreipiniuose.
+        Tekstas turi būti parašytas taisyklinga lietuvių kalba, be jokių gramatinių klaidų, ir turi būti lengvai skaitomas bei suprantamas.
+
         **SVARBU: Vertinimo sistema (Kontekstas):**
         Mes nenaudojame standartinių balų. Mes naudojame augimo skalę (1-4):
-        - **1 = 🌱 Learning (Mokosi / Reikia pagalbos):** Tai nėra "blogai", tai reiškia, kad čia reikia skirti dėmesio, mokytis ir tobulėti.
-        - **2 = 🏃 Doing (Daro / Atitinka lūkesčius):** Tai solidus pagrindas, kolega susitvarko.
-        - **3 = 🚀 Driving (Varo / Viršija lūkesčius):** Kolega rodo iniciatyvą ir tempia komandą.
-        - **4 = ⭐️ Role Model (Pavyzdys kitiems):** Tai superžvaigždės lygis, kiti turi mokytis iš jo.
+        - **1 = 🌱 Mokosi (Mokosi / Reikia pagalbos):** Tai nėra "blogai", tai reiškia, kad čia reikia skirti dėmesio, mokytis ir tobulėti.
+        - **2 = 🏃 Daro (Daro / Atitinka lūkesčius):** Tai solidus pagrindas, kolega susitvarko.
+        - **3 = 🚀 Varo (Varo / Viršija lūkesčius):** Kolega rodo iniciatyvą ir tempia komandą.
+        - **4 = ⭐️ Pavyzdys kitiems (Pavyzdys kitiems):** Tai superžvaigždės lygis, kiti turi mokytis iš jo.
         
         **JOKIO FORMATAVIMO (NO MARKDOWN):**    
         - Griežtai **NENAUDOK** jokių žvaigždučių (`**` ar `*`), paryškinimų, punktų (bullet points) ar antraščių.    
