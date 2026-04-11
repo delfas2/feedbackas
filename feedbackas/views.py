@@ -146,11 +146,12 @@ def get_team_members(request):
         if user_company_link:
             team_members_qs = User.objects.filter(profile__company_link=user_company_link).exclude(id=user.id)
     except Profile.DoesNotExist:
-        pass  # Jei nėra įmonės, grąžinsime visus vartotojus žemiau
+        pass  # Jei nėra įmonės, tiesiog grąžinsime tuščią sąrašą
     except OperationalError as e:
+        import logging
+        logger = logging.getLogger(__name__)
         logger.error(f"Database error fetching team_members for {user.username}: {e}")
-    if not team_members_qs.exists():
-        team_members_qs = User.objects.exclude(id=user.id)
+        
     data = [{'id': member.id, 'name': member.get_full_name() or member.username} for member in team_members_qs]
     return JsonResponse(data, safe=False)
 
@@ -167,6 +168,9 @@ def request_feedback(request):
         due_date = request.POST.get('due_date')
         
         requested_to = get_object_or_404(User, id=requested_to_id)
+        
+        if requested_to.profile.company_link != request.user.profile.company_link:
+            return JsonResponse({'success': False, 'errors': 'Negalima siųsti užklausų kitos įmonės darbuotojams.'})
         
         feedback_request = FeedbackRequest.objects.create(
             requester=requester,
@@ -204,6 +208,10 @@ def fill_feedback(request, request_id):
         return redirect('home')
         
     feedback_request = get_object_or_404(FeedbackRequest, id=request_id)
+    
+    if feedback_request.requested_to != request.user:
+        messages.error(request, 'Neturite teisių pildyti šio atsiliepimo.')
+        return redirect('home')
     if request.method == 'POST':
         form = FeedbackForm(request.POST)
         if form.is_valid():
@@ -1459,6 +1467,10 @@ def send_questionnaire(request):
 
     for c_id in colleague_ids:
         requested_to = get_object_or_404(User, id=c_id)
+        
+        if requested_to.profile.company_link != request.user.profile.company_link:
+            skipped_count += 1
+            continue
         
         # Check if a pending request already exists for this questionnaire and this colleague
         existing = FeedbackRequest.objects.filter(
