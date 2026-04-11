@@ -36,74 +36,7 @@
     <!-- Turinys -->
     <div class="p-6 md:p-8 space-y-8">
 
-        <!-- 1. Apibendrinimo Kortelė -->
-        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 relative">
-            <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-purple-100 rounded-full opacity-50 blur-2xl">
-            </div>
 
-            <div class="flex flex-col md:flex-row justify-between items-center gap-8 relative z-10">
-                <!-- Įvertinimas -->
-                <div class="text-center md:text-left">
-                    <p class="text-gray-500 font-medium mb-1">Bendras Įvertinimas</p>
-                    <div class="flex items-baseline gap-2 justify-center md:justify-start">
-                        <h2 class="text-5xl font-extrabold text-gray-800">{{ overall_avg_rating|floatformat }}</h2>
-                        <!-- Pokytis laikinai paslėptas -->
-                        <!-- <span class="text-green-500 font-bold flex items-center">
-                                    <svg class="w-4 h-4 mr-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M12 7a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0V8.414l-4.293 4.293a1 1 0 01-1.414 0L8 10.414l-4.293 4.293a1 1 0 01-1.414-1.414l5-5a1 1 0 011.414 0L11 10.586 15.293 6.293A1 1 0 0115.293 6.293z" clip-rule="evenodd" /></svg>
-                                    +0.4
-                                </span> -->
-                    </div>
-                </div>
-
-                <!-- Statistika -->
-                <div class="flex gap-8">
-                    <div class="text-center">
-                        <div class="text-2xl font-bold text-purple-600">{{ received_feedback_count }}</div>
-                        <div class="text-xs text-gray-500 uppercase tracking-wide">Gauta Atsiliepimų</div>
-                    </div>
-                    <div class="text-center relative">
-                        <div class="text-2xl font-bold text-purple-600">{{ participation_rate }}%</div>
-                        <div class="text-xs text-gray-500 uppercase tracking-wide cursor-pointer hover:text-purple-500 transition-colors"
-                            onclick="document.getElementById('tooltip-part').classList.toggle('hidden')">
-                            Dalyvavimas
-                        </div>
-                        <div id="tooltip-part"
-                            class="hidden absolute left-1/2 -translate-x-1/2 top-full mt-2 w-56 p-3 bg-white border border-purple-100 text-gray-700 text-xs rounded-lg shadow-xl z-50 text-left normal-case tracking-normal shadow-purple-900/10">
-                            <strong class="block mb-1 text-purple-700">Dalyvavimas</strong>
-                            Parodo, kokia dalis jūsų išsiųstų prašymų buvo sėkmingai užpildyta kolegų per šį laikotarpį.
-                            <div
-                                class="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-white border-t border-l border-purple-100 transform rotate-45">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-center hidden sm:block relative">
-                        <div class="text-2xl font-bold text-purple-600">
-                            Top
-                            <span>
-                                {% if top_percentile == '--' %}
-                                {{ top_percentile }}
-                                {% else %}
-                                {{ top_percentile }}%
-                                {% endif %}
-                            </span>
-                        </div>
-                        <div class="text-xs text-gray-500 uppercase tracking-wide cursor-pointer hover:text-purple-500 transition-colors"
-                            onclick="document.getElementById('tooltip-top').classList.toggle('hidden')">
-                            Įmonėje
-                        </div>
-                        <div id="tooltip-top"
-                            class="hidden absolute right-0 sm:left-1/2 sm:-translate-x-1/2 top-full mt-2 w-56 p-3 bg-white border border-purple-100 text-gray-700 text-xs rounded-lg shadow-xl z-50 text-left normal-case tracking-normal shadow-purple-900/10">
-                            <strong class="block mb-1 text-purple-700">Top % Įmonėje</strong>
-                            Parodo jūsų bendro įvertinimo poziciją (procentilę) lyginant su visais kitais kolegų
-                            atsiliepimų vidurkiais įmonėje.
-                            <div
-                                class="absolute -top-1.5 right-6 sm:left-1/2 sm:-translate-x-1/2 w-3 h-3 bg-white border-t border-l border-purple-100 transform rotate-45">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- 2. Kompetencijų Grafikas ir Detalės -->
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
