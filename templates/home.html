@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.1/dist/css/tom-select.css" rel="stylesheet">
 <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50">
     <header class="bg-white shadow p-4 flex justify-between items-center"
         data-company-active="{{ is_company_active|yesno:'true,false' }}">
@@ -137,7 +138,7 @@
                     <div class="mb-4">
                         <label for="team-member" class="block text-sm font-medium text-gray-700 text-left">Komandos
                             narys</label>
-                        <select id="team-member" name="requested_to"
+                        <select id="team-member" name="requested_to" multiple
                             class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         </select>
                     </div>
@@ -159,19 +160,17 @@
                         <input type="date" name="due_date" id="due-date"
                             class="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                     </div>
-                    <div class="items-center px-4 py-3">
+                    <div class="flex space-x-3 mt-4">
+                        <button id="close-modal" type="button"
+                            class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                            Uždaryti
+                        </button>
                         <button id="submit-feedback" type="submit"
-                            class="px-4 py-2 bg-purple-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300">
+                            class="flex-1 px-4 py-2 bg-purple-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-300">
                             Pateikti
                         </button>
                     </div>
                 </form>
-            </div>
-            <div class="items-center px-4 py-3">
-                <button id="close-modal"
-                    class="px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300">
-                    Uždaryti
-                </button>
             </div>
         </div>
     </div>
@@ -191,19 +190,17 @@
                             class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                         </select>
                     </div>
-                    <div class="items-center px-4 py-3">
-                        <button id="select-colleague-btn"
-                            class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                    <div class="flex space-x-3 mt-4">
+                        <button id="close-send-modal" type="button"
+                            class="flex-1 px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300">
+                            Uždaryti
+                        </button>
+                        <button id="select-colleague-btn" type="submit"
+                            class="flex-1 px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md shadow-sm hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-300">
                             Pasirinkti
                         </button>
                     </div>
                 </form>
-            </div>
-            <div class="items-center px-4 py-3">
-                <button id="close-send-modal"
-                    class="px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300">
-                    Uždaryti
-                </button>
             </div>
         </div>
     </div>
@@ -215,6 +212,7 @@
 <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.4.1/dist/js/tom-select.complete.min.js"></script>
 <script>
     const feedbackModal = document.getElementById('feedback-modal');
     const requestFeedbackBtn = document.getElementById('request-feedback-btn');
@@ -240,12 +238,21 @@
             fetch("{% url 'get_team_members' %}")
                 .then(response => response.json())
                 .then(data => {
+                    if (window.tsTeamMember) {
+                        window.tsTeamMember.destroy();
+                    }
                     teamMemberSelect.innerHTML = '<option value="">Pasirinkite narį</option>';
                     data.forEach(member => {
                         const option = document.createElement('option');
                         option.value = member.id;
                         option.textContent = member.name;
                         teamMemberSelect.appendChild(option);
+                    });
+                    window.tsTeamMember = new TomSelect('#team-member', {
+                        create: false,
+                        placeholder: 'Ieškoti kolegų...',
+                        sortField: { field: "text", direction: "asc" },
+                        plugins: ['remove_button']
                     });
                 });
             feedbackModal.classList.remove('hidden');
@@ -271,12 +278,20 @@
             fetch("{% url 'get_team_members' %}")
                 .then(response => response.json())
                 .then(data => {
+                    if (window.tsSendToMember) {
+                        window.tsSendToMember.destroy();
+                    }
                     sendToMemberSelect.innerHTML = '<option value="">Pasirinkite narį</option>';
                     data.forEach(member => {
                         const option = document.createElement('option');
                         option.value = member.id;
                         option.textContent = member.name;
                         sendToMemberSelect.appendChild(option);
+                    });
+                    window.tsSendToMember = new TomSelect('#send-to-member', {
+                        create: false,
+                        placeholder: 'Ieškoti kolegų...',
+                        sortField: { field: "text", direction: "asc" }
                     });
                 });
             sendFeedbackModal.classList.remove('hidden');

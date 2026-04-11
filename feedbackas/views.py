@@ -162,24 +162,29 @@ def request_feedback(request):
         
     if request.method == 'POST':
         requester = request.user
-        requested_to_id = request.POST.get('requested_to')
+        requested_to_ids = request.POST.getlist('requested_to')
         project_name = request.POST.get('project_name')
         comment = request.POST.get('comment')
         due_date = request.POST.get('due_date')
         
-        requested_to = get_object_or_404(User, id=requested_to_id)
-        
-        if requested_to.profile.company_link != request.user.profile.company_link:
-            return JsonResponse({'success': False, 'errors': 'Negalima siųsti užklausų kitos įmonės darbuotojams.'})
-        
-        feedback_request = FeedbackRequest.objects.create(
-            requester=requester,
-            requested_to=requested_to,
-            project_name=project_name,
-            comment=comment,
-            due_date=due_date
-        )
-        return JsonResponse({'success': True, 'feedback_request_id': feedback_request.id})
+        feedback_request_ids = []
+        for requested_to_id in requested_to_ids:
+            requested_to = get_object_or_404(User, id=requested_to_id)
+            
+            if requested_to.profile.company_link != request.user.profile.company_link:
+                # Gynyba naršyklės DOM inspekcijoms
+                continue
+            
+            feedback_request = FeedbackRequest.objects.create(
+                requester=requester,
+                requested_to=requested_to,
+                project_name=project_name,
+                comment=comment,
+                due_date=due_date
+            )
+            feedback_request_ids.append(feedback_request.id)
+            
+        return JsonResponse({'success': True, 'feedback_request_ids': feedback_request_ids})
     return JsonResponse({'success': False, 'errors': 'Invalid request method'})
 
 @login_required
