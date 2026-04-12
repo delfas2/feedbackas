@@ -21,13 +21,8 @@
     <!-- Navigacija (Supaprastinta) -->
     <header class="bg-bg-main shadow-md sticky top-0 z-50">
         <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <a href="{% url 'index' %}" class="flex items-center text-xl font-bold text-text-main">
-                <svg class="w-8 h-8 mr-2 text-primary" fill="currentColor" viewBox="0 0 20 20">
-                    <path fill-rule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
-                        clip-rule="evenodd"></path>
-                </svg>
-                Kudosly.lt
+            <a href="{% url 'index' %}" class="block outline-none flex items-center">
+                <img src="{% static 'images/logo.png' %}" alt="Kudosly.lt" class="h-8 w-auto object-contain">
             </a>
             <div class="hidden md:flex space-x-6 items-center">
                 <a href="{% url 'index' %}#funkcijos" class="text-text-muted hover:text-primary">Pradžia</a>
