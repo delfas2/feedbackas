@@ -99,12 +99,7 @@ def home(request):
         feedback_request__status='completed'
     ).count()
     
-    my_team_count = 0
-    if hasattr(request.user, 'profile') and request.user.profile.department:
-        my_team_count = Profile.objects.filter(
-            department=request.user.profile.department,
-            company_link=request.user.profile.company_link
-        ).exclude(user=request.user).count()
+    sent_surveys_count = FeedbackRequest.objects.filter(requester=request.user).count()
 
     context = {
         'feedback_requests': feedback_requests,
@@ -113,7 +108,7 @@ def home(request):
         'is_company_active': is_company_active(request.user),
         'pending_tasks_count': pending_tasks_count,
         'completed_surveys_count': completed_surveys_count,
-        'my_team_count': my_team_count,
+        'sent_surveys_count': sent_surveys_count,
     }
     return render(request, 'home.html', context)
 

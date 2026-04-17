@@ -20,10 +20,7 @@
 
     <div class="p-6 md:p-8 space-y-6">
 
-        <div class="bg-bg-main rounded-2xl shadow-lg p-6 mb-6">
-            <h3 class="text-xl font-bold text-text-main mb-2 text-center">Gauti atsiliepimai augimui</h3>
-            <div id="feedback-chart-container"></div>
-        </div>
+        <div id="feedback-chart-container" class="bg-bg-main rounded-2xl shadow-lg p-8 sm:p-12 mb-6 overflow-hidden"></div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="bg-bg-main p-6 rounded-2xl shadow-lg flex items-center space-x-4">
                 <div class="bg-bg-secondary p-3 rounded-full">
@@ -54,13 +51,12 @@
                 <div class="bg-bg-secondary p-3 rounded-full">
                     <svg class="w-6 h-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none"
                         viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.998-2.55m-3.002 2.55a9.094 9.094 0 0 1-3.741-.479 3 3 0 0 1-4.998-2.55m3.002 2.55a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0 4.998-2.55m-3.002 2.55a3 3 0 0 1-4.998-2.55m0 0a9.094 9.094 0 0 1-3.741-.479 3 3 0 0 1-4.998-2.55M12 9.75a3 3 0 0 1 0-3 3 3 0 0 1 0 3z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" />
                     </svg>
                 </div>
                 <div>
-                    <p class="text-sm text-text-muted">Mano Komanda</p>
-                    <p class="text-2xl font-bold text-text-main">{{ my_team_count }}</p>
+                    <p class="text-sm text-text-muted">Mano išsiųstos apklausos</p>
+                    <p class="text-2xl font-bold text-text-main">{{ sent_surveys_count }}</p>
                 </div>
             </div>
         </div>
@@ -419,197 +415,150 @@
 
 {% verbatim %}
 <script type="text/babel">
-    const { useState, useEffect, useMemo } = React;
+    const { useState, useEffect } = React;
 
-    const SurveyTimelineChart = () => {
-        const [data, setData] = useState([]);
-        const [hoveredIndex, setHoveredIndex] = useState(null);
-        const [isVisible, setIsVisible] = useState(false);
+    const GrowthFeedbackChart = () => {
+        const [steps, setSteps] = useState([]);
+        const [loading, setLoading] = useState(true);
 
         useEffect(() => {
             fetch("/get_feedback_data/")
-                .then(response => response.json())
-                .then(fetchedData => {
-                    setData(fetchedData);
-                });
-            setTimeout(() => setIsVisible(true), 100);
+                .then(r => r.json())
+                .then(data => {
+                    // Map API data to step format
+                    const mapped = data.map((item, i) => ({
+                        id: i + 1,
+                        status: item.status === 'done' ? 'completed' : item.status === 'active' ? 'current' : 'upcoming',
+                        title: item.label || `Žingsnis ${i + 1}`,
+                        feedback_details: item.feedback_details || null,
+                    }));
+                    setSteps(mapped);
+                    setLoading(false);
+                })
+                .catch(() => setLoading(false));
         }, []);
 
-        const getCoordinates = (index, total, width, height, padding) => {
-            const x = total > 1 ? (index / (total - 1)) * (width - padding * 2) + padding : width / 2;
-            const y = height / 2;
-            return { x, y };
-        };
-
-        const width = 800;
-        const height = 100;
-        const padding = 60;
-
-        const points = useMemo(() => {
-            if (data.length === 0) return [];
-            return data.map((_, index) =>
-                getCoordinates(index, data.length, width, height, padding)
-            );
-        }, [data, width, height, padding]);
-
-        const activeIndex = data.findLastIndex(d => d.status === 'done' || d.status === 'active');
-        const pulseStartX = points.length > 0 ? points[0].x : padding;
-        const pulseEndX = activeIndex !== -1 ? points[activeIndex].x : padding;
-        const progressEndX = pulseEndX;
-
-        if (data.length === 0) {
+        if (loading) {
             return (
-                <div className="w-full flex items-center justify-center p-6 bg-bg-main min-h-[100px]">
-                    <p className="text-text-muted">Atsiliepimų istorija bus matoma čia.</p>
+                <div className="w-full flex items-center justify-center py-10">
+                    <p className="text-text-muted text-sm">Kraunama...</p>
                 </div>
             );
         }
 
+        if (steps.length === 0) {
+            return (
+                <div className="w-full text-center py-10">
+                    <p className="text-text-muted text-sm">Atsiliepimų istorija bus matoma čia.</p>
+                </div>
+            );
+        }
+
+        const completedCount = steps.filter(s => s.status === 'completed').length;
+        const progressPercent = Math.round((completedCount / (steps.length - 1)) * 100);
+
+        const getStepColor = (status) => {
+            if (status === 'completed') return 'var(--color-primary)';
+            if (status === 'current') return 'var(--color-primary)';
+            return 'var(--color-bg-secondary)';
+        };
+
         return (
-            <div className="w-full flex items-center justify-center pt-6 bg-bg-main">
-                <div className="relative w-full max-w-5xl select-none">
-                    <svg
-                        viewBox={`0 0 ${width} ${height}`}
-                        className="w-full h-auto overflow-visible"
-                    >
-                        <defs>
-                            <linearGradient id="staticLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stopColor="var(--color-primary)" />
-                                <stop offset="100%" stopColor="var(--color-secondary)" />
-                            </linearGradient>
-                            <linearGradient id="pulseBeam" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stopColor="white" stopOpacity="0" />
-                                <stop offset="50%" stopColor="white" stopOpacity="0.8" />
-                                <stop offset="100%" stopColor="white" stopOpacity="0" />
-                            </linearGradient>
-                            <mask id="lineMask">
-                                <path
-                                    d={`M ${pulseStartX},${height / 2} L ${pulseEndX},${height / 2}`}
-                                    stroke="white"
-                                    strokeWidth="6"
-                                    strokeLinecap="round"
-                                />
-                            </mask>
-                        </defs>
-                        <line
-                            x1={padding}
-                            y1={height / 2}
-                            x2={width - padding}
-                            y2={height / 2}
-                            stroke="#E2E8F0"
-                            strokeWidth="6"
-                            strokeLinecap="round"
-                        />
-                        <line
-                            x1={padding}
-                            y1={height / 2}
-                            x2={progressEndX}
-                            y2={height / 2}
-                            stroke="url(#staticLineGradient)"
-                            strokeWidth="6"
-                            strokeLinecap="round"
-                        />
-                        {activeIndex > -1 && (
-                            <g mask="url(#lineMask)">
-                                <rect
-                                    x={pulseStartX}
-                                    y={height / 2 - 5}
-                                    width={pulseEndX - pulseStartX}
-                                    height="10"
-                                    fill="url(#staticLineGradient)"
-                                />
-                                <rect
-                                    x={pulseStartX - 100}
-                                    y={height / 2 - 5}
-                                    width="200"
-                                    height="10"
-                                    fill="url(#pulseBeam)"
-                                    style={{ mixBlendMode: 'overlay' }}
-                                >
-                                    <animate
-                                        attributeName="x"
-                                        from={pulseStartX - 200}
-                                        to={pulseEndX}
-                                        dur="2s"
-                                        repeatCount="indefinite"
-                                    />
-                                </rect>
-                            </g>
-                        )}
-                        {points.map((point, index) => {
-                            const item = data[index];
-                            const isCompleted = item.status === 'done';
-                            const isPending = item.status === 'pending';
-                            const isActionable = isCompleted || isPending;
-                            const isHovered = hoveredIndex === index;
-                            return (
-                                <g
-                                    key={index}
-                                    onMouseEnter={() => setHoveredIndex(index)}
-                                    onMouseLeave={() => setHoveredIndex(null)}
-                                    onClick={() => {
-                                        if (isCompleted && item.feedback_details) {
-                                            openViewModal(item.feedback_details);
-                                        }
+            <div className="w-full">
+                {/* Header */}
+                <div className="mb-8">
+                    <h2 className="text-2xl font-extrabold tracking-tight text-text-main">
+                        Gauti atsiliepimai augimui
+                    </h2>
+                </div>
+
+                {/* Timeline */}
+                <div className="relative py-10 px-2">
+
+
+                    {/* Step bubbles */}
+                    <div className="relative flex justify-between items-center w-full">
+                        {steps.map((step) => (
+                            <div
+                                key={step.id}
+                                className="relative flex flex-col items-center group"
+                                onClick={() => {
+                                    if (step.status === 'completed' && step.feedback_details) {
+                                        openViewModal(step.feedback_details);
+                                    }
+                                }}
+                                style={{ cursor: step.status === 'completed' && step.feedback_details ? 'pointer' : 'default' }}
+                            >
+                                {/* Pulse ring for current step */}
+                                {step.status === 'current' && (
+                                    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                                        <div className="absolute w-12 h-12 rounded-full animate-ping opacity-20" style={{ backgroundColor: 'var(--color-primary)' }}></div>
+                                        <div className="absolute w-14 h-14 rounded-full animate-pulse opacity-10" style={{ backgroundColor: 'var(--color-primary)' }}></div>
+                                    </div>
+                                )}
+
+                                {/* Bubble */}
+                                <div
+                                    className="relative z-10 flex items-center justify-center rounded-full transition-all duration-500"
+                                    style={{
+                                        width: step.status === 'current' ? '36px' : '32px',
+                                        height: step.status === 'current' ? '36px' : '32px',
+                                        backgroundColor: step.status === 'completed' ? 'var(--color-primary)' : 'var(--color-bg-main)',
+                                        border: step.status === 'completed'
+                                            ? 'none'
+                                            : step.status === 'current'
+                                                ? '4px solid var(--color-primary)'
+                                                : '2px solid var(--color-bg-secondary)',
+                                        boxShadow: step.status === 'completed'
+                                            ? '0 0 12px rgba(var(--color-primary-rgb, 45,74,119), 0.3)'
+                                            : step.status === 'current'
+                                                ? '0 4px 20px rgba(var(--color-primary-rgb, 45,74,119), 0.25)'
+                                                : 'none',
                                     }}
-                                    style={{ cursor: isActionable ? 'pointer' : 'default' }}
                                 >
-                                    <circle cx={point.x} cy={point.y} r="20" fill="transparent" />
-                                    <circle
-                                        cx={point.x}
-                                        cy={point.y}
-                                        r={isHovered ? 14 : 10}
-                                        fill={isCompleted ? "var(--color-primary)" : "white"}
-                                        stroke={isActionable ? "var(--color-primary)" : "var(--color-bg-secondary)"}
-                                        strokeWidth={3}
-                                        className="transition-all duration-300"
-                                    />
-                                    {isCompleted && (
-                                        <circle cx={point.x} cy={point.y} r={isHovered ? 6 : 4} fill="white" className="transition-all duration-300" />
+                                    {step.status === 'completed' && (
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round">
+                                            <path d="M20 6 9 17l-5-5" />
+                                        </svg>
                                     )}
-                                    <text
-                                        x={point.x}
-                                        y={point.y + 25}
-                                        textAnchor="middle"
-                                        className={`text-[11px] font-bold transition-colors duration-300 ${isActionable ? 'fill-primary' : 'fill-text-muted'
-                                            }`}
-                                    >
-                                        {index + 1}
-                                    </text>
-                                    {isHovered && (
-                                        <g>
-                                            <rect
-                                                x={point.x - 100}
-                                                y={point.y - 45}
-                                                width="200"
-                                                height="30"
-                                                rx="6"
-                                                fill="#1E293B"
-                                            />
-                                            <path d={`M ${point.x},${point.y - 15} L ${point.x - 5},${point.y - 20} L ${point.x + 5},${point.y - 20} Z`} fill="#1E293B" />
-                                            <text
-                                                x={point.x}
-                                                y={point.y - 26}
-                                                textAnchor="middle"
-                                                fill="white"
-                                                fontSize="11"
-                                                fontWeight="bold"
-                                            >
-                                                {item.label}
-                                            </text>
-                                        </g>
+                                    {step.status === 'current' && (
+                                        <div className="w-2.5 h-2.5 rounded-full animate-pulse" style={{ backgroundColor: 'var(--color-primary)' }}></div>
                                     )}
-                                </g>
-                            );
-                        })}
-                    </svg>
+                                </div>
+
+                                {/* Step number */}
+                                <span
+                                    className="absolute -bottom-8 text-[11px] font-bold tracking-tighter transition-colors duration-300"
+                                    style={{
+                                        color: step.status === 'completed'
+                                            ? 'var(--color-primary)'
+                                            : step.status === 'current'
+                                                ? 'var(--color-text-main)'
+                                                : 'var(--color-text-muted)',
+                                        transform: step.status === 'current' ? 'scale(1.1)' : 'scale(1)',
+                                    }}
+                                >
+                                    {step.id}
+                                </span>
+
+                                {/* Tooltip */}
+                                <div className="absolute -top-12 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-30 whitespace-nowrap">
+                                    <div className="bg-gray-900/90 backdrop-blur text-white text-[11px] font-semibold px-3 py-1.5 rounded-xl shadow-xl">
+                                        {step.title}
+                                        <div className="absolute top-full left-1/2 -translate-x-1/2 border-[5px] border-transparent border-t-gray-900/90"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </div>
         );
-    }
+    };
+
     const domContainer = document.querySelector('#feedback-chart-container');
     const root = ReactDOM.createRoot(domContainer);
-    root.render(<SurveyTimelineChart />);
+    root.render(<GrowthFeedbackChart />);
 </script>
 {% endverbatim %}
 {% endblock scripts %}
