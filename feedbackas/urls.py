@@ -35,6 +35,7 @@ urlpatterns = [
     path('team/', views.team_members_list, name='team_members_list'),
     path('tasks/dashboard/', views.my_tasks_list, name='my_tasks_list'),
     path('request/<int:request_id>/cancel/', views.cancel_feedback_request, name='cancel_feedback_request'),
+    path('request/<int:request_id>/reject/', views.reject_feedback_request, name='reject_feedback_request'),
     path('request/<int:request_id>/edit/', views.edit_feedback_request, name='edit_feedback_request'),
     path('results/', views.results, name='results'),
     path('api/competency_trend/<str:competency_name>/', views.get_competency_trend, name='competency_trend'),

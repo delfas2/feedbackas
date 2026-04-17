@@ -430,6 +430,27 @@ def cancel_feedback_request(request, request_id):
     return redirect('my_tasks_list')
 
 @login_required
+@require_POST
+def reject_feedback_request(request, request_id):
+    """
+    Leidžia vartotojui (kurio prašoma atsiliepimo) atmesti prašymą.
+    """
+    feedback_request = get_object_or_404(FeedbackRequest, id=request_id)
+
+    if feedback_request.requested_to != request.user:
+        messages.error(request, 'Neturite teisių atmesti šio prašymo.')
+        return redirect('home')
+        
+    if feedback_request.status != 'pending':
+        messages.error(request, 'Dabar negalite atmesti šio prašymo.')
+        return redirect('home')
+
+    feedback_request.delete()
+    messages.success(request, 'Atsiliepimo prašymas atmestas.')
+    
+    return redirect('home')
+
+@login_required
 def edit_feedback_request(request, request_id):
     """
     Leidžia vartotojui paredaguoti prašymo projekto pavadinimą, komentarą ir terminą.
