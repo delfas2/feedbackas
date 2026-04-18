@@ -1282,6 +1282,249 @@ def superadmin_toggle_admin(request, company_id, user_id):
             messages.success(request, f'{target_user.get_full_name()} {status} administratorių.')
     return redirect('superadmin_company_detail', company_id=company_id)
 
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_billing_overview(request):
+    """
+    Bendra sąskaitų statistika visoms įmonėms.
+    Kiekvienai įmonei skaičiuoja dabartinio mėnesio sąskaitą (Max Count).
+    """
+    from users.models import ContractSettings
+    from users.billing_service import calculate_monthly_bill
+    import calendar
+
+    today = date.today()
+    try:
+        selected_year = int(request.GET.get('year', today.year))
+        selected_month = int(request.GET.get('month', today.month))
+        if not (1 <= selected_month <= 12):
+            selected_month = today.month
+    except (ValueError, TypeError):
+        selected_year, selected_month = today.year, today.month
+
+    companies = Company.objects.all().order_by('name')
+
+    rows = []
+    total_amount = 0
+    total_employees = 0
+    companies_with_settings = 0
+    companies_without_settings = 0
+
+    for company in companies:
+        bill = calculate_monthly_bill(company.id, selected_year, selected_month)
+        if bill.get('has_settings'):
+            companies_with_settings += 1
+            total_amount += bill['final_amount']
+            total_employees += bill['max_count']
+        else:
+            companies_without_settings += 1
+        rows.append({
+            'company': company,
+            'bill': bill,
+        })
+
+    # ── Grafiko duomenys: per įmonę, pasirinktas laikotarpis ──────────────────
+    import json
+
+    # Laikotarpis: praėję + ateities mėnesiai
+    chart_past = int(request.GET.get('chart_past', 6))   # praėjusių mėnesių
+    chart_future = int(request.GET.get('chart_future', 3))  # prognozuojamų
+    chart_past = max(1, min(chart_past, 24))
+    chart_future = max(0, min(chart_future, 12))
+
+    # Sugeneruojame visus mėnesius kairė→dešinė: seniausias...dabartinis...ateitis
+    chart_labels = []
+    chart_is_future = []
+
+    # Pradžios taškas: chart_past mėnesių atgal nuo šiandien
+    start_m = today.month - chart_past
+    start_y = today.year
+    while start_m <= 0:
+        start_m += 12
+        start_y -= 1
+
+    m, y = start_m, start_y
+    total_months = chart_past + 1 + chart_future
+    for _ in range(total_months):
+        label = f"{y}-{m:02d}"
+        chart_labels.append({'label': label, 'year': y, 'month': m})
+        chart_is_future.append(date(y, m, 1) > date(today.year, today.month, 1))
+        # Pereiti į kitą mėnesį
+        m += 1
+        if m > 12:
+            m = 1
+            y += 1
+
+    # Vieno mėnesio prognozė = paskutinio žinomo mėnesio sąskaitos sumos
+    # Sukaupiam duomenis pagal įmonę
+    from users.billing_service import calculate_monthly_bill as _calc
+
+    # Spalvų paletė įmonėms
+    PALETTE = [
+        '#2d4a77', '#3b7dd8', '#52a8ff', '#7ec8e3',
+        '#a78bfa', '#34d399', '#f59e0b', '#f87171',
+        '#94a3b8', '#fb923c', '#e879f9', '#4ade80',
+    ]
+
+    companies_with_contract = [c for c in companies if hasattr(c, 'contract_settings')]
+    companies_list = list(companies)
+
+    chart_datasets = []
+    for idx, company in enumerate(companies_list):
+        color = PALETTE[idx % len(PALETTE)]
+        values = []
+        for slot in chart_labels:
+            b = _calc(company.id, slot['year'], slot['month'])
+            if b.get('has_settings'):
+                values.append(float(b['final_amount']))
+            else:
+                values.append(0.0)
+        chart_datasets.append({
+            'label': company.name,
+            'data': values,
+            'backgroundColor': color + 'cc',   # slight transparency
+            'borderColor': color,
+            'borderWidth': 1,
+            'borderRadius': 4,
+        })
+
+    label_strs = [s['label'] for s in chart_labels]
+
+    # Mėnesių sąrašas pasirinkimui (paskutiniai 12 mėnesių, naujesni pirmiau)
+    month_options = []
+    for i in range(12):
+        m = today.month - i
+        y = today.year
+        if m <= 0:
+            m += 12
+            y -= 1
+        month_options.append({'year': y, 'month': m, 'label': f"{y} {calendar.month_abbr[m]}"})
+
+    context = {
+        'rows': rows,
+        'selected_year': selected_year,
+        'selected_month': selected_month,
+        'selected_month_label': f"{selected_year} {calendar.month_name[selected_month]}",
+        'month_options': month_options,
+        'total_amount': total_amount,
+        'total_employees': total_employees,
+        'companies_with_settings': companies_with_settings,
+        'companies_without_settings': companies_without_settings,
+        'today': today,
+        'chart_labels_json': json.dumps(label_strs),
+        'chart_datasets_json': json.dumps(chart_datasets),
+        'chart_future_json': json.dumps(chart_is_future),
+        'chart_past': chart_past,
+        'chart_future': chart_future,
+        # Mygtukų variantai (value, label)
+        'past_options': [(3, '3M'), (6, '6M'), (12, '12M'), (24, '24M')],
+        'future_options': [(0, 'Išj.'), (1, '+1M'), (3, '+3M'), (6, '+6M')],
+    }
+    return render(request, 'superadmin/billing_overview.html', context)
+
+
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_company_billing(request, company_id):
+    """
+    Rodo įmonės sutarčių sąrašą, leidžia kurti naujas sutartis
+    ir skaičiuoja mėnesio sąskaitą pagal Max Count strategiją.
+    """
+    from users.models import ContractSettings, EmployeeCountLog
+    from users.billing_service import calculate_monthly_bill
+    from decimal import Decimal, InvalidOperation
+    import calendar
+
+    company = get_object_or_404(Company, id=company_id)
+
+    # ── POST: sukurti naują sutartį ───────────────────────────────────────────
+    if request.method == 'POST':
+        action = request.POST.get('action', 'create')
+
+        if action == 'delete':
+            contract_id = request.POST.get('contract_id')
+            ContractSettings.objects.filter(id=contract_id, company=company).delete()
+            messages.success(request, 'Sutartis ištrinta.')
+            return redirect('superadmin_company_billing', company_id=company_id)
+
+        # Nauja sutartis
+        price_str = request.POST.get('price_per_employee', '').strip()
+        min_fee_str = request.POST.get('minimum_fee', '0').strip() or '0'
+        contract_start = request.POST.get('contract_start', '').strip()
+        contract_end = request.POST.get('contract_end', '').strip() or None
+
+        try:
+            price = Decimal(price_str)
+            min_fee = Decimal(min_fee_str)
+        except InvalidOperation:
+            messages.error(request, 'Neteisingas kainos formatas. Naudokite skaičius, pvz.: 9.99')
+            return redirect('superadmin_company_billing', company_id=company_id)
+
+        if not contract_start:
+            messages.error(request, 'Sutarties pradžios data yra privaloma.')
+            return redirect('superadmin_company_billing', company_id=company_id)
+
+        ContractSettings.objects.create(
+            company=company,
+            price_per_employee=price,
+            minimum_fee=min_fee,
+            contract_start=contract_start,
+            contract_end=contract_end,
+        )
+        messages.success(request, 'Nauja sutartis sėkmingai sukurta.')
+        return redirect('superadmin_company_billing', company_id=company_id)
+
+    # ── GET ───────────────────────────────────────────────────────────────────
+    today = date.today()
+    try:
+        selected_year = int(request.GET.get('year', today.year))
+        selected_month = int(request.GET.get('month', today.month))
+        if not (1 <= selected_month <= 12):
+            selected_month = today.month
+    except (ValueError, TypeError):
+        selected_year, selected_month = today.year, today.month
+
+    # Visos šios įmonės sutartys (naujiausios pirmiau)
+    all_contracts = ContractSettings.objects.filter(company=company).order_by('-contract_start')
+
+    # Skaičiuojame sąskaitą pasirinktam mėnesiui
+    bill = calculate_monthly_bill(company_id, selected_year, selected_month)
+
+    # Paskutiniai EmployeeCountLog įrašai
+    recent_logs = EmployeeCountLog.objects.filter(company=company).order_by('-recorded_at')[:15]
+
+    # Mėnesių sąrašas: nuo anksčiausios sutarties pradžios iki dabar
+    month_options = []
+    earliest = all_contracts.order_by('contract_start').first()
+    if earliest:
+        iter_date = date(earliest.contract_start.year, earliest.contract_start.month, 1)
+        current = date(today.year, today.month, 1)
+        while iter_date <= current:
+            month_options.append({
+                'year': iter_date.year,
+                'month': iter_date.month,
+                'label': f"{iter_date.year}-{iter_date.month:02d}",
+            })
+            if iter_date.month == 12:
+                iter_date = date(iter_date.year + 1, 1, 1)
+            else:
+                iter_date = date(iter_date.year, iter_date.month + 1, 1)
+        month_options.reverse()
+
+    context = {
+        'company': company,
+        'bill': bill,
+        'all_contracts': all_contracts,
+        'recent_logs': recent_logs,
+        'selected_year': selected_year,
+        'selected_month': selected_month,
+        'selected_month_label': f"{selected_year}-{selected_month:02d}",
+        'month_options': month_options,
+        'today': today,
+    }
+    return render(request, 'superadmin/company_billing.html', context)
+
 @user_passes_test(lambda u: u.is_superuser)
 def superadmin_remove_employee(request, company_id, user_id):
     if request.method == 'POST':

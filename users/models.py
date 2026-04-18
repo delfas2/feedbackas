@@ -1,5 +1,7 @@
+from decimal import Decimal
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Company(models.Model):
     name = models.CharField(max_length=255)
@@ -46,3 +48,56 @@ class Profile(models.Model):
                 img.save(self.image.path)
         except Exception:
             pass # Jei trūksta Pillow arba paveikslėlis nerastas atmintyje (pvz., testų metu)
+
+
+class ContractSettings(models.Model):
+    """Sutarties nustatymai: kaina ir minimalus mokestis įmonei.
+    Viena įmonė gali turėti kelias sutartis (skirtingi laikotarpiai).
+    """
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, related_name='contracts'
+    )
+    price_per_employee = models.DecimalField(
+        max_digits=8, decimal_places=2,
+        help_text="Kaina už vieną aktyvų darbuotoją per mėnesį (EUR)"
+    )
+    minimum_fee = models.DecimalField(
+        max_digits=8, decimal_places=2, default=Decimal('0.00'),
+        help_text="Minimalus mėnesinis mokestis (EUR)"
+    )
+    contract_start = models.DateField(help_text="Sutarties pradžios data")
+    contract_end = models.DateField(
+        null=True, blank=True, help_text="Sutarties pabaigos data (palikite tuščią jei neterminuota)"
+    )
+
+    def __str__(self):
+        return f"{self.company.name} sutarties nustatymai"
+
+    class Meta:
+        verbose_name = "Sutarties nustatymai"
+        verbose_name_plural = "Sutarčių nustatymai"
+
+
+class EmployeeCountLog(models.Model):
+    """
+    Aktyvių darbuotojų skaičiaus momentinis įrašas.
+    Naujas įrašas sukuriamas kaskart, kai darbuotojas pridedamas
+    arba aktyvumo statusas pasikeičia (per signalą).
+    """
+    company = models.ForeignKey(
+        Company, on_delete=models.CASCADE, related_name='employee_count_logs'
+    )
+    recorded_at = models.DateTimeField(
+        default=timezone.now, help_text="Kada buvo užfiksuotas šis skaičius"
+    )
+    active_count = models.PositiveIntegerField(
+        help_text="Aktyvių darbuotojų skaičius tuo metu"
+    )
+
+    def __str__(self):
+        return f"{self.company.name} – {self.active_count} ({self.recorded_at:%Y-%m-%d %H:%M})"
+
+    class Meta:
+        ordering = ['-recorded_at']
+        verbose_name = "Darbuotojų skaičiaus įrašas"
+        verbose_name_plural = "Darbuotojų skaičiaus įrašai"

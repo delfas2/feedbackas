@@ -1,0 +1,241 @@
+{% extends 'base.html' %}
+
+{% block title %}Sąskaitų valdymas – {{ company.name }}{% endblock %}
+
+{% block content %}
+<main class="flex-1 overflow-y-auto bg-bg-secondary p-6">
+  <div class="max-w-5xl mx-auto space-y-8">
+
+    <!-- Breadcrumb -->
+    <nav class="flex text-text-muted text-sm">
+      <a href="{% url 'superadmin_companies_list' %}" class="hover:text-primary">Įmonės</a>
+      <span class="mx-2">/</span>
+      <a href="{% url 'superadmin_company_detail' company.id %}" class="hover:text-primary">{{ company.name }}</a>
+      <span class="mx-2">/</span>
+      <span class="text-text-main">Sąskaitų valdymas</span>
+    </nav>
+
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-text-main">Sąskaitų valdymas</h1>
+        <p class="text-text-muted mt-1">{{ company.name }} · Max Count strategija</p>
+      </div>
+      <a href="{% url 'superadmin_company_detail' company.id %}"
+         class="px-4 py-2 border border-gray-300 text-text-main rounded-lg hover:bg-bg-main transition text-sm font-medium self-start">
+        ← Grįžti
+      </a>
+    </div>
+
+    <!-- Messages -->
+    {% for message in messages %}
+    <div class="px-4 py-3 rounded-lg text-sm font-medium
+      {% if message.tags == 'success' %}bg-green-50 text-green-700 border border-green-200
+      {% else %}bg-red-50 text-red-700 border border-red-200{% endif %}">
+      {{ message }}
+    </div>
+    {% endfor %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
+
+      <!-- LEFT: Sutartys ir forma -->
+      <div class="lg:col-span-2 space-y-6">
+
+        <!-- Nauja sutartis -->
+        <div class="bg-bg-main rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-text-main mb-5 flex items-center gap-2">
+            <svg class="w-5 h-5 text-primary" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="14" x="2" y="5" rx="2"/><line x1="2" x2="22" y1="10" y2="10"/></svg>
+            Nauja sutartis
+          </h2>
+          <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="create">
+
+            <div class="space-y-1.5">
+              <label class="text-[13px] font-bold text-gray-400 uppercase tracking-wider">
+                Kaina / darbuotoją (EUR) *
+              </label>
+              <input type="number" name="price_per_employee" step="0.01" min="0" required
+                value="{{ all_contracts.first.price_per_employee|default:'' }}"
+                placeholder="pvz. 9.99"
+                class="w-full bg-gray-50 border border-transparent focus:border-blue-400/40 focus:bg-white focus:ring-4 focus:ring-blue-400/10 rounded-xl py-3 px-4 outline-none transition text-sm text-gray-700">
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-[13px] font-bold text-gray-400 uppercase tracking-wider">
+                Minimalus mokestis (EUR)
+              </label>
+              <input type="number" name="minimum_fee" step="0.01" min="0"
+                value="{{ all_contracts.first.minimum_fee|default:'0.00' }}"
+                placeholder="pvz. 50.00"
+                class="w-full bg-gray-50 border border-transparent focus:border-blue-400/40 focus:bg-white focus:ring-4 focus:ring-blue-400/10 rounded-xl py-3 px-4 outline-none transition text-sm text-gray-700">
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-[13px] font-bold text-gray-400 uppercase tracking-wider">
+                Sutarties pradžia *
+              </label>
+              <input type="date" name="contract_start" required
+                value="{{ today|date:'Y-m-d' }}"
+                class="w-full bg-gray-50 border border-transparent focus:border-blue-400/40 focus:bg-white focus:ring-4 focus:ring-blue-400/10 rounded-xl py-3 px-4 outline-none transition text-sm text-gray-700">
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-[13px] font-bold text-gray-400 uppercase tracking-wider">
+                Sutarties pabaiga <span class="normal-case font-normal">(palik tuščia jei neterminuota)</span>
+              </label>
+              <input type="date" name="contract_end"
+                class="w-full bg-gray-50 border border-transparent focus:border-blue-400/40 focus:bg-white focus:ring-4 focus:ring-blue-400/10 rounded-xl py-3 px-4 outline-none transition text-sm text-gray-700">
+            </div>
+
+            <button type="submit"
+              class="w-full bg-[#2d4a77] hover:bg-[#233a5e] text-white py-3 rounded-xl font-bold text-sm shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 mt-2">
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14m-7-7h14"/></svg>
+              Sukurti naują sutartį
+            </button>
+          </form>
+        </div>
+
+        <!-- Sutarčių istorija -->
+        {% if all_contracts %}
+        <div class="bg-bg-main rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-base font-bold text-text-main mb-4">Sutarčių istorija</h2>
+          <div class="space-y-3">
+            {% for c in all_contracts %}
+            <div class="p-3 bg-bg-secondary rounded-xl border border-gray-100 flex items-start justify-between">
+              <div>
+                <p class="font-bold text-text-main text-sm">
+                  {{ c.contract_start|date:"Y-m-d" }} — {{ c.contract_end|date:"Y-m-d"|default:"Neterminuota" }}
+                </p>
+                <p class="text-xs text-text-muted mt-1">
+                  Kaina: <span class="font-semibold text-text-main">{{ c.price_per_employee }} €</span>,
+                  Min: <span class="font-semibold text-text-main">{{ c.minimum_fee }} €</span>
+                </p>
+              </div>
+              <form method="POST" onsubmit="return confirm('Ar tikrai norite ištrinti šią sutartį?');">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="delete">
+                <input type="hidden" name="contract_id" value="{{ c.id }}">
+                <button type="submit" class="text-red-400 hover:text-red-600 p-1 bg-white rounded shadow-sm border border-gray-200 hover:border-red-200 transition" title="Ištrinti">
+                  <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+              </form>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+
+      <!-- RIGHT: sąskaitos rezultatai -->
+      <div class="lg:col-span-3 space-y-6">
+
+        <!-- Mėnesio parinkimas -->
+        <div class="bg-bg-main rounded-2xl shadow-sm border border-gray-100 p-6">
+          <h2 class="text-lg font-bold text-text-main mb-4">Mėnesio sąskaita</h2>
+          {% if month_options %}
+          <form method="GET" class="flex flex-wrap gap-3 items-end">
+            <div class="flex-1 min-w-[180px] space-y-1">
+              <label class="text-[12px] font-bold text-gray-400 uppercase tracking-wider">Pasirinkite mėnesį</label>
+              <select name="month_select" onchange="this.form.submit()"
+                class="w-full bg-gray-50 border border-gray-200 rounded-xl py-2.5 px-3 text-sm text-gray-700 outline-none focus:ring-2 focus:ring-blue-400/20">
+                {% for opt in month_options %}
+                <option value="{{ opt.year }}-{{ opt.month }}"
+                  {% if opt.year == selected_year and opt.month == selected_month %}selected{% endif %}>
+                  {{ opt.label }}
+                </option>
+                {% endfor %}
+              </select>
+            </div>
+            <input type="hidden" name="year" id="year-hidden" value="{{ selected_year }}">
+            <input type="hidden" name="month" id="month-hidden" value="{{ selected_month }}">
+          </form>
+          <script>
+            document.querySelector('select[name="month_select"]').addEventListener('change', function() {
+              const parts = this.value.split('-');
+              document.getElementById('year-hidden').value = parts[0];
+              document.getElementById('month-hidden').value = parts[1];
+              this.form.submit();
+            });
+          </script>
+          {% endif %}
+
+          {% if bill.error %}
+            <div class="mt-4 p-4 bg-yellow-50 border border-yellow-200 rounded-xl text-yellow-800 text-sm">
+              ⚠️ {{ bill.error }}
+            </div>
+          {% else %}
+            <!-- Rezultatų kortelės -->
+            <div class="mt-5 grid grid-cols-2 gap-4">
+              <div class="bg-bg-secondary rounded-xl p-4">
+                <p class="text-xs font-bold text-text-muted uppercase tracking-wider mb-1">Mėnesis</p>
+                <p class="text-xl font-extrabold text-text-main">{{ selected_month_label }}</p>
+              </div>
+              <div class="bg-bg-secondary rounded-xl p-4">
+                <p class="text-xs font-bold text-text-muted uppercase tracking-wider mb-1">Maks. darbuotojų skaičius</p>
+                <p class="text-3xl font-extrabold text-primary">{{ bill.max_count }}</p>
+                <p class="text-xs text-text-muted mt-1">{{ bill.data_source }}</p>
+              </div>
+              <div class="bg-bg-secondary rounded-xl p-4">
+                <p class="text-xs font-bold text-text-muted uppercase tracking-wider mb-1">Kaina / darbuotoją</p>
+                <p class="text-xl font-extrabold text-text-main">{{ bill.price_per_employee }} €</p>
+              </div>
+              <div class="bg-[#2d4a77]/5 border border-[#2d4a77]/20 rounded-xl p-4">
+                <p class="text-xs font-bold text-[#2d4a77] uppercase tracking-wider mb-1">Galutinė suma</p>
+                <p class="text-3xl font-extrabold text-[#2d4a77]">{{ bill.final_amount }} €</p>
+                {% if bill.minimum_applied %}
+                <p class="text-xs text-text-muted mt-1">Pritaikytas min. mokestis ({{ bill.minimum_fee }} €)</p>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Sutarties laikotarpis -->
+            <div class="mt-4 p-4 bg-gray-50 rounded-xl flex flex-wrap gap-6 text-sm">
+              <div>
+                <p class="text-xs text-text-muted font-semibold uppercase tracking-wider">Sutarties pradžia</p>
+                <p class="font-bold text-text-main mt-0.5">{{ bill.contract_start }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-text-muted font-semibold uppercase tracking-wider">Sutarties pabaiga</p>
+                <p class="font-bold text-text-main mt-0.5">{{ bill.contract_end|default:"Neterminuota" }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-text-muted font-semibold uppercase tracking-wider">Logų šiame mėnesyje</p>
+                <p class="font-bold text-text-main mt-0.5">{{ bill.logs_count }}</p>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <!-- Darbuotojų skaičiaus istorija -->
+        {% if recent_logs %}
+        <div class="bg-bg-main rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div class="px-6 py-4 border-b border-gray-100">
+            <h3 class="text-base font-bold text-text-main">Paskutiniai darbuotojų skaičiaus įrašai</h3>
+            <p class="text-xs text-text-muted mt-0.5">Automatiškai fiksuojami kaskart keičiantis darbuotojų skaičiui</p>
+          </div>
+          <table class="w-full text-sm text-left">
+            <thead class="bg-bg-secondary text-text-muted">
+              <tr>
+                <th class="px-5 py-2.5 font-semibold">Data ir laikas</th>
+                <th class="px-5 py-2.5 font-semibold text-right">Aktyvūs darbuotojai</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-50">
+              {% for log in recent_logs %}
+              <tr class="hover:bg-bg-secondary/50 transition">
+                <td class="px-5 py-3 text-text-muted">{{ log.recorded_at|date:"Y-m-d H:i" }}</td>
+                <td class="px-5 py-3 text-right font-bold text-text-main">{{ log.active_count }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}

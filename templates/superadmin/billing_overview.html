@@ -1,0 +1,313 @@
+{% extends 'base.html' %}
+
+{% block title %}Sąskaitų statistika – Superadmin{% endblock %}
+
+{% block content %}
+<main class="flex-1 overflow-y-auto bg-bg-secondary p-6">
+  <div class="max-w-7xl mx-auto space-y-8">
+
+    <!-- Breadcrumb -->
+    <nav class="flex text-text-muted text-sm">
+      <a href="{% url 'superadmin_companies_list' %}" class="hover:text-primary">Įmonės</a>
+      <span class="mx-2">/</span>
+      <span class="text-text-main">Sąskaitų statistika</span>
+    </nav>
+
+    <!-- Header + mėnesio pasirinkimas -->
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+      <div>
+        <h1 class="text-3xl font-bold text-text-main">Sąskaitų statistika</h1>
+        <p class="text-text-muted mt-1">Bendra apžvalga · {{ selected_month_label }}</p>
+      </div>
+
+      <!-- Mėnesio filtras -->
+      <form method="GET" class="flex items-end gap-3">
+        <div class="space-y-1">
+          <label class="text-[12px] font-bold text-gray-400 uppercase tracking-wider">Mėnesis</label>
+          <select name="month_select" onchange="this.form.submit()"
+            class="bg-bg-main border border-gray-200 rounded-xl py-2.5 px-3 text-sm text-text-main outline-none focus:ring-2 focus:ring-blue-400/20 shadow-sm">
+            {% for opt in month_options %}
+            <option value="{{ opt.year }}-{{ opt.month }}"
+              {% if opt.year == selected_year and opt.month == selected_month %}selected{% endif %}>
+              {{ opt.label }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <input type="hidden" name="year" id="y-hidden" value="{{ selected_year }}">
+        <input type="hidden" name="month" id="m-hidden" value="{{ selected_month }}">
+      </form>
+      <script>
+        document.querySelector('select[name="month_select"]').addEventListener('change', function() {
+          const parts = this.value.split('-');
+          document.getElementById('y-hidden').value = parts[0];
+          document.getElementById('m-hidden').value = parts[1];
+          this.form.submit();
+        });
+      </script>
+    </div>
+
+    <!-- Suvestinės kortelės -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-5">
+      <div class="bg-bg-main rounded-2xl shadow-sm border border-gray-100 p-5">
+        <p class="text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Įmonių iš viso</p>
+        <p class="text-3xl font-extrabold text-text-main">{{ rows|length }}</p>
+      </div>
+      <div class="bg-bg-main rounded-2xl shadow-sm border border-gray-100 p-5">
+        <p class="text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Su nustatymais</p>
+        <p class="text-3xl font-extrabold text-green-600">{{ companies_with_settings }}</p>
+      </div>
+      <div class="bg-bg-main rounded-2xl shadow-sm border border-gray-100 p-5">
+        <p class="text-xs font-bold text-text-muted uppercase tracking-wider mb-2">Bendra darbuotojų pikas</p>
+        <p class="text-3xl font-extrabold text-primary">{{ total_employees }}</p>
+      </div>
+      <div class="bg-[#2d4a77]/5 border border-[#2d4a77]/15 rounded-2xl shadow-sm p-5">
+        <p class="text-xs font-bold text-[#2d4a77] uppercase tracking-wider mb-2">Bendra suma (EUR)</p>
+        <p class="text-3xl font-extrabold text-[#2d4a77]">{{ total_amount|floatformat:2 }} €</p>
+      </div>
+    </div>
+
+    <!-- Pajamų grafikas su laikotarpio pasirinkimu -->
+    <div class="bg-bg-main rounded-2xl shadow-sm border border-gray-100 p-6">
+      <!-- Antraštė + selektoriai -->
+      <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
+        <div>
+          <h2 class="text-base font-bold text-text-main">Pajamos per mėnesį</h2>
+          <p class="text-xs text-text-muted mt-0.5">Faktinė ir prognozuojama · pagal įmonę</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <!-- Praėjusių mėnesių pasirinkimas -->
+          <form method="GET" id="chartRangeForm" class="flex items-center gap-2 flex-wrap">
+            {% for key, val in request.GET.items %}
+              {% if key != 'chart_past' and key != 'chart_future' %}
+              <input type="hidden" name="{{ key }}" value="{{ val }}">
+              {% endif %}
+            {% endfor %}
+            <div class="flex items-center gap-1.5 bg-bg-secondary rounded-xl p-1">
+              <span class="text-xs text-text-muted font-semibold px-2">Praeitis:</span>
+              {% for n,label in past_options %}
+              <button type="submit" name="chart_past" value="{{ n }}"
+                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all {% if chart_past == n %}bg-[#2d4a77] text-white shadow{% else %}text-text-muted hover:bg-bg-main{% endif %}">
+                {{ label }}
+              </button>
+              {% endfor %}
+            </div>
+            <div class="flex items-center gap-1.5 bg-bg-secondary rounded-xl p-1">
+              <span class="text-xs text-text-muted font-semibold px-2">Prognozė:</span>
+              {% for n,label in future_options %}
+              <button type="submit" name="chart_future" value="{{ n }}"
+                class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all {% if chart_future == n %}bg-amber-500 text-white shadow{% else %}text-text-muted hover:bg-bg-main{% endif %}">
+                {{ label }}
+              </button>
+              {% endfor %}
+            </div>
+          </form>
+          <span id="chart-total-badge" class="px-3 py-1 bg-[#2d4a77]/10 text-[#2d4a77] rounded-full text-sm font-bold whitespace-nowrap"></span>
+        </div>
+      </div>
+
+      <div class="relative" style="height: 260px;">
+        <canvas id="revenueChart"></canvas>
+      </div>
+
+      <!-- Legenda -->
+      <div id="chartLegend" class="mt-4 flex flex-wrap gap-3"></div>
+    </div>
+
+    <!-- Lentelė su visomis įmonėmis -->
+    <div class="bg-bg-main rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+        <h2 class="text-base font-bold text-text-main">Įmonės · {{ selected_month_label }}</h2>
+        {% if companies_without_settings > 0 %}
+        <span class="text-xs text-yellow-700 bg-yellow-50 border border-yellow-200 px-3 py-1 rounded-full font-semibold">
+          ⚠ {{ companies_without_settings }} įmon{% if companies_without_settings == 1 %}ė{% else %}ių{% endif %} be nustatymų
+        </span>
+        {% endif %}
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm text-left">
+          <thead class="bg-bg-secondary text-text-muted border-b border-gray-100">
+            <tr>
+              <th class="px-6 py-3 font-semibold">Įmonė</th>
+              <th class="px-6 py-3 font-semibold text-center">Maks. darbuotojai</th>
+              <th class="px-6 py-3 font-semibold text-center">Kaina / darb.</th>
+              <th class="px-6 py-3 font-semibold text-center">Min. mokestis</th>
+              <th class="px-6 py-3 font-semibold text-right">Suma</th>
+              <th class="px-6 py-3 font-semibold text-right">Veiksmai</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-50">
+            {% for row in rows %}
+            <tr class="hover:bg-bg-secondary/50 transition-colors">
+              <td class="px-6 py-4">
+                <a href="{% url 'superadmin_company_detail' row.company.id %}"
+                   class="font-semibold text-text-main hover:text-primary">
+                  {{ row.company.name }}
+                </a>
+                {% if not row.company.is_active %}
+                <span class="ml-2 text-xs text-text-muted bg-bg-secondary px-2 py-0.5 rounded-full">Išjungta</span>
+                {% endif %}
+              </td>
+
+              {% if row.bill.has_settings %}
+                <td class="px-6 py-4 text-center">
+                  <span class="text-lg font-extrabold text-primary">{{ row.bill.max_count }}</span>
+                </td>
+                <td class="px-6 py-4 text-center text-text-muted">{{ row.bill.price_per_employee }} €</td>
+                <td class="px-6 py-4 text-center text-text-muted">
+                  {% if row.bill.minimum_fee %}{{ row.bill.minimum_fee }} €{% else %}—{% endif %}
+                </td>
+                <td class="px-6 py-4 text-right">
+                  <span class="font-extrabold text-[#2d4a77] text-base">{{ row.bill.final_amount }} €</span>
+                  {% if row.bill.minimum_applied %}
+                  <span class="block text-xs text-text-muted">min. mokestis taikytas</span>
+                  {% endif %}
+                </td>
+              {% else %}
+                <td colspan="4" class="px-6 py-4 text-center">
+                  <span class="text-xs text-yellow-700 bg-yellow-50 border border-yellow-100 px-3 py-1 rounded-full">
+                    Sutarties nustatymai nenustatyti
+                  </span>
+                </td>
+              {% endif %}
+
+              <td class="px-6 py-4 text-right">
+                <a href="{% url 'superadmin_company_billing' row.company.id %}?year={{ selected_year }}&month={{ selected_month }}"
+                   class="text-xs font-medium text-primary hover:underline">
+                  Detaliau →
+                </a>
+              </td>
+            </tr>
+            {% empty %}
+            <tr>
+              <td colspan="6" class="px-6 py-8 text-center text-text-muted">Nėra registruotų įmonių</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+  const labels   = {{ chart_labels_json|safe }};
+  const datasets = {{ chart_datasets_json|safe }};
+  const isFuture = {{ chart_future_json|safe }};
+
+  // Paryškiname dabartinį mėnesį (pirmasis ne-ateities iš dešinės)
+  const nowIdx = isFuture.lastIndexOf(false);
+
+  // Prognozuojamiems stulpeliams - dryžuotas pattern spalvos
+  // Perdarome datasets: ateities stulpeliams naudojame mažesnį skaidrumą
+  const processedDatasets = datasets.map(ds => {
+    const bgArr = ds.data.map((_, i) => {
+      const base = ds.backgroundColor;
+      if (isFuture[i]) return base.slice(0, 7) + '55';   // labai permatomas
+      if (i === nowIdx) return base.slice(0, 7) + 'ee';    // ryškus
+      return base;
+    });
+    const borderArr = ds.data.map((_, i) => {
+      if (isFuture[i]) return ds.borderColor + '88';
+      return ds.borderColor;
+    });
+    return { ...ds, backgroundColor: bgArr, borderColor: borderArr };
+  });
+
+  // Suma tik faktiniams mėnesiams (ne ateičiai)
+  const total = processedDatasets.reduce((sum, ds) => {
+    return sum + ds.data.reduce((s, v, i) => s + (isFuture[i] ? 0 : v), 0);
+  }, 0);
+  const projectionTotal = processedDatasets.reduce((sum, ds) => {
+    return sum + ds.data.reduce((s, v, i) => s + (isFuture[i] ? v : 0), 0);
+  }, 0);
+
+  const badge = document.getElementById('chart-total-badge');
+  if (projectionTotal > 0) {
+    badge.textContent = 'Faktinė: ' + total.toFixed(2) + ' € · Prognozė: +' + projectionTotal.toFixed(2) + ' €';
+  } else {
+    badge.textContent = 'Iš viso: ' + total.toFixed(2) + ' €';
+  }
+
+  // Grafikas
+  const ctx = document.getElementById('revenueChart').getContext('2d');
+  const chart = new Chart(ctx, {
+    type: 'bar',
+    data: { labels, datasets: processedDatasets },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(10,20,40,0.92)',
+          titleColor: '#fff',
+          bodyColor: '#cbd5e1',
+          padding: 14,
+          cornerRadius: 12,
+          callbacks: {
+            title: items => {
+              const i = items[0].dataIndex;
+              return isFuture[i] ? '📈 ' + items[0].label + ' (prognozė)' : items[0].label;
+            },
+            label: item => {
+              const v = item.parsed.y;
+              return v > 0 ? '  ' + item.dataset.label + ': ' + v.toFixed(2) + ' €' : null;
+            },
+            footer: items => {
+              const sum = items.reduce((s, i) => s + i.parsed.y, 0);
+              return sum > 0 ? 'Viso: ' + sum.toFixed(2) + ' €' : '';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          grid: { display: false },
+          ticks: {
+            color: (ctx) => isFuture[ctx.index] ? '#f59e0b' : '#94a3b8',
+            font: { size: 11, weight: '600' }
+          },
+          border: { display: false },
+        },
+        y: {
+          stacked: true,
+          beginAtZero: true,
+          grid: { color: 'rgba(0,0,0,0.04)' },
+          border: { display: false },
+          ticks: {
+            color: '#94a3b8',
+            font: { size: 11 },
+            callback: v => v + ' €'
+          }
+        }
+      }
+    }
+  });
+
+  // Unikali legenda
+  const legend = document.getElementById('chartLegend');
+  datasets.forEach(ds => {
+    if (ds.data.some(v => v > 0)) {
+      const item = document.createElement('div');
+      item.className = 'flex items-center gap-1.5 text-xs text-gray-600';
+      item.innerHTML = `<span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:${ds.borderColor}"></span>${ds.label}`;
+      legend.appendChild(item);
+    }
+  });
+
+  // Prognozės žyma
+  if (isFuture.some(Boolean)) {
+    const item = document.createElement('div');
+    item.className = 'flex items-center gap-1.5 text-xs text-amber-600 font-semibold ml-2';
+    item.innerHTML = '📈 Prognozuojamas laikotarpis';
+    legend.appendChild(item);
+  }
+})();
+</script>
+{% endblock %}
