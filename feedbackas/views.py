@@ -101,6 +101,16 @@ def home(request):
     
     sent_surveys_count = FeedbackRequest.objects.filter(requester=request.user).count()
 
+    # Calculate distinct years for the feedback chart filter
+    current_year = date.today().year
+    try:
+        selected_year = int(request.GET.get('year', current_year))
+    except ValueError:
+        selected_year = current_year
+
+    years = FeedbackRequest.objects.filter(requester=request.user).dates('created_at', 'year')
+    available_years = sorted(list(set([y.year for y in years] + [current_year])), reverse=True)
+
     context = {
         'feedback_requests': feedback_requests,
         'company_name': company_name,
@@ -109,6 +119,8 @@ def home(request):
         'pending_tasks_count': pending_tasks_count,
         'completed_surveys_count': completed_surveys_count,
         'sent_surveys_count': sent_surveys_count,
+        'available_years': available_years,
+        'selected_year': selected_year,
     }
     return render(request, 'home.html', context)
 
@@ -536,9 +548,17 @@ def check_ai_task_status(request):
 @login_required
 def get_feedback_data(request):
     user = request.user
-    # Get all feedback requests made by this user, ordered by creation date
+    
+    current_year = date.today().year
+    try:
+        year = int(request.GET.get('year', current_year))
+    except ValueError:
+        year = current_year
+        
+    # Get all feedback requests made by this user in the specified year, ordered by creation date
     all_requests = FeedbackRequest.objects.filter(
-        requester=user
+        requester=user,
+        created_at__year=year
     ).select_related('requested_to', 'feedback').order_by('created_at')
     
     data = []
@@ -574,6 +594,15 @@ def get_feedback_data(request):
             'feedback_details': feedback_details
         })
     
+    # Tikslas: 10 apklausų, todėl turi matytis 10 tuščių (arba pilnų) burbuliukų
+    while len(data) < 10:
+        data.append({
+            'id': f'empty-{len(data)}',
+            'label': 'Apklausa',
+            'status': 'upcoming',
+            'feedback_details': None
+        })
+        
     return JsonResponse(data, safe=False)
 
 
