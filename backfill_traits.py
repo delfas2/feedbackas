@@ -8,7 +8,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'feedbackas.settings')
 django.setup()
 
 from feedbackas.models import Feedback
-from feedbackas.ai_service import FeedbackGenerator
+from feedbackas.ai_service import OpenRouterService
 
 def backfill():
     import time
@@ -23,7 +23,15 @@ def backfill():
             continue
             
         print(f"[{i+1}/{count}] Extracting for Feedback {fb.id}...")
-        extracted_data = FeedbackGenerator.extract_strengths_weaknesses(fb.feedback, fb.comments)
+        
+        user = getattr(fb.feedback_request, 'requester', None)
+        company = None
+        if user and hasattr(user, 'profile') and user.profile.company_link:
+            company = user.profile.company_link
+            
+        extracted_data = OpenRouterService.extract_strengths_weaknesses(
+            fb.feedback, fb.comments, user=user, company=company
+        )
         fb.extracted_strengths = extracted_data.get("strengths", [])
         fb.extracted_improvements = extracted_data.get("improvements", [])
         fb.save()

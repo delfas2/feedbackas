@@ -64,3 +64,18 @@ class TraitRating(models.Model):
 
     def __str__(self):
         return f"{self.trait.name}: {self.rating} (Feedback #{self.feedback.id})"
+
+class AIUsageLog(models.Model):
+    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='ai_usage_logs')
+    company = models.ForeignKey('users.Company', on_delete=models.SET_NULL, null=True, blank=True, related_name='ai_usage_logs')
+    request_type = models.CharField(max_length=100, help_text="Pvž., 'feedback_generation', 'feedback_analysis'")
+    model_name = models.CharField(max_length=100)
+    prompt_tokens = models.IntegerField(default=0)
+    completion_tokens = models.IntegerField(default=0)
+    total_cost = models.DecimalField(max_digits=10, decimal_places=6, default=0.0)
+    raw_response = models.JSONField(blank=True, null=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.request_type} by {self.user} ({self.total_cost}$)"
+

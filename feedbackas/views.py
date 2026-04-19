@@ -16,7 +16,7 @@ from django.db import models
 import logging
 from datetime import date
 from .services import FeedbackAnalytics
-from .ai_service import FeedbackGenerator
+from .ai_service import OpenRouterService
 from users.models import Department, Company
 from .forms import DepartmentForm
 from django.utils import timezone
@@ -514,7 +514,8 @@ def generate_ai_feedback(request):
             keywords=keywords,
             comments=comments,
             existing_feedback=existing_feedback,
-            colleague_name=colleague_name
+            colleague_name=colleague_name,
+            user_id=request.user.id
         )
         
         return JsonResponse({'task_id': task_id, 'status': 'processing'})
@@ -872,6 +873,66 @@ def superadmin_companies_list(request):
         'companies': companies,
     }
     return render(request, 'superadmin/companies_list.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_ai_analytics(request):
+    from datetime import datetime, timedelta
+    from django.db.models import Sum, Count
+    from feedbackas.models import AIUsageLog
+
+    # Determine date range
+    today = timezone.now().date()
+    # Default: this month
+    first_day_of_month = today.replace(day=1)
+    
+    start_date_str = request.GET.get('start_date', first_day_of_month.strftime('%Y-%m-%d'))
+    end_date_str = request.GET.get('end_date', today.strftime('%Y-%m-%d'))
+
+    try:
+        start_date = datetime.strptime(start_date_str, '%Y-%m-%d').date()
+        end_date = datetime.strptime(end_date_str, '%Y-%m-%d').date()
+    except ValueError:
+        start_date = first_day_of_month
+        end_date = today
+
+    # Filter logs
+    # Make sure we include the end date completely
+    end_date_inclusive = end_date + timedelta(days=1)
+    logs = AIUsageLog.objects.filter(timestamp__gte=start_date, timestamp__lt=end_date_inclusive)
+
+    # Global KPI
+    total_cost = logs.aggregate(Sum('total_cost'))['total_cost__sum'] or 0.0
+    total_queries = logs.count()
+
+    # Aggregate by company
+    company_stats = logs.values('company__name').annotate(
+        total_cost=Sum('total_cost'),
+        total_queries=Count('id')
+    ).order_by('-total_cost')
+
+    company_labels = []
+    company_costs = []
+    for stat in company_stats:
+        company_labels.append(stat['company__name'] or 'Nepriskirta įmonė')
+        company_costs.append(float(stat['total_cost']))
+
+    # Aggregate by user (Top 20)
+    user_stats = logs.values('user__first_name', 'user__last_name', 'user__username', 'company__name').annotate(
+        total_cost=Sum('total_cost'),
+        total_queries=Count('id')
+    ).order_by('-total_cost')[:20]
+
+    context = {
+        'start_date': start_date_str,
+        'end_date': end_date_str,
+        'total_cost': total_cost,
+        'total_queries': total_queries,
+        'company_labels': json.dumps(company_labels),
+        'company_costs': json.dumps(company_costs),
+        'user_stats': user_stats,
+    }
+    return render(request, 'superadmin/ai_analytics.html', context)
+
 
 @user_passes_test(lambda u: u.is_superuser)
 def superadmin_download_employee_template(request):

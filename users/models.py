@@ -11,6 +11,22 @@ class Company(models.Model):
     def __str__(self):
         return self.name
 
+    def get_current_month_ai_queries_count(self):
+        from django.utils import timezone
+        now = timezone.now()
+        return self.ai_usage_logs.filter(timestamp__year=now.year, timestamp__month=now.month).count()
+
+    def get_current_month_ai_cost(self):
+        from django.utils import timezone
+        from django.db.models import Sum
+        now = timezone.now()
+        total = self.ai_usage_logs.filter(timestamp__year=now.year, timestamp__month=now.month).aggregate(Sum('total_cost'))['total_cost__sum']
+        return total or 0.0
+
+    def get_top_ai_users(self, limit=3):
+        from django.db.models import Count
+        return self.ai_usage_logs.values('user__first_name', 'user__last_name', 'user__username').annotate(query_count=Count('id')).order_by('-query_count')[:limit]
+
 class Department(models.Model):
     company = models.ForeignKey(Company, on_delete=models.CASCADE, related_name='departments')
     name = models.CharField(max_length=255)

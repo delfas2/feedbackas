@@ -1,13 +1,14 @@
 import requests
 import json
 from django.conf import settings
+from decimal import Decimal
+from feedbackas.models import AIUsageLog
 
-
-class FeedbackGenerator:
+class OpenRouterService:
     @staticmethod
-    def _call_openrouter(prompt):
+    def _call_openrouter(prompt, user=None, company=None, request_type='general'):
         """
-        Siunčia užklausą į OpenRouter API ir grąžina atsakymą.
+        Siunčia užklausą į OpenRouter API ir grąžina atsakymą bei rinka išlaidas.
         """
         api_key = settings.OPENROUTER_API_KEY
         model = getattr(settings, 'OPENROUTER_MODEL', 'google/gemma-3-27b-it:free')
@@ -35,12 +36,31 @@ class FeedbackGenerator:
         response.raise_for_status()
 
         data = response.json()
+        
+        # Sukuriame loginį įrašą
+        if user or company:
+            usage = data.get('usage', {})
+            prompt_tokens = usage.get('prompt_tokens', 0)
+            completion_tokens = usage.get('completion_tokens', 0)
+            total_cost = usage.get('total_cost', 0.0)
+            
+            AIUsageLog.objects.create(
+                user=user,
+                company=company,
+                request_type=request_type,
+                model_name=model,
+                prompt_tokens=prompt_tokens,
+                completion_tokens=completion_tokens,
+                total_cost=Decimal(str(total_cost)),
+                raw_response=data
+            )
+            
         return data['choices'][0]['message']['content']
 
     @staticmethod
-    def generate(ratings, keywords, comments, existing_feedback, colleague_name):
+    def generate(ratings, keywords, comments, existing_feedback, colleague_name, user=None, company=None):
         """
-        Generuoja grįžtamąjį ryšį naudojant OpenRouter API (Gemma).
+        Generuoja grįžtamąjį ryšį naudojant OpenRouter API.
         """
         prompt = f"""
         Veik kaip konkretus, kolegiškas komandos narys, būk empatiškas ir teik konstruktyvią kritiką.
@@ -99,10 +119,12 @@ class FeedbackGenerator:
         Tekstas turi būti motyvuojantis, profesionalus ir aiškus. Nenaudok Markdown formatavimo.
         """
 
-        return FeedbackGenerator._call_openrouter(prompt)
+        return OpenRouterService._call_openrouter(
+            prompt, user=user, company=company, request_type='feedback_generation'
+        )
 
     @staticmethod
-    def extract_strengths_weaknesses(feedback_text, comments_text):
+    def extract_strengths_weaknesses(feedback_text, comments_text, user=None, company=None):
         """
         Iš tekstinio atsiliepimo išveda stiprybes ir tobulintinas sritis JSON formatu.
         """
@@ -131,7 +153,9 @@ class FeedbackGenerator:
         """
 
         try:
-            response_text = FeedbackGenerator._call_openrouter(prompt)
+            response_text = OpenRouterService._call_openrouter(
+                prompt, user=user, company=company, request_type='feedback_analysis'
+            )
         except Exception as e:
             print(f"Failed to extract traits: {e}")
             return {"strengths": [], "improvements": []}

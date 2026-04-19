@@ -131,14 +131,28 @@ class FeedbackAnalytics:
             'recommended_trainings': recommended_trainings,
         }
 
-def generate_ai_feedback_task(ratings, keywords, comments, existing_feedback, colleague_name):
-    from .ai_service import FeedbackGenerator
-    return FeedbackGenerator.generate(
+def generate_ai_feedback_task(ratings, keywords, comments, existing_feedback, colleague_name, user_id=None):
+    from .ai_service import OpenRouterService
+    from django.contrib.auth.models import User
+    
+    user = None
+    company = None
+    if user_id:
+        try:
+            user = User.objects.get(id=user_id)
+            if hasattr(user, 'profile') and user.profile.company_link:
+                company = user.profile.company_link
+        except User.DoesNotExist:
+            pass
+
+    return OpenRouterService.generate(
         ratings=ratings,
         keywords=keywords,
         comments=comments,
         existing_feedback=existing_feedback,
-        colleague_name=colleague_name
+        colleague_name=colleague_name,
+        user=user,
+        company=company
     )
 
 class TeamAnalytics:
@@ -238,17 +252,21 @@ def extract_feedback_features_task(feedback_id):
     naudojant Google Gemini ir išsaugoti jas atgal į Feedback modelį.
     """
     from .models import Feedback
-    from .ai_service import FeedbackGenerator
+    from .ai_service import OpenRouterService
     import logging
     
     logger = logging.getLogger(__name__)
     
     try:
         feedback = Feedback.objects.get(id=feedback_id)
+        user = feedback.feedback_request.requester
+        company = user.profile.company_link if hasattr(user, 'profile') else None
         
-        extracted_data = FeedbackGenerator.extract_strengths_weaknesses(
+        extracted_data = OpenRouterService.extract_strengths_weaknesses(
             feedback.feedback, 
-            feedback.comments
+            feedback.comments,
+            user=user,
+            company=company
         )
         
         # Update the feedback object with extracted data

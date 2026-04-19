@@ -49,6 +49,7 @@ urlpatterns = [
     path('management/assign/', views.assign_to_department, name='assign_to_department'),
     path('superadmin/', views.superadmin_dashboard, name='superadmin_dashboard'),
     path('superadmin/companies/', views.superadmin_companies_list, name='superadmin_companies_list'),
+    path('superadmin/ai-analytics/', views.superadmin_ai_analytics, name='superadmin_ai_analytics'),
     path('superadmin/companies/create/', views.superadmin_create_company, name='superadmin_create_company'),
     path('superadmin/companies/create/template/', views.superadmin_download_employee_template, name='superadmin_download_employee_template'),
     path('superadmin/companies/<int:company_id>/toggle-status/', views.superadmin_toggle_company, name='superadmin_toggle_company'),

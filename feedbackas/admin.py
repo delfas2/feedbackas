@@ -18,3 +18,37 @@ class UserAdmin(BaseUserAdmin):
 # Re-register UserAdmin
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
+
+from feedbackas.models import AIUsageLog
+from django.db.models import Sum
+
+@admin.register(AIUsageLog)
+class AIUsageLogAdmin(admin.ModelAdmin):
+    list_display = ('user', 'company', 'request_type', 'total_cost', 'timestamp')
+    list_filter = ('company', 'request_type', 'timestamp', 'user')
+    search_fields = ('user__username', 'user__first_name', 'user__last_name', 'company__name')
+    readonly_fields = ('raw_response',)
+
+    def changelist_view(self, request, extra_context=None):
+        response = super().changelist_view(request, extra_context)
+        try:
+            qs = response.context_data['cl'].queryset
+            total_cost_sum = qs.aggregate(Sum('total_cost'))['total_cost__sum'] or 0.0
+            total_prompts = qs.aggregate(Sum('prompt_tokens'))['prompt_tokens__sum'] or 0
+            total_completions = qs.aggregate(Sum('completion_tokens'))['completion_tokens__sum'] or 0
+        except (AttributeError, KeyError):
+            total_cost_sum = 0.0
+            total_prompts = 0
+            total_completions = 0
+            
+        extra_info = f"Atfiltruotų užklausų suma: {total_cost_sum:.4f}$, Prompt žetonai: {total_prompts}, Completion žetonai: {total_completions}"
+        
+        my_context = {
+            'title': f'{self.opts.verbose_name_plural} | {extra_info}'
+        }
+        if extra_context:
+            my_context.update(extra_context)
+            
+        if hasattr(response, 'context_data'):
+            response.context_data.update(my_context)
+        return response
