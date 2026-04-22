@@ -12,9 +12,9 @@ services:
     command: sh -c "npm install && npm run build && python manage.py collectstatic --noinput && python manage.py migrate && gunicorn feedbackas.wsgi:application --bind 0.0.0.0:8000 --workers 3"
     volumes:
       - .:/app
-    # Port mapping added for local access
-    ports:
-      - "8000:8000"
+    # Port mapping no longer needed; Traefik will route to the container directly
+    expose:
+      - "8000"
     labels:
       - traefik.enable=true
       - traefik.http.routers.kudosly.rule=Host(`kudosly.lt`) || Host(`www.kudosly.lt`)
