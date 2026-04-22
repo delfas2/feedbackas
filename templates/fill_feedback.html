@@ -422,11 +422,12 @@
                                 Raktiniai žodžiai
                             </label>
                             <div class="mt-1 flex rounded-md shadow-sm">
-                                <input type="text" name="keywords" id="keywords"
-                                    placeholder="pvz., komandiškas darbas, iniciatyvumas, analitinis mąstymas..."
+                                <input type="hidden" name="keywords" id="keywords">
+                                <input type="text" id="keyword-input-display"
+                                    placeholder="Įveskite žodį ir spauskite Enter arba kablelį..."
                                     class="flex-1 block w-full rounded-none rounded-l-md px-3 py-2 border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-purple-500 sm:text-sm">
                                 <button type="button" id="open-keyword-modal"
-                                    class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-gray-300 bg-bg-secondary text-text-muted text-sm hover:bg-bg-secondary">
+                                    class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-primary bg-purple-50 text-primary text-sm hover:bg-purple-100 transition-colors animate-pulse" title="Atidaryti žodžių debesį">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
                                         viewBox="0 0 24 24" stroke="currentColor">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -434,6 +435,7 @@
                                     </svg>
                                 </button>
                             </div>
+                            <div id="selected-keywords-container" class="mt-2 flex flex-wrap gap-2 empty:hidden"></div>
                         </div>
 
                         <!-- Keyword Modal -->
@@ -648,6 +650,8 @@
             const closeKeywordModalBtn = document.getElementById('close-keyword-modal');
             const keywordCloud = document.getElementById('keyword-cloud');
             const keywordsInput = document.getElementById('keywords');
+            const keywordInputDisplay = document.getElementById('keyword-input-display');
+            const selectedKeywordsContainer = document.getElementById('selected-keywords-container');
 
             // Keyword cloud: always show the default generic keyword cloud
             const positiveKeywords = [
@@ -676,51 +680,92 @@
                 'Neetiškas elgesys', 'Nepagarba', 'Apatija', 'Neigiamas požiūris', 'Komunikacijos stoka', 'Negebėjimas priimti sprendimų'
             ];
 
-            positiveKeywords.forEach(keyword => {
-                const keywordEl = document.createElement('span');
-                keywordEl.textContent = keyword;
-                keywordEl.className = 'cursor-pointer bg-green-100 text-green-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
-                keywordEl.addEventListener('click', () => {
-                    if (keywordsInput.value) {
-                        keywordsInput.value += ', ' + keyword;
-                    } else {
-                        keywordsInput.value = keyword;
-                    }
-                    keywordEl.style.display = 'none';
-                });
-                keywordCloud.appendChild(keywordEl);
-            });
+            const allKeywordEls = [];
 
-            neutralKeywords.forEach(keyword => {
-                const keywordEl = document.createElement('span');
-                keywordEl.textContent = keyword;
-                keywordEl.className = 'cursor-pointer bg-yellow-100 text-yellow-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
-                keywordEl.addEventListener('click', () => {
-                    if (keywordsInput.value) {
-                        keywordsInput.value += ', ' + keyword;
+            function syncKeywordCloud() {
+                const currentKeywords = keywordsInput.value.split(',').map(s => s.trim()).filter(s => s);
+                const lowerKeywords = currentKeywords.map(s => s.toLowerCase());
+                
+                // Atnaujinti modalo žodžių stilių
+                allKeywordEls.forEach(item => {
+                    if (lowerKeywords.includes(item.keyword.toLowerCase())) {
+                        item.el.classList.add('opacity-60', 'ring-2', 'ring-offset-2', 'ring-primary');
+                        item.isSelected = true;
                     } else {
-                        keywordsInput.value = keyword;
+                        item.el.classList.remove('opacity-60', 'ring-2', 'ring-offset-2', 'ring-primary');
+                        item.isSelected = false;
                     }
-                    keywordEl.style.display = 'none';
                 });
-                keywordCloud.appendChild(keywordEl);
-            });
 
-            negativeKeywords.forEach(keyword => {
-                const keywordEl = document.createElement('span');
-                keywordEl.textContent = keyword;
-                keywordEl.className = 'cursor-pointer bg-red-100 text-red-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded-full';
-                keywordEl.addEventListener('click', () => {
-                    if (keywordsInput.value) {
-                        keywordsInput.value += ', ' + keyword;
-                    } else {
-                        keywordsInput.value = keyword;
-                    }
-                    keywordEl.style.display = 'none';
+                // Perpiešti burbuliukus po laukeliu
+                selectedKeywordsContainer.innerHTML = '';
+                currentKeywords.forEach(keyword => {
+                    const chip = document.createElement('span');
+                    chip.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 transition-all hover:bg-purple-200';
+                    chip.innerHTML = `${keyword} <button type="button" class="ml-1.5 text-purple-500 hover:text-purple-700 focus:outline-none">&times;</button>`;
+                    
+                    chip.querySelector('button').addEventListener('click', () => {
+                        const newKeywords = keywordsInput.value.split(',').map(s => s.trim()).filter(s => s && s.toLowerCase() !== keyword.toLowerCase());
+                        keywordsInput.value = newKeywords.join(', ');
+                        syncKeywordCloud();
+                    });
+
+                    selectedKeywordsContainer.appendChild(chip);
                 });
-                keywordCloud.appendChild(keywordEl);
-            });
+            }
+
+            if (keywordInputDisplay) {
+                keywordInputDisplay.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ',') {
+                        e.preventDefault();
+                        const newWord = keywordInputDisplay.value.trim();
+                        // Išvalome nereikalingus kablelius ar tarpus
+                        const cleanedWord = newWord.replace(/,$/, '').trim();
+                        if (cleanedWord) {
+                            const current = keywordsInput.value.split(',').map(s => s.trim()).filter(s => s);
+                            if (!current.map(k => k.toLowerCase()).includes(cleanedWord.toLowerCase())) {
+                                current.push(cleanedWord);
+                                keywordsInput.value = current.join(', ');
+                            }
+                            keywordInputDisplay.value = '';
+                            syncKeywordCloud();
+                        }
+                    }
+                });
+            }
+
+            function createKeywordEl(keyword, baseClass) {
+                const el = document.createElement('span');
+                el.textContent = keyword;
+                el.className = `cursor-pointer text-sm font-medium px-2.5 py-0.5 rounded-full transition-all duration-200 select-none ${baseClass}`;
+                
+                const item = { keyword: keyword, el: el, isSelected: false };
+                allKeywordEls.push(item);
+
+                el.addEventListener('click', () => {
+                    let current = keywordsInput.value.split(',').map(s => s.trim()).filter(s => s);
+                    
+                    if (!item.isSelected) {
+                        if (!current.map(k => k.toLowerCase()).includes(keyword.toLowerCase())) {
+                            current.push(keyword);
+                        }
+                    } else {
+                        current = current.filter(k => k.toLowerCase() !== keyword.toLowerCase());
+                    }
+                    
+                    keywordsInput.value = current.join(', ');
+                    syncKeywordCloud();
+                });
+                
+                keywordCloud.appendChild(el);
+            }
+
+            positiveKeywords.forEach(k => createKeywordEl(k, 'bg-green-100 text-green-800'));
+            neutralKeywords.forEach(k => createKeywordEl(k, 'bg-yellow-100 text-yellow-800'));
+            negativeKeywords.forEach(k => createKeywordEl(k, 'bg-red-100 text-red-800'));
+
             openKeywordModalBtn.addEventListener('click', () => {
+                syncKeywordCloud();
                 keywordModal.classList.remove('hidden');
             });
 
@@ -733,6 +778,8 @@
                     keywordModal.classList.add('hidden');
                 }
             });
+            // Pradinė sinchronizacija (jei laukelis jau turi reikšmių)
+            syncKeywordCloud();
         });
     </script>
 

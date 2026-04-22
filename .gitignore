@@ -67,3 +67,5 @@ dmypy.json
 
 # Pyre
 .pyre/
+# Local docker compose overrides
+docker-compose.override.yml
