@@ -159,7 +159,9 @@ def get_team_members(request):
         logger = logging.getLogger(__name__)
         logger.error(f"Database error fetching team_members for {user.username}: {e}")
         
-    data = [{'id': member.id, 'name': member.get_full_name() or member.username} for member in team_members_qs]
+    from feedbackas.converters import HashIdConverter
+    converter = HashIdConverter()
+    data = [{'id': converter.to_url(member.id), 'name': member.get_full_name() or member.username} for member in team_members_qs]
     return JsonResponse(data, safe=False)
 
 @login_required
@@ -191,7 +193,10 @@ def request_feedback(request):
             )
             feedback_request_ids.append(feedback_request.id)
             
-        return JsonResponse({'success': True, 'feedback_request_ids': feedback_request_ids})
+        from feedbackas.converters import HashIdConverter
+        converter = HashIdConverter()
+        encoded_ids = [converter.to_url(fid) for fid in feedback_request_ids]
+        return JsonResponse({'success': True, 'feedback_request_ids': encoded_ids})
     return JsonResponse({'success': False, 'errors': 'Invalid request method'})
 
 @login_required
@@ -562,6 +567,9 @@ def get_feedback_data(request):
         created_at__year=year
     ).select_related('requested_to', 'feedback').order_by('created_at')
     
+    from feedbackas.converters import HashIdConverter
+    converter = HashIdConverter()
+    
     data = []
     for fr in all_requests:
         respondent = fr.requested_to.get_full_name() or fr.requested_to.username
@@ -589,7 +597,7 @@ def get_feedback_data(request):
             status = 'empty'
             
         data.append({
-            'id': fr.id,
+            'id': converter.to_url(fr.id),
             'label': label,
             'status': status,
             'feedback_details': feedback_details

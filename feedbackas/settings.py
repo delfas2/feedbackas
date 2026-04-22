@@ -33,6 +33,8 @@ if not SECRET_KEY:
         from django.core.exceptions import ImproperlyConfigured
         raise ImproperlyConfigured("Saugumo klaida: projektas paleistas produkcijoje be nustatyto SECRET_KEY!")
 
+HASHIDS_SALT = SECRET_KEY
+
 ALLOWED_HOSTS = ['127.0.0.1', '172.28.117.18', '*', 'home-lab.taild43829.ts.net']
 
 CSRF_TRUSTED_ORIGINS = [
