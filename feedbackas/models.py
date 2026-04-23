@@ -28,6 +28,7 @@ class Feedback(models.Model):
     keywords = models.CharField(max_length=255)
     comments = models.TextField(blank=True)
     feedback = models.TextField()
+    created_at = models.DateTimeField(default=timezone.now)
 
     # AI išskirtos savybės iš atsiliepimo ir komentaro
     extracted_strengths = models.JSONField(default=list, blank=True)

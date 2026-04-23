@@ -44,13 +44,17 @@
         <!-- Tabs -->
         <div class="border-b border-gray-200 mb-6 pb-2">
             <nav class="flex space-x-6 text-sm font-medium" aria-label="Tabs">
-                <button id="btn-tab-assigned" class="flex items-center gap-2 border-b-2 border-purple-600 text-primary pb-2 px-1 hover:text-primary transition">
+                <button id="btn-tab-assigned"
+                    class="flex items-center gap-2 border-b-2 border-purple-600 text-primary pb-2 px-1 hover:text-primary transition">
                     Užduotys man
-                    <span class="bg-bg-secondary text-primary py-0.5 px-2 rounded-full text-xs font-semibold">{{ assigned_requests.count }}</span>
+                    <span class="bg-bg-secondary text-primary py-0.5 px-2 rounded-full text-xs font-semibold">{{
+                        assigned_requests.count }}</span>
                 </button>
-                <button id="btn-tab-made" class="flex items-center gap-2 border-b-2 border-transparent text-text-muted pb-2 px-1 hover:text-text-main hover:border-gray-300 transition">
+                <button id="btn-tab-made"
+                    class="flex items-center gap-2 border-b-2 border-transparent text-text-muted pb-2 px-1 hover:text-text-main hover:border-gray-300 transition">
                     Mano išsiųsti prašymai
-                    <span class="bg-bg-secondary text-text-muted py-0.5 px-2 rounded-full text-xs font-semibold">{{ made_requests.count }}</span>
+                    <span class="bg-bg-secondary text-text-muted py-0.5 px-2 rounded-full text-xs font-semibold">{{
+                        made_requests.count }}</span>
                 </button>
             </nav>
         </div>
@@ -88,10 +92,12 @@
                                     class="font-medium text-primary">{{ name }}</span></p>
                             {% endwith %}
                             {% endwith %}
-                            {% if request.comment %}<p class="text-sm text-text-muted mt-1">Komentaras: {{ request.comment }}</p>{% endif %}
+                            {% if request.comment %}<p class="text-sm text-text-muted mt-1">Komentaras: {{
+                                request.comment }}</p>{% endif %}
                             <div class="flex items-center mt-2 space-x-3 text-xs">
                                 {% if request.status == 'pending' %}
-                                <span class="bg-bg-secondary text-secondary px-2 py-0.5 rounded-full font-medium">Laukiama
+                                <span
+                                    class="bg-bg-secondary text-secondary px-2 py-0.5 rounded-full font-medium">Laukiama
                                     atsakymo</span>
                                 {% if request.due_date %}
                                 <span class="text-text-muted flex items-center">
@@ -157,7 +163,7 @@
                             <h3 class="text-lg font-semibold text-text-main">{{ request.project_name }}</h3>
                             {% with reqto=request.requested_to %}
                             {% with name=reqto.get_full_name|default:reqto.username %}
-                            <p class="text-text-muted text-sm">Atsiliepimo prašoma iš: <span
+                            <p class="text-text-muted text-sm">Atsiliepimas iš: <span
                                     class="font-medium text-primary">{{ name }}</span></p>
                             {% endwith %}
                             {% endwith %}
@@ -181,9 +187,18 @@
                         <button type="button" data-project="{{ request.project_name }}"
                             data-rname="{{ request.requested_to.get_full_name|default:request.requested_to.username }}"
                             data-rating="{{ request.feedback.rating }}"
-                            data-date="{{ request.feedback.created_at|date:'Y-m-d' }}"
+                            data-date="{{ request.feedback.created_at|default:request.created_at|date:'Y-m-d' }}"
                             data-feedback="{{ request.feedback.feedback|default:'' }}"
-                            data-comments="{{ request.feedback.comments|default:'' }}" onclick="openViewModal(this)"
+                            data-comments="{{ request.feedback.comments|default:'' }}"
+                            data-teamwork="{{ request.feedback.teamwork_rating }}"
+                            data-communication="{{ request.feedback.communication_rating }}"
+                            data-initiative="{{ request.feedback.initiative_rating }}"
+                            data-technical="{{ request.feedback.technical_skills_rating }}"
+                            data-problem="{{ request.feedback.problem_solving_rating }}"
+                            data-keywords="{{ request.feedback.keywords|default:'' }}" {% if
+                            request.feedback.trait_ratings.exists %}
+                            data-traits='[{% for tr in request.feedback.trait_ratings.all %}{"name": "{{ tr.trait.name|escapejs }}", "rating": {{ tr.rating }}}{% if not forloop.last %},{% endif %}{% endfor %}]'
+                            {% endif %} onclick="openViewModal(this)"
                             class="block w-full md:w-auto text-center px-6 py-2 bg-bg-main border border-gray-300 text-text-main font-medium rounded-lg hover:bg-bg-secondary transition-colors">
                             Peržiūrėti
                         </button>
@@ -224,13 +239,22 @@
 </main>
 
 <!-- Edit Modal -->
-<div id="editModal" class="fixed inset-0 overflow-y-auto bg-black/40 backdrop-blur-md flex items-center justify-center p-4 z-50 transition-all duration-500 hidden" style="z-index: 50;">
-    <div class="bg-white/95 w-full max-w-md rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.2)] overflow-hidden transition-all animate-in fade-in zoom-in duration-300 border border-white/20">
-        
+<div id="editModal"
+    class="fixed inset-0 overflow-y-auto bg-black/40 backdrop-blur-md flex items-center justify-center p-4 z-50 transition-all duration-500 hidden"
+    style="z-index: 50;">
+    <div
+        class="bg-white/95 w-full max-w-md rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.2)] overflow-hidden transition-all animate-in fade-in zoom-in duration-300 border border-white/20">
+
         <div class="px-6 sm:px-8 pt-8 pb-4 flex justify-between items-center">
             <h2 class="text-2xl font-extrabold tracking-tight text-gray-900" id="modal-title">Redaguoti Užklausą</h2>
-            <button type="button" onclick="closeEditModal()" class="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            <button type="button" onclick="closeEditModal()"
+                class="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                    class="lucide lucide-x">
+                    <path d="M18 6 6 18" />
+                    <path d="m6 6 12 12" />
+                </svg>
             </button>
         </div>
 
@@ -238,49 +262,83 @@
             {% csrf_token %}
             <div class="px-6 sm:px-8 py-2">
                 <p class="text-text-muted mb-5 text-[14px]">
-                    Keičiate atsiliepimo prašymą naudotojui <span id="modalReceiverName" class="font-bold text-gray-700"></span>.
+                    Keičiate atsiliepimo prašymą naudotojui <span id="modalReceiverName"
+                        class="font-bold text-gray-700"></span>.
                 </p>
                 <div class="space-y-5">
-                    
+
                     <div class="space-y-1.5">
-                        <label for="modal_project_name" class="text-[13px] font-bold text-gray-400 uppercase tracking-wider ml-1">Projekto pavadinimas *</label>
+                        <label for="modal_project_name"
+                            class="text-[13px] font-bold text-gray-400 uppercase tracking-wider ml-1">Projekto
+                            pavadinimas *</label>
                         <div class="relative group">
-                            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors z-10">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-briefcase"><path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/><rect width="20" height="14" x="2" y="6" rx="2"/></svg>
+                            <div
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors z-10">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-briefcase">
+                                    <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                                    <rect width="20" height="14" x="2" y="6" rx="2" />
+                                </svg>
                             </div>
-                            <input type="text" id="modal_project_name" name="project_name" required class="w-full bg-gray-50 border border-transparent focus:border-blue-500/30 focus:bg-white focus:ring-4 focus:ring-blue-500/10 rounded-2xl py-3.5 pl-11 pr-4 outline-none transition-all text-[15px] text-gray-700">
+                            <input type="text" id="modal_project_name" name="project_name" required
+                                class="w-full bg-gray-50 border border-transparent focus:border-blue-500/30 focus:bg-white focus:ring-4 focus:ring-blue-500/10 rounded-2xl py-3.5 pl-11 pr-4 outline-none transition-all text-[15px] text-gray-700">
                         </div>
                     </div>
 
                     <div class="space-y-1.5">
-                        <label for="modal_comment" class="text-[13px] font-bold text-gray-400 uppercase tracking-wider ml-1">Jūsų žinutė / komentaras</label>
+                        <label for="modal_comment"
+                            class="text-[13px] font-bold text-gray-400 uppercase tracking-wider ml-1">Jūsų žinutė /
+                            komentaras</label>
                         <div class="relative group">
-                            <div class="absolute left-4 top-4 text-gray-400 group-focus-within:text-blue-500 transition-colors z-10">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-message-square"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            <div
+                                class="absolute left-4 top-4 text-gray-400 group-focus-within:text-blue-500 transition-colors z-10">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-message-square">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                </svg>
                             </div>
-                            <textarea id="modal_comment" name="comment" rows="3" class="w-full bg-gray-50 border border-transparent focus:border-blue-500/30 focus:bg-white focus:ring-4 focus:ring-blue-500/10 rounded-2xl py-3.5 pl-11 pr-4 outline-none transition-all text-[15px] text-gray-700 resize-none"></textarea>
+                            <textarea id="modal_comment" name="comment" rows="3"
+                                class="w-full bg-gray-50 border border-transparent focus:border-blue-500/30 focus:bg-white focus:ring-4 focus:ring-blue-500/10 rounded-2xl py-3.5 pl-11 pr-4 outline-none transition-all text-[15px] text-gray-700 resize-none"></textarea>
                         </div>
                     </div>
 
                     <div class="space-y-1.5">
-                        <label for="modal_due_date" class="text-[13px] font-bold text-gray-400 uppercase tracking-wider ml-1">Terminas *</label>
+                        <label for="modal_due_date"
+                            class="text-[13px] font-bold text-gray-400 uppercase tracking-wider ml-1">Terminas *</label>
                         <div class="relative group">
-                            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors pointer-events-none z-10">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/></svg>
+                            <div
+                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors pointer-events-none z-10">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                    stroke-linejoin="round" class="lucide lucide-calendar">
+                                    <path d="M8 2v4" />
+                                    <path d="M16 2v4" />
+                                    <rect width="18" height="18" x="3" y="4" rx="2" />
+                                    <path d="M3 10h18" />
+                                </svg>
                             </div>
-                            <input type="date" id="modal_due_date" name="due_date" required class="w-full bg-gray-50 border border-transparent focus:border-blue-500/30 focus:bg-white focus:ring-4 focus:ring-blue-500/10 rounded-2xl py-3.5 pl-11 pr-4 outline-none transition-all text-[15px] text-gray-700">
+                            <input type="date" id="modal_due_date" name="due_date" required
+                                class="w-full bg-gray-50 border border-transparent focus:border-blue-500/30 focus:bg-white focus:ring-4 focus:ring-blue-500/10 rounded-2xl py-3.5 pl-11 pr-4 outline-none transition-all text-[15px] text-gray-700">
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="p-6 sm:p-8 flex gap-3">
-                <button type="button" onclick="closeEditModal()" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 py-4 rounded-2xl font-bold text-[15px] transition-all active:scale-95">
+                <button type="button" onclick="closeEditModal()"
+                    class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 py-4 rounded-2xl font-bold text-[15px] transition-all active:scale-95">
                     Atšaukti
                 </button>
-                <button type="submit" class="flex-[2] bg-[#2d4a77] hover:bg-[#233a5e] text-white px-4 sm:px-8 py-4 rounded-2xl font-bold text-[15px] shadow-lg shadow-blue-900/20 flex flex-row items-center justify-center gap-2 transition-all active:scale-95">
+                <button type="submit"
+                    class="flex-[2] bg-[#2d4a77] hover:bg-[#233a5e] text-white px-4 sm:px-8 py-4 rounded-2xl font-bold text-[15px] shadow-lg shadow-blue-900/20 flex flex-row items-center justify-center gap-2 transition-all active:scale-95">
                     Išsaugoti
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-check"><path d="M20 6 9 17l-5-5"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                        class="lucide lucide-check">
+                        <path d="M20 6 9 17l-5-5" />
+                    </svg>
                 </button>
             </div>
         </form>
@@ -302,7 +360,7 @@
     function closeEditModal() {
         document.getElementById('editModal').classList.add('hidden');
     }
-    
+
     // Tabs functionality
     document.addEventListener('DOMContentLoaded', () => {
         const btnAssigned = document.getElementById('btn-tab-assigned');
