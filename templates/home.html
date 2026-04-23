@@ -1,11 +1,17 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 <link href="https://cdn.jsdelivr.net/npm/tom-select@2.4.1/dist/css/tom-select.css" rel="stylesheet">
 <main class="flex-1 overflow-x-hidden overflow-y-auto bg-bg-secondary">
     <header class="bg-bg-main shadow p-4 flex justify-between items-center"
         data-company-active="{{ is_company_active|yesno:'true,false' }}">
-        <h2 class="text-xl font-bold text-text-main">Pagrindinis</h2>
+        <div class="flex items-center space-x-3">
+            <a href="{% url 'home' %}" class="md:hidden flex items-center">
+                <img src="{% static 'images/logo.png' %}" alt="Kudosly.lt" class="h-8 w-auto object-contain">
+            </a>
+            <h2 class="text-xl font-bold text-text-main">Pagrindinis</h2>
+        </div>
         <div class="flex space-x-2">
             <a href="#" id="request-feedback-btn"
                 class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg shadow-sm hover:bg-primary/90 transition-colors">
