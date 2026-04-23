@@ -183,7 +183,7 @@
                         </div>
                     </div>
                     <div class="w-full md:w-auto">
-                        {% if request.status == 'completed' %}
+                        {% if request.status == 'completed' and request.feedback %}
                         <button type="button" data-project="{{ request.project_name }}"
                             data-rname="{{ request.requested_to.get_full_name|default:request.requested_to.username }}"
                             data-rating="{{ request.feedback.rating }}"
@@ -195,8 +195,7 @@
                             data-initiative="{{ request.feedback.initiative_rating }}"
                             data-technical="{{ request.feedback.technical_skills_rating }}"
                             data-problem="{{ request.feedback.problem_solving_rating }}"
-                            data-keywords="{{ request.feedback.keywords|default:'' }}" {% if
-                            request.feedback.trait_ratings.exists %}
+                            data-keywords="{{ request.feedback.keywords|default:'' }}" {% if request.feedback.trait_ratings.exists %}
                             data-traits='[{% for tr in request.feedback.trait_ratings.all %}{"name": "{{ tr.trait.name|escapejs }}", "rating": {{ tr.rating }}}{% if not forloop.last %},{% endif %}{% endfor %}]'
                             {% endif %} onclick="openViewModal(this)"
                             class="block w-full md:w-auto text-center px-6 py-2 bg-bg-main border border-gray-300 text-text-main font-medium rounded-lg hover:bg-bg-secondary transition-colors">
