@@ -47,14 +47,12 @@
                 <button id="btn-tab-assigned"
                     class="flex items-center gap-2 border-b-2 border-purple-600 text-primary pb-2 px-1 hover:text-primary transition">
                     Užduotys man
-                    <span class="bg-bg-secondary text-primary py-0.5 px-2 rounded-full text-xs font-semibold">{{
-                        assigned_requests.count }}</span>
+                    <span class="bg-bg-secondary text-primary py-0.5 px-2 rounded-full text-xs font-semibold">{{ assigned_requests.count }}</span>
                 </button>
                 <button id="btn-tab-made"
                     class="flex items-center gap-2 border-b-2 border-transparent text-text-muted pb-2 px-1 hover:text-text-main hover:border-gray-300 transition">
                     Mano išsiųsti prašymai
-                    <span class="bg-bg-secondary text-text-muted py-0.5 px-2 rounded-full text-xs font-semibold">{{
-                        made_requests.count }}</span>
+                    <span class="bg-bg-secondary text-text-muted py-0.5 px-2 rounded-full text-xs font-semibold">{{ made_requests.count }}</span>
                 </button>
             </nav>
         </div>
@@ -92,8 +90,7 @@
                                     class="font-medium text-primary">{{ name }}</span></p>
                             {% endwith %}
                             {% endwith %}
-                            {% if request.comment %}<p class="text-sm text-text-muted mt-1">Komentaras: {{
-                                request.comment }}</p>{% endif %}
+                            {% if request.comment %}<p class="text-sm text-text-muted mt-1">Komentaras: {{ request.comment }}</p>{% endif %}
                             <div class="flex items-center mt-2 space-x-3 text-xs">
                                 {% if request.status == 'pending' %}
                                 <span
