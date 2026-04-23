@@ -41,7 +41,7 @@ class AIUsageLogAdmin(admin.ModelAdmin):
             total_prompts = 0
             total_completions = 0
             
-        extra_info = f"Atfiltruotų užklausų suma: {total_cost_sum:.4f}$, Prompt žetonai: {total_prompts}, Completion žetonai: {total_completions}"
+        extra_info = f"Atfiltruotų užklausų suma: {total_cost_sum:.6f}$, Prompt žetonai: {total_prompts}, Completion žetonai: {total_completions}"
         
         my_context = {
             'title': f'{self.opts.verbose_name_plural} | {extra_info}'

@@ -73,7 +73,7 @@ class AIUsageLog(models.Model):
     model_name = models.CharField(max_length=100)
     prompt_tokens = models.IntegerField(default=0)
     completion_tokens = models.IntegerField(default=0)
-    total_cost = models.DecimalField(max_digits=10, decimal_places=6, default=0.0)
+    total_cost = models.DecimalField(max_digits=15, decimal_places=10, default=0.0)
     raw_response = models.JSONField(blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 

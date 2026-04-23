@@ -42,7 +42,8 @@ class OpenRouterService:
             usage = data.get('usage', {})
             prompt_tokens = usage.get('prompt_tokens', 0)
             completion_tokens = usage.get('completion_tokens', 0)
-            total_cost = usage.get('total_cost', 0.0)
+            # OpenRouter dažniausiai grąžina 'cost', bet kai kurie modeliai/atsakymai gali turėti 'total_cost'
+            total_cost = usage.get('cost') or usage.get('total_cost', 0.0)
             
             AIUsageLog.objects.create(
                 user=user,
