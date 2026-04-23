@@ -235,32 +235,36 @@ def fill_feedback(request, request_id):
             feedback = form.save(commit=False)
             feedback.feedback_request = feedback_request
             
-            # Išsaugome atsiliepimą, kad turėtume jo ID
-            feedback.save()
-            feedback_request.status = 'completed'
-            feedback_request.save()
+            # Užtikriname, kad pakoreguotas tekstas būtų paimtas, jei form.save(commit=False) jo neužpildė
+            if 'feedback' in request.POST:
+                feedback.feedback = request.POST.get('feedback')
             
-            # AI Išskyrimas (Stiprybės ir Tobulintinos sritys) - Foninė užduotis
-            from django_q.tasks import async_task
-            async_task('feedbackas.services.extract_feedback_features_task', feedback.id)
+            feedback.save()
             
             # Save trait ratings if this is a questionnaire-based feedback
             if feedback_request.questionnaire:
-                from .models import TraitRating, Trait
+                from .models import TraitRating
                 for trait in feedback_request.questionnaire.traits.all():
                     trait_rating_value = request.POST.get(f'trait_rating_{trait.id}', 0)
                     try:
                         trait_rating_value = int(trait_rating_value)
                     except (ValueError, TypeError):
                         trait_rating_value = 0
-                    TraitRating.objects.create(
+                    TraitRating.objects.update_or_create(
                         feedback=feedback,
                         trait=trait,
-                        rating=trait_rating_value
+                        defaults={'rating': trait_rating_value}
                     )
             
-            messages.success(request, 'Jūsų įvertinimas išsiųstas.')
+            feedback_request.status = 'completed'
+            feedback_request.save()
             
+            # AI Išskyrimas (Stiprybės ir Tobulintinos sritys) - Foninė užduotis
+            # Perkeliame čia, kad užtikrintume, jog feedback.feedback jau yra DB
+            from django_q.tasks import async_task
+            async_task('feedbackas.services.extract_feedback_features_task', feedback.id)
+            
+            messages.success(request, 'Jūsų įvertinimas išsiųstas.')
             return redirect('home')
     else:
         form = FeedbackForm()
