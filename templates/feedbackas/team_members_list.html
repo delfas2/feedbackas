@@ -4,22 +4,23 @@
 
 {% block content %}
 <!-- 2. Pagrindinis Turinys -->
-<main class="flex-1 overflow-y-auto bg-bg-secondary h-screen">
+<main class="flex-1 overflow-y-auto bg-bg-secondary">
 
     <!-- Viršutinė juosta -->
-    <header class="bg-bg-main shadow-sm p-4 flex justify-between items-center">
-        <!-- Mobilus Meniu Mygtukas -->
-        <button class="md:hidden p-2 text-text-muted">
-            <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-        </button>
+    <header class="bg-bg-main border-b border-gray-100 h-[72px] px-4 flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <!-- Mobilus Meniu Mygtukas -->
+            <button class="md:hidden p-2 text-text-muted">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+            </button>
 
-        <h1 class="text-2xl font-bold text-text-main hidden md:block">
-            Komandos Nariai 👥
-        </h1>
-
+            <h1 class="text-2xl font-bold text-text-main hidden md:block">
+                Komandos nariai
+            </h1>
+        </div>
         <div class="flex space-x-3">
         </div>
     </header>
