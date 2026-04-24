@@ -10,6 +10,7 @@ class FeedbackRequest(models.Model):
     comment = models.TextField(blank=True, null=True)
     due_date = models.DateField()
     status = models.CharField(max_length=20, default='pending')
+    is_self_initiated = models.BooleanField(default=False, help_text='True jei atsiliepimas inicijuotas paties vertintojo, o ne paprašytas')
     created_at = models.DateTimeField(default=timezone.now)
 
     def __str__(self):

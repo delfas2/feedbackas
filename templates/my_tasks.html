@@ -86,8 +86,13 @@
                                 {{ request.project_name }}</h3>
                             {% with req=request.requester %}
                             {% with name=req.get_full_name|default:req.username %}
+                            {% if request.is_self_initiated %}
+                            <p class="text-text-muted text-sm">Atsiliepimas apie: <span
+                                    class="font-medium text-primary">{{ name }}</span></p>
+                            {% else %}
                             <p class="text-text-muted text-sm">Atsiliepimą inicijavo: <span
                                     class="font-medium text-primary">{{ name }}</span></p>
+                            {% endif %}
                             {% endwith %}
                             {% endwith %}
                             {% if request.comment %}<p class="text-sm text-text-muted mt-1">Komentaras: {{ request.comment }}</p>{% endif %}
@@ -117,7 +122,7 @@
                         {% if request.status == 'pending' %}
                         <a href="{% url 'fill_feedback' request.id %}"
                             class="block w-full md:w-auto text-center px-6 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors">
-                            Pildyti atsiliepimą
+                            {% if request.is_self_initiated %}Tęsti pildymą{% else %}Pildyti atsiliepimą{% endif %}
                         </a>
                         {% else %}
                         <span

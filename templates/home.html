@@ -92,7 +92,11 @@
                             <!-- Vidurys: Tekstas -->
                             <div class="flex-grow">
                                 <h3 class="text-[17px] font-semibold text-text-main leading-tight">
+                                    {% if fr.is_self_initiated %}
+                                    Atsiliepimas apie: {{ fr.requester.get_full_name|default:fr.requester.username }}
+                                    {% else %}
                                     Atsiliepimo prašo: {{ fr.requester.get_full_name|default:fr.requester.username }}
+                                    {% endif %}
                                 </h3>
                                 <p class="text-[14px] text-text-main mt-1 leading-snug font-medium">
                                     {{ fr.project_name }}
@@ -119,13 +123,13 @@
                             <div class="flex flex-col gap-2 ml-4 min-w-[110px]">
                                 <a href="{% url 'fill_feedback' fr.id %}"
                                     class="flex items-center justify-center gap-1.5 bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-xl text-[14px] font-bold shadow-sm transition-all active:scale-95"
-                                    title="Pildyti">
+                                    title="{% if fr.is_self_initiated %}Tęsti pildymą{% else %}Pildyti{% endif %}">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
                                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                                         stroke-linejoin="round" class="lucide lucide-check">
                                         <path d="M20 6 9 17l-5-5" />
                                     </svg>
-                                    Pildyti
+                                    {% if fr.is_self_initiated %}Tęsti{% else %}Pildyti{% endif %}
                                 </a>
                                 <form action="{% url 'reject_feedback_request' fr.id %}" method="POST"
                                     class="w-full m-0"

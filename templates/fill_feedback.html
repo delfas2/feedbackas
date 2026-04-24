@@ -807,6 +807,7 @@
             });
             // Pradinė sinchronizacija (jei laukelis jau turi reikšmių)
             syncKeywordCloud();
+            window.syncKeywordCloud = syncKeywordCloud;
 
             // --- AI mygtuko validacijos logika ---
             const generateBtn = document.getElementById('generate-ai-btn');
@@ -977,6 +978,114 @@
                         btn.disabled = false;
                     });
             });
+        });
+    </script>
+
+    <!-- Auto-save / Restore juodraštis -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const STORAGE_KEY = 'feedback_draft_{{ feedback_request.id }}';
+
+            function getDraftData() {
+                try {
+                    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
+                } catch(e) {
+                    return {};
+                }
+            }
+
+            function saveDraft() {
+                const data = {};
+
+                // Savybių įvertinimai
+                document.querySelectorAll('.competency-battery input[type="hidden"]').forEach(input => {
+                    data['rating_' + input.name] = input.value;
+                });
+
+                // Raktiniai žodžiai
+                data.keywords = document.getElementById('keywords').value;
+
+                // Komentarai
+                data.comments = document.getElementById('comments').value;
+
+                // AI sugeneruotas / redaguotas tekstas
+                data.feedback = document.getElementById('feedback').value;
+
+                // Ar buvo matomas feedback konteineris
+                data.feedbackVisible = !document.getElementById('final-feedback-container').classList.contains('hidden');
+                data.submitVisible = !document.getElementById('submit-feedback-btn').classList.contains('hidden');
+
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+            }
+
+            function restoreDraft() {
+                const data = getDraftData();
+                if (!data || Object.keys(data).length === 0) return;
+
+                // Atkurti savybių įvertinimus
+                document.querySelectorAll('.competency-battery').forEach(container => {
+                    const input = container.querySelector('input[type="hidden"]');
+                    if (!input) return;
+                    const savedValue = data['rating_' + input.name];
+                    if (savedValue && parseInt(savedValue) > 0) {
+                        // Simuliuoti paspaudimą ant tinkamo lygio
+                        const btn = container.querySelector(`[data-level="${savedValue}"]`);
+                        if (btn) {
+                            btn.click();
+                        }
+                    }
+                });
+
+                // Atkurti raktinius žodžius
+                if (data.keywords) {
+                    document.getElementById('keywords').value = data.keywords;
+                    // Iššaukti sinchronizaciją (burbuliukai + debesis)
+                    if (typeof window.syncKeywordCloud === 'function') {
+                        window.syncKeywordCloud();
+                    }
+                    // Atnaujinti AI mygtuko būseną
+                    if (typeof updateGenerateButtonState === 'function') {
+                        updateGenerateButtonState();
+                    }
+                }
+
+                // Atkurti komentarus
+                if (data.comments) {
+                    document.getElementById('comments').value = data.comments;
+                }
+
+                // Atkurti feedback tekstą
+                if (data.feedback) {
+                    document.getElementById('feedback').value = data.feedback;
+                }
+
+                // Atkurti matomumą
+                if (data.feedbackVisible) {
+                    document.getElementById('final-feedback-container').classList.remove('hidden');
+                }
+                if (data.submitVisible) {
+                    document.getElementById('submit-feedback-btn').classList.remove('hidden');
+                }
+            }
+
+            // Atkurti juodraštį krovimo metu
+            // Šiek tiek palaukiame, kad kiti skriptai (baterijos, raktažodžiai) būtų inicializuoti
+            setTimeout(restoreDraft, 100);
+
+            // Automatiškai saugoti kas 2 sekundes
+            setInterval(saveDraft, 2000);
+
+            // Saugoti kai keičiasi laukai
+            document.getElementById('comments').addEventListener('input', saveDraft);
+            document.getElementById('feedback').addEventListener('input', saveDraft);
+
+            // Išvalyti juodraštį siunčiant formą
+            const form = document.querySelector('form[method="POST"]');
+            if (form) {
+                form.addEventListener('submit', function() {
+                    localStorage.removeItem(STORAGE_KEY);
+                });
+            }
         });
     </script>
 </body>

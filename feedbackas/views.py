@@ -254,7 +254,8 @@ def send_feedback(request, user_id):
         requested_to=requested_to,
         project_name='Atsiliepimas',
         comment='',
-        due_date=date.today()
+        due_date=date.today(),
+        is_self_initiated=True
     )
     
     return redirect('fill_feedback', request_id=feedback_request.id)
@@ -468,8 +469,8 @@ def team_members_list(request):
 
 @login_required
 def my_tasks_list(request):
-    # Feedback requests made by the current user
-    made_requests = FeedbackRequest.objects.filter(requester=request.user).select_related('requested_to', 'feedback').order_by('-due_date')
+    # Feedback requests made by the current user (excluding self-initiated evaluations from others)
+    made_requests = FeedbackRequest.objects.filter(requester=request.user, is_self_initiated=False).select_related('requested_to', 'feedback').order_by('-due_date')
 
     # Feedback requests assigned to the current user (tasks to do)
     assigned_requests = FeedbackRequest.objects.filter(requested_to=request.user).select_related('requester').order_by('-due_date')
