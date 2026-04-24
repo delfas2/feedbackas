@@ -161,7 +161,23 @@ def get_team_members(request):
         
     from feedbackas.converters import HashIdConverter
     converter = HashIdConverter()
-    data = [{'id': converter.to_url(member.id), 'name': member.get_full_name() or member.username} for member in team_members_qs]
+    
+    # Gauti narių ID, kuriems jau yra laukianti užklausa
+    pending_requester_ids = set(
+        FeedbackRequest.objects.filter(
+            requested_to=user,
+            status='pending'
+        ).values_list('requester_id', flat=True)
+    )
+    
+    data = [
+        {
+            'id': converter.to_url(member.id), 
+            'name': member.get_full_name() or member.username,
+            'has_pending': member.id in pending_requester_ids
+        } 
+        for member in team_members_qs
+    ]
     return JsonResponse(data, safe=False)
 
 @login_required
@@ -177,11 +193,22 @@ def request_feedback(request):
         due_date = request.POST.get('due_date')
         
         feedback_request_ids = []
+        skipped_names = []
         for requested_to_id in requested_to_ids:
             requested_to = get_object_or_404(User, id=requested_to_id)
             
             if requested_to.profile.company_link != request.user.profile.company_link:
                 # Gynyba naršyklės DOM inspekcijoms
+                continue
+            
+            # Patikrinti, ar jau yra neužpildytas prašymas šiam žmogui
+            existing_pending = FeedbackRequest.objects.filter(
+                requester=requester,
+                requested_to=requested_to,
+                status='pending'
+            ).exists()
+            if existing_pending:
+                skipped_names.append(requested_to.get_full_name() or requested_to.username)
                 continue
             
             feedback_request = FeedbackRequest.objects.create(
@@ -196,7 +223,11 @@ def request_feedback(request):
         from feedbackas.converters import HashIdConverter
         converter = HashIdConverter()
         encoded_ids = [converter.to_url(fid) for fid in feedback_request_ids]
-        return JsonResponse({'success': True, 'feedback_request_ids': encoded_ids})
+        response_data = {'success': True, 'feedback_request_ids': encoded_ids}
+        if skipped_names:
+            response_data['skipped'] = skipped_names
+            response_data['skipped_message'] = f'Praleisti nariai (jau turi laukiančią užklausą): {", ".join(skipped_names)}'
+        return JsonResponse(response_data)
     return JsonResponse({'success': False, 'errors': 'Invalid request method'})
 
 @login_required
@@ -207,6 +238,16 @@ def send_feedback(request, user_id):
         
     requester = get_object_or_404(User, id=user_id)
     requested_to = request.user
+    
+    # Patikrinti, ar jau yra neužpildytas prašymas nuo šio žmogaus
+    existing_pending = FeedbackRequest.objects.filter(
+        requester=requester,
+        requested_to=requested_to,
+        status='pending'
+    ).exists()
+    if existing_pending:
+        messages.warning(request, f'Jūs jau turite neužpildytą atsiliepimo užklausą nuo {requester.get_full_name() or requester.username}. Pirmiau užpildykite esamą.')
+        return redirect('home')
     
     feedback_request = FeedbackRequest.objects.create(
         requester=requester,
@@ -360,6 +401,14 @@ def team_members_list(request):
                 requester__in=all_members, status='pending'
             ).count()
             
+            # ID sąrašas narių, kuriems jau išsiųsta laukianti užklausa
+            pending_from_me_ids = set(
+                FeedbackRequest.objects.filter(
+                    requested_to=user,
+                    status='pending'
+                ).values_list('requester_id', flat=True)
+            )
+            
             context = {
                 'has_sub_departments': True,
                 'department_blocks': department_blocks,
@@ -367,6 +416,7 @@ def team_members_list(request):
                 'search_query': None,
                 'overall_avg_rating': overall_avg_rating,
                 'pending_feedback_count': pending_feedback_count,
+                'pending_from_me_ids': pending_from_me_ids,
             }
             return render(request, 'feedbackas/team_members_list.html', context)
         
@@ -397,12 +447,21 @@ def team_members_list(request):
     overall_avg_rating = Feedback.objects.filter(feedback_request__requester__in=team_members_qs).aggregate(Avg('rating'))['rating__avg']
     pending_feedback_count = FeedbackRequest.objects.filter(requester__in=team_members_qs, status='pending').count()
 
+    # ID sąrašas narių, kuriems jau išsiųsta laukianti užklausa
+    pending_from_me_ids = set(
+        FeedbackRequest.objects.filter(
+            requested_to=user,
+            status='pending'
+        ).values_list('requester_id', flat=True)
+    )
+    
     context = {
         'has_sub_departments': False,
         'team_members': team_members,
         'search_query': query,
         'overall_avg_rating': overall_avg_rating,
         'pending_feedback_count': pending_feedback_count,
+        'pending_from_me_ids': pending_from_me_ids,
     }
     
     return render(request, 'feedbackas/team_members_list.html', context)

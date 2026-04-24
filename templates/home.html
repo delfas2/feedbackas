@@ -433,7 +433,10 @@
                     data.forEach(member => {
                         const option = document.createElement('option');
                         option.value = member.id;
-                        option.textContent = member.name;
+                        option.textContent = member.name + (member.has_pending ? ' (laukiama užpildymo)' : '');
+                        if (member.has_pending) {
+                            option.disabled = true;
+                        }
                         sendToMemberSelect.appendChild(option);
                     });
                     window.tsSendToMember = new TomSelect('#send-to-member', {
@@ -490,6 +493,9 @@
                 .then(data => {
                     if (data.success) {
                         feedbackModal.classList.add('hidden');
+                        if (data.skipped_message) {
+                            alert(data.skipped_message);
+                        }
                         window.location.reload();
                     } else {
                         console.error(data.errors);
