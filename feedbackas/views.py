@@ -506,46 +506,35 @@ def my_tasks_list(request):
 @require_POST
 def cancel_feedback_request(request, request_id):
     """
-    Suteikia galimybę atšaukti (ištrinti) prašymą, kol jis dar nėra 'completed'.
+    Suteikia galimybę ištrinti prašymą, kurį sukūrė vartotojas.
     """
     feedback_request = get_object_or_404(FeedbackRequest, id=request_id)
 
     # Patikriname ar esamas vartotojas yra prašymo autorius
     if feedback_request.requester != request.user:
-        messages.error(request, 'Neturite teisių atšaukti šio prašymo.')
+        messages.error(request, 'Neturite teisių ištrinti šio prašymo.')
         return redirect('my_tasks_list')
         
-    # Patikriname ar prašymas dar nebaigtas (galima atšaukti tik 'pending')
-    if feedback_request.status != 'pending':
-        messages.error(request, 'Negalima atšaukti jau įvertinto arba užbaigto prašymo.')
-        return redirect('my_tasks_list')
-
-    # Jei viskas gerai - triname
     feedback_request.delete()
-    messages.success(request, 'Atsiliepimo prašymas sėkmingai atšauktas.')
-    
+    messages.success(request, 'Atsiliepimo prašymas sėkmingai ištrintas.')
     return redirect('my_tasks_list')
 
 @login_required
 @require_POST
 def reject_feedback_request(request, request_id):
     """
-    Leidžia vartotojui (kurio prašoma atsiliepimo) atmesti prašymą.
+    Leidžia vartotojui (kurio prašoma atsiliepimo) ištrinti (atmesti) prašymą.
     """
     feedback_request = get_object_or_404(FeedbackRequest, id=request_id)
 
     if feedback_request.requested_to != request.user:
-        messages.error(request, 'Neturite teisių atmesti šio prašymo.')
-        return redirect('home')
+        messages.error(request, 'Neturite teisių ištrinti šio prašymo.')
+        return redirect('my_tasks_list')
         
-    if feedback_request.status != 'pending':
-        messages.error(request, 'Dabar negalite atmesti šio prašymo.')
-        return redirect('home')
-
     feedback_request.delete()
-    messages.success(request, 'Atsiliepimo prašymas atmestas.')
+    messages.success(request, 'Atsiliepimo užklausa sėkmingai ištrinta.')
     
-    return redirect('home')
+    return redirect('my_tasks_list')
 
 @login_required
 def edit_feedback_request(request, request_id):

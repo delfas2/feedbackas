@@ -21,76 +21,11 @@
         </h1>
 
         <div class="flex space-x-3">
-            <!-- Paieška -->
-            <form method="get" action="" class="relative hidden md:block">
-                <input type="text" name="q" value="{{ search_query|default:'' }}" placeholder="Ieškoti..."
-                    class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary focus:border-purple-500 text-sm">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-text-muted" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                        fill="currentColor">
-                        <path fill-rule="evenodd"
-                            d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
-                            clip-rule="evenodd" />
-                    </svg>
-                </div>
-            </form>
-
-            <a href="#"
-                class="px-4 py-2 text-sm font-medium text-white bg-primary rounded-lg shadow-sm hover:bg-primary/90 transition-colors flex items-center">
-                <svg class="w-5 h-5 mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                Pridėti narį
-            </a>
         </div>
     </header>
 
-    <!-- Turinys -->
-    <div class="p-6 md:p-8">
-
-        <!-- Komandos Statistika -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-bg-main p-4 rounded-2xl shadow-sm border border-purple-100 flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-text-muted">Iš viso narių</p>
-                    <p class="text-2xl font-bold text-text-main">{{ team_members|length }}</p>
-                </div>
-                <div class="bg-bg-secondary p-2 rounded-lg">
-                    <svg class="w-6 h-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.998-2.55m-3.002 2.55a9.094 9.094 0 0 1-3.741-.479 3 3 0 0 1-4.998-2.55m3.002 2.55a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0 4.998-2.55m-3.002 2.55a3 3 0 0 1-4.998-2.55m0 0a9.094 9.094 0 0 1-3.741-.479 3 3 0 0 1-4.998-2.55M12 9.75a3 3 0 0 1 0-3 3 3 0 0 1 0 3z" />
-                    </svg>
-                </div>
-            </div>
-            <div class="bg-bg-main p-4 rounded-2xl shadow-sm border border-purple-100 flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-text-muted">Vidutinis Įvertinimas</p>
-                    <p class="text-2xl font-bold text-text-main">{{ overall_avg_rating|default:"N/A"|floatformat:1 }}<span class="text-sm font-normal text-text-muted">/4</span></p>
-                </div>
-                <div class="bg-green-50 p-2 rounded-lg">
-                    <svg class="w-6 h-6 text-accent" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M2.25 18L9 11.25l4.306 4.307a11.95 11.95 0 015.814-5.519l2.74-1.22m0 0l-5.94-2.28m5.94 2.28l-2.28 5.941" />
-                    </svg>
-                </div>
-            </div>
-            <div class="bg-bg-main p-4 rounded-2xl shadow-sm border border-purple-100 flex items-center justify-between">
-                <div>
-                    <p class="text-sm text-text-muted">Laukiantys Atsiliepimai</p>
-                    <p class="text-2xl font-bold text-text-main">{{ pending_feedback_count }}</p>
-                </div>
-                <div class="bg-orange-50 p-2 rounded-lg">
-                    <svg class="w-6 h-6 text-orange-500" xmlns="http://www.w3.org/2000/svg" fill="none"
-                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                </div>
-            </div>
-        </div>
+        <!-- Turinys -->
+        <div class="p-6 md:p-8">
 
         {% if has_sub_departments %}
         <!-- Hierarchical: Department Blocks -->
