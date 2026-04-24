@@ -56,36 +56,57 @@ def home(request):
     except OperationalError as e:
         logger.error(f"Database operational error fetching company for {request.user.username}: {e}")
     
-    # Recent team activity
+    # Recent team activity — visos įmonės veikla
     recent_activity = []
     
-    # Recent feedbacks received about this user
-    recent_received = Feedback.objects.filter(
-        feedback_request__requester=request.user,
-        feedback_request__status='completed'
-    ).select_related('feedback_request__requested_to').order_by('-feedback_request__created_at')[:5]
-    for fb in recent_received:
-        person = fb.feedback_request.requested_to
-        recent_activity.append({
-            'initials': (person.first_name[:1] + person.last_name[:1]).upper() if person.first_name and person.last_name else '??',
-            'name': person.get_full_name(),
-            'action': f'pateikė atsiliepimą apie jus.',
-            'date': fb.feedback_request.created_at,
-        })
+    try:
+        user_company = request.user.profile.company_link
+    except (Profile.DoesNotExist, AttributeError):
+        user_company = None
     
-    # Recent pending requests for this user
-    recent_pending = FeedbackRequest.objects.filter(
-        requested_to=request.user,
-        status='pending'
-    ).select_related('requester').order_by('-created_at')[:5]
-    for fr in recent_pending:
-        person = fr.requester
-        recent_activity.append({
-            'initials': (person.first_name[:1] + person.last_name[:1]).upper() if person.first_name and person.last_name else '??',
-            'name': person.get_full_name(),
-            'action': f'paprašė jūsų atsiliepimo.',
-            'date': fr.created_at,
-        })
+    if user_company:
+        # Neseniai užbaigti atsiliepimai komandoje
+        recent_completed = Feedback.objects.filter(
+            feedback_request__requester__profile__company_link=user_company,
+            feedback_request__status='completed'
+        ).select_related(
+            'feedback_request__requested_to',
+            'feedback_request__requester'
+        ).order_by('-feedback_request__created_at')[:10]
+        
+        for fb in recent_completed:
+            writer = fb.feedback_request.requested_to
+            about = fb.feedback_request.requester
+            is_self = fb.feedback_request.is_self_initiated
+            
+            if is_self:
+                action_text = f'įvertino {about.get_full_name() or about.username}.'
+                person = writer
+            else:
+                action_text = f'pateikė atsiliepimą apie {about.get_full_name() or about.username}.'
+                person = writer
+            
+            recent_activity.append({
+                'initials': (person.first_name[:1] + person.last_name[:1]).upper() if person.first_name and person.last_name else '??',
+                'name': person.get_full_name() or person.username,
+                'action': action_text,
+                'date': fb.feedback_request.created_at,
+            })
+        
+        # Neseniai sukurti prašymai komandoje
+        recent_requests = FeedbackRequest.objects.filter(
+            requester__profile__company_link=user_company,
+            is_self_initiated=False
+        ).select_related('requester', 'requested_to').order_by('-created_at')[:10]
+        
+        for fr in recent_requests:
+            person = fr.requester
+            recent_activity.append({
+                'initials': (person.first_name[:1] + person.last_name[:1]).upper() if person.first_name and person.last_name else '??',
+                'name': person.get_full_name() or person.username,
+                'action': f'paprašė atsiliepimo iš {fr.requested_to.get_full_name() or fr.requested_to.username}.',
+                'date': fr.created_at,
+            })
     
     # Sort by date descending, take top 5
     recent_activity.sort(key=lambda x: x['date'], reverse=True)
