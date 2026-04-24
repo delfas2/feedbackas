@@ -987,8 +987,8 @@ def superadmin_ai_analytics(request):
         company_labels.append(stat['company__name'] or 'Nepriskirta įmonė')
         company_costs.append(float(stat['total_cost']))
 
-    # Aggregate by user (Top 20)
-    user_stats = logs.values('user__first_name', 'user__last_name', 'user__username', 'company__name').annotate(
+    # Aggregate by user (Top 20) — neįtraukiame foninių užklausų (feedback_analysis)
+    user_stats = logs.exclude(request_type='feedback_analysis').values('user__first_name', 'user__last_name', 'user__username', 'company__name').annotate(
         total_cost=Sum('total_cost'),
         total_queries=Count('id')
     ).order_by('-total_cost')[:20]
