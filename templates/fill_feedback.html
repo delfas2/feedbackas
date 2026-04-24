@@ -489,18 +489,26 @@
 
                         <!-- 4. Mygtukai -->
                         <div class="flex justify-end space-x-4 pt-4">
-                            <button type="button" id="generate-ai-btn"
-                                class="inline-flex items-center px-5 py-2 text-sm font-medium text-text-main bg-bg-secondary rounded-lg shadow-sm hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors">
-                                <svg id="ai-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-text-main hidden"
-                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                        stroke-width="4"></circle>
-                                    <path class="opacity-75" fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                    </path>
-                                </svg>
-                                <span id="ai-btn-text">Generuoti (AI)</span>
-                            </button>
+                            <div class="relative group" id="generate-ai-btn-wrapper">
+                                <button type="button" id="generate-ai-btn" disabled
+                                    class="inline-flex items-center px-5 py-2 text-sm font-medium text-text-main bg-bg-secondary rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-bg-secondary hover:bg-gray-200">
+                                    <svg id="ai-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-text-main hidden"
+                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                            stroke-width="4"></circle>
+                                        <path class="opacity-75" fill="currentColor"
+                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                        </path>
+                                    </svg>
+                                    <span id="ai-btn-text">Generuoti (AI)</span>
+                                </button>
+                                <!-- Tooltip: rodomas tik kai mygtukas disabled -->
+                                <div id="ai-btn-tooltip"
+                                    class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-nowrap opacity-0 pointer-events-none transition-opacity duration-200 z-50">
+                                    <span id="ai-btn-tooltip-text">Pasirinkite visas savybes ir bent 3 raktinius žodžius</span>
+                                    <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
+                                </div>
+                            </div>
                             <button type="submit" id="submit-feedback-btn"
                                 class="hidden px-5 py-2 text-sm font-medium text-white bg-primary rounded-lg shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
                                 Siųsti Atsiliepimą
@@ -649,6 +657,10 @@
                     if (target) {
                         const level = parseInt(target.dataset.level, 10);
                         updateView(level);
+                        // Atnaujinti AI mygtuko būseną po kiekvieno pasirinkimo
+                        if (typeof updateGenerateButtonState === 'function') {
+                            updateGenerateButtonState();
+                        }
                     }
                 });
             });
@@ -738,6 +750,9 @@
                             }
                             keywordInputDisplay.value = '';
                             syncKeywordCloud();
+                            if (typeof updateGenerateButtonState === 'function') {
+                                updateGenerateButtonState();
+                            }
                         }
                     }
                 });
@@ -764,6 +779,9 @@
                     
                     keywordsInput.value = current.join(', ');
                     syncKeywordCloud();
+                    if (typeof updateGenerateButtonState === 'function') {
+                        updateGenerateButtonState();
+                    }
                 });
                 
                 keywordCloud.appendChild(el);
@@ -789,6 +807,65 @@
             });
             // Pradinė sinchronizacija (jei laukelis jau turi reikšmių)
             syncKeywordCloud();
+
+            // --- AI mygtuko validacijos logika ---
+            const generateBtn = document.getElementById('generate-ai-btn');
+            const tooltip = document.getElementById('ai-btn-tooltip');
+            const tooltipText = document.getElementById('ai-btn-tooltip-text');
+            const btnWrapper = document.getElementById('generate-ai-btn-wrapper');
+
+            window.updateGenerateButtonState = function() {
+                // 1. Patikrinti, ar visos savybės pasirinktos (value > 0)
+                const allBatteries = document.querySelectorAll('.competency-battery input[type="hidden"]');
+                let allRated = true;
+                let unratedCount = 0;
+                allBatteries.forEach(input => {
+                    // Ignoruojame paslėptus default competencies jei yra klausimynas
+                    const parentContainer = input.closest('#default-competencies');
+                    if (parentContainer && parentContainer.style.display === 'none') return;
+                    if (parseInt(input.value, 10) === 0) {
+                        allRated = false;
+                        unratedCount++;
+                    }
+                });
+
+                // 2. Patikrinti, ar yra bent 3 raktiniai žodžiai
+                const currentKeywords = keywordsInput.value.split(',').map(s => s.trim()).filter(s => s);
+                const hasEnoughKeywords = currentKeywords.length >= 3;
+
+                // 3. Nustatyti mygtuko būseną
+                const isValid = allRated && hasEnoughKeywords;
+                generateBtn.disabled = !isValid;
+
+                // 4. Tooltip žinutė
+                if (!isValid) {
+                    const issues = [];
+                    if (!allRated) issues.push('įvertinkite visas savybes');
+                    if (!hasEnoughKeywords) issues.push(`pasirinkite bent 3 raktinius žodžius (dabar: ${currentKeywords.length})`);
+                    tooltipText.textContent = 'Prašome ' + issues.join(' ir ');
+                }
+            };
+
+            // Tooltip rodymas tik kai mygtukas disabled
+            btnWrapper.addEventListener('mouseenter', () => {
+                if (generateBtn.disabled) {
+                    tooltip.classList.remove('opacity-0', 'pointer-events-none');
+                    tooltip.classList.add('opacity-100');
+                }
+            });
+            btnWrapper.addEventListener('mouseleave', () => {
+                tooltip.classList.add('opacity-0', 'pointer-events-none');
+                tooltip.classList.remove('opacity-100');
+            });
+
+            // Taip pat reaguoti kai raktažodžiai trinami per burbuliukus
+            const observer = new MutationObserver(() => {
+                updateGenerateButtonState();
+            });
+            observer.observe(selectedKeywordsContainer, { childList: true });
+
+            // Pradinė būsena
+            updateGenerateButtonState();
         });
     </script>
 
