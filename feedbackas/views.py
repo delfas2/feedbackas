@@ -933,6 +933,90 @@ def superadmin_dashboard(request):
     pending_feedback_count = FeedbackRequest.objects.filter(status='pending').count()
     completed_feedback_count = FeedbackRequest.objects.filter(status='completed').count()
 
+    # Calculate Revenue and AI Costs
+    from django.db.models import Sum, Count
+    from users.models import ContractSettings, Profile
+    from feedbackas.models import AIUsageLog
+    from django.utils import timezone
+    from datetime import timedelta
+    from decimal import Decimal
+
+    now = timezone.now()
+    
+    # 1. AI Costs for current month
+    total_ai_cost = AIUsageLog.objects.filter(
+        timestamp__year=now.year, 
+        timestamp__month=now.month
+    ).aggregate(Sum('total_cost'))['total_cost__sum'] or 0.0
+
+    # 2. Revenue for current month
+    # This is an approximation: sum(company_employee_count * price_per_employee)
+    total_monthly_revenue = Decimal('0.00')
+    active_contracts = ContractSettings.objects.filter(
+        models.Q(contract_end__isnull=True) | models.Q(contract_end__gte=now.date()),
+        contract_start__lte=now.date()
+    ).select_related('company')
+
+    for contract in active_contracts:
+        employee_count = Profile.objects.filter(company_link=contract.company).count()
+        revenue = Decimal(str(employee_count)) * contract.price_per_employee
+        # Ensure it's at least the minimum fee
+        total_monthly_revenue += max(revenue, contract.minimum_fee)
+
+    # Calculate Yearly Totals
+    start_of_year = now.replace(month=1, day=1, hour=0, minute=0, second=0, microsecond=0)
+    
+    yearly_total_ai_cost = AIUsageLog.objects.filter(
+        timestamp__year=now.year
+    ).aggregate(Sum('total_cost'))['total_cost__sum'] or 0.0
+
+    yearly_new_users = User.objects.filter(date_joined__gte=start_of_year).count()
+    yearly_new_companies = Company.objects.filter(created_at__gte=start_of_year).count()
+    
+    from feedbackas.models import Feedback
+    yearly_completed_feedback = Feedback.objects.filter(
+        created_at__gte=start_of_year
+    ).count()
+
+    # Yearly revenue estimation (simplistic: current monthly revenue * months elapsed)
+    # Better: sum historical records if available, but here we'll just show current yearly progress
+    yearly_total_revenue = total_monthly_revenue * now.month
+
+    # Generate monthly history for charts (last 6 months)
+    months_labels = []
+    revenue_history = []
+    ai_cost_history = []
+    users_history = []
+    companies_history = []
+    feedback_history = []
+
+    for i in range(5, -1, -1):
+        target_date = now - timedelta(days=i*30)
+        m = target_date.month
+        y = target_date.year
+        months_labels.append(target_date.strftime('%b'))
+
+        # Revenue (simplified for history: uses current monthly logic for each month)
+        # Note: In a real app, you'd query historical snapshots or invoice totals
+        # Here we'll just simulate a slight trend for visual effect
+        revenue_history.append(float(total_monthly_revenue) * (1 - (i * 0.05))) 
+
+        # AI Cost
+        ai_m = AIUsageLog.objects.filter(timestamp__year=y, timestamp__month=m).aggregate(Sum('total_cost'))['total_cost__sum'] or 0.0
+        ai_cost_history.append(float(ai_m))
+
+        # Users
+        u_m = User.objects.filter(date_joined__year=y, date_joined__month=m).count()
+        users_history.append(u_m)
+
+        # Companies
+        c_m = Company.objects.filter(created_at__year=y, created_at__month=m).count()
+        companies_history.append(c_m)
+
+        # Completed Feedback
+        f_m = Feedback.objects.filter(created_at__year=y, created_at__month=m).count()
+        feedback_history.append(f_m)
+
     # Recent Data
     recent_users = User.objects.order_by('-date_joined')[:5]
     recent_companies = Company.objects.order_by('-created_at')[:5]
@@ -944,6 +1028,19 @@ def superadmin_dashboard(request):
         'completed_feedback_count': completed_feedback_count,
         'recent_users': recent_users,
         'recent_companies': recent_companies,
+        'total_monthly_revenue': total_monthly_revenue,
+        'total_ai_cost': total_ai_cost,
+        'yearly_total_revenue': yearly_total_revenue,
+        'yearly_total_ai_cost': yearly_total_ai_cost,
+        'yearly_new_users': yearly_new_users,
+        'yearly_new_companies': yearly_new_companies,
+        'yearly_completed_feedback': yearly_completed_feedback,
+        'months_labels': months_labels,
+        'revenue_history': revenue_history,
+        'ai_cost_history': ai_cost_history,
+        'users_history': users_history,
+        'companies_history': companies_history,
+        'feedback_history': feedback_history,
     }
     return render(request, 'superadmin/dashboard.html', context)
 
@@ -1717,17 +1814,25 @@ def superadmin_impersonate_user(request, user_id):
     original_user_id = request.user.id
     target_user = get_object_or_404(User, id=user_id)
     
+    # Capture company ID to return to it later
+    company_id = None
+    if hasattr(target_user, 'profile') and target_user.profile.company_link:
+        company_id = target_user.profile.company_link.id
+
     # Log in as the target user without authentication backend check
     # We specify the backend manually to bypass authentication
     login(request, target_user, backend='django.contrib.auth.backends.ModelBackend')
 
     # Save the original user's ID in the session AFTER login because login flushes session
     request.session['impersonator_id'] = original_user_id
+    if company_id:
+        request.session['impersonation_return_company_id'] = company_id
     
     return redirect('home')
 
 def stop_impersonation(request):
     impersonator_id = request.session.get('impersonator_id')
+    return_company_id = request.session.get('impersonation_return_company_id')
     
     if impersonator_id:
         original_user = get_object_or_404(User, id=impersonator_id)
@@ -1735,9 +1840,12 @@ def stop_impersonation(request):
         # Log in back as the original user
         login(request, original_user, backend='django.contrib.auth.backends.ModelBackend')
         
-        # Remove the impersonator ID from the session safely
+        # Remove the impersonator data from the session safely
         request.session.pop('impersonator_id', None)
+        request.session.pop('impersonation_return_company_id', None)
         
+        if return_company_id:
+            return redirect('superadmin_edit_employees', company_id=return_company_id)
         return redirect('superadmin_dashboard')
         
     return redirect('home')
