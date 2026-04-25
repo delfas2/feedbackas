@@ -1,23 +1,22 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.db.models import Q, Count, Avg
+from django.db.models import Q, Count, Avg, Sum
 from .forms import RegistrationForm, FeedbackForm
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
-from .models import FeedbackRequest, Feedback
-from users.models import Profile
+from .models import FeedbackRequest, Feedback, AIUsageLog
+from users.models import Profile, ContractSettings, Department, Company
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.db import OperationalError
 from django.views.decorators.http import require_POST
 import json, traceback
-from django.db.models import Avg
 from django.db import models
 import logging
-from datetime import date
+from datetime import date, timedelta
+from decimal import Decimal
 from .services import FeedbackAnalytics
 from .ai_service import OpenRouterService
-from users.models import Department, Company
 from .forms import DepartmentForm
 from django.utils import timezone
 
@@ -933,14 +932,6 @@ def superadmin_dashboard(request):
     pending_feedback_count = FeedbackRequest.objects.filter(status='pending').count()
     completed_feedback_count = FeedbackRequest.objects.filter(status='completed').count()
 
-    # Calculate Revenue and AI Costs
-    from django.db.models import Sum, Count
-    from users.models import ContractSettings, Profile
-    from feedbackas.models import AIUsageLog
-    from django.utils import timezone
-    from datetime import timedelta
-    from decimal import Decimal
-
     now = timezone.now()
     
     # 1. AI Costs for current month
@@ -973,7 +964,6 @@ def superadmin_dashboard(request):
     yearly_new_users = User.objects.filter(date_joined__gte=start_of_year).count()
     yearly_new_companies = Company.objects.filter(created_at__gte=start_of_year).count()
     
-    from feedbackas.models import Feedback
     yearly_completed_feedback = Feedback.objects.filter(
         created_at__gte=start_of_year
     ).count()
