@@ -1,175 +1,173 @@
 {% extends 'superadmin/base_superadmin.html' %}
 
-{% block title %}Redaguoti darbuotojus - {{ company.name }}{% endblock %}
+{% block title %}Darbuotojai - {{ company.name }}{% endblock %}
 
 {% block content %}
-<main class="flex-1 overflow-y-auto bg-bg-secondary p-6">
-    <div class="max-w-7xl mx-auto">
-        <!-- Breadcrumb -->
-        <nav class="flex mb-4 text-text-muted text-sm">
-            <a href="{% url 'superadmin_companies_list' %}" class="hover:text-primary">Įmonės</a>
-            <span class="mx-2">/</span>
-            <a href="{% url 'superadmin_company_detail' company.id %}" class="hover:text-primary">{{ company.name
-                }}</a>
-            <span class="mx-2">/</span>
-            <span class="text-text-main">Darbuotojai</span>
-        </nav>
+<div class="min-h-screen bg-[#f8fafc] p-4 md:p-8 font-sans text-slate-900">
+  <div class="max-w-6xl mx-auto mb-8">
+    <!-- Breadcrumbs -->
+    <nav class="flex items-center text-sm text-slate-500 mb-4">
+      <a href="{% url 'superadmin_dashboard' %}" class="hover:text-indigo-600 cursor-pointer">Superadmin</a>
+      <i data-lucide="chevron-right" class="w-[14px] h-[14px] mx-2 opacity-50"></i>
+      <a href="{% url 'superadmin_companies_list' %}" class="hover:text-indigo-600 cursor-pointer">Įmonės</a>
+      <i data-lucide="chevron-right" class="w-[14px] h-[14px] mx-2 opacity-50"></i>
+      <a href="{% url 'superadmin_company_detail' company.id %}" class="hover:text-indigo-600 cursor-pointer">{{ company.name }}</a>
+      <i data-lucide="chevron-right" class="w-[14px] h-[14px] mx-2 opacity-50"></i>
+      <span class="text-slate-900 font-semibold">Darbuotojų valdymas</span>
+    </nav>
+    
+    <!-- Header Sekcija -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm mb-8">
+      <div class="flex items-center gap-5">
+        <div class="bg-indigo-600 h-14 w-14 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-200 shrink-0">
+          <i data-lucide="users" class="w-7 h-7"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl font-extrabold tracking-tight">Darbuotojai: {{ company.name }}</h1>
+          <p class="text-slate-500 text-sm mt-0.5">Pridėkite, importuokite arba šalinkite įmonės narius.</p>
+        </div>
+      </div>
+      <div class="flex gap-3">
+          <a href="{% url 'superadmin_company_detail' company.id %}" class="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 px-5 py-2.5 rounded-xl text-sm font-bold transition-all text-slate-700">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Grįžti į apžvalgą
+          </a>
+      </div>
+    </div>
 
-        <h1 class="text-2xl font-bold text-text-main mb-8">Redaguoti darbuotojus: {{ company.name }}</h1>
-
-
-
-        <!-- Add Employee Form -->
-        <div class="bg-bg-main rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
-            <h2 class="text-lg font-semibold text-text-main mb-4">Pridėti darbuotoją</h2>
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+        <!-- Pridėti darbuotoją -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-2 bg-indigo-50 text-indigo-600 rounded-lg">
+                    <i data-lucide="user-plus" class="w-5 h-5"></i>
+                </div>
+                <h2 class="text-lg font-bold text-slate-900">Pridėti darbuotoją</h2>
+            </div>
             <form action="{% url 'superadmin_add_employee' company.id %}" method="post" class="space-y-4">
                 {% csrf_token %}
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <div>
-                        <input type="text" name="first_name" placeholder="Vardas"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-purple-500">
-                    </div>
-                    <div>
-                        <input type="text" name="last_name" placeholder="Pavardė"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-purple-500">
-                    </div>
-                    <div>
-                        <input type="email" name="email" required placeholder="El. paštas *"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-purple-500">
-                    </div>
-                    <div>
-                        <input type="password" name="password" placeholder="Pradinis slaptažodis"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-purple-500">
-                    </div>
-                    <div class="lg:col-span-2 flex gap-4">
-                        <select name="department_id"
-                            class="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-purple-500 bg-bg-main">
-                            <option value="">Nepriskirta komandai (Bendra įmonė)</option>
-                            {% for dept in departments %}
-                            <option value="{{ dept.id }}">{{ dept.name }}</option>
-                            {% endfor %}
-                        </select>
-                        <button type="submit"
-                            class="px-8 py-2 bg-primary/90 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium whitespace-nowrap shadow-sm">
-                            Sukurti / Pridėti
-                        </button>
-                    </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <input type="text" name="first_name" placeholder="Vardas" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 text-sm transition-all">
+                    <input type="text" name="last_name" placeholder="Pavardė" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 text-sm transition-all">
+                </div>
+                <input type="email" name="email" required placeholder="El. paštas *" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 text-sm transition-all">
+                <input type="password" name="password" placeholder="Pradinis slaptažodis (neprivaloma)" class="w-full px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 text-sm transition-all">
+                
+                <div class="flex gap-3">
+                    <select name="department_id" class="flex-1 px-4 py-2.5 border border-slate-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-400 text-sm transition-all bg-white font-medium text-slate-700">
+                        <option value="">Bendra įmonė</option>
+                        {% for dept in departments %}
+                        <option value="{{ dept.id }}">{{ dept.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-md shadow-indigo-100 transition-all active:scale-95 whitespace-nowrap">
+                        Sukurti
+                    </button>
                 </div>
             </form>
         </div>
 
-        <!-- Import Employees Form -->
-        <div class="bg-bg-main rounded-xl shadow-sm p-6 border border-gray-100 mb-8">
-            <div class="flex items-center justify-between mb-4">
-                <h2 class="text-lg font-semibold text-text-main">Importuoti darbuotojus iš sąrašo</h2>
-                <a href="{% url 'superadmin_download_employee_template' %}"
-                    class="text-sm text-primary hover:text-primary font-medium flex items-center gap-1 transition-colors">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    Atsisiųsti pavyzdį
-                </a>
+        <!-- Importuoti darbuotojus -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+            <div>
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg">
+                            <i data-lucide="file-up" class="w-5 h-5"></i>
+                        </div>
+                        <h2 class="text-lg font-bold text-slate-900">Masinis importas</h2>
+                    </div>
+                    <a href="{% url 'superadmin_download_employee_template' %}" class="text-xs font-bold text-indigo-600 hover:underline flex items-center gap-1">
+                        <i data-lucide="download" class="w-3 h-3"></i> Pavyzdys
+                    </a>
+                </div>
+                <p class="text-xs text-slate-500 mb-4">Kelkite Excel (.xlsx) arba CSV failą su stulpeliais: vardas, pavardė, el_pastas, skyrius.</p>
             </div>
 
-            <form action="{% url 'superadmin_import_employees' company.id %}" method="post"
-                enctype="multipart/form-data" class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+            <form action="{% url 'superadmin_import_employees' company.id %}" method="post" enctype="multipart/form-data" class="space-y-4">
                 {% csrf_token %}
-                <div class="flex-1">
-                    <div class="flex items-center gap-4">
-                        <label for="employee_list"
-                            class="cursor-pointer px-4 py-2 bg-bg-secondary text-text-main rounded-lg hover:bg-gray-200 transition-colors font-medium border border-gray-300 shadow-sm flex items-center gap-2">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-text-muted" fill="none"
-                                viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                            </svg>
-                            Pasirinkti failą
-                        </label>
-                        <input type="file" id="employee_list" name="employee_list" class="hidden" required
-                            accept=".csv, .xlsx, .xls"
-                            onchange="document.getElementById('file-chosen-import').textContent = this.files[0] ? this.files[0].name : 'Failas nepasirinktas'">
-                        <span id="file-chosen-import" class="text-sm text-text-muted truncate max-w-xs">Failas
-                            nepasirinktas</span>
-                    </div>
-                    <p class="text-xs text-text-muted mt-2">Priimami formatai: CSV, Excel (.xlsx, .xls)</p>
+                <div class="relative group">
+                    <label for="employee_list" class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-200 rounded-2xl cursor-pointer bg-slate-50 hover:bg-slate-100 hover:border-indigo-300 transition-all">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 mb-2 group-hover:text-indigo-500 transition-colors"></i>
+                            <p id="file-chosen-import" class="text-xs text-slate-500 font-medium">Pasirinkite failą...</p>
+                        </div>
+                        <input type="file" id="employee_list" name="employee_list" class="hidden" required accept=".csv, .xlsx, .xls" onchange="document.getElementById('file-chosen-import').textContent = this.files[0] ? this.files[0].name : 'Failas nepasirinktas'">
+                    </label>
                 </div>
-                <button type="submit"
-                    class="px-8 py-2 bg-primary/90 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium whitespace-nowrap shadow-sm mt-4 sm:mt-0">
-                    Importuoti
+                <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3 rounded-xl transition-all active:scale-[0.98]">
+                    Vykdyti importą
                 </button>
             </form>
         </div>
+    </div>
 
-        <div class="bg-bg-main rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left text-sm text-text-muted">
-                    <thead class="bg-bg-secondary text-text-muted border-b border-gray-100">
-                        <tr>
-                            <th class="px-6 py-3 font-medium">Vardas</th>
-                            <th class="px-6 py-3 font-medium">El. paštas</th>
-                            <th class="px-6 py-3 font-medium">Departamentas</th>
-                            <th class="px-6 py-3 font-medium">Vadovas</th>
-                            <th class="px-6 py-3 font-medium text-right">Veiksmai</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        {% for profile in profiles %}
-                        <tr class="hover:bg-bg-secondary transition-colors">
-                            <td class="px-6 py-3 font-medium text-text-main">
-                                {% if profile.user.first_name or profile.user.last_name %}
-                                {{ profile.user.first_name }} {{ profile.user.last_name }}
-                                {% else %}
-                                {{ profile.user.username }}
-                                {% endif %}
-                            </td>
-                            <td class="px-6 py-3">{{ profile.user.email }}</td>
-                            <td class="px-6 py-3">
-                                {% if profile.department %}
-                                <span class="px-2 py-1 bg-bg-secondary text-secondary rounded-full text-xs font-semibold">
-                                    {{ profile.department.name }}
-                                </span>
-                                {% else %}
-                                <span class="text-text-muted">-</span>
-                                {% endif %}
-                            </td>
-                            <td class="px-6 py-3">
-                                {% if profile.manager %}
-                                {{ profile.manager.get_full_name }}
-                                {% else %}
-                                <span class="text-text-muted">-</span>
-                                {% endif %}
-                            </td>
-                            <td class="px-6 py-3 text-right flex items-center justify-end space-x-3">
-                                <a href="{% url 'superadmin_impersonate_user' profile.user.id %}"
-                                    class="text-secondary hover:text-secondary font-medium"
-                                    title="Prisijungti kaip šis vartotojas">
-                                    Peržiūrėti
+    <!-- Darbuotojų lentelė -->
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="bg-slate-50/80 border-b border-slate-100">
+                        <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Darbuotojas</th>
+                        <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest">Skyrius</th>
+                        <th class="px-6 py-4 text-[11px] font-bold text-slate-400 uppercase tracking-widest text-right">Veiksmai</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for profile in profiles %}
+                    <tr class="hover:bg-indigo-50/30 transition-all group">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-xl bg-slate-100 text-slate-500 flex items-center justify-center font-bold text-sm border border-slate-200 group-hover:border-indigo-200 group-hover:text-indigo-600 transition-all">
+                                    {{ profile.user.first_name|first|default:profile.user.username|first|upper }}{{ profile.user.last_name|first|upper }}
+                                </div>
+                                <div>
+                                    <div class="text-sm font-bold text-slate-900">{{ profile.user.get_full_name|default:profile.user.username }}</div>
+                                    <div class="text-xs text-slate-500 font-medium">{{ profile.user.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            {% if profile.department %}
+                            <span class="text-xs font-bold text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-100">
+                                {{ profile.department.name }}
+                            </span>
+                            {% else %}
+                            <span class="text-xs text-slate-400">Nepriskirta</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-all">
+                                <a href="{% url 'superadmin_impersonate_user' profile.user.id %}" title="Peržiūrėti kaip šis vartotojas" class="p-2 hover:bg-white hover:text-emerald-600 hover:shadow-sm border border-transparent rounded-xl text-slate-400 transition-all">
+                                    <i data-lucide="user-check" class="w-5 h-5"></i>
                                 </a>
-                                <a href="/admin/auth/user/{{ profile.user.id }}/change/" target="_blank"
-                                    class="text-text-muted hover:text-primary font-medium">
-                                    Redaguoti
+                                <a href="/admin/auth/user/{{ profile.user.id }}/change/" target="_blank" title="Redaguoti sistemoje" class="p-2 hover:bg-white hover:text-indigo-600 hover:shadow-sm border border-transparent rounded-xl text-slate-400 transition-all">
+                                    <i data-lucide="settings" class="w-5 h-5"></i>
                                 </a>
-                                <form action="{% url 'superadmin_remove_employee' company.id profile.user.id %}"
-                                    method="post"
-                                    onsubmit="return confirm('Ar tikrai norite pašalinti šį vartotoją iš įmonės?');">
+                                <form action="{% url 'superadmin_remove_employee' company.id profile.user.id %}" method="post" onsubmit="return confirm('Ar tikrai norite pašalinti šį vartotoją?');" class="inline">
                                     {% csrf_token %}
-                                    <button type="submit" class="text-red-400 hover:text-red-600 font-medium">
-                                        Šalinti
+                                    <button type="submit" title="Šalinti" class="p-2 hover:bg-white hover:text-rose-600 hover:shadow-sm border border-transparent rounded-xl text-slate-400 transition-all">
+                                        <i data-lucide="trash-2" class="w-5 h-5"></i>
                                     </button>
                                 </form>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="5" class="px-6 py-4 text-center text-text-muted">Nėra darbuotojų</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="px-6 py-12 text-center text-slate-400 italic">
+                            Nėra pridėtų darbuotojų
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
-</main>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script>
+  lucide.createIcons();
+</script>
 {% endblock %}
