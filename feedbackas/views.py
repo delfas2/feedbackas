@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.core.mail import send_mail
 from django.db.models import Q, Count, Avg, Sum
 from .forms import RegistrationForm, FeedbackForm
 from django.contrib.auth import login, logout
@@ -33,9 +34,28 @@ def index(request):
         return redirect('home')
         
     if request.method == 'POST':
-        # Here we could process request.POST.get('name'), email, message 
-        # and send an email or save to DB. For now we just show success.
-        messages.success(request, 'Ačiū! Jūsų užklausa gauta, netrukus su jumis susisieksime.')
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        phone = request.POST.get('phone')
+        employees = request.POST.get('employees', 'Nepasirinkta')
+        message = request.POST.get('message')
+        
+        subject = f"Nauja užklausa iš Kudosly.lt: {name}"
+        body = f"Vardas: {name}\nEl. paštas: {email}\nTelefonas: {phone}\nDarbuotojų skaičius: {employees}\n\nŽinutė:\n{message}"
+        
+        try:
+            send_mail(
+                subject,
+                body,
+                'info@kudosly.lt',  # From email
+                ['info@kudosly.lt'], # To email
+                fail_silently=False,
+            )
+            messages.success(request, 'Ačiū! Jūsų užklausa gauta, netrukus su jumis susisieksime.')
+        except Exception as e:
+            logger.error(f"Klaida siunčiant kontaktų formos el. laišką: {str(e)}")
+            messages.error(request, 'Apgailestaujame, įvyko klaida siunčiant žinutę. Bandykite vėliau arba rašykite tiesiogiai info@kudosly.lt.')
+            
         return redirect('index')
         
     return render(request, 'index.html')
