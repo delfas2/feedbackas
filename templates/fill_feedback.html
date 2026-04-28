@@ -1,1093 +1,721 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="lt">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kolegos Apklausa - Kudosly.lt</title>
-    <!-- Tailwind CSS CDN -->
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <!-- Google Fonts (Inter) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+{% block title %}Kolegos Apklausa - Kudosly.lt{% endblock %}
 
-        /* Slankiklio stilius */
-        input[type='range']::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #8B5CF6;
-            /* purple-500 */
-            border-radius: 50%;
-            cursor: pointer;
-            margin-top: -6px;
-            /* Centravimui */
-        }
+{% block style %}
+/* Slankiklio stilius */
+input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #8B5CF6;
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: -6px;
+}
 
-        input[type='range']::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: #8B5CF6;
-            border-radius: 50%;
-            cursor: pointer;
-        }
+input[type='range']::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #8B5CF6;
+    border-radius: 50%;
+    cursor: pointer;
+}
 
-        /* Nauji stiliai baterijos komponentui */
-        .competency-battery .battery-segment {
-            transition: all 0.3s ease-out;
-        }
+/* Nauji stiliai baterijos komponentui */
+.competency-battery .battery-segment {
+    transition: all 0.3s ease-out;
+}
 
-        .competency-battery .battery-segment.active {
-            color: white;
-        }
+.competency-battery .battery-segment.active {
+    color: white;
+}
 
-        .competency-battery .battery-segment.level-1.active {
-            background-color: #60A5FA;
-            /* blue-400 */
-        }
+.competency-battery .battery-segment.level-1.active {
+    background-color: #60A5FA; /* blue-400 */
+}
 
-        .competency-battery .battery-segment.level-2.active {
-            background-color: #A3E635;
-            /* lime-400 */
-        }
+.competency-battery .battery-segment.level-2.active {
+    background-color: #A3E635; /* lime-400 */
+}
 
-        .competency-battery .battery-segment.level-3.active {
-            background-color: #22C55E;
-            /* green-500 */
-        }
+.competency-battery .battery-segment.level-3.active {
+    background-color: #22C55E; /* green-500 */
+}
 
-        .competency-battery .battery-segment.level-4.active {
-            background-color: #9333EA;
-            /* purple-600 */
-        }
+.competency-battery .battery-segment.level-4.active {
+    background-color: #9333EA; /* purple-600 */
+}
 
-        .competency-battery .battery-label {
-            transition: opacity 0.3s ease-out;
-        }
+.competency-battery .battery-label {
+    transition: opacity 0.3s ease-out;
+}
 
-        .competency-battery .battery-label.active {
-            opacity: 1;
-        }
+.competency-battery .battery-label.active {
+    opacity: 1;
+}
 
-        .competency-battery .battery-label.inactive {
-            opacity: 0.4;
-        }
+.competency-battery .battery-label.inactive {
+    opacity: 0.4;
+}
 
-        .competency-battery .battery-label:not(.active):hover {
-            opacity: 0.7;
-        }
+.competency-battery .battery-label:not(.active):hover {
+    opacity: 0.7;
+}
 
-        .competency-tag {
-            transition: all 0.3s ease-out;
-        }
+.competency-tag {
+    transition: all 0.3s ease-out;
+}
 
-        .competency-tag.level-1 {
-            background-color: #DBEAFE;
-            /* blue-100 */
-            border-color: #60A5FA;
-            /* blue-400 */
-            color: #1D4ED8;
-            /* blue-700 */
-        }
+.competency-tag.level-1 {
+    background-color: #DBEAFE; border-color: #60A5FA; color: #1D4ED8;
+}
+.competency-tag.level-2 {
+    background-color: #ECFCCB; border-color: #84CC16; color: #3F6212;
+}
+.competency-tag.level-3 {
+    background-color: #DCFCE7; border-color: #16A34A; color: #14532D;
+}
+.competency-tag.level-4 {
+    background-color: #F3E8FF; border-color: #9333EA; color: #581C87;
+}
+{% endblock %}
 
-        .competency-tag.level-2 {
-            background-color: #ECFCCB;
-            /* lime-100 */
-            border-color: #84CC16;
-            /* lime-500 */
-            color: #3F6212;
-            /* lime-800 */
-        }
+{% block content %}
+<!-- 2. Pagrindinis Turinys -->
+<main class="flex-1 overflow-y-auto bg-[#f8fafc] font-sans text-slate-900">
 
-        .competency-tag.level-3 {
-            background-color: #DCFCE7;
-            /* green-100 */
-            border-color: #16A34A;
-            /* green-600 */
-            color: #14532D;
-            /* green-800 */
-        }
+    <!-- Viršutinė juosta -->
+    <header class="bg-white shadow-sm p-4 md:px-8 border-b border-slate-100 flex justify-between items-center sticky top-0 z-20">
+        <div class="flex items-center space-x-4">
+            <!-- Mobilus Meniu Mygtukas -->
+            <button class="md:hidden p-2 text-slate-400 hover:text-slate-600">
+                <i data-lucide="menu" class="w-6 h-6"></i>
+            </button>
 
-        .competency-tag.level-4 {
-            background-color: #F3E8FF;
-            /* purple-100 */
-            border-color: #9333EA;
-            /* purple-600 */
-            color: #581C87;
-            /* purple-900 */
-        }
-    </style>
-</head>
+            <!-- Logotipas (Matomas tik mobiliajame) -->
+            <a href="{% url 'home' %}" class="md:hidden flex items-center">
+                <img src="{% static 'images/logo.png' %}" alt="Kudosly.lt" class="h-8 w-auto object-contain">
+            </a>
 
-<body class="bg-bg-secondary">
-
-    <div class="flex h-screen">
-
-        <!-- 1. Šoninė Navigacijos Juosta -->
-        <aside class="hidden md:flex w-64 flex-col bg-bg-main shadow-lg">
-            <!-- Logotipas -->
-            <div class="px-6 py-5 border-b">
-                <a href="{% url 'home' %}" class="block outline-none flex items-center">
-                    <img src="{% static 'images/logo.png' %}" alt="Kudosly.lt" class="h-8 w-auto object-contain">
-                </a>
+            <div>
+                <h1 class="text-xl font-bold text-slate-800 tracking-tight">{{ feedback_request.project_name }}</h1>
             </div>
+        </div>
 
-            <!-- Navigacija -->
-            <nav class="flex-1 space-y-2 py-4 px-4">
-                {% if not user.is_superuser %}
-                <a href="{% url 'home' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'home' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                    </svg>
-                    <span>Pagrindinis</span>
-                </a>
-                <a href="{% url 'my_tasks_list' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'my_tasks_list' or request.resolver_match.url_name == 'fill_feedback' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.336a3.75 3.75 0 0 1 1.3 0c.94.12 1.708.743 2.052 1.543a.75.75 0 0 0 .634.416 3.377 3.377 0 0 1 3.165 3.377v11.082a3.377 3.377 0 0 1-3.377 3.377H8.876a3.377 3.377 0 0 1-3.377-3.377V8.672a3.377 3.377 0 0 1 3.165-3.377.75.75 0 0 0 .634-.416 3.75 3.75 0 0 1 2.052-1.543Z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 13.5H12M9 16.5H12M15 13.5H15.008V13.508H15V13.5ZM15 16.5H15.008V16.508H15V16.5ZM15 10.5H15.008V10.508H15V10.5ZM9 10.5H12" />
-                    </svg>
-                    <span>Mano Užduotys</span>
-                </a>
-                <a href="{% url 'team_members_list' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'team_members_list' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
-                    </svg>
-                    <span>Mano Komanda</span>
-                </a>
-                <a href="{% url 'questionnaires_list' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'questionnaires_list' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
-                    </svg>
-                    <span>Individuali forma</span>
-                </a>
-                {% if user.profile.company_link %}
-                <a href="{% url 'company_management' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'company_management' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
-                    </svg>
-                    <span>Įmonės valdymas</span>
-                </a>
-                {% endif %}
-                <a href="{% url 'results' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'results' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M3 13.125C3 12.504 3.504 12 4.125 12h15.75c.621 0 1.125.504 1.125 1.125v6.75C21 20.496 20.496 21 19.875 21H4.125A1.125 1.125 0 0 1 3 19.875v-6.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.375c1.036 0 1.875.84 1.875 1.875v.375c0 1.036-.84 1.875-1.875 1.875h-.375A1.875 1.875 0 0 1 9.75 9v-.375z" />
-                    </svg>
-                    <span>Rezultatai</span>
-                </a>
+        <a href="{% url 'home' %}" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-2">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> Atgal
+        </a>
+    </header>
 
-                {% endif %}
-                {% if user.is_superuser %}
-                <a href="{% url 'superadmin_dashboard' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'superadmin_dashboard' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" />
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" />
-                    </svg>
-                    <span>Statistika</span>
-                </a>
-                <a href="{% url 'superadmin_companies_list' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'superadmin_companies_list' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                    </svg>
-                    <span>Įmonės</span>
-                </a>
-                <a href="{% url 'superadmin_superusers_list' %}"
-                    class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if 'superusers' in request.path %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="1.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                    </svg>
-                    <span>Supervartotojai</span>
-                </a>
-                {% endif %}
-            </nav>
-
-            <!-- Vartotojo profilis ir atsijungimas -->
-            <div class="mt-auto border-t p-4">
-                <div class="flex items-center space-x-3">
-                    <img class="w-10 h-10 rounded-full" src="https://placehold.co/40x40/eee/333?text=VP"
-                        alt="Vartotojo profilio nuotrauka">
-                    <div>
-                        <p class="font-medium text-text-main">{{ user.first_name }}</p>
-                        <a href="{% url 'logout' %}"
-                            class="flex items-center space-x-1 text-sm text-primary hover:text-purple-700 transition-colors">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
-                            </svg>
-                            <span>Atsijungti</span>
-                        </a>
-                    </div>
+    <!-- Turinys -->
+    <div class="p-4 md:p-8 pb-12">
+        <!-- Apklausos Forma (pritaikyta padidinta max-w-3xl kad būtų daugiau erdvės, bet ne per daug) -->
+        <div class="max-w-3xl mx-auto bg-white p-6 md:p-10 rounded-3xl shadow-sm border border-slate-100 relative">
+            {% if not is_team_form %}
+            <div class="flex items-center gap-4 mb-8 pb-6 border-b border-slate-100">
+                <div class="w-14 h-14 rounded-full bg-slate-100 border-4 border-slate-50 flex items-center justify-center font-bold text-slate-500 text-lg">
+                    {{ feedback_request.requester.first_name|first|upper }}{{ feedback_request.requester.last_name|first|upper }}
                 </div>
-            </div>
-        </aside>
-
-        <!-- 2. Pagrindinis Turinys -->
-        <main class="flex-1 overflow-y-auto">
-
-            <!-- Viršutinė juosta -->
-            <header class="bg-bg-main shadow-sm p-4 flex justify-between items-center">
-                <div class="flex items-center space-x-4">
-                    <!-- Mobilus Meniu Mygtukas -->
-                    <button class="md:hidden p-2 text-text-muted">
-                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                            stroke-width="1.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                        </svg>
-                    </button>
-
-                    <!-- Logotipas (Matomas tik mobiliajame, nes desktop turi šoninę juostą) -->
-                    <a href="{% url 'home' %}" class="md:hidden flex items-center">
-                        <img src="{% static 'images/logo.png' %}" alt="Kudosly.lt" class="h-8 w-auto object-contain">
-                    </a>
-
-                    <h1 class="text-xl font-bold text-text-main">
-                        {{ feedback_request.project_name }}
-                    </h1>
-                </div>
-
-                <a href="{% url 'home' %}" class="px-4 py-2 text-sm font-medium text-text-muted hover:text-primary">
-                    Atgal į panelę
-                </a>
-            </header>
-
-            <!-- Turinys -->
-            <div class="p-6 md:p-8">
-                <!-- Apklausos Forma -->
-                <div class="max-w-2xl mx-auto bg-bg-main p-6 md:p-8 rounded-2xl shadow-lg">
-                    {% if not is_team_form %}
-                    <h2 class="text-2xl font-bold text-text-main mb-6">
-                        Atsiliepimas apie:
-                        <span class="text-primary">
-                            {{ feedback_request.requester.get_full_name|default:feedback_request.requester.username }}
-                        </span>
+                <div>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Atsiliepimas apie</p>
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        {{ feedback_request.requester.get_full_name|default:feedback_request.requester.username }}
                     </h2>
-                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
 
-                    <form method="POST" class="space-y-6">
-                        <input type="hidden" id="colleague-name"
-                            value="{{ feedback_request.requester.get_full_name|default:feedback_request.requester.username }}">
-                        {% csrf_token %}
+            <form method="POST" class="space-y-8">
+                <input type="hidden" id="colleague-name" value="{{ feedback_request.requester.get_full_name|default:feedback_request.requester.username }}">
+                {% csrf_token %}
 
-                        <!-- Kompetencijų slankikliai -->
-                        <div class="space-y-2 pt-4 border-t">
-                            <div class="competency-battery" data-competency="rating">
-                                <input type="hidden" name="rating" value="0">
-                            </div>
+                <!-- Kompetencijų slankikliai -->
+                <div class="space-y-4 pt-2">
+                    <div class="competency-battery" data-competency="rating">
+                        <input type="hidden" name="rating" value="0">
+                    </div>
 
-                            <!-- Hardcoded competencies (hidden when questionnaire has traits) -->
-                            <div id="default-competencies">
-                                <!-- Komandinis Darbas -->
-                                <div class="competency-battery" data-competency="teamwork_rating">
-                                    <input type="hidden" name="teamwork_rating" value="0">
-                                </div>
-
-                                <!-- Komunikacija -->
-                                <div class="competency-battery" data-competency="communication_rating">
-                                    <input type="hidden" name="communication_rating" value="0">
-                                </div>
-
-                                <!-- Iniciatyvumas -->
-                                <div class="competency-battery" data-competency="initiative_rating">
-                                    <input type="hidden" name="initiative_rating" value="0">
-                                </div>
-
-                                <!-- Techninės Žinios -->
-                                <div class="competency-battery" data-competency="technical_skills_rating">
-                                    <input type="hidden" name="technical_skills_rating" value="0">
-                                </div>
-
-                                <!-- Problemų Sprendimas -->
-                                <div class="competency-battery" data-competency="problem_solving_rating">
-                                    <input type="hidden" name="problem_solving_rating" value="0">
-                                </div>
-                            </div>
-
-                            <!-- Dynamic trait batteries (populated by JS when questionnaire is linked) -->
-                            <div id="dynamic-trait-batteries"></div>
-
-                            <!-- Baterijos šablonas (bus klonuojamas su JS) -->
-                            <template id="competency-template">
-                                <div class="mb-4 transition-all hover:scale-[1.01] duration-300">
-                                    <div class="flex justify-between items-center mb-1 px-1">
-                                        <h3 class="font-bold text-slate-700 text-sm md:text-base competency-label"></h3>
-                                        <span
-                                            class="text-[10px] md:text-xs font-bold px-3 py-1 rounded-full border competency-tag shadow-sm transition-all duration-300"
-                                            style="display: none;"></span>
-                                    </div>
-                                    <div
-                                        class="relative bg-slate-100/80 p-1.5 rounded-[2rem] flex items-stretch h-20 md:h-24 shadow-inner border border-white">
-                                        <!-- Slankantis fonas pasirinkimui -->
-                                        <div
-                                            class="slider-bg absolute top-1.5 bottom-1.5 rounded-[1.75rem] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-xl hidden z-0">
-                                        </div>
-
-                                        <button type="button" data-level="1"
-                                            class="relative z-10 flex-1 flex flex-col items-center justify-center transition-all duration-300 group battery-segment text-slate-400 hover:text-slate-600">
-                                            <div
-                                                class="mb-1 transition-transform duration-500 icon-wrapper group-hover:scale-110">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="w-5 h-5 md:w-6 md:h-6">
-                                                    <path
-                                                        d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
-                                                </svg>
-                                            </div>
-                                            <span
-                                                class="text-[10px] md:text-xs font-black uppercase tracking-wider transition-opacity duration-300 opacity-60 label-text">Mokosi</span>
-                                        </button>
-                                        <button type="button" data-level="2"
-                                            class="relative z-10 flex-1 flex flex-col items-center justify-center transition-all duration-300 group battery-segment text-slate-400 hover:text-slate-600">
-                                            <div
-                                                class="mb-1 transition-transform duration-500 icon-wrapper group-hover:scale-110">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="w-5 h-5 md:w-6 md:h-6">
-                                                    <line x1="22" y1="11" x2="22" y2="11" />
-                                                    <path d="M5 12l5 5L20 7" />
-                                                </svg>
-                                            </div>
-                                            <span
-                                                class="text-[10px] md:text-xs font-black uppercase tracking-wider transition-opacity duration-300 opacity-60 label-text">Daro</span>
-                                        </button>
-                                        <button type="button" data-level="3"
-                                            class="relative z-10 flex-1 flex flex-col items-center justify-center transition-all duration-300 group battery-segment text-slate-400 hover:text-slate-600">
-                                            <div
-                                                class="mb-1 transition-transform duration-500 icon-wrapper group-hover:scale-110">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="w-5 h-5 md:w-6 md:h-6">
-                                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                                                </svg>
-                                            </div>
-                                            <span
-                                                class="text-[10px] md:text-xs font-black uppercase tracking-wider transition-opacity duration-300 opacity-60 label-text">Varo</span>
-                                        </button>
-                                        <button type="button" data-level="4"
-                                            class="relative z-10 flex-1 flex flex-col items-center justify-center transition-all duration-300 group battery-segment text-slate-400 hover:text-slate-600">
-                                            <div
-                                                class="mb-1 transition-transform duration-500 icon-wrapper group-hover:scale-110">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                    viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                    class="w-5 h-5 md:w-6 md:h-6">
-                                                    <polygon
-                                                        points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                                                </svg>
-                                            </div>
-                                            <span
-                                                class="text-[10px] md:text-xs font-black uppercase tracking-wider transition-opacity duration-300 opacity-60 label-text">Pavyzdys</span>
-                                        </button>
-                                    </div>
-                                    <div class="mt-2 h-8 flex items-center justify-center info-panel overflow-hidden">
-                                        <div class="flex flex-col items-center animate-pulse empty-state">
-                                            <div class="w-12 h-1 bg-slate-200 rounded-full mb-1"></div>
-                                            <p class="text-slate-400 text-xs font-medium">Pasirinkite vieną iš lygių
-                                                aukščiau</p>
-                                        </div>
-                                        <div
-                                            class="text-center transition-all duration-500 transform translate-y-4 opacity-0 selected-state hidden">
-                                            <p class="text-slate-500 text-sm font-semibold active-desc"></p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </template>
+                    <!-- Hardcoded competencies -->
+                    <div id="default-competencies">
+                        <div class="competency-battery" data-competency="teamwork_rating">
+                            <input type="hidden" name="teamwork_rating" value="0">
                         </div>
+                        <div class="competency-battery" data-competency="communication_rating">
+                            <input type="hidden" name="communication_rating" value="0">
+                        </div>
+                        <div class="competency-battery" data-competency="initiative_rating">
+                            <input type="hidden" name="initiative_rating" value="0">
+                        </div>
+                        <div class="competency-battery" data-competency="technical_skills_rating">
+                            <input type="hidden" name="technical_skills_rating" value="0">
+                        </div>
+                        <div class="competency-battery" data-competency="problem_solving_rating">
+                            <input type="hidden" name="problem_solving_rating" value="0">
+                        </div>
+                    </div>
 
+                    <!-- Dynamic trait batteries -->
+                    <div id="dynamic-trait-batteries"></div>
 
-                        <!-- 2. Raktinių Žodžių Laukas -->
-                        <div>
-                            <label for="keywords" class="block text-sm font-medium text-text-main">
-                                Raktiniai žodžiai
-                            </label>
-                            <div class="mt-1 flex rounded-md shadow-sm">
-                                <input type="hidden" name="keywords" id="keywords">
-                                <input type="text" id="keyword-input-display"
-                                    placeholder="Įveskite žodį ir spauskite Enter arba kablelį..."
-                                    class="flex-1 block w-full rounded-none rounded-l-md px-3 py-2 border border-gray-300 placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-purple-500 sm:text-sm">
-                                <button type="button" id="open-keyword-modal"
-                                    class="inline-flex items-center px-3 rounded-r-md border border-l-0 border-primary bg-purple-50 text-primary text-sm hover:bg-purple-100 transition-colors animate-pulse" title="Atidaryti žodžių debesį">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
-                                        viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                    </svg>
+                    <!-- Baterijos šablonas -->
+                    <template id="competency-template">
+                        <div class="mb-4 transition-all hover:scale-[1.01] duration-300">
+                            <div class="flex justify-between items-center mb-1 px-1">
+                                <h3 class="font-bold text-slate-700 text-sm md:text-base competency-label"></h3>
+                                <span class="text-[10px] md:text-xs font-bold px-3 py-1 rounded-full border competency-tag shadow-sm transition-all duration-300" style="display: none;"></span>
+                            </div>
+                            <div class="relative bg-slate-100 p-1.5 rounded-2xl flex items-stretch h-14 md:h-16 shadow-inner border border-white">
+                                <!-- Slankantis fonas pasirinkimui -->
+                                <div class="slider-bg absolute top-1.5 bottom-1.5 rounded-xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-md hidden z-0"></div>
+
+                                <button type="button" data-level="1" class="relative z-10 flex-1 flex flex-row items-center justify-center gap-1.5 md:gap-2 transition-all duration-300 group battery-segment text-slate-400 hover:text-slate-600">
+                                    <div class="transition-transform duration-500 icon-wrapper group-hover:scale-110">
+                                        <i data-lucide="circle-dashed" class="w-4 h-4 md:w-5 md:h-5"></i>
+                                    </div>
+                                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider transition-opacity duration-300 opacity-80 label-text">Mokosi</span>
+                                </button>
+                                <button type="button" data-level="2" class="relative z-10 flex-1 flex flex-row items-center justify-center gap-1.5 md:gap-2 transition-all duration-300 group battery-segment text-slate-400 hover:text-slate-600">
+                                    <div class="transition-transform duration-500 icon-wrapper group-hover:scale-110">
+                                        <i data-lucide="check-circle" class="w-4 h-4 md:w-5 md:h-5"></i>
+                                    </div>
+                                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider transition-opacity duration-300 opacity-80 label-text">Daro</span>
+                                </button>
+                                <button type="button" data-level="3" class="relative z-10 flex-1 flex flex-row items-center justify-center gap-1.5 md:gap-2 transition-all duration-300 group battery-segment text-slate-400 hover:text-slate-600">
+                                    <div class="transition-transform duration-500 icon-wrapper group-hover:scale-110">
+                                        <i data-lucide="zap" class="w-4 h-4 md:w-5 md:h-5"></i>
+                                    </div>
+                                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider transition-opacity duration-300 opacity-80 label-text">Varo</span>
+                                </button>
+                                <button type="button" data-level="4" class="relative z-10 flex-1 flex flex-row items-center justify-center gap-1.5 md:gap-2 transition-all duration-300 group battery-segment text-slate-400 hover:text-slate-600">
+                                    <div class="transition-transform duration-500 icon-wrapper group-hover:scale-110">
+                                        <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5"></i>
+                                    </div>
+                                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider transition-opacity duration-300 opacity-80 label-text">Pavyzdys</span>
                                 </button>
                             </div>
-                            <div id="selected-keywords-container" class="mt-2 flex flex-wrap gap-2 empty:hidden"></div>
-                        </div>
-
-                        <!-- Keyword Modal -->
-                        <div id="keyword-modal"
-                            class="fixed inset-0 overflow-y-auto h-full w-full hidden" style="background-color: rgba(75, 85, 99, 0.5); z-index: 50;">
-                            <div class="relative top-20 mx-auto p-5 border w-1/2 shadow-lg rounded-md bg-bg-main">
-                                <div class="flex justify-between items-center pb-3">
-                                    <p class="text-2xl font-bold">Raktinių žodžių debesis</p>
-                                    <div class="cursor-pointer z-50" id="close-keyword-modal">
-                                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                            viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M6 18L18 6M6 6l12 12" />
-                                        </svg>
-                                    </div>
+                            <div class="mt-2 h-6 flex items-center justify-center info-panel overflow-hidden">
+                                <div class="flex flex-col items-center animate-pulse empty-state">
+                                    <p class="text-slate-400 text-[11px] font-medium">Pasirinkite vieną iš lygių aukščiau</p>
                                 </div>
-                                <div id="keyword-cloud" class="flex flex-wrap gap-2">
-                                    <!-- Keywords will be populated here -->
+                                <div class="text-center transition-all duration-500 transform translate-y-4 opacity-0 selected-state hidden">
+                                    <p class="text-slate-500 text-xs md:text-sm font-semibold active-desc"></p>
                                 </div>
                             </div>
                         </div>
+                    </template>
+                </div>
 
-                        <!-- Komentarų laukas -->
-                        <div>
-                            <label for="comments" class="block text-sm font-medium text-text-main">
-                                Komentarai
-                            </label>
-                            <textarea id="comments" name="comments" rows="4"
-                                placeholder="Įrašykite laisvos formos komentarus apie kolegą..."
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-purple-500 sm:text-sm"></textarea>
+                <!-- 2. Raktinių Žodžių Laukas -->
+                <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                    <label for="keywords" class="flex items-center gap-2 text-sm font-bold text-slate-700 mb-3">
+                        <i data-lucide="tags" class="w-4 h-4 text-slate-400"></i> Raktiniai žodžiai
+                    </label>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <div class="flex-1">
+                            <input type="hidden" name="keywords" id="keywords">
+                            <input type="text" id="keyword-input-display" placeholder="Įveskite žodį ir spauskite Enter arba kablelį..." class="block w-full px-4 py-3 bg-white border border-slate-200 rounded-xl shadow-sm placeholder-slate-400 text-slate-700 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-all sm:text-sm">
                         </div>
+                        <button type="button" id="open-keyword-modal" class="inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-teal-700 bg-teal-50 border border-teal-100 rounded-xl hover:bg-teal-100 hover:border-teal-200 transition-all sm:w-auto w-full whitespace-nowrap shadow-sm">
+                            <i data-lucide="cloud" class="w-4 h-4"></i> Rinktis iš debesies
+                        </button>
+                    </div>
+                    <div id="selected-keywords-container" class="mt-3 flex flex-wrap gap-2 empty:hidden"></div>
+                </div>
 
-                        <!-- 3. Išsamaus Atsiliepimo Laukas -->
-                        <div id="final-feedback-container" class="hidden">
-                            <label for="feedback" class="block text-sm font-medium text-text-main">
-                                Išsamus atsiliepimas
-                            </label>
-                            <textarea id="feedback" name="feedback" rows="6"
-                                placeholder="Pateikite išsamesnį komentarą, nurodydami konkrečius pavyzdžius, kas sekėsi puikiai ir kur reikėtų tobulėti..."
-                                class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-purple-500 sm:text-sm"></textarea>
-                        </div>
-
-                        <!-- 4. Mygtukai -->
-                        <div class="flex justify-end space-x-4 pt-4">
-                            <div class="relative group" id="generate-ai-btn-wrapper">
-                                <button type="button" id="generate-ai-btn" disabled
-                                    class="inline-flex items-center px-5 py-2 text-sm font-medium text-text-main bg-bg-secondary rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-bg-secondary hover:bg-gray-200">
-                                    <svg id="ai-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-text-main hidden"
-                                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                                            stroke-width="4"></circle>
-                                        <path class="opacity-75" fill="currentColor"
-                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                        </path>
-                                    </svg>
-                                    <span id="ai-btn-text">Generuoti (AI)</span>
-                                </button>
-                                <!-- Tooltip: rodomas tik kai mygtukas disabled -->
-                                <div id="ai-btn-tooltip"
-                                    class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-800 text-white text-xs rounded-lg shadow-lg whitespace-nowrap opacity-0 pointer-events-none transition-opacity duration-200 z-50">
-                                    <span id="ai-btn-tooltip-text">Pasirinkite visas savybes ir bent 3 raktinius žodžius</span>
-                                    <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
-                                </div>
-                            </div>
-                            <button type="submit" id="submit-feedback-btn"
-                                class="hidden px-5 py-2 text-sm font-medium text-white bg-primary rounded-lg shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors">
-                                Siųsti Atsiliepimą
+                <!-- Keyword Modal -->
+                <div id="keyword-modal" class="fixed inset-0 overflow-y-auto h-full w-full hidden backdrop-blur-sm transition-all" style="background-color: rgba(15, 23, 42, 0.4); z-index: 50;">
+                    <div class="relative top-20 mx-auto p-6 border border-slate-100 w-[90%] md:w-2/3 lg:w-1/2 shadow-2xl rounded-3xl bg-white">
+                        <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
+                            <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
+                                <i data-lucide="cloud" class="w-5 h-5 text-teal-600"></i> Raktinių žodžių debesis
+                            </h3>
+                            <button type="button" id="close-keyword-modal" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors">
+                                <i data-lucide="x" class="w-5 h-5"></i>
                             </button>
                         </div>
-                    </form>
+                        <div id="keyword-cloud" class="flex flex-wrap gap-2 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                            <!-- Keywords will be populated here -->
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </main>
+
+                <!-- Komentarų laukas -->
+                <div>
+                    <label for="comments" class="flex items-center gap-2 text-sm font-bold text-slate-700 mb-3">
+                        <i data-lucide="message-square" class="w-4 h-4 text-slate-400"></i> Komentarai
+                    </label>
+                    <textarea id="comments" name="comments" rows="4" placeholder="Įrašykite laisvos formos komentarus apie kolegą..." class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl shadow-sm placeholder-slate-400 text-slate-700 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-all resize-none sm:text-sm"></textarea>
+                </div>
+
+                <!-- 3. Išsamaus Atsiliepimo Laukas -->
+                <div id="final-feedback-container" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <label for="feedback" class="flex items-center gap-2 text-sm font-bold text-slate-700 mb-3">
+                        <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i> Išsamus atsiliepimas (AI)
+                    </label>
+                    <div class="relative">
+                        <textarea id="feedback" name="feedback" rows="6" placeholder="Pateikite išsamesnį komentarą..." class="block w-full px-4 py-4 bg-teal-50/30 border border-teal-100 rounded-2xl shadow-inner placeholder-slate-400 text-slate-800 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-all resize-none sm:text-sm leading-relaxed"></textarea>
+                        <div class="absolute top-3 right-3 text-teal-600 opacity-20 pointer-events-none">
+                            <i data-lucide="sparkles" class="w-6 h-6"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Mygtukai -->
+                <div class="flex flex-col sm:flex-row justify-end items-center gap-4 pt-8 mt-4 border-t border-slate-100">
+                    <div class="relative group w-full sm:w-auto" id="generate-ai-btn-wrapper">
+                        <button type="button" id="generate-ai-btn" disabled class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-bold text-slate-700 bg-white border-2 border-slate-200 rounded-xl shadow-sm transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:border-slate-100 hover:not(:disabled):bg-slate-50 hover:not(:disabled):border-slate-300">
+                            <i data-lucide="sparkles" id="ai-icon" class="w-4 h-4 text-teal-500"></i>
+                            <svg id="ai-spinner" class="animate-spin h-4 w-4 text-teal-500 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            <span id="ai-btn-text">Generuoti AI juodraštį</span>
+                        </button>
+                        <!-- Tooltip: rodomas tik kai mygtukas disabled -->
+                        <div id="ai-btn-tooltip" class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2.5 bg-slate-800 text-white text-[11px] font-medium rounded-xl shadow-xl whitespace-nowrap opacity-0 pointer-events-none transition-all duration-300 z-50 transform translate-y-2 group-hover:-translate-y-0">
+                            <span id="ai-btn-tooltip-text">Pasirinkite visas savybes ir bent 3 raktinius žodžius</span>
+                            <div class="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-slate-800"></div>
+                        </div>
+                    </div>
+                    <div id="submit-feedback-btn-wrapper" class="hidden w-full sm:w-auto">
+                        <button type="submit" id="submit-feedback-btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 text-sm font-bold text-white bg-teal-600 rounded-xl shadow-md hover:bg-teal-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-300 hover:-translate-y-0.5">
+                            <i data-lucide="send" class="w-4 h-4"></i> Patvirtinti ir siųsti
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
     </div>
+</main>
+{% endblock %}
 
-    <!-- Slankiklio reikšmės atnaujinimo skriptas -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Naujos "baterijos" logikos inicializavimas
-            const competencyData = {
-                teamwork_rating: { label: 'Komandinis Darbas' },
-                communication_rating: { label: 'Komunikacija' },
-                initiative_rating: { label: 'Iniciatyvumas' },
-                technical_skills_rating: { label: 'Techninės Žinios' },
-                problem_solving_rating: { label: 'Problemų Sprendimas' },
-                rating: { label: 'Bendras įvertinimas' }
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Lucide icons init
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+
+        // Naujos "baterijos" logikos inicializavimas
+        const competencyData = {
+            teamwork_rating: { label: 'Komandinis Darbas' },
+            communication_rating: { label: 'Komunikacija' },
+            initiative_rating: { label: 'Iniciatyvumas' },
+            technical_skills_rating: { label: 'Techninės Žinios' },
+            problem_solving_rating: { label: 'Problemų Sprendimas' },
+            rating: { label: 'Bendras įvertinimas' }
+        };
+
+        const levels = [
+            {
+                id: 1, label: "Mokosi", fullLabel: "Mokosi", description: "Reikia pagalbos", colorClass: "from-slate-400 to-slate-500"
+            },
+            {
+                id: 2, label: "Daro", fullLabel: "Daro", description: "Atitinka lūkesčius", colorClass: "from-sky-400 to-sky-500"
+            },
+            {
+                id: 3, label: "Varo", fullLabel: "Varo", description: "Viršija lūkesčius", colorClass: "from-teal-400 to-teal-500"
+            },
+            {
+                id: 4, label: "Pavyzdys", fullLabel: "Pavyzdys", description: "Superžvaigždė", colorClass: "from-emerald-400 to-emerald-500"
+            }
+        ];
+
+        // Check for questionnaire traits and create dynamic batteries
+        const questionnaireTraits = JSON.parse('{{ questionnaire_traits_json|escapejs }}');
+        const hasQuestionnaire = '{{ has_questionnaire|yesno:"true,false" }}' === 'true';
+
+        if (hasQuestionnaire && questionnaireTraits.length > 0) {
+            document.getElementById('default-competencies').style.display = 'none';
+            const dynamicContainer = document.getElementById('dynamic-trait-batteries');
+            questionnaireTraits.forEach(trait => {
+                const div = document.createElement('div');
+                div.className = 'competency-battery';
+                div.dataset.competency = 'trait_rating_' + trait.id;
+                div.innerHTML = '<input type="hidden" name="trait_rating_' + trait.id + '" value="0">';
+                dynamicContainer.appendChild(div);
+                competencyData['trait_rating_' + trait.id] = { label: trait.name };
+            });
+        }
+
+        document.querySelectorAll('.competency-battery').forEach(container => {
+            const competencyName = container.dataset.competency;
+            if (!competencyData[competencyName]) return; 
+            const template = document.getElementById('competency-template').content.cloneNode(true);
+            container.appendChild(template);
+
+            container.querySelector('.competency-label').textContent = competencyData[competencyName].label;
+            const hiddenInput = container.querySelector(`input[name="${competencyName}"]`);
+
+            const updateView = (value) => {
+                hiddenInput.value = value;
+                const segments = container.querySelectorAll('.battery-segment');
+                const sliderBg = container.querySelector('.slider-bg');
+                const emptyState = container.querySelector('.empty-state');
+                const selectedState = container.querySelector('.selected-state');
+
+                if (value > 0) {
+                    const levelData = levels[value - 1];
+                    sliderBg.className = `slider-bg absolute top-1.5 bottom-1.5 rounded-xl transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-md bg-gradient-to-br ${levelData.colorClass} z-0 block`;
+                    sliderBg.style.left = `calc(${(value - 1) * 25}% + 6px)`;
+                    sliderBg.style.width = `calc(25% - 12px)`;
+
+                    emptyState.classList.add('hidden');
+                    selectedState.classList.remove('hidden', 'opacity-0', 'translate-y-4');
+                    selectedState.querySelector('.active-desc').textContent = levelData.description;
+                } else {
+                    sliderBg.classList.add('hidden');
+                    sliderBg.style.width = '0px';
+                    emptyState.classList.remove('hidden');
+                    selectedState.classList.add('hidden', 'opacity-0', 'translate-y-4');
+                }
+
+                segments.forEach(segment => {
+                    const level = parseInt(segment.dataset.level, 10);
+                    const isActive = level === value;
+                    const iconWrapper = segment.querySelector('.icon-wrapper');
+                    const labelText = segment.querySelector('.label-text');
+
+                    if (isActive) {
+                        segment.classList.add('text-white', 'scale-105');
+                        segment.classList.remove('text-slate-400');
+                        iconWrapper.classList.add('scale-110');
+                        labelText.classList.replace('opacity-60', 'opacity-100');
+                    } else {
+                        segment.classList.remove('text-white', 'scale-105');
+                        segment.classList.add('text-slate-400');
+                        iconWrapper.classList.remove('scale-110');
+                        labelText.classList.replace('opacity-100', 'opacity-60');
+                    }
+                });
             };
 
-            const levels = [
-                {
-                    id: 1,
-                    label: "Mokosi",
-                    fullLabel: "Mokosi",
-                    description: "Reikia pagalbos",
-                    colorClass: "from-orange-400 to-orange-500",
-                    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 md:w-6 md:h-6"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>'
-                },
-                {
-                    id: 2,
-                    label: "Daro",
-                    fullLabel: "Daro",
-                    description: "Atitinka lūkesčius",
-                    colorClass: "from-yellow-400 to-yellow-500",
-                    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 md:w-6 md:h-6"><line x1="22" y1="11" x2="22" y2="11"/><path d="M5 12l5 5L20 7"/></svg>'
-                },
-                {
-                    id: 3,
-                    label: "Varo",
-                    fullLabel: "Varo",
-                    description: "Viršija lūkesčius",
-                    colorClass: "from-blue-400 to-blue-500",
-                    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 md:w-6 md:h-6"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>'
-                },
-                {
-                    id: 4,
-                    label: "Pavyzdys",
-                    fullLabel: "Pavyzdys",
-                    description: "Superžvaigždė",
-                    colorClass: "from-emerald-400 to-emerald-500",
-                    icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 md:w-6 md:h-6"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>'
+            container.addEventListener('click', (e) => {
+                const target = e.target.closest('[data-level]');
+                if (target) {
+                    const level = parseInt(target.dataset.level, 10);
+                    updateView(level);
+                    if (typeof updateGenerateButtonState === 'function') {
+                        updateGenerateButtonState();
+                    }
                 }
-            ];
+            });
+        });
 
-            // Check for questionnaire traits and create dynamic batteries
-            const questionnaireTraits = JSON.parse('{{ questionnaire_traits_json|escapejs }}');
-            const hasQuestionnaire = '{{ has_questionnaire|yesno:"true,false" }}' === 'true';
+        // Re-init lucide icons for cloned template elements
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
 
-            if (hasQuestionnaire && questionnaireTraits.length > 0) {
-                // Hide default competencies
-                document.getElementById('default-competencies').style.display = 'none';
+        // Keyword Modal
+        const keywordModal = document.getElementById('keyword-modal');
+        const openKeywordModalBtn = document.getElementById('open-keyword-modal');
+        const closeKeywordModalBtn = document.getElementById('close-keyword-modal');
+        const keywordCloud = document.getElementById('keyword-cloud');
+        const keywordsInput = document.getElementById('keywords');
+        const keywordInputDisplay = document.getElementById('keyword-input-display');
+        const selectedKeywordsContainer = document.getElementById('selected-keywords-container');
 
-                // Create dynamic trait batteries
-                const dynamicContainer = document.getElementById('dynamic-trait-batteries');
-                questionnaireTraits.forEach(trait => {
-                    const div = document.createElement('div');
-                    div.className = 'competency-battery';
-                    div.dataset.competency = 'trait_rating_' + trait.id;
-                    div.innerHTML = '<input type="hidden" name="trait_rating_' + trait.id + '" value="0">';
-                    dynamicContainer.appendChild(div);
+        const positiveKeywords = ['Komandinis darbas', 'Komunikabilumas', 'Iniciatyvumas', 'Problemų sprendimas', 'Lyderystė', 'Analitinis mąstymas', 'Kūrybiškumas', 'Adaptabilumas', 'Atsakingumas', 'Laiko planavimas', 'Techninės žinios', 'Strateginis mąstymas', 'Klientų aptarnavimas', 'Derybos', 'Prezentavimo įgūdžiai', 'Patikimumas', 'Motyvacija', 'Pozityvumas', 'Efektyvumas', 'Savarankiškumas', 'Mentorystė', 'Pagalba kitiems', 'Atvirumas', 'Entuziazmas', 'Profesionalumas', 'Kruopštumas', 'Smalsumas', 'Konstruktyvumas', 'Įžvalgumas', 'Lankstumas', 'Draugiškumas', 'Mandagumas', 'Punktualumas', 'Organizuotumas', 'Empatija', 'Orientacija į rezultą', 'Gebėjimas įkvėpti', 'Gebėjimas mokytis', 'Sąžiningumas', 'Atkaklumas'];
+        const neutralKeywords = ['Tylus', 'Ramus', 'Individualistas', 'Analitikas', 'Stebėtojas', 'Vykdytojas', 'Planuotojas', 'Struktūruotas', 'Formalus', 'Neformalus', 'Praktiškas', 'Teoretikas', 'Atsargus', 'Racionalus', 'Intravertas', 'Ekstravertas', 'Realistas', 'Pragmmatikas', 'Diplomatas', 'Kritikas', 'Svajotojas', 'Logiškas', 'Emocionalus', 'Konservatyvus', 'Liberalus', 'Tiesioginis', 'Netiesioginis', 'Detalus', 'Apibendrinantis', 'Koncepualus'];
+        const negativeKeywords = ['Vėlavimas', 'Neatsakingumas', 'Pasyvumas', 'Konfliktiškumas', 'Arogancija', 'Klaidų slėpimas', 'Neorganizuotumas', 'Nekokybiškas darbas', 'Stresas', 'Negatyvumas', 'Nepasitikėjimas', 'Kritikos nepriėmimas', 'Dėmesio stoka', 'Bendradarbiavimo stoka', 'Lėtas darbas', 'Nedraugiškumas', 'Chaotiškumas', 'Uždarumas', 'Pesimizmas', 'Abejingumas', 'Išsiblaškymas', 'Paviršutiniškumas', 'Neapdairumas', 'Neryžtingumas', 'Užsispyrimas', 'Ignoravimas', 'Manipuliavimas', 'Pesimizmas', 'Skubotumas', 'Neetiškas elgesys', 'Nepagarba', 'Apatija', 'Neigiamas požiūris', 'Komunikacijos stoka', 'Negebėjimas priimti sprendimų'];
 
-                    // Add to competencyData so it gets a proper label
-                    competencyData['trait_rating_' + trait.id] = { label: trait.name };
-                });
+        const allKeywordEls = [];
+
+        function getKeywordColors(keyword) {
+            const lowerK = keyword.toLowerCase();
+            if (positiveKeywords.some(k => k.toLowerCase() === lowerK)) {
+                return { bg: 'bg-emerald-100', text: 'text-emerald-800', border: 'border-emerald-200', hoverBg: 'hover:bg-emerald-200', btnText: 'text-emerald-600', btnHover: 'hover:text-emerald-900' };
+            } else if (negativeKeywords.some(k => k.toLowerCase() === lowerK)) {
+                return { bg: 'bg-rose-100', text: 'text-rose-800', border: 'border-rose-200', hoverBg: 'hover:bg-rose-200', btnText: 'text-rose-600', btnHover: 'hover:text-rose-900' };
+            } else {
+                return { bg: 'bg-slate-100', text: 'text-slate-800', border: 'border-slate-200', hoverBg: 'hover:bg-slate-200', btnText: 'text-slate-600', btnHover: 'hover:text-slate-900' };
             }
+        }
 
-            document.querySelectorAll('.competency-battery').forEach(container => {
-                const competencyName = container.dataset.competency;
-                if (!competencyData[competencyName]) return; // skip unknown
-                const template = document.getElementById('competency-template').content.cloneNode(true);
-                container.appendChild(template);
-
-                container.querySelector('.competency-label').textContent = competencyData[competencyName].label;
-                const hiddenInput = container.querySelector(`input[name="${competencyName}"]`);
-
-                const updateView = (value) => {
-                    hiddenInput.value = value;
-
-                    const segments = container.querySelectorAll('.battery-segment');
-                    const sliderBg = container.querySelector('.slider-bg');
-                    const emptyState = container.querySelector('.empty-state');
-                    const selectedState = container.querySelector('.selected-state');
-
-                    if (value > 0) {
-                        const levelData = levels[value - 1];
-
-                        // Update Slider Background
-                        sliderBg.className = `slider-bg absolute top-1.5 bottom-1.5 rounded-[1.75rem] transition-all duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-xl bg-gradient-to-br ${levelData.colorClass} z-0 block`;
-                        sliderBg.style.left = `calc(${(value - 1) * 25}% + 6px)`;
-                        sliderBg.style.width = `calc(25% - 12px)`;
-
-                        // Show selected state and hide empty state
-                        emptyState.classList.add('hidden');
-                        selectedState.classList.remove('hidden');
-                        selectedState.classList.remove('opacity-0', 'translate-y-4');
-                        selectedState.querySelector('.active-desc').textContent = levelData.description;
-
-                    } else {
-                        // Reset to no selection
-                        sliderBg.classList.add('hidden');
-                        sliderBg.style.width = '0px';
-
-                        emptyState.classList.remove('hidden');
-                        selectedState.classList.add('hidden', 'opacity-0', 'translate-y-4');
-                    }
-
-                    segments.forEach(segment => {
-                        const level = parseInt(segment.dataset.level, 10);
-                        const isActive = level === value;
-                        const iconWrapper = segment.querySelector('.icon-wrapper');
-                        const labelText = segment.querySelector('.label-text');
-
-                        if (isActive) {
-                            segment.classList.add('text-white', 'scale-105');
-                            segment.classList.remove('text-slate-400');
-                            iconWrapper.classList.add('scale-110', 'rotate-0');
-                            labelText.classList.replace('opacity-60', 'opacity-100');
-                            labelText.textContent = levels[level - 1].label;
-                        } else {
-                            segment.classList.remove('text-white', 'scale-105');
-                            segment.classList.add('text-slate-400');
-                            iconWrapper.classList.remove('scale-110', 'rotate-0');
-                            labelText.classList.replace('opacity-100', 'opacity-60');
-                            labelText.textContent = levels[level - 1].label;
-                        }
-                    });
-                };
-
-                container.addEventListener('click', (e) => {
-                    const target = e.target.closest('[data-level]');
-                    if (target) {
-                        const level = parseInt(target.dataset.level, 10);
-                        updateView(level);
-                        // Atnaujinti AI mygtuko būseną po kiekvieno pasirinkimo
-                        if (typeof updateGenerateButtonState === 'function') {
-                            updateGenerateButtonState();
-                        }
-                    }
-                });
+        function syncKeywordCloud() {
+            const currentKeywords = keywordsInput.value.split(',').map(s => s.trim()).filter(s => s);
+            const lowerKeywords = currentKeywords.map(s => s.toLowerCase());
+            
+            allKeywordEls.forEach(item => {
+                if (lowerKeywords.includes(item.keyword.toLowerCase())) {
+                    item.el.classList.add('opacity-50', 'ring-2', 'ring-offset-2', 'ring-teal-500');
+                    item.isSelected = true;
+                } else {
+                    item.el.classList.remove('opacity-50', 'ring-2', 'ring-offset-2', 'ring-teal-500');
+                    item.isSelected = false;
+                }
             });
 
-            // Keyword Modal
-            const keywordModal = document.getElementById('keyword-modal');
-            const openKeywordModalBtn = document.getElementById('open-keyword-modal');
-            const closeKeywordModalBtn = document.getElementById('close-keyword-modal');
-            const keywordCloud = document.getElementById('keyword-cloud');
-            const keywordsInput = document.getElementById('keywords');
-            const keywordInputDisplay = document.getElementById('keyword-input-display');
-            const selectedKeywordsContainer = document.getElementById('selected-keywords-container');
-
-            // Keyword cloud: always show the default generic keyword cloud
-            const positiveKeywords = [
-                'Komandinis darbas', 'Komunikabilumas', 'Iniciatyvumas', 'Problemų sprendimas', 'Lyderystė',
-                'Analitinis mąstymas', 'Kūrybiškumas', 'Adaptabilumas', 'Atsakingumas', 'Laiko planavimas',
-                'Techninės žinios', 'Strateginis mąstymas', 'Klientų aptarnavimas', 'Derybos', 'Prezentavimo įgūdžiai',
-                'Patikimumas', 'Motyvacija', 'Pozityvumas', 'Efektyvumas', 'Savarankiškumas', 'Mentorystė', 'Pagalba kitiems',
-                'Atvirumas', 'Entuziazmas', 'Profesionalumas', 'Kruopštumas', 'Smalsumas', 'Konstruktyvumas', 'Įžvalgumas', 'Lankstumas',
-                'Draugiškumas', 'Mandagumas', 'Punktualumas', 'Organizuotumas', 'Empatija', 'Orientacija į rezultą', 'Gebėjimas įkvėpti',
-                'Gebėjimas mokytis', 'Sąžiningumas', 'Atkaklumas'
-            ];
-
-            const neutralKeywords = [
-                'Tylus', 'Ramus', 'Individualistas', 'Analitikas', 'Stebėtojas', 'Vykdytojas', 'Planuotojas',
-                'Struktūruotas', 'Formalus', 'Neformalus', 'Praktiškas', 'Teoretikas', 'Atsargus', 'Racionalus', 'Intravertas',
-                'Ekstravertas', 'Realistas', 'Pragmmatikas', 'Diplomatas', 'Kritikas', 'Svajotojas', 'Logiškas',
-                'Emocionalus', 'Konservatyvus', 'Liberalus', 'Tiesioginis', 'Netiesioginis', 'Detalus', 'Apibendrinantis', 'Koncepualus'
-            ];
-
-            const negativeKeywords = [
-                'Vėlavimas', 'Neatsakingumas', 'Pasyvumas', 'Konfliktiškumas', 'Arogancija',
-                'Klaidų slėpimas', 'Neorganizuotumas', 'Nekokybiškas darbas', 'Stresas', 'Negatyvumas',
-                'Nepasitikėjimas', 'Kritikos nepriėmimas', 'Dėmesio stoka', 'Bendradarbiavimo stoka', 'Lėtas darbas',
-                'Nedraugiškumas', 'Chaotiškumas', 'Uždarumas', 'Pesimizmas', 'Abejingumas', 'Išsiblaškymas', 'Paviršutiniškumas',
-                'Neapdairumas', 'Neryžtingumas', 'Užsispyrimas', 'Ignoravimas', 'Manipuliavimas', 'Pesimizmas', 'Skubotumas',
-                'Neetiškas elgesys', 'Nepagarba', 'Apatija', 'Neigiamas požiūris', 'Komunikacijos stoka', 'Negebėjimas priimti sprendimų'
-            ];
-
-            const allKeywordEls = [];
-
-            function syncKeywordCloud() {
-                const currentKeywords = keywordsInput.value.split(',').map(s => s.trim()).filter(s => s);
-                const lowerKeywords = currentKeywords.map(s => s.toLowerCase());
+            selectedKeywordsContainer.innerHTML = '';
+            currentKeywords.forEach(keyword => {
+                const c = getKeywordColors(keyword);
+                const chip = document.createElement('span');
+                chip.className = `inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold ${c.bg} ${c.text} transition-all ${c.hoverBg} shadow-sm border ${c.border}`;
+                chip.innerHTML = `${keyword} <button type="button" class="ml-2 ${c.btnText} ${c.btnHover} focus:outline-none"><i data-lucide="x" class="w-3 h-3"></i></button>`;
                 
-                // Atnaujinti modalo žodžių stilių
-                allKeywordEls.forEach(item => {
-                    if (lowerKeywords.includes(item.keyword.toLowerCase())) {
-                        item.el.classList.add('opacity-60', 'ring-2', 'ring-offset-2', 'ring-primary');
-                        item.isSelected = true;
-                    } else {
-                        item.el.classList.remove('opacity-60', 'ring-2', 'ring-offset-2', 'ring-primary');
-                        item.isSelected = false;
-                    }
-                });
-
-                // Perpiešti burbuliukus po laukeliu
-                selectedKeywordsContainer.innerHTML = '';
-                currentKeywords.forEach(keyword => {
-                    const chip = document.createElement('span');
-                    chip.className = 'inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-purple-100 text-purple-800 transition-all hover:bg-purple-200';
-                    chip.innerHTML = `${keyword} <button type="button" class="ml-1.5 text-purple-500 hover:text-purple-700 focus:outline-none">&times;</button>`;
-                    
-                    chip.querySelector('button').addEventListener('click', () => {
-                        const newKeywords = keywordsInput.value.split(',').map(s => s.trim()).filter(s => s && s.toLowerCase() !== keyword.toLowerCase());
-                        keywordsInput.value = newKeywords.join(', ');
-                        syncKeywordCloud();
-                    });
-
-                    selectedKeywordsContainer.appendChild(chip);
-                });
-            }
-
-            if (keywordInputDisplay) {
-                keywordInputDisplay.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ',') {
-                        e.preventDefault();
-                        const newWord = keywordInputDisplay.value.trim();
-                        // Išvalome nereikalingus kablelius ar tarpus
-                        const cleanedWord = newWord.replace(/,$/, '').trim();
-                        if (cleanedWord) {
-                            const current = keywordsInput.value.split(',').map(s => s.trim()).filter(s => s);
-                            if (!current.map(k => k.toLowerCase()).includes(cleanedWord.toLowerCase())) {
-                                current.push(cleanedWord);
-                                keywordsInput.value = current.join(', ');
-                            }
-                            keywordInputDisplay.value = '';
-                            syncKeywordCloud();
-                            if (typeof updateGenerateButtonState === 'function') {
-                                updateGenerateButtonState();
-                            }
-                        }
-                    }
-                });
-            }
-
-            function createKeywordEl(keyword, baseClass) {
-                const el = document.createElement('span');
-                el.textContent = keyword;
-                el.className = `cursor-pointer text-sm font-medium px-2.5 py-0.5 rounded-full transition-all duration-200 select-none ${baseClass}`;
-                
-                const item = { keyword: keyword, el: el, isSelected: false };
-                allKeywordEls.push(item);
-
-                el.addEventListener('click', () => {
-                    let current = keywordsInput.value.split(',').map(s => s.trim()).filter(s => s);
-                    
-                    if (!item.isSelected) {
-                        if (!current.map(k => k.toLowerCase()).includes(keyword.toLowerCase())) {
-                            current.push(keyword);
-                        }
-                    } else {
-                        current = current.filter(k => k.toLowerCase() !== keyword.toLowerCase());
-                    }
-                    
-                    keywordsInput.value = current.join(', ');
+                chip.querySelector('button').addEventListener('click', () => {
+                    const newKeywords = keywordsInput.value.split(',').map(s => s.trim()).filter(s => s && s.toLowerCase() !== keyword.toLowerCase());
+                    keywordsInput.value = newKeywords.join(', ');
                     syncKeywordCloud();
-                    if (typeof updateGenerateButtonState === 'function') {
-                        updateGenerateButtonState();
-                    }
                 });
-                
-                keywordCloud.appendChild(el);
-            }
+                selectedKeywordsContainer.appendChild(chip);
+            });
+            if (typeof lucide !== 'undefined') lucide.createIcons({root: selectedKeywordsContainer});
+        }
 
-            positiveKeywords.forEach(k => createKeywordEl(k, 'bg-green-100 text-green-800'));
-            neutralKeywords.forEach(k => createKeywordEl(k, 'bg-yellow-100 text-yellow-800'));
-            negativeKeywords.forEach(k => createKeywordEl(k, 'bg-red-100 text-red-800'));
+        if (keywordInputDisplay) {
+            keywordInputDisplay.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ',') {
+                    e.preventDefault();
+                    const newWord = keywordInputDisplay.value.trim().replace(/,$/, '').trim();
+                    if (newWord) {
+                        const current = keywordsInput.value.split(',').map(s => s.trim()).filter(s => s);
+                        if (!current.map(k => k.toLowerCase()).includes(newWord.toLowerCase())) {
+                            current.push(newWord);
+                            keywordsInput.value = current.join(', ');
+                        }
+                        keywordInputDisplay.value = '';
+                        syncKeywordCloud();
+                        if (typeof updateGenerateButtonState === 'function') updateGenerateButtonState();
+                    }
+                }
+            });
+        }
 
-            openKeywordModalBtn.addEventListener('click', () => {
+        function createKeywordEl(keyword, baseClass) {
+            const el = document.createElement('span');
+            el.textContent = keyword;
+            el.className = `cursor-pointer text-[13px] font-semibold px-3 py-1 rounded-full transition-all duration-200 select-none border border-transparent hover:border-slate-300 shadow-sm ${baseClass}`;
+            const item = { keyword: keyword, el: el, isSelected: false };
+            allKeywordEls.push(item);
+
+            el.addEventListener('click', () => {
+                let current = keywordsInput.value.split(',').map(s => s.trim()).filter(s => s);
+                if (!item.isSelected) {
+                    if (!current.map(k => k.toLowerCase()).includes(keyword.toLowerCase())) current.push(keyword);
+                } else {
+                    current = current.filter(k => k.toLowerCase() !== keyword.toLowerCase());
+                }
+                keywordsInput.value = current.join(', ');
                 syncKeywordCloud();
-                keywordModal.classList.remove('hidden');
+                if (typeof updateGenerateButtonState === 'function') updateGenerateButtonState();
             });
+            keywordCloud.appendChild(el);
+        }
 
-            closeKeywordModalBtn.addEventListener('click', () => {
-                keywordModal.classList.add('hidden');
-            });
+        positiveKeywords.forEach(k => createKeywordEl(k, 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'));
+        neutralKeywords.forEach(k => createKeywordEl(k, 'bg-slate-50 text-slate-700 hover:bg-slate-100'));
+        negativeKeywords.forEach(k => createKeywordEl(k, 'bg-rose-50 text-rose-700 hover:bg-rose-100'));
 
-            window.addEventListener('click', (event) => {
-                if (event.target == keywordModal) {
-                    keywordModal.classList.add('hidden');
-                }
-            });
-            // Pradinė sinchronizacija (jei laukelis jau turi reikšmių)
+        openKeywordModalBtn.addEventListener('click', () => {
             syncKeywordCloud();
-            window.syncKeywordCloud = syncKeywordCloud;
+            keywordModal.classList.remove('hidden');
+        });
 
-            // --- AI mygtuko validacijos logika ---
-            const generateBtn = document.getElementById('generate-ai-btn');
-            const tooltip = document.getElementById('ai-btn-tooltip');
-            const tooltipText = document.getElementById('ai-btn-tooltip-text');
-            const btnWrapper = document.getElementById('generate-ai-btn-wrapper');
+        closeKeywordModalBtn.addEventListener('click', () => {
+            keywordModal.classList.add('hidden');
+        });
 
-            window.updateGenerateButtonState = function() {
-                // 1. Patikrinti, ar visos savybės pasirinktos (value > 0)
-                const allBatteries = document.querySelectorAll('.competency-battery input[type="hidden"]');
-                let allRated = true;
-                let unratedCount = 0;
-                allBatteries.forEach(input => {
-                    // Ignoruojame paslėptus default competencies jei yra klausimynas
-                    const parentContainer = input.closest('#default-competencies');
-                    if (parentContainer && parentContainer.style.display === 'none') return;
-                    if (parseInt(input.value, 10) === 0) {
-                        allRated = false;
-                        unratedCount++;
+        window.addEventListener('click', (event) => {
+            if (event.target == keywordModal) keywordModal.classList.add('hidden');
+        });
+
+        syncKeywordCloud();
+        window.syncKeywordCloud = syncKeywordCloud;
+
+        // --- AI mygtuko validacijos logika ---
+        const generateBtn = document.getElementById('generate-ai-btn');
+        const tooltip = document.getElementById('ai-btn-tooltip');
+        const tooltipText = document.getElementById('ai-btn-tooltip-text');
+        const btnWrapper = document.getElementById('generate-ai-btn-wrapper');
+
+        window.updateGenerateButtonState = function() {
+            const allBatteries = document.querySelectorAll('.competency-battery input[type="hidden"]');
+            let allRated = true;
+            allBatteries.forEach(input => {
+                const parentContainer = input.closest('#default-competencies');
+                if (parentContainer && parentContainer.style.display === 'none') return;
+                if (parseInt(input.value, 10) === 0) allRated = false;
+            });
+
+            const currentKeywords = keywordsInput.value.split(',').map(s => s.trim()).filter(s => s);
+            const hasEnoughKeywords = currentKeywords.length >= 3;
+            const isValid = allRated && hasEnoughKeywords;
+            
+            generateBtn.disabled = !isValid;
+
+            if (!isValid) {
+                const issues = [];
+                if (!allRated) issues.push('įvertinkite visas savybes');
+                if (!hasEnoughKeywords) issues.push(`bent 3 raktinius žodžius (${currentKeywords.length}/3)`);
+                tooltipText.textContent = 'Trūksta: ' + issues.join(' ir ');
+                tooltip.classList.remove('hidden');
+            } else {
+                tooltip.classList.add('hidden');
+            }
+        };
+
+        btnWrapper.addEventListener('mouseenter', () => {
+            if (generateBtn.disabled && !tooltip.classList.contains('hidden')) {
+                tooltip.classList.remove('opacity-0', 'pointer-events-none');
+                tooltip.classList.add('opacity-100');
+            }
+        });
+        btnWrapper.addEventListener('mouseleave', () => {
+            tooltip.classList.add('opacity-0', 'pointer-events-none');
+            tooltip.classList.remove('opacity-100');
+        });
+
+        const observer = new MutationObserver(() => updateGenerateButtonState());
+        observer.observe(selectedKeywordsContainer, { childList: true });
+        updateGenerateButtonState();
+
+        // AI Generation Logic
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
                     }
-                });
-
-                // 2. Patikrinti, ar yra bent 3 raktiniai žodžiai
-                const currentKeywords = keywordsInput.value.split(',').map(s => s.trim()).filter(s => s);
-                const hasEnoughKeywords = currentKeywords.length >= 3;
-
-                // 3. Nustatyti mygtuko būseną
-                const isValid = allRated && hasEnoughKeywords;
-                generateBtn.disabled = !isValid;
-
-                // 4. Tooltip žinutė
-                if (!isValid) {
-                    const issues = [];
-                    if (!allRated) issues.push('įvertinkite visas savybes');
-                    if (!hasEnoughKeywords) issues.push(`pasirinkite bent 3 raktinius žodžius (dabar: ${currentKeywords.length})`);
-                    tooltipText.textContent = 'Prašome ' + issues.join(' ir ');
                 }
+            }
+            return cookieValue;
+        }
+
+        document.getElementById('generate-ai-btn').addEventListener('click', function () {
+            const btn = this;
+            const spinner = document.getElementById('ai-spinner');
+            const aiIcon = document.getElementById('ai-icon');
+            const btnText = document.getElementById('ai-btn-text');
+
+            spinner.classList.remove('hidden');
+            aiIcon.classList.add('hidden');
+            btnText.textContent = 'Generuojama...';
+            btn.disabled = true;
+
+            const ratings = {
+                rating: document.querySelector('input[name="rating"]').value,
+                teamwork: document.querySelector('input[name="teamwork_rating"]').value,
+                communication: document.querySelector('input[name="communication_rating"]').value,
+                initiative: document.querySelector('input[name="initiative_rating"]').value,
+                technical_skills: document.querySelector('input[name="technical_skills_rating"]').value,
+                problem_solving: document.querySelector('input[name="problem_solving_rating"]').value,
             };
 
-            // Tooltip rodymas tik kai mygtukas disabled
-            btnWrapper.addEventListener('mouseenter', () => {
-                if (generateBtn.disabled) {
-                    tooltip.classList.remove('opacity-0', 'pointer-events-none');
-                    tooltip.classList.add('opacity-100');
-                }
-            });
-            btnWrapper.addEventListener('mouseleave', () => {
-                tooltip.classList.add('opacity-0', 'pointer-events-none');
-                tooltip.classList.remove('opacity-100');
-            });
+            const data = {
+                ratings: ratings,
+                keywords: document.getElementById('keywords').value,
+                comments: document.getElementById('comments').value,
+                existing_feedback: document.getElementById('feedback').value,
+                colleague_name: document.getElementById('colleague-name').value,
+            };
 
-            // Taip pat reaguoti kai raktažodžiai trinami per burbuliukus
-            const observer = new MutationObserver(() => {
-                updateGenerateButtonState();
-            });
-            observer.observe(selectedKeywordsContainer, { childList: true });
-
-            // Pradinė būsena
-            updateGenerateButtonState();
+            fetch("{% url 'generate_ai_feedback' %}", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+                body: JSON.stringify(data),
+            }).then(response => response.json())
+              .then(result => {
+                  if (result.task_id) {
+                      const checkInterval = setInterval(() => {
+                          fetch(`{% url 'check_ai_task_status' %}?task_id=${result.task_id}`)
+                              .then(res => res.json())
+                              .then(statusResult => {
+                                  if (statusResult.status === 'completed') {
+                                      clearInterval(checkInterval);
+                                      document.getElementById('feedback').value = statusResult.generated_feedback;
+                                      document.getElementById('final-feedback-container').classList.remove('hidden');
+                                      document.getElementById('submit-feedback-btn-wrapper').classList.remove('hidden');
+                                      spinner.classList.add('hidden');
+                                      aiIcon.classList.remove('hidden');
+                                      btnText.textContent = 'Pergeneruoti AI';
+                                      btn.disabled = false;
+                                  } else if (statusResult.status === 'failed' || statusResult.error) {
+                                      clearInterval(checkInterval);
+                                      alert('Klaida generuojant atsiliepimą.');
+                                      spinner.classList.add('hidden');
+                                      aiIcon.classList.remove('hidden');
+                                      btnText.textContent = 'Generuoti AI juodraštį';
+                                      btn.disabled = false;
+                                  }
+                              }).catch(err => {
+                                  clearInterval(checkInterval);
+                                  spinner.classList.add('hidden');
+                                  aiIcon.classList.remove('hidden');
+                                  btn.disabled = false;
+                              });
+                      }, 2000);
+                  } else {
+                      alert('Klaida paleidžiant generavimą.');
+                      spinner.classList.add('hidden');
+                      aiIcon.classList.remove('hidden');
+                      btn.disabled = false;
+                  }
+              }).catch(error => {
+                  alert('Tinklo klaida.');
+                  spinner.classList.add('hidden');
+                  aiIcon.classList.remove('hidden');
+                  btn.disabled = false;
+              });
         });
-    </script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            function getCookie(name) {
-                let cookieValue = null;
-                if (document.cookie && document.cookie !== '') {
-                    const cookies = document.cookie.split(';');
-                    for (let i = 0; i < cookies.length; i++) {
-                        const cookie = cookies[i].trim();
-                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                            break;
+        // Auto-save / Restore juodraštis
+        const STORAGE_KEY = 'feedback_draft_{{ feedback_request.id }}';
+        function saveDraft() {
+            const data = {
+                keywords: document.getElementById('keywords').value,
+                comments: document.getElementById('comments').value,
+                feedback: document.getElementById('feedback').value,
+                feedbackVisible: !document.getElementById('final-feedback-container').classList.contains('hidden'),
+                submitVisible: !document.getElementById('submit-feedback-btn-wrapper').classList.contains('hidden')
+            };
+            document.querySelectorAll('.competency-battery input[type="hidden"]').forEach(i => data['rating_' + i.name] = i.value);
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        setTimeout(() => {
+            try {
+                const data = JSON.parse(localStorage.getItem(STORAGE_KEY));
+                if (data) {
+                    document.querySelectorAll('.competency-battery').forEach(c => {
+                        const i = c.querySelector('input[type="hidden"]');
+                        if (i && data['rating_' + i.name] > 0) {
+                            const b = c.querySelector(`[data-level="${data['rating_' + i.name]}"]`);
+                            if (b) b.click();
                         }
-                    }
-                }
-                return cookieValue;
-            }
-
-            document.getElementById('generate-ai-btn').addEventListener('click', function () {
-                const btn = this;
-                const spinner = document.getElementById('ai-spinner');
-                const btnText = document.getElementById('ai-btn-text');
-
-                spinner.classList.remove('hidden');
-                btnText.textContent = 'Generuojama...';
-                btn.disabled = true;
-
-                const ratings = {
-                    rating: document.querySelector('input[name="rating"]').value,
-                    teamwork: document.querySelector('input[name="teamwork_rating"]').value,
-                    communication: document.querySelector('input[name="communication_rating"]').value,
-                    initiative: document.querySelector('input[name="initiative_rating"]').value,
-                    technical_skills: document.querySelector('input[name="technical_skills_rating"]').value,
-                    problem_solving: document.querySelector('input[name="problem_solving_rating"]').value,
-                };
-                const keywords = document.getElementById('keywords').value;
-                const comments = document.getElementById('comments').value;
-                const existing_feedback = document.getElementById('feedback').value;
-                const colleague_name = document.getElementById('colleague-name').value;
-
-                const data = {
-                    ratings: ratings,
-                    keywords: keywords,
-                    comments: comments,
-                    existing_feedback: existing_feedback,
-                    colleague_name: colleague_name,
-                };
-
-                const csrftoken = getCookie('csrftoken');
-
-                fetch("{% url 'generate_ai_feedback' %}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': csrftoken,
-                    },
-                    body: JSON.stringify(data),
-                })
-                    .then(response => response.json())
-                    .then(result => {
-                        if (result.task_id) {
-                            // Start polling for the result
-                            const taskId = result.task_id;
-                            const checkInterval = setInterval(() => {
-                                fetch(`{% url 'check_ai_task_status' %}?task_id=${taskId}`)
-                                    .then(res => res.json())
-                                    .then(statusResult => {
-                                        if (statusResult.status === 'completed') {
-                                            clearInterval(checkInterval);
-                                            document.getElementById('feedback').value = statusResult.generated_feedback;
-                                            document.getElementById('final-feedback-container').classList.remove('hidden');
-                                            document.getElementById('submit-feedback-btn').classList.remove('hidden');
-                                            spinner.classList.add('hidden');
-                                            btnText.textContent = 'Generuoti (AI)';
-                                            btn.disabled = false;
-                                        } else if (statusResult.status === 'failed' || statusResult.error) {
-                                            clearInterval(checkInterval);
-                                            console.error('Klaida generuojant atsiliepimą:', statusResult.error);
-                                            alert('Atsiprašome, įvyko klaida generuojant atsiliepimą. Bandykite vėliau.');
-                                            spinner.classList.add('hidden');
-                                            btnText.textContent = 'Generuoti (AI)';
-                                            btn.disabled = false;
-                                        }
-                                        // If status is 'processing', do nothing and let the interval run again
-                                    })
-                                    .catch(err => {
-                                        clearInterval(checkInterval);
-                                        console.error('Polling klaida:', err);
-                                        spinner.classList.add('hidden');
-                                        btnText.textContent = 'Generuoti (AI)';
-                                        btn.disabled = false;
-                                    });
-                            }, 2000); // Check every 2 seconds
-                        } else if (result.error) {
-                            console.error('Klaida paleidžiant generavimą:', result.error);
-                            alert('Atsiprašome, įvyko klaida. Bandykite vėliau.');
-                            spinner.classList.add('hidden');
-                            btnText.textContent = 'Generuoti (AI)';
-                            btn.disabled = false;
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Fetch klaida:', error);
-                        alert('Atsiprašome, įvyko tinklo klaida. Bandykite vėliau.');
-                        spinner.classList.add('hidden');
-                        btnText.textContent = 'Generuoti (AI)';
-                        btn.disabled = false;
                     });
-            });
-        });
-    </script>
-
-    <!-- Auto-save / Restore juodraštis -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const STORAGE_KEY = 'feedback_draft_{{ feedback_request.id }}';
-
-            function getDraftData() {
-                try {
-                    return JSON.parse(localStorage.getItem(STORAGE_KEY)) || {};
-                } catch(e) {
-                    return {};
-                }
-            }
-
-            function saveDraft() {
-                const data = {};
-
-                // Savybių įvertinimai
-                document.querySelectorAll('.competency-battery input[type="hidden"]').forEach(input => {
-                    data['rating_' + input.name] = input.value;
-                });
-
-                // Raktiniai žodžiai
-                data.keywords = document.getElementById('keywords').value;
-
-                // Komentarai
-                data.comments = document.getElementById('comments').value;
-
-                // AI sugeneruotas / redaguotas tekstas
-                data.feedback = document.getElementById('feedback').value;
-
-                // Ar buvo matomas feedback konteineris
-                data.feedbackVisible = !document.getElementById('final-feedback-container').classList.contains('hidden');
-                data.submitVisible = !document.getElementById('submit-feedback-btn').classList.contains('hidden');
-
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-            }
-
-            function restoreDraft() {
-                const data = getDraftData();
-                if (!data || Object.keys(data).length === 0) return;
-
-                // Atkurti savybių įvertinimus
-                document.querySelectorAll('.competency-battery').forEach(container => {
-                    const input = container.querySelector('input[type="hidden"]');
-                    if (!input) return;
-                    const savedValue = data['rating_' + input.name];
-                    if (savedValue && parseInt(savedValue) > 0) {
-                        // Simuliuoti paspaudimą ant tinkamo lygio
-                        const btn = container.querySelector(`[data-level="${savedValue}"]`);
-                        if (btn) {
-                            btn.click();
-                        }
+                    if (data.keywords) {
+                        document.getElementById('keywords').value = data.keywords;
+                        if (window.syncKeywordCloud) window.syncKeywordCloud();
                     }
-                });
-
-                // Atkurti raktinius žodžius
-                if (data.keywords) {
-                    document.getElementById('keywords').value = data.keywords;
-                    // Iššaukti sinchronizaciją (burbuliukai + debesis)
-                    if (typeof window.syncKeywordCloud === 'function') {
-                        window.syncKeywordCloud();
-                    }
-                    // Atnaujinti AI mygtuko būseną
-                    if (typeof updateGenerateButtonState === 'function') {
-                        updateGenerateButtonState();
+                    if (data.comments) document.getElementById('comments').value = data.comments;
+                    
+                    if (data.feedback && data.feedback.trim() !== '') {
+                        document.getElementById('feedback').value = data.feedback;
+                        document.getElementById('final-feedback-container').classList.remove('hidden');
+                        document.getElementById('submit-feedback-btn-wrapper').classList.remove('hidden');
+                    } else {
+                        document.getElementById('final-feedback-container').classList.add('hidden');
+                        document.getElementById('submit-feedback-btn-wrapper').classList.add('hidden');
                     }
                 }
+            } catch(e) {}
+        }, 100);
 
-                // Atkurti komentarus
-                if (data.comments) {
-                    document.getElementById('comments').value = data.comments;
-                }
-
-                // Atkurti feedback tekstą
-                if (data.feedback) {
-                    document.getElementById('feedback').value = data.feedback;
-                }
-
-                // Atkurti matomumą
-                if (data.feedbackVisible) {
-                    document.getElementById('final-feedback-container').classList.remove('hidden');
-                }
-                if (data.submitVisible) {
-                    document.getElementById('submit-feedback-btn').classList.remove('hidden');
-                }
-            }
-
-            // Atkurti juodraštį krovimo metu
-            // Šiek tiek palaukiame, kad kiti skriptai (baterijos, raktažodžiai) būtų inicializuoti
-            setTimeout(restoreDraft, 100);
-
-            // Automatiškai saugoti kas 2 sekundes
-            setInterval(saveDraft, 2000);
-
-            // Saugoti kai keičiasi laukai
-            document.getElementById('comments').addEventListener('input', saveDraft);
-            document.getElementById('feedback').addEventListener('input', saveDraft);
-
-            // Išvalyti juodraštį siunčiant formą
-            const form = document.querySelector('form[method="POST"]');
-            if (form) {
-                form.addEventListener('submit', function() {
-                    localStorage.removeItem(STORAGE_KEY);
-                });
-            }
-        });
-    </script>
-</body>
-
-</html>
+        setInterval(saveDraft, 2000);
+        document.getElementById('comments').addEventListener('input', saveDraft);
+        document.getElementById('feedback').addEventListener('input', saveDraft);
+        const formEl = document.querySelector('form[method="POST"]');
+        if (formEl) formEl.addEventListener('submit', () => localStorage.removeItem(STORAGE_KEY));
+    });
+</script>
+{% endblock %}

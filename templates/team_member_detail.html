@@ -1,47 +1,65 @@
 {% extends "base.html" %}
+{% load static %}
+
 {% block title %}{{ member.get_full_name }} — Komandos Statistika{% endblock %}
 
 {% block content %}
-<main class="flex-1 overflow-y-auto">
-    <header class="bg-bg-main shadow-sm p-4">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<main class="flex-1 p-4 md:p-8 overflow-y-auto bg-[#f8fafc] font-sans text-slate-900">
+    <header class="mb-8">
         <div class="flex items-center space-x-4">
-            <a href="{% url 'team_statistics' %}" class="text-text-muted hover:text-primary transition">
-                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
-                </svg>
+            <a href="{% url 'team_statistics' %}" class="p-2.5 bg-white border border-slate-200 rounded-xl text-slate-500 hover:text-slate-800 hover:bg-slate-50 transition-colors shadow-sm">
+                <i data-lucide="arrow-left" class="w-5 h-5"></i>
             </a>
             <div>
-                <h1 class="text-2xl font-bold text-text-main">{{ member.get_full_name }}</h1>
-                <p class="text-sm text-text-muted">{{ department.name }} · {{ member.email }}</p>
+                <h1 class="text-3xl font-bold text-slate-800">{{ member.get_full_name }}</h1>
+                <p class="text-sm text-slate-500 mt-1 font-medium">{{ department.name|default:"Skyrius nepriskirtas" }} · {{ member.email }}</p>
             </div>
         </div>
     </header>
 
-    <div class="p-6 md:p-8 space-y-8">
+    <div class="space-y-8 pb-10">
 
         <!-- 1. Summary -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-bg-main rounded-2xl shadow-lg p-6 relative overflow-hidden">
-                <div
-                    class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-bg-secondary rounded-full opacity-50 blur-2xl">
+            <div class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-3xl shadow-lg p-8 relative overflow-hidden text-white">
+                <div class="absolute -top-6 -right-6 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-teal-500/20 rounded-full blur-3xl"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex items-center gap-2 mb-2 opacity-80">
+                        <i data-lucide="star" class="w-4 h-4"></i>
+                        <p class="font-medium text-sm">Bendras vidurkis</p>
+                    </div>
+                    <div class="flex items-end gap-2">
+                        <h2 class="text-5xl font-extrabold">{{ avg_rating }}</h2>
+                        <span class="text-sm opacity-60 mb-1 font-medium">/ 5</span>
+                    </div>
                 </div>
-                <p class="text-text-muted font-medium text-sm mb-1">Bendras vidurkis</p>
-                <h2 class="text-4xl font-extrabold text-text-main">{{ avg_rating }}</h2>
-                <p class="text-xs text-text-muted mt-1">iš 4 galimų</p>
             </div>
-            <div class="bg-bg-main rounded-2xl shadow-lg p-6">
-                <p class="text-text-muted font-medium text-sm mb-1">Atsiliepimų</p>
-                <h2 class="text-4xl font-extrabold text-primary">{{ feedback_count }}</h2>
-                <p class="text-xs text-text-muted mt-1">užbaigtų apklausų</p>
+            
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-2 mb-2 text-slate-500">
+                        <i data-lucide="check-square" class="w-4 h-4"></i>
+                        <p class="font-medium text-sm">Atsiliepimų skaičius</p>
+                    </div>
+                    <h2 class="text-4xl font-extrabold text-teal-600">{{ feedback_count }}</h2>
+                </div>
+                <p class="text-[13px] text-slate-400 font-medium mt-4">Užbaigtų apklausų</p>
             </div>
-            <div class="bg-bg-main rounded-2xl shadow-lg p-6">
-                <p class="text-text-muted font-medium text-sm mb-1">Raktiniai žodžiai</p>
-                <div class="flex flex-wrap gap-1 mt-2">
+            
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 flex flex-col">
+                <div class="flex items-center gap-2 mb-4 text-slate-500">
+                    <i data-lucide="hash" class="w-4 h-4"></i>
+                    <p class="font-medium text-sm">Raktiniai žodžiai</p>
+                </div>
+                <div class="flex flex-wrap gap-2 mt-auto">
                     {% for kw in all_keywords %}
-                    <span class="px-2 py-0.5 bg-bg-secondary text-primary rounded-full text-xs font-medium">{{ kw }}</span>
+                    <span class="px-3 py-1 bg-slate-50 border border-slate-100 text-slate-700 rounded-lg text-[13px] font-bold">{{ kw }}</span>
                     {% empty %}
-                    <span class="text-xs text-text-muted">Kol kas nėra</span>
+                    <span class="text-[13px] text-slate-400 font-medium">Kol kas nėra raktinių žodžių</span>
                     {% endfor %}
                 </div>
             </div>
@@ -50,18 +68,24 @@
         <!-- 2. Competencies + Trait Ratings -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <!-- Standard competencies -->
-            <div class="bg-bg-main rounded-2xl shadow-lg p-6">
-                <h3 class="text-lg font-bold text-text-main mb-5">Kompetencijos</h3>
-                <div class="space-y-4">
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="p-2.5 bg-teal-50 rounded-xl">
+                        <i data-lucide="bar-chart-2" class="w-5 h-5 text-teal-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Kompetencijos</h3>
+                </div>
+                
+                <div class="space-y-6">
                     {% for comp in competencies %}
                     <div>
-                        <div class="flex justify-between mb-1">
-                            <span class="text-sm font-medium text-text-main">{{ comp.name }}</span>
-                            <span class="text-sm font-bold text-primary">{{ comp.score }}/4</span>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-[14px] font-bold text-slate-700">{{ comp.name }}</span>
+                            <span class="text-[14px] font-extrabold text-teal-600">{{ comp.score|floatformat:1 }}/5</span>
                         </div>
-                        <div class="w-full bg-bg-secondary rounded-full h-2.5">
-                            <div class="bg-primary h-2.5 rounded-full"
-                                style="width: {% widthratio comp.score 4 100 %}%"></div>
+                        <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                            <div class="bg-gradient-to-r from-teal-400 to-teal-600 h-2.5 rounded-full"
+                                style="width: {% widthratio comp.score 5 100 %}%"></div>
                         </div>
                     </div>
                     {% endfor %}
@@ -69,124 +93,145 @@
             </div>
 
             <!-- Trait ratings (from questionnaires) -->
-            <div class="bg-bg-main rounded-2xl shadow-lg p-6">
-                <h3 class="text-lg font-bold text-text-main mb-5">Savybių įvertinimai</h3>
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+                <div class="flex items-center gap-3 mb-8">
+                    <div class="p-2.5 bg-blue-50 rounded-xl">
+                        <i data-lucide="activity" class="w-5 h-5 text-blue-600"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-slate-800">Savybių įvertinimai</h3>
+                </div>
+                
                 {% if trait_ratings %}
-                <div class="space-y-4">
+                <div class="space-y-6">
                     {% for tr in trait_ratings %}
                     <div>
-                        <div class="flex justify-between mb-1">
-                            <span class="text-sm font-medium text-text-main">{{ tr.trait__name }}</span>
-                            <span class="text-sm font-bold text-primary">{{ tr.avg_rating|floatformat:1 }}/4</span>
+                        <div class="flex justify-between mb-2">
+                            <span class="text-[14px] font-bold text-slate-700">{{ tr.trait__name }}</span>
+                            <span class="text-[14px] font-extrabold text-blue-600">{{ tr.avg_rating|floatformat:1 }}/5</span>
                         </div>
-                        <div class="w-full bg-bg-secondary rounded-full h-2.5">
-                            <div class="bg-accent h-2.5 rounded-full"
-                                style="width: {% widthratio tr.avg_rating 4 100 %}%"></div>
+                        <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+                            <div class="bg-gradient-to-r from-blue-400 to-blue-600 h-2.5 rounded-full"
+                                style="width: {% widthratio tr.avg_rating 5 100 %}%"></div>
                         </div>
                     </div>
                     {% endfor %}
                 </div>
                 {% else %}
-                <p class="text-sm text-text-muted">Šis darbuotojas dar neturi savybių įvertinimų.</p>
+                <div class="h-full min-h-[150px] flex flex-col items-center justify-center text-center">
+                    <i data-lucide="pie-chart" class="w-8 h-8 text-slate-200 mb-3"></i>
+                    <p class="text-sm font-medium text-slate-500">Šis darbuotojas dar neturi <br/> unikalių savybių įvertinimų.</p>
+                </div>
                 {% endif %}
             </div>
         </div>
 
         <!-- 3. All feedbacks timeline -->
-        <div class="bg-bg-main rounded-2xl shadow-lg overflow-hidden">
-            <div class="p-6 border-b border-gray-100">
-                <h3 class="text-lg font-bold text-text-main">Visi atsiliepimai</h3>
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="p-8 border-b border-slate-100 flex items-center gap-3 bg-slate-50/50">
+                <div class="p-2.5 bg-slate-200/50 rounded-xl">
+                    <i data-lucide="history" class="w-5 h-5 text-slate-600"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800">Atsiliepimų istorija</h3>
             </div>
-            <div class="divide-y divide-gray-100">
+            
+            <div class="divide-y divide-slate-100">
                 {% for fb in feedbacks %}
-                <div class="p-6 hover:bg-bg-secondary transition">
-                    <div class="flex items-start justify-between mb-3">
-                        <div class="flex items-center space-x-3">
-                            <div
-                                class="w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center text-text-muted font-bold text-xs">
-                                {{ fb.feedback_request.requested_to.first_name|first }}{{ fb.feedback_request.requested_to.last_name|first }}</div>
+                <div class="p-8 hover:bg-slate-50/50 transition-colors">
+                    <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-5">
+                        <div class="flex items-center space-x-4">
+                            <div class="w-12 h-12 rounded-full bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center text-slate-500 font-extrabold text-sm">
+                                {{ fb.feedback_request.requested_to.first_name|first|upper }}{{ fb.feedback_request.requested_to.last_name|first|upper }}
+                            </div>
                             <div>
-                                <p class="text-sm font-medium text-text-main">{{ fb.feedback_request.requested_to.get_full_name }}</p>
-                                <p class="text-xs text-text-muted">{{ fb.feedback_request.created_at|date:"Y-m-d" }}</p>
+                                <p class="text-[15px] font-bold text-slate-800">{{ fb.feedback_request.requested_to.get_full_name }}</p>
+                                <p class="text-[12px] font-semibold text-slate-400 mt-0.5">{{ fb.feedback_request.created_at|date:"Y-m-d" }}</p>
                             </div>
                         </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-lg font-bold text-text-main">{{ fb.rating }}</span><span
-                                class="text-xs text-text-muted">/4</span>
+                        <div class="flex items-center flex-wrap gap-2">
+                            <div class="px-3 py-1.5 bg-teal-50 border border-teal-100 rounded-xl flex items-center gap-1.5">
+                                <i data-lucide="star" class="w-4 h-4 text-teal-600 fill-teal-600/20"></i>
+                                <span class="text-[15px] font-extrabold text-teal-700">{{ fb.rating }}</span>
+                                <span class="text-xs font-semibold text-teal-600/60">/ 5</span>
+                            </div>
                             {% if fb.feedback_request.questionnaire %}
-                            <span
-                                class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-bg-secondary text-secondary">📋
-                                {{ fb.feedback_request.questionnaire.name }}</span>
+                            <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-[12px] font-bold bg-slate-100 text-slate-600 border border-slate-200 gap-1.5">
+                                <i data-lucide="clipboard-list" class="w-3.5 h-3.5"></i>
+                                {{ fb.feedback_request.questionnaire.name }}
+                            </span>
                             {% endif %}
                         </div>
                     </div>
 
                     {% if fb.feedback %}
-                    <div class="bg-bg-secondary rounded-lg p-3 mb-3">
-                        <p class="text-sm text-text-main leading-relaxed">{{ fb.feedback }}</p>
+                    <div class="bg-white border border-slate-100 shadow-sm rounded-2xl p-5 mb-4 relative">
+                        <i data-lucide="quote" class="w-8 h-8 text-slate-100 absolute top-4 left-4"></i>
+                        <p class="text-[14px] text-slate-700 font-medium leading-relaxed relative z-10 pl-6 italic">„{{ fb.feedback }}“</p>
                     </div>
                     {% endif %}
 
                     {% if fb.comments %}
-                    <div class="bg-yellow-50 border border-yellow-100 rounded-lg p-3 mb-3">
-                        <p class="text-xs font-semibold text-yellow-700 mb-1">💬 Komentaras:</p>
-                        <p class="text-sm text-text-main">{{ fb.comments }}</p>
+                    <div class="bg-amber-50 border border-amber-100 rounded-2xl p-4 mb-4">
+                        <div class="flex items-center gap-1.5 mb-1.5">
+                            <i data-lucide="message-circle" class="w-4 h-4 text-amber-600"></i>
+                            <p class="text-[12px] font-bold text-amber-800 uppercase tracking-wide">Komentaras</p>
+                        </div>
+                        <p class="text-[14px] text-amber-900 font-medium">{{ fb.comments }}</p>
                     </div>
                     {% endif %}
 
                     {% if fb.keywords %}
-                    <div class="flex flex-wrap gap-1">
-                        <span class="px-2 py-0.5 bg-bg-secondary text-primary rounded-full text-xs">{{ fb.keywords }}</span>
+                    <div class="flex flex-wrap gap-2 mb-5">
+                        <span class="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-[12px] font-bold">
+                            {{ fb.keywords }}
+                        </span>
                     </div>
                     {% endif %}
 
                     <!-- Competency mini-bars -->
-                    <div class="grid grid-cols-5 gap-2 mt-3">
+                    <div class="grid grid-cols-5 gap-3 mt-6 pt-5 border-t border-slate-100">
                         <div class="text-center">
-                            <div class="text-xs text-text-muted mb-1">Komanda</div>
-                            <div class="w-full bg-bg-secondary rounded-full h-1.5">
-                                <div class="bg-purple-400 h-1.5 rounded-full"
-                                    style="width: {% widthratio fb.teamwork_rating 4 100 %}%"></div>
+                            <div class="text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide truncate" title="Komanda">Komanda</div>
+                            <div class="w-full bg-slate-100 rounded-full h-1.5 mb-1.5">
+                                <div class="bg-teal-400 h-1.5 rounded-full" style="width: {% widthratio fb.teamwork_rating 5 100 %}%"></div>
                             </div>
-                            <div class="text-xs font-medium text-text-muted mt-0.5">{{ fb.teamwork_rating }}</div>
+                            <div class="text-[12px] font-extrabold text-slate-700">{{ fb.teamwork_rating }}</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-xs text-text-muted mb-1">Komunik.</div>
-                            <div class="w-full bg-bg-secondary rounded-full h-1.5">
-                                <div class="bg-purple-400 h-1.5 rounded-full"
-                                    style="width: {% widthratio fb.communication_rating 4 100 %}%"></div>
+                            <div class="text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide truncate" title="Komunikacija">Komunik.</div>
+                            <div class="w-full bg-slate-100 rounded-full h-1.5 mb-1.5">
+                                <div class="bg-teal-400 h-1.5 rounded-full" style="width: {% widthratio fb.communication_rating 5 100 %}%"></div>
                             </div>
-                            <div class="text-xs font-medium text-text-muted mt-0.5">{{ fb.communication_rating }}</div>
+                            <div class="text-[12px] font-extrabold text-slate-700">{{ fb.communication_rating }}</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-xs text-text-muted mb-1">Iniciat.</div>
-                            <div class="w-full bg-bg-secondary rounded-full h-1.5">
-                                <div class="bg-purple-400 h-1.5 rounded-full"
-                                    style="width: {% widthratio fb.initiative_rating 4 100 %}%"></div>
+                            <div class="text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide truncate" title="Iniciatyva">Iniciat.</div>
+                            <div class="w-full bg-slate-100 rounded-full h-1.5 mb-1.5">
+                                <div class="bg-teal-400 h-1.5 rounded-full" style="width: {% widthratio fb.initiative_rating 5 100 %}%"></div>
                             </div>
-                            <div class="text-xs font-medium text-text-muted mt-0.5">{{ fb.initiative_rating }}</div>
+                            <div class="text-[12px] font-extrabold text-slate-700">{{ fb.initiative_rating }}</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-xs text-text-muted mb-1">Techn.</div>
-                            <div class="w-full bg-bg-secondary rounded-full h-1.5">
-                                <div class="bg-purple-400 h-1.5 rounded-full"
-                                    style="width: {% widthratio fb.technical_skills_rating 4 100 %}%"></div>
+                            <div class="text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide truncate" title="Techniniai įg.">Techn.</div>
+                            <div class="w-full bg-slate-100 rounded-full h-1.5 mb-1.5">
+                                <div class="bg-teal-400 h-1.5 rounded-full" style="width: {% widthratio fb.technical_skills_rating 5 100 %}%"></div>
                             </div>
-                            <div class="text-xs font-medium text-text-muted mt-0.5">{{ fb.technical_skills_rating }}</div>
+                            <div class="text-[12px] font-extrabold text-slate-700">{{ fb.technical_skills_rating }}</div>
                         </div>
                         <div class="text-center">
-                            <div class="text-xs text-text-muted mb-1">Probl.</div>
-                            <div class="w-full bg-bg-secondary rounded-full h-1.5">
-                                <div class="bg-purple-400 h-1.5 rounded-full"
-                                    style="width: {% widthratio fb.problem_solving_rating 4 100 %}%"></div>
+                            <div class="text-[11px] font-bold text-slate-400 mb-1.5 uppercase tracking-wide truncate" title="Problemų sprend.">Probl.</div>
+                            <div class="w-full bg-slate-100 rounded-full h-1.5 mb-1.5">
+                                <div class="bg-teal-400 h-1.5 rounded-full" style="width: {% widthratio fb.problem_solving_rating 5 100 %}%"></div>
                             </div>
-                            <div class="text-xs font-medium text-text-muted mt-0.5">{{ fb.problem_solving_rating }}</div>
+                            <div class="text-[12px] font-extrabold text-slate-700">{{ fb.problem_solving_rating }}</div>
                         </div>
                     </div>
                 </div>
                 {% empty %}
-                <div class="p-8 text-center text-text-muted">
-                    Šis darbuotojas dar neturi jokių atsiliepimų.
+                <div class="p-12 flex flex-col items-center justify-center text-center">
+                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                        <i data-lucide="message-square-off" class="w-8 h-8 text-slate-300"></i>
+                    </div>
+                    <p class="text-slate-500 font-medium">Šis darbuotojas dar neturi jokių atsiliepimų istorijos.</p>
                 </div>
                 {% endfor %}
             </div>
@@ -194,4 +239,12 @@
 
     </div>
 </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
+</script>
 {% endblock %}

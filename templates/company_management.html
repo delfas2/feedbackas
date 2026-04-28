@@ -3,20 +3,30 @@
 {% block title %}Įmonės Valdymas - Kudosly.lt{% endblock %}
 
 {% block content %}
-<main class="flex-1 overflow-y-auto bg-bg-secondary h-screen">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<main class="flex-1 overflow-y-auto bg-[#f8fafc] font-sans text-slate-900 pb-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-8">
 
-        <header class="flex justify-between items-center mb-8">
-            <h1 class="text-2xl font-bold text-text-main">{{ company_name }} struktūra</h1>
+        <header class="flex justify-between items-center mb-8 gap-4">
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800">{{ company_name }} struktūra</h1>
+                <p class="text-slate-500 mt-1">Valdykite komandas ir priskirkite darbuotojus.</p>
+            </div>
             <button onclick="document.getElementById('add-dept-modal').classList.remove('hidden')"
-                class="bg-primary/90 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition">
-                + Pridėti padalinį
+                class="bg-slate-900 text-white font-bold px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-colors shadow-sm flex items-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i> Padalinys
             </button>
         </header>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-2 bg-bg-main rounded-xl shadow-sm border border-gray-200 p-6">
-                <h2 class="text-xl font-semibold mb-4 text-text-main">Organizacinis Medis</h2>
+            <div class="lg:col-span-2 bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+                <div class="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                        <i data-lucide="sitemap" class="w-5 h-5"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-slate-800">Organizacinis Medis</h2>
+                </div>
 
                 {% if root_departments %}
                 <ul class="space-y-4">
@@ -25,40 +35,61 @@
                     {% endfor %}
                 </ul>
                 {% else %}
-                <p class="text-text-muted italic">Struktūra dar nesukurta.</p>
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i data-lucide="folder-tree" class="w-8 h-8 text-slate-300"></i>
+                    </div>
+                    <p class="text-slate-500 font-medium italic">Struktūra dar nesukurta.</p>
+                </div>
                 {% endif %}
             </div>
 
-            <div class="bg-bg-main rounded-xl shadow-sm border border-gray-200 p-6 h-fit">
-                <h2 class="text-xl font-semibold mb-4 text-text-main">Nepriskirti Darbuotojai</h2>
-                <div class="space-y-2">
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 h-fit">
+                <div class="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
+                    <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600">
+                        <i data-lucide="user-minus" class="w-5 h-5"></i>
+                    </div>
+                    <h2 class="text-xl font-bold text-slate-800">Nepriskirti Darbuotojai</h2>
+                </div>
+                
+                <div class="space-y-3">
                     {% for u in unassigned_users %}
-                    <form method="POST" action="{% url 'assign_to_department' %}" class="p-3 bg-bg-secondary rounded-lg">
+                    <form method="POST" action="{% url 'assign_to_department' %}" class="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-slate-200 transition-colors">
                         {% csrf_token %}
                         <input type="hidden" name="user_id" value="{{ u.id }}">
-                        <div class="flex items-center space-x-3 mb-2">
-                            <div
-                                class="w-8 h-8 rounded-full bg-bg-secondary flex items-center justify-center text-primary font-bold text-xs">
-                                {{ u.first_name|first }}{{ u.last_name|first }}</div>
-                            <div>
-                                <p class="text-sm font-medium text-text-main">{{ u.get_full_name }}</p>
-                                <p class="text-xs text-text-muted">{{ u.email }}</p>
+                        <div class="flex items-center space-x-3 mb-3">
+                            <div class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-teal-600 font-bold text-sm shadow-sm shrink-0">
+                                {{ u.first_name|first|upper }}{{ u.last_name|first|upper }}
+                            </div>
+                            <div class="overflow-hidden">
+                                <p class="text-[14px] font-bold text-slate-800 truncate">{{ u.get_full_name }}</p>
+                                <p class="text-[12px] text-slate-500 truncate">{{ u.email }}</p>
                             </div>
                         </div>
-                        <div class="flex items-center gap-2">
-                            <select name="department_id" required
-                                class="flex-1 text-xs border border-gray-300 rounded-md px-2 py-1.5 focus:ring-primary focus:border-purple-500">
-                                <option value="">Padalinys...</option>
-                                {% for dept in all_departments %}
-                                <option value="{{ dept.id }}">{{ dept.name }}</option>
-                                {% endfor %}
-                            </select>
+                        <div class="flex flex-col gap-2">
+                            <div class="relative">
+                                <select name="department_id" required
+                                    class="w-full text-[13px] font-medium text-slate-700 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none appearance-none bg-white">
+                                    <option value="" disabled selected>Pasirinkite padalinį...</option>
+                                    {% for dept in all_departments %}
+                                    <option value="{{ dept.id }}">{{ dept.name }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
+                                    <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                                </div>
+                            </div>
                             <button type="submit"
-                                class="text-xs text-white bg-primary/90 hover:bg-purple-700 px-3 py-1.5 rounded-md font-medium transition flex-shrink-0">Priskirti</button>
+                                class="w-full text-[13px] text-white bg-slate-900 hover:bg-slate-800 px-3 py-2 rounded-xl font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i> Priskirti
+                            </button>
                         </div>
                     </form>
                     {% empty %}
-                    <p class="text-sm text-text-muted">Visi darbuotojai priskirti.</p>
+                    <div class="text-center py-8">
+                        <i data-lucide="check-circle-2" class="w-12 h-12 text-teal-400 mx-auto mb-2 opacity-50"></i>
+                        <p class="text-[14px] font-bold text-slate-500">Visi darbuotojai priskirti.</p>
+                    </div>
                     {% endfor %}
                 </div>
             </div>
@@ -66,32 +97,82 @@
     </div>
 </main>
 
-<div id="add-dept-modal" class="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full hidden z-50">
-    <div class="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-bg-main">
-        <div class="mt-3 text-center">
-            <h3 class="text-lg leading-6 font-medium text-text-main">Naujas Padalinys</h3>
-            <form method="POST" class="mt-4 text-left">
+<div id="add-dept-modal" class="fixed inset-0 bg-black/40 backdrop-blur-sm overflow-y-auto h-full w-full hidden z-50 flex items-center justify-center p-4">
+    <div class="relative max-w-md w-full shadow-2xl rounded-[32px] bg-white overflow-hidden animate-in fade-in zoom-in duration-300">
+        <div class="p-8">
+            <div class="flex items-center justify-center w-16 h-16 rounded-full bg-teal-50 text-teal-600 mx-auto mb-4">
+                <i data-lucide="folder-plus" class="w-8 h-8"></i>
+            </div>
+            <div class="text-center mb-6">
+                <h3 class="text-2xl font-extrabold text-slate-900">Naujas Padalinys</h3>
+                <p class="text-sm font-medium text-slate-500 mt-1">Įveskite padalinio informaciją</p>
+            </div>
+            
+            <form method="POST" class="text-left space-y-4">
                 {% csrf_token %}
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-text-main mb-1">Pavadinimas</label>
-                    {{ form.name }}
+                
+                <div class="space-y-1">
+                    <label class="block text-[14px] font-bold text-slate-800">Pavadinimas</label>
+                    <div class="relative">
+                        <!-- form.name applies django widget rendering. We'll wrap it in standard styling via JS below or let it be if it inherits standard input styles -->
+                        <div class="custom-django-field">
+                            {{ form.name }}
+                        </div>
+                    </div>
                 </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-text-main mb-1">Tėvinis padalinys (neprivaloma)</label>
-                    {{ form.parent }}
+                
+                <div class="space-y-1">
+                    <label class="block text-[14px] font-bold text-slate-800">Tėvinis padalinys <span class="text-slate-400 font-normal text-xs">(neprivaloma)</span></label>
+                    <div class="custom-django-field">
+                        {{ form.parent }}
+                    </div>
                 </div>
-                <div class="mb-4">
-                    <label class="block text-sm font-medium text-text-main mb-1">Vadovas</label>
-                    {{ form.manager }}
+                
+                <div class="space-y-1">
+                    <label class="block text-[14px] font-bold text-slate-800">Vadovas</label>
+                    <div class="custom-django-field">
+                        {{ form.manager }}
+                    </div>
                 </div>
-                <div class="flex justify-end gap-2 mt-6">
+                
+                <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-100">
                     <button type="button" onclick="document.getElementById('add-dept-modal').classList.add('hidden')"
-                        class="px-4 py-2 bg-gray-200 text-text-main rounded-lg">Atšaukti</button>
+                        class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-colors">Atšaukti</button>
                     <button type="submit"
-                        class="px-4 py-2 bg-primary/90 text-white rounded-lg hover:bg-purple-700">Sukurti</button>
+                        class="px-6 py-2.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 shadow-sm transition-colors">Sukurti</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<style>
+    /* Styling for Django forms which output standard inputs/selects */
+    .custom-django-field input[type="text"],
+    .custom-django-field select {
+        width: 100%;
+        padding: 0.75rem 1rem;
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 0.75rem;
+        font-size: 0.875rem;
+        color: #334155;
+        transition: all 0.2s;
+    }
+    .custom-django-field input[type="text"]:focus,
+    .custom-django-field select:focus {
+        outline: none;
+        border-color: #0f766e;
+        ring: 2px solid #0f766e;
+        background-color: white;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
+</script>
 {% endblock %}

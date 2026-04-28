@@ -2,139 +2,195 @@
 {% block title %}Komandos Statistika - Kudosly.lt{% endblock %}
 
 {% block content %}
-<main class="flex-1 overflow-y-auto">
-    <header class="bg-bg-main border-b border-gray-100 h-[72px] px-4 flex justify-between items-center">
-        <div class="flex items-center space-x-3">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<main class="flex-1 p-4 md:p-8 overflow-y-auto bg-[#f8fafc] font-sans text-slate-900 pb-10">
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div>
             <!-- Mobilus Meniu Mygtukas -->
-            <button class="md:hidden p-2 text-text-muted">
-                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
+            <button class="md:hidden p-2 -ml-2 text-slate-500 mb-2">
+                <i data-lucide="menu"></i>
             </button>
-            <h1 class="text-2xl font-bold text-text-main hidden md:block">Komandos statistika — {{ department.name }}</h1>
+            <h1 class="text-3xl font-bold text-slate-800 hidden md:block">
+                Komandos statistika — {{ department.name }}
+            </h1>
+            <p class="text-slate-500 mt-1 hidden md:block">Bendra komandos kompetencijų ir aktyvumo apžvalga</p>
         </div>
     </header>
 
-    <div class="p-6 md:p-8 space-y-8">
-
+    <div class="space-y-8">
         <!-- 1. Summary Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="bg-bg-main rounded-2xl shadow-lg p-6 relative overflow-hidden">
-                <div
-                    class="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-bg-secondary rounded-full opacity-50 blur-2xl">
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 relative overflow-hidden group hover:border-slate-200 transition-all">
+                <div class="absolute -right-6 -top-6 w-24 h-24 bg-teal-50 rounded-full opacity-50 blur-2xl group-hover:bg-teal-100 transition-colors"></div>
+                <div class="flex items-center gap-3 mb-4 relative z-10">
+                    <div class="p-2.5 bg-teal-50 text-teal-600 rounded-xl">
+                        <i data-lucide="star" class="w-5 h-5"></i>
+                    </div>
+                    <p class="text-slate-500 font-bold text-[13px] uppercase tracking-wide">Komandos vidurkis</p>
                 </div>
-                <p class="text-text-muted font-medium text-sm mb-1">Komandos vidurkis</p>
-                <h2 class="text-4xl font-extrabold text-text-main">{{ team_avg_rating }}</h2>
-                <p class="text-xs text-text-muted mt-1">iš 4 galimų</p>
+                <div class="flex items-end gap-2 relative z-10">
+                    <h2 class="text-5xl font-extrabold text-slate-900 tracking-tight">{{ team_avg_rating }}</h2>
+                    <p class="text-[14px] font-medium text-slate-400 mb-1.5">iš 4</p>
+                </div>
             </div>
-            <div class="bg-bg-main rounded-2xl shadow-lg p-6">
-                <p class="text-text-muted font-medium text-sm mb-1">Narių skaičius</p>
-                <h2 class="text-4xl font-extrabold text-primary">{{ team_member_count }}</h2>
-                <p class="text-xs text-text-muted mt-1">padalinio nariai</p>
+            
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 relative overflow-hidden group hover:border-slate-200 transition-all">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
+                        <i data-lucide="users" class="w-5 h-5"></i>
+                    </div>
+                    <p class="text-slate-500 font-bold text-[13px] uppercase tracking-wide">Narių skaičius</p>
+                </div>
+                <div class="flex items-end gap-2">
+                    <h2 class="text-5xl font-extrabold text-blue-600 tracking-tight">{{ team_member_count }}</h2>
+                    <p class="text-[14px] font-medium text-slate-400 mb-1.5">nariai</p>
+                </div>
             </div>
-            <div class="bg-bg-main rounded-2xl shadow-lg p-6">
-                <p class="text-text-muted font-medium text-sm mb-1">Gauta atsiliepimų</p>
-                <h2 class="text-4xl font-extrabold text-primary">{{ team_feedback_count }}</h2>
-                <p class="text-xs text-text-muted mt-1">iš viso komandai</p>
+            
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 relative overflow-hidden group hover:border-slate-200 transition-all">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2.5 bg-rose-50 text-rose-600 rounded-xl">
+                        <i data-lucide="message-square" class="w-5 h-5"></i>
+                    </div>
+                    <p class="text-slate-500 font-bold text-[13px] uppercase tracking-wide">Gauta atsiliepimų</p>
+                </div>
+                <div class="flex items-end gap-2">
+                    <h2 class="text-5xl font-extrabold text-rose-600 tracking-tight">{{ team_feedback_count }}</h2>
+                    <p class="text-[14px] font-medium text-slate-400 mb-1.5">iš viso</p>
+                </div>
             </div>
         </div>
 
         <!-- 2. Competency Bars -->
-        <div class="bg-bg-main rounded-2xl shadow-lg p-6">
-            <h3 class="text-xl font-bold text-text-main mb-6">Komandos Kompetencijos</h3>
-            <div class="space-y-5">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8">
+            <div class="flex items-center gap-3 mb-8 pb-4 border-b border-slate-100">
+                <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600">
+                    <i data-lucide="activity" class="w-5 h-5"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800">Komandos Kompetencijos</h3>
+            </div>
+            
+            <div class="space-y-6">
                 {% for comp in competencies %}
-                <div>
-                    <div class="flex justify-between mb-1">
-                        <span class="text-sm font-medium text-text-main">{{ comp.name }}</span>
-                        <span class="text-sm font-bold text-primary">{{ comp.score }}/4</span>
+                <div class="group">
+                    <div class="flex justify-between mb-2">
+                        <span class="text-[15px] font-bold text-slate-700">{{ comp.name }}</span>
+                        <span class="text-[15px] font-bold text-teal-600 bg-teal-50 px-2 py-0.5 rounded-lg">{{ comp.score }}<span class="text-teal-400 text-xs">/4</span></span>
                     </div>
-                    <div class="w-full bg-bg-secondary rounded-full h-3">
-                        <div class="bg-primary h-3 rounded-full transition-all"
-                            style="width: {% widthratio comp.score 4 100 %}%"></div>
+                    <div class="w-full bg-slate-100 rounded-full h-3.5 shadow-inner overflow-hidden">
+                        <div class="h-full rounded-full transition-all duration-1000 ease-out bg-gradient-to-r from-teal-400 to-teal-500 relative"
+                            style="width: {% widthratio comp.score 4 100 %}%">
+                            <div class="absolute inset-0 bg-white/20"></div>
+                        </div>
                     </div>
+                </div>
+                {% empty %}
+                <div class="text-center py-8">
+                    <i data-lucide="bar-chart-3" class="w-12 h-12 text-slate-300 mx-auto mb-3"></i>
+                    <p class="text-slate-500 font-medium">Nėra pakankamai duomenų kompetencijoms rodyti.</p>
                 </div>
                 {% endfor %}
             </div>
         </div>
 
         <!-- 3. Per-member table -->
-        <div class="bg-bg-main rounded-2xl shadow-lg overflow-hidden">
-            <div class="p-6 border-b border-gray-100">
-                <h3 class="text-xl font-bold text-text-main">Narių Įvertinimai</h3>
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+            <div class="p-8 border-b border-slate-100 flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-600">
+                    <i data-lucide="users-2" class="w-5 h-5"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800">Narių Įvertinimai</h3>
             </div>
-            <table class="w-full">
-                <thead class="bg-bg-secondary">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-text-muted uppercase tracking-wider">
-                            Darbuotojas</th>
-                        <th class="px-6 py-3 text-center text-xs font-semibold text-text-muted uppercase tracking-wider">
-                            Atsiliepimų</th>
-                        <th class="px-6 py-3 text-center text-xs font-semibold text-text-muted uppercase tracking-wider">
-                            Vidurkis</th>
-                        <th class="px-6 py-3 text-center text-xs font-semibold text-text-muted uppercase tracking-wider">
-                            Lygis</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100">
-                    {% for ms in member_stats %}
-                    <tr class="hover:bg-bg-secondary transition cursor-pointer"
-                        data-url="{% url 'team_member_detail' ms.user.id %}" onclick="window.location.href=this.dataset.url">
-                        <td class="px-6 py-4">
-                            <div class="flex items-center space-x-3">
-                                <div
-                                    class="w-9 h-9 rounded-full bg-bg-secondary flex items-center justify-center text-primary font-bold text-xs">
-                                    {{ ms.user.first_name|first }}{{ ms.user.last_name|first }}</div>
-                                <div>
-                                    <p class="text-sm font-medium text-text-main">{{ ms.user.get_full_name }}</p>
-                                    <p class="text-xs text-text-muted">{{ ms.user.email }}</p>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-slate-50/50">
+                        <tr>
+                            <th class="px-8 py-4 text-left text-[12px] font-bold text-slate-400 uppercase tracking-wider">
+                                Darbuotojas</th>
+                            <th class="px-8 py-4 text-center text-[12px] font-bold text-slate-400 uppercase tracking-wider">
+                                Atsiliepimų</th>
+                            <th class="px-8 py-4 text-center text-[12px] font-bold text-slate-400 uppercase tracking-wider">
+                                Vidurkis</th>
+                            <th class="px-8 py-4 text-center text-[12px] font-bold text-slate-400 uppercase tracking-wider">
+                                Lygis</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for ms in member_stats %}
+                        <tr class="hover:bg-slate-50 transition-colors cursor-pointer group"
+                            data-url="{% url 'team_member_detail' ms.user.id %}" onclick="window.location.href=this.dataset.url">
+                            <td class="px-8 py-5">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-10 h-10 rounded-full bg-white border border-slate-200 flex items-center justify-center text-teal-600 font-bold text-sm shadow-sm group-hover:border-teal-200 transition-colors shrink-0">
+                                        {{ ms.user.first_name|first|upper }}{{ ms.user.last_name|first|upper }}
+                                    </div>
+                                    <div>
+                                        <p class="text-[15px] font-bold text-slate-800 group-hover:text-teal-700 transition-colors">{{ ms.user.get_full_name }}</p>
+                                        <p class="text-[13px] font-medium text-slate-500">{{ ms.user.email }}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        </td>
-                        <td class="px-6 py-4 text-center text-sm text-text-muted">{{ ms.feedback_count }}</td>
-                        <td class="px-6 py-4 text-center">
-                            {% if ms.avg_rating %}
-                            <span class="text-lg font-bold text-text-main">{{ ms.avg_rating }}</span><span
-                                class="text-xs text-text-muted">/4</span>
-                            {% else %}
-                            <span class="text-sm text-text-muted">—</span>
-                            {% endif %}
-                        </td>
-                        <td class="px-6 py-4 text-center">
-                            {% if ms.avg_rating %}
-                            {% if ms.avg_rating >= 3.5 %}
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">⚡
-                                Pavyzdys</span>
-                            {% elif ms.avg_rating >= 2.5 %}
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800">🚀
-                                Varo</span>
-                            {% elif ms.avg_rating >= 1.5 %}
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">🏃
-                                Daro</span>
-                            {% else %}
-                            <span
-                                class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-bg-secondary text-secondary">🌱
-                                Mokosi</span>
-                            {% endif %}
-                            {% else %}
-                            <span class="text-sm text-text-muted">—</span>
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="4" class="px-6 py-8 text-center text-text-muted">Komandoje kol kas nėra narių su
-                            atsiliepimais.</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                            </td>
+                            <td class="px-8 py-5 text-center">
+                                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-[14px] font-bold text-slate-600 group-hover:bg-slate-200 transition-colors">
+                                    {{ ms.feedback_count }}
+                                </span>
+                            </td>
+                            <td class="px-8 py-5 text-center">
+                                {% if ms.avg_rating %}
+                                <div class="flex items-center justify-center">
+                                    <span class="text-lg font-bold text-slate-900">{{ ms.avg_rating }}</span>
+                                    <span class="text-[12px] font-bold text-slate-400 ml-1">/4</span>
+                                </div>
+                                {% else %}
+                                <span class="text-[14px] font-bold text-slate-300">—</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-8 py-5 text-center">
+                                {% if ms.avg_rating %}
+                                    {% if ms.avg_rating >= 3.5 %}
+                                    <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-[12px] font-bold bg-teal-50 text-teal-700 border border-teal-100">
+                                        Pavyzdys
+                                    </span>
+                                    {% elif ms.avg_rating >= 2.5 %}
+                                    <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-[12px] font-bold bg-sky-50 text-sky-700 border border-sky-100">
+                                        Varo
+                                    </span>
+                                    {% elif ms.avg_rating >= 1.5 %}
+                                    <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-[12px] font-bold bg-amber-50 text-amber-700 border border-amber-100">
+                                        Daro
+                                    </span>
+                                    {% else %}
+                                    <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-[12px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
+                                        Mokosi
+                                    </span>
+                                    {% endif %}
+                                {% else %}
+                                <span class="text-[14px] font-bold text-slate-300">—</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="px-8 py-12 text-center">
+                                <i data-lucide="users" class="w-12 h-12 text-slate-300 mx-auto mb-3"></i>
+                                <p class="text-[15px] font-medium text-slate-500">Komandoje kol kas nėra narių su atsiliepimais.</p>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
 
     </div>
 </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
+</script>
 {% endblock %}

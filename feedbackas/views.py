@@ -134,12 +134,17 @@ def home(request):
     # Dynamic metrics calculation
     pending_tasks_count = feedback_requests.count()
     
+    # Užpildytos apklausos, gautos vartotojo (surinkta atsakymų)
     completed_surveys_count = Feedback.objects.filter(
-        feedback_request__requested_to=request.user, 
+        feedback_request__requester=request.user, 
         feedback_request__status='completed'
     ).count()
     
-    sent_surveys_count = FeedbackRequest.objects.filter(requester=request.user).count()
+    # Mano išsiųsta kitiems (komandos nariams išsiųstas ryšys)
+    sent_surveys_count = Feedback.objects.filter(
+        feedback_request__requested_to=request.user,
+        feedback_request__status='completed'
+    ).count()
 
     # Calculate distinct years for the feedback chart filter
     current_year = date.today().year

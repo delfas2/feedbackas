@@ -1,76 +1,125 @@
 {% extends 'base.html' %}
+{% load static %}
 
 {% block title %}Visi Įvertinimai - Kudosly.lt{% endblock %}
 
 {% block content %}
-<main class="flex-1 overflow-y-auto bg-bg-secondary">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<main class="flex-1 p-4 md:p-8 overflow-y-auto bg-[#f8fafc] font-sans text-slate-900 pb-10">
     
     <!-- Viršutinė juosta -->
-    <header class="bg-bg-main border-b border-gray-100 h-[72px] px-4 flex justify-between items-center">
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
         <div class="flex items-center space-x-3">
             <!-- Mobilus Meniu Mygtukas -->
-            <button class="md:hidden p-2 text-text-muted">
-                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                    stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
+            <button class="md:hidden p-2 -ml-2 text-slate-500 mb-2">
+                <i data-lucide="menu"></i>
             </button>
 
             <!-- Logotipas (Mobilus) -->
-            <a href="{% url 'home' %}" class="md:hidden flex items-center">
-                <img src="{% static 'images/logo.png' %}" alt="Kudosly.lt" class="h-8 w-auto object-contain">
+            <a href="{% url 'home' %}" class="md:hidden flex items-center mb-2">
+                <div class="w-8 h-8 bg-slate-900 text-white flex items-center justify-center rounded-lg font-bold mr-2">K</div>
+                <span class="font-extrabold text-slate-900 tracking-tight">Kudosly</span>
             </a>
 
-            <h1 class="text-2xl font-bold text-text-main hidden md:block">
-                Visi įvertinimai
-            </h1>
+            <div>
+                <h1 class="text-3xl font-bold text-slate-800 hidden md:block">
+                    Visi įvertinimai
+                </h1>
+                <p class="text-slate-500 mt-1 hidden md:block">Visų platformoje pateiktų įvertinimų sąrašas</p>
+            </div>
         </div>
     </header>
 
     <!-- Turinys -->
-    <div class="p-6 md:p-8">
-        <div class="bg-bg-main rounded-2xl shadow-lg p-6">
-            <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-bg-secondary">
-                        <tr>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Vertinamas asmuo</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Vertintojas</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Projektas</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Data</th>
-                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-text-muted uppercase tracking-wider">Įvertinimas</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-bg-main divide-y divide-gray-200">
-                        {% for feedback in all_feedback %}
-                        <tr>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-text-main">{{ feedback.feedback_request.requester.get_full_name }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-text-muted">{{ feedback.feedback_request.requested_to.get_full_name }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-text-muted">{{ feedback.feedback_request.project_name }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm text-text-muted">{{ feedback.feedback_request.created_at|date:"Y-m-d" }}</div>
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-bg-secondary text-primary">
-                                    {{ feedback.rating }}/4
-                                </span>
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="5" class="px-6 py-4 text-center text-sm text-text-muted">Užpildytų vertinimų nerasta.</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+        <div class="p-8 border-b border-slate-100 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600">
+                    <i data-lucide="inbox" class="w-5 h-5"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-800">Įvertinimų istorija</h3>
             </div>
+        </div>
+        
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-slate-50/50">
+                    <tr>
+                        <th scope="col" class="px-8 py-4 text-left text-[12px] font-bold text-slate-400 uppercase tracking-wider">
+                            Vertinamas asmuo
+                        </th>
+                        <th scope="col" class="px-8 py-4 text-left text-[12px] font-bold text-slate-400 uppercase tracking-wider">
+                            Vertintojas
+                        </th>
+                        <th scope="col" class="px-8 py-4 text-left text-[12px] font-bold text-slate-400 uppercase tracking-wider">
+                            Projektas
+                        </th>
+                        <th scope="col" class="px-8 py-4 text-left text-[12px] font-bold text-slate-400 uppercase tracking-wider">
+                            Data
+                        </th>
+                        <th scope="col" class="px-8 py-4 text-left text-[12px] font-bold text-slate-400 uppercase tracking-wider">
+                            Įvertinimas
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for feedback in all_feedback %}
+                    <tr class="hover:bg-slate-50 transition-colors group">
+                        <td class="px-8 py-5 whitespace-nowrap">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-bold text-xs shrink-0">
+                                    {{ feedback.feedback_request.requester.first_name|first|upper }}{{ feedback.feedback_request.requester.last_name|first|upper }}
+                                </div>
+                                <span class="text-[14px] font-bold text-slate-800">{{ feedback.feedback_request.requester.get_full_name }}</span>
+                            </div>
+                        </td>
+                        <td class="px-8 py-5 whitespace-nowrap">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-bold text-xs shrink-0">
+                                    {{ feedback.feedback_request.requested_to.first_name|first|upper }}{{ feedback.feedback_request.requested_to.last_name|first|upper }}
+                                </div>
+                                <span class="text-[14px] font-medium text-slate-600">{{ feedback.feedback_request.requested_to.get_full_name }}</span>
+                            </div>
+                        </td>
+                        <td class="px-8 py-5 whitespace-nowrap">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="folder" class="w-4 h-4 text-slate-400"></i>
+                                <span class="text-[14px] font-medium text-slate-600">{{ feedback.feedback_request.project_name }}</span>
+                            </div>
+                        </td>
+                        <td class="px-8 py-5 whitespace-nowrap">
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="calendar" class="w-4 h-4 text-slate-400"></i>
+                                <span class="text-[14px] text-slate-500">{{ feedback.feedback_request.created_at|date:"Y-m-d" }}</span>
+                            </div>
+                        </td>
+                        <td class="px-8 py-5 whitespace-nowrap">
+                            <span class="inline-flex items-center px-3 py-1 rounded-xl text-[13px] font-bold bg-teal-50 text-teal-700 border border-teal-100">
+                                <i data-lucide="star" class="w-3.5 h-3.5 mr-1 text-teal-500"></i>
+                                {{ feedback.rating }}<span class="text-teal-400 font-normal ml-0.5">/4</span>
+                            </span>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-8 py-16 text-center">
+                            <i data-lucide="inbox" class="w-12 h-12 text-slate-300 mx-auto mb-4"></i>
+                            <p class="text-[15px] font-medium text-slate-500">Užpildytų vertinimų nerasta.</p>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 </main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+    });
+</script>
 {% endblock %}

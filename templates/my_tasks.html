@@ -4,34 +4,32 @@
 {% block title %}Mano Užduotys - Atsiliepimai+{% endblock %}
 
 {% block content %}
-<main class="flex-1 overflow-y-auto">
+<script src="https://unpkg.com/lucide@latest"></script>
+
+<main class="flex-1 p-4 md:p-8 overflow-y-auto bg-[#f8fafc] font-sans text-slate-900">
 
     <!-- Viršutinė juosta -->
-    <header class="bg-bg-main border-b border-gray-100 h-[72px] px-4 flex justify-between items-center">
-        <div class="flex items-center space-x-3">
+    <header class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+        <div>
             <!-- Mobilus Meniu Mygtukas -->
-            <button class="md:hidden p-2 text-text-muted">
-                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                    stroke-width="1.5" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
+            <button class="md:hidden p-2 -ml-2 text-slate-500 mb-2">
+                <i data-lucide="menu"></i>
             </button>
 
             <!-- Logotipas (Mobilus) -->
-            <a href="{% url 'home' %}" class="md:hidden flex items-center">
+            <a href="{% url 'home' %}" class="md:hidden flex items-center mb-4">
                 <img src="{% static 'images/logo.png' %}" alt="Kudosly.lt" class="h-8 w-auto object-contain">
             </a>
 
-            <h1 class="text-2xl font-bold text-text-main hidden md:block">
+            <h1 class="text-3xl font-bold text-slate-800 hidden md:block">
                 Mano užduotys
             </h1>
+            <p class="text-slate-500 mt-1 hidden md:block">Tvarkykite savo atsiliepimų prašymus ir atsakymus.</p>
         </div>
 
         <!-- Filtravimas -->
         <div class="flex space-x-2">
-            <select
-                class="bg-bg-main border border-gray-300 text-text-main py-2 px-4 rounded-lg text-sm focus:outline-none focus:ring-primary focus:border-purple-500">
+            <select class="bg-white border border-slate-200 text-slate-700 py-2.5 px-4 rounded-xl text-sm font-semibold shadow-sm outline-none transition-all focus:border-slate-300 focus:ring-4 focus:ring-slate-100 cursor-pointer hover:bg-slate-50">
                 <option>Naujausi viršuje</option>
                 <option>Pagal terminą</option>
             </select>
@@ -39,20 +37,20 @@
     </header>
 
     <!-- Turinys -->
-    <div class="p-6 md:p-8">
+    <div class="pb-10">
 
         <!-- Tabs -->
-        <div class="border-b border-gray-200 mb-6 pb-2">
-            <nav class="flex space-x-6 text-sm font-medium" aria-label="Tabs">
+        <div class="border-b border-slate-200 mb-8 pb-0">
+            <nav class="flex space-x-8 text-sm font-semibold" aria-label="Tabs">
                 <button id="btn-tab-assigned"
-                    class="flex items-center gap-2 border-b-2 border-purple-600 text-primary pb-2 px-1 hover:text-primary transition">
+                    class="flex items-center gap-2 border-b-2 border-slate-900 text-slate-900 pb-3 px-1 transition-colors">
                     Užduotys man
-                    <span class="bg-bg-secondary text-primary py-0.5 px-2 rounded-full text-xs font-semibold">{{ assigned_requests.count }}</span>
+                    <span class="bg-slate-100 text-slate-800 py-0.5 px-2.5 rounded-full text-[11px] font-bold">{{ assigned_requests.count }}</span>
                 </button>
                 <button id="btn-tab-made"
-                    class="flex items-center gap-2 border-b-2 border-transparent text-text-muted pb-2 px-1 hover:text-text-main hover:border-gray-300 transition">
+                    class="flex items-center gap-2 border-b-2 border-transparent text-slate-400 pb-3 px-1 hover:text-slate-700 transition-colors">
                     Mano išsiųsti prašymai
-                    <span class="bg-bg-secondary text-text-muted py-0.5 px-2 rounded-full text-xs font-semibold">{{ made_requests.count }}</span>
+                    <span class="bg-slate-100 text-slate-500 py-0.5 px-2.5 rounded-full text-[11px] font-bold">{{ made_requests.count }}</span>
                 </button>
             </nav>
         </div>
@@ -61,87 +59,68 @@
         <div id="tab-assigned" class="mb-10">
             <div class="space-y-4">
                 {% for request in assigned_requests %}
-                <div
-                    class="bg-bg-main p-5 rounded-xl shadow-sm border hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4 {% if request.status == 'pending' %}border-purple-100{% elif request.status == 'completed' %}border-gray-200 opacity-70{% endif %}">
-                    <div class="flex items-start space-x-4">
-                        <div
-                            class="p-3 rounded-lg flex-shrink-0 {% if request.status == 'pending' %}bg-bg-secondary{% else %}bg-gray-200{% endif %}">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-5 {% if request.status == 'completed' %}opacity-60 bg-slate-50/50{% endif %}">
+                    <div class="flex items-start space-x-5">
+                        <div class="p-3.5 rounded-2xl flex-shrink-0 {% if request.status == 'pending' %}bg-teal-50 text-teal-600{% else %}bg-slate-100 text-slate-400{% endif %}">
                             {% if request.status == 'pending' %}
-                            <svg class="w-6 h-6 text-primary" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                            </svg>
+                            <i data-lucide="target" class="w-[22px] h-[22px]"></i>
                             {% else %}
-                            <svg class="w-6 h-6 text-text-muted" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            <i data-lucide="check-circle-2" class="w-[22px] h-[22px]"></i>
                             {% endif %}
                         </div>
                         <div>
-                            <h3
-                                class="text-lg font-semibold text-text-main {% if request.status == 'completed' %}line-through{% endif %}">
-                                {{ request.project_name }}</h3>
+                            <h3 class="text-[17px] font-bold text-slate-800 {% if request.status == 'completed' %}line-through{% endif %}">
+                                {{ request.project_name }}
+                            </h3>
                             {% with req=request.requester %}
                             {% with name=req.get_full_name|default:req.username %}
                             {% if request.is_self_initiated %}
-                            <p class="text-text-muted text-sm">Atsiliepimas apie: <span
-                                    class="font-medium text-primary">{{ name }}</span></p>
+                            <p class="text-slate-500 text-[13px] mt-1 font-medium">Atsiliepimas apie: <span class="font-bold text-slate-900">{{ name }}</span></p>
                             {% else %}
-                            <p class="text-text-muted text-sm">Atsiliepimą inicijavo: <span
-                                    class="font-medium text-primary">{{ name }}</span></p>
+                            <p class="text-slate-500 text-[13px] mt-1 font-medium">Atsiliepimą inicijavo: <span class="font-bold text-slate-900">{{ name }}</span></p>
                             {% endif %}
                             {% endwith %}
                             {% endwith %}
-                            {% if request.comment %}<p class="text-sm text-text-muted mt-1">Komentaras: {{ request.comment }}</p>{% endif %}
-                            <div class="flex items-center mt-2 space-x-3 text-xs">
+                            {% if request.comment %}<p class="text-[13px] text-slate-500 mt-1 italic max-w-2xl">„{{ request.comment }}“</p>{% endif %}
+                            
+                            <div class="flex items-center mt-4 space-x-3 text-xs">
                                 {% if request.status == 'pending' %}
-                                <span
-                                    class="bg-bg-secondary text-secondary px-2 py-0.5 rounded-full font-medium">Laukiama
-                                    atsakymo</span>
+                                <span class="bg-teal-50 text-teal-700 px-3 py-1 rounded-full font-bold tracking-wide uppercase text-[10px]">Laukiama atsakymo</span>
                                 {% if request.due_date %}
-                                <span class="text-text-muted flex items-center">
-                                    <svg class="w-3 h-3 mr-1" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                        viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                    Terminas: {{ request.due_date|date:"Y-m-d" }}
+                                <span class="text-slate-500 flex items-center font-semibold">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 mr-1.5 opacity-60"></i>
+                                    {{ request.due_date|date:"Y-m-d" }}
                                 </span>
                                 {% endif %}
                                 {% else %}
-                                <span
-                                    class="bg-gray-200 text-text-muted px-2 py-0.5 rounded-full font-medium">Užbaigta</span>
+                                <span class="bg-slate-100 text-slate-500 px-3 py-1 rounded-full font-bold tracking-wide uppercase text-[10px]">Užbaigta</span>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
-                    <div class="w-full md:w-auto flex flex-col md:flex-row gap-2">
+                    <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3">
                         {% if request.status == 'pending' %}
-                        <a href="{% url 'fill_feedback' request.id %}"
-                            class="block w-full md:w-auto text-center px-6 py-2 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors">
+                        <a href="{% url 'fill_feedback' request.id %}" class="block w-full sm:w-auto text-center px-8 py-3 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/10">
                             {% if request.is_self_initiated %}Tęsti pildymą{% else %}Pildyti atsiliepimą{% endif %}
                         </a>
                         {% else %}
-                        <span
-                            class="block w-full md:w-auto text-center px-6 py-2 text-text-muted font-medium cursor-default">Atlikta</span>
+                        <span class="block w-full sm:w-auto text-center px-8 py-3 text-slate-400 font-bold cursor-default">Atlikta</span>
                         {% endif %}
-                        <form action="{% url 'reject_feedback_request' request.id %}" method="POST"
-                            class="w-full md:w-auto"
-                            onsubmit="return confirm('Ar tikrai norite ištrinti šią užduotį?');">
+                        <form action="{% url 'reject_feedback_request' request.id %}" method="POST" class="w-full sm:w-auto" onsubmit="return confirm('Ar tikrai norite ištrinti šią užduotį?');">
                             {% csrf_token %}
-                            <button type="submit"
-                                class="block w-full text-center px-4 py-2 bg-red-50 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors">
+                            <button type="submit" class="block w-full text-center px-4 py-3 bg-white border border-slate-200 text-red-500 font-bold rounded-2xl hover:bg-red-50 hover:text-red-600 transition-colors">
                                 Ištrinti
                             </button>
                         </form>
                     </div>
                 </div>
                 {% empty %}
-                <div class="bg-bg-main p-5 rounded-xl shadow-sm border text-center text-text-muted">
-                    Neturite jums priskirtų užduočių.
+                <div class="bg-white p-10 rounded-3xl border border-slate-100 text-center flex flex-col items-center justify-center min-h-[250px]">
+                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                        <i data-lucide="inbox" class="w-8 h-8 text-slate-300"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-1">Jokių užduočių</h3>
+                    <p class="text-slate-500 text-sm">Šiuo metu neturite jums priskirtų atsiliepimų prašymų.</p>
                 </div>
                 {% endfor %}
             </div>
@@ -151,49 +130,38 @@
         <div id="tab-made" class="hidden">
             <div class="space-y-4">
                 {% for request in made_requests %}
-                <div
-                    class="bg-bg-main p-5 rounded-xl shadow-sm border hover:shadow-md transition-shadow flex flex-col md:flex-row justify-between items-start md:items-center gap-4 {% if request.status == 'completed' %}border-green-100{% else %}border-gray-200{% endif %}">
-                    <div class="flex items-start space-x-4">
-                        <div
-                            class="p-3 rounded-lg flex-shrink-0 {% if request.status == 'completed' %}bg-green-100{% else %}bg-bg-secondary{% endif %}">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 hover:border-slate-200 hover:shadow-md transition-all flex flex-col md:flex-row justify-between items-start md:items-center gap-5 {% if request.status == 'completed' %}border-green-100/50 bg-green-50/10{% endif %}">
+                    <div class="flex items-start space-x-5">
+                        <div class="p-3.5 rounded-2xl flex-shrink-0 {% if request.status == 'completed' %}bg-green-50 text-green-600{% else %}bg-blue-50 text-blue-600{% endif %}">
                             {% if request.status == 'completed' %}
-                            <svg class="w-6 h-6 text-accent" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            <i data-lucide="check-circle-2" class="w-[22px] h-[22px]"></i>
                             {% else %}
-                            <svg class="w-6 h-6 text-text-muted" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round"
-                                    d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
+                            <i data-lucide="clock" class="w-[22px] h-[22px]"></i>
                             {% endif %}
                         </div>
                         <div>
-                            <h3 class="text-lg font-semibold text-text-main">{{ request.project_name }}</h3>
+                            <h3 class="text-[17px] font-bold text-slate-800">{{ request.project_name }}</h3>
                             {% with reqto=request.requested_to %}
                             {% with name=reqto.get_full_name|default:reqto.username %}
-                            <p class="text-text-muted text-sm">Atsiliepimas iš: <span
-                                    class="font-medium text-primary">{{ name }}</span></p>
+                            <p class="text-slate-500 text-[13px] mt-1 font-medium">Atsiliepimas iš: <span class="font-bold text-slate-900">{{ name }}</span></p>
                             {% endwith %}
                             {% endwith %}
-                            <div class="flex items-center mt-2 space-x-3 text-xs">
+                            <div class="flex items-center mt-4 space-x-3 text-xs">
                                 {% if request.status == 'completed' %}
-                                <span class="bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-medium">Gautas
-                                    atsakymas</span>
+                                <span class="bg-green-50 text-green-700 px-3 py-1 rounded-full font-bold tracking-wide uppercase text-[10px]">Gautas atsakymas</span>
                                 {% else %}
-                                <span
-                                    class="bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full font-medium">Laukiama
-                                    atsakymo</span>
+                                <span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-bold tracking-wide uppercase text-[10px]">Laukiama atsakymo</span>
                                 {% endif %}
                                 {% if request.due_date %}
-                                <span class="text-text-muted">Terminas: {{ request.due_date|date:"Y-m-d" }}</span>
+                                <span class="text-slate-500 flex items-center font-semibold">
+                                    <i data-lucide="calendar" class="w-3.5 h-3.5 mr-1.5 opacity-60"></i>
+                                    {{ request.due_date|date:"Y-m-d" }}
+                                </span>
                                 {% endif %}
                             </div>
                         </div>
                     </div>
-                    <div class="w-full md:w-auto flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
+                    <div class="w-full md:w-auto flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
                         {% if request.status == 'completed' and request.feedback %}
                         <button type="button" data-project="{{ request.project_name }}"
                             data-rname="{{ request.requested_to.get_full_name|default:request.requested_to.username }}"
@@ -209,7 +177,7 @@
                             data-keywords="{{ request.feedback.keywords|default:'' }}" {% if request.feedback.trait_ratings.exists %}
                             data-traits='[{% for tr in request.feedback.trait_ratings.all %}{"name": "{{ tr.trait.name|escapejs }}", "rating": {{ tr.rating }}}{% if not forloop.last %},{% endif %}{% endfor %}]'
                             {% endif %} onclick="openViewModal(this)"
-                            class="block w-full md:w-auto text-center px-6 py-2 bg-bg-main border border-gray-300 text-text-main font-medium rounded-lg hover:bg-bg-secondary transition-colors">
+                            class="block w-full sm:w-auto text-center px-8 py-3 bg-white border border-slate-200 text-slate-800 font-bold rounded-2xl hover:bg-slate-50 transition-colors">
                             Peržiūrėti
                         </button>
                         {% else %}
@@ -219,25 +187,26 @@
                                 data-date="{{ request.due_date|date:'Y-m-d' }}"
                                 data-rname="{{ reqto.get_full_name|default:reqto.username }}"
                                 onclick="openEditModal(this)"
-                                class="block w-full md:w-auto text-center px-4 py-2 bg-bg-secondary text-primary font-medium rounded-lg hover:bg-bg-secondary transition-colors transition">
-                                Redaguoti
+                                class="block w-full sm:w-auto text-center px-8 py-3 bg-white border border-slate-200 text-slate-800 font-bold rounded-2xl hover:bg-slate-50 transition-colors flex items-center justify-center gap-2">
+                                <i data-lucide="edit-2" class="w-4 h-4"></i> Redaguoti
                             </button>
                             {% endwith %}
                         {% endif %}
-                        <form action="{% url 'cancel_feedback_request' request.id %}" method="POST"
-                            class="w-full md:w-auto"
-                            onsubmit="return confirm('Ar tikrai norite ištrinti šį prašymą?');">
+                        <form action="{% url 'cancel_feedback_request' request.id %}" method="POST" class="w-full sm:w-auto" onsubmit="return confirm('Ar tikrai norite ištrinti šį prašymą?');">
                             {% csrf_token %}
-                            <button type="submit"
-                                class="block w-full h-full text-center px-4 py-2 bg-red-50 text-red-600 font-medium rounded-lg hover:bg-red-100 transition-colors">
+                            <button type="submit" class="block w-full text-center px-4 py-3 bg-white border border-slate-200 text-red-500 font-bold rounded-2xl hover:bg-red-50 hover:text-red-600 transition-colors">
                                 Ištrinti
                             </button>
                         </form>
                     </div>
                 </div>
                 {% empty %}
-                <div class="bg-bg-main p-5 rounded-xl shadow-sm border text-center text-text-muted">
-                    Jūs dar nesate išsiuntę jokių prašymų.
+                <div class="bg-white p-10 rounded-3xl border border-slate-100 text-center flex flex-col items-center justify-center min-h-[250px]">
+                    <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                        <i data-lucide="send" class="w-8 h-8 text-slate-300"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-slate-800 mb-1">Tuščia</h3>
+                    <p class="text-slate-500 text-sm">Jūs dar nesate išsiuntę jokių prašymų.</p>
                 </div>
                 {% endfor %}
             </div>
@@ -247,106 +216,66 @@
 </main>
 
 <!-- Edit Modal -->
-<div id="editModal"
-    class="fixed inset-0 overflow-y-auto bg-black/40 backdrop-blur-md flex items-center justify-center p-4 z-50 transition-all duration-500 hidden"
-    style="z-index: 50;">
-    <div
-        class="bg-white/95 w-full max-w-md rounded-[32px] shadow-[0_20px_60px_rgba(0,0,0,0.2)] overflow-hidden transition-all animate-in fade-in zoom-in duration-300 border border-white/20">
+<div id="editModal" class="fixed inset-0 overflow-y-auto bg-black/40 backdrop-blur-md flex items-center justify-center p-4 z-[9999] hidden">
+    <div class="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden transition-all animate-in fade-in zoom-in duration-300 border border-white/20">
 
-        <div class="px-6 sm:px-8 pt-8 pb-4 flex justify-between items-center">
-            <h2 class="text-2xl font-extrabold tracking-tight text-gray-900" id="modal-title">Redaguoti Užklausą</h2>
-            <button type="button" onclick="closeEditModal()"
-                class="p-2 hover:bg-gray-100 rounded-full text-gray-400 transition-colors">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                    class="lucide lucide-x">
-                    <path d="M18 6 6 18" />
-                    <path d="m6 6 12 12" />
-                </svg>
+        <div class="px-8 pt-8 pb-4 flex justify-between items-center">
+            <h2 class="text-2xl font-extrabold tracking-tight text-slate-900" id="modal-title">Redaguoti Užklausą</h2>
+            <button type="button" onclick="closeEditModal()" class="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors">
+                <i data-lucide="x"></i>
             </button>
         </div>
 
         <form id="editForm" method="POST" action="">
             {% csrf_token %}
-            <div class="px-6 sm:px-8 py-2">
-                <p class="text-text-muted mb-5 text-[14px]">
-                    Keičiate atsiliepimo prašymą naudotojui <span id="modalReceiverName"
-                        class="font-bold text-gray-700"></span>.
+            <div class="px-8 py-2">
+                <p class="text-slate-500 mb-6 text-[13px] font-medium leading-relaxed">
+                    Keičiate atsiliepimo prašymą naudotojui <br/><span id="modalReceiverName" class="font-bold text-slate-800 text-[15px]"></span>.
                 </p>
                 <div class="space-y-5">
 
                     <div class="space-y-1.5">
-                        <label for="modal_project_name"
-                            class="text-[13px] font-bold text-gray-400 uppercase tracking-wider ml-1">Projekto
-                            pavadinimas *</label>
+                        <label for="modal_project_name" class="text-[12px] font-bold text-slate-400 uppercase tracking-wider ml-1">Projekto pavadinimas *</label>
                         <div class="relative group">
-                            <div
-                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors z-10">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-briefcase">
-                                    <path d="M16 20V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                                    <rect width="20" height="14" x="2" y="6" rx="2" />
-                                </svg>
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 z-10">
+                                <i data-lucide="briefcase" class="w-[18px] h-[18px]"></i>
                             </div>
                             <input type="text" id="modal_project_name" name="project_name" required
-                                class="w-full bg-gray-50 border border-transparent focus:border-blue-500/30 focus:bg-white focus:ring-4 focus:ring-blue-500/10 rounded-2xl py-3.5 pl-11 pr-4 outline-none transition-all text-[15px] text-gray-700">
+                                class="w-full bg-slate-50 border border-transparent focus:bg-white focus:ring-4 focus:ring-slate-100 rounded-2xl py-3.5 pl-11 pr-4 outline-none transition-all text-[15px] text-slate-800 font-medium">
                         </div>
                     </div>
 
                     <div class="space-y-1.5">
-                        <label for="modal_comment"
-                            class="text-[13px] font-bold text-gray-400 uppercase tracking-wider ml-1">Jūsų žinutė /
-                            komentaras</label>
+                        <label for="modal_comment" class="text-[12px] font-bold text-slate-400 uppercase tracking-wider ml-1">Jūsų žinutė / komentaras</label>
                         <div class="relative group">
-                            <div
-                                class="absolute left-4 top-4 text-gray-400 group-focus-within:text-blue-500 transition-colors z-10">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-message-square">
-                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                                </svg>
+                            <div class="absolute left-4 top-4 text-slate-400 z-10">
+                                <i data-lucide="message-square" class="w-[18px] h-[18px]"></i>
                             </div>
                             <textarea id="modal_comment" name="comment" rows="3"
-                                class="w-full bg-gray-50 border border-transparent focus:border-blue-500/30 focus:bg-white focus:ring-4 focus:ring-blue-500/10 rounded-2xl py-3.5 pl-11 pr-4 outline-none transition-all text-[15px] text-gray-700 resize-none"></textarea>
+                                class="w-full bg-slate-50 border border-transparent focus:bg-white focus:ring-4 focus:ring-slate-100 rounded-2xl py-3.5 pl-11 pr-4 outline-none transition-all text-[15px] text-slate-800 font-medium resize-none"></textarea>
                         </div>
                     </div>
 
                     <div class="space-y-1.5">
-                        <label for="modal_due_date"
-                            class="text-[13px] font-bold text-gray-400 uppercase tracking-wider ml-1">Terminas *</label>
+                        <label for="modal_due_date" class="text-[12px] font-bold text-slate-400 uppercase tracking-wider ml-1">Terminas *</label>
                         <div class="relative group">
-                            <div
-                                class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-blue-500 transition-colors pointer-events-none z-10">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
-                                    fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                                    stroke-linejoin="round" class="lucide lucide-calendar">
-                                    <path d="M8 2v4" />
-                                    <path d="M16 2v4" />
-                                    <rect width="18" height="18" x="3" y="4" rx="2" />
-                                    <path d="M3 10h18" />
-                                </svg>
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10">
+                                <i data-lucide="calendar" class="w-[18px] h-[18px]"></i>
                             </div>
                             <input type="date" id="modal_due_date" name="due_date" required
-                                class="w-full bg-gray-50 border border-transparent focus:border-blue-500/30 focus:bg-white focus:ring-4 focus:ring-blue-500/10 rounded-2xl py-3.5 pl-11 pr-4 outline-none transition-all text-[15px] text-gray-700">
+                                class="w-full bg-slate-50 border border-transparent focus:bg-white focus:ring-4 focus:ring-slate-100 rounded-2xl py-3.5 pl-11 pr-4 outline-none transition-all text-[15px] text-slate-800 font-medium">
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="p-6 sm:p-8 flex gap-3">
-                <button type="button" onclick="closeEditModal()"
-                    class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-600 py-4 rounded-2xl font-bold text-[15px] transition-all active:scale-95">
+            <div class="p-8 flex gap-3 mt-4">
+                <button type="button" onclick="closeEditModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-600 py-4 rounded-2xl font-bold text-[15px] transition-all">
                     Atšaukti
                 </button>
-                <button type="submit"
-                    class="flex-[2] bg-[#2d4a77] hover:bg-[#233a5e] text-white px-4 sm:px-8 py-4 rounded-2xl font-bold text-[15px] shadow-lg shadow-blue-900/20 flex flex-row items-center justify-center gap-2 transition-all active:scale-95">
+                <button type="submit" class="flex-[2] bg-[#2d4a77] hover:bg-[#1e3456] text-white px-4 sm:px-8 py-4 rounded-2xl font-bold text-[15px] shadow-lg shadow-[#2d4a77]/20 flex flex-row items-center justify-center gap-2 transition-all">
                     Išsaugoti
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                        class="lucide lucide-check">
-                        <path d="M20 6 9 17l-5-5" />
-                    </svg>
+                    <i data-lucide="check" class="w-4 h-4"></i>
                 </button>
             </div>
         </form>
@@ -379,7 +308,6 @@
         const badgeMade = btnMade.querySelector('span');
 
         function switchTab(showAssigned) {
-            // Content
             if (showAssigned) {
                 tabAssigned.classList.remove('hidden');
                 tabMade.classList.add('hidden');
@@ -388,22 +316,26 @@
                 tabMade.classList.remove('hidden');
             }
 
-            // Buttons
             if (showAssigned) {
-                btnAssigned.className = 'flex items-center gap-2 border-b-2 border-purple-600 text-primary pb-2 px-1 hover:text-primary transition';
-                badgeAssigned.className = 'bg-bg-secondary text-primary py-0.5 px-2 rounded-full text-xs font-semibold';
-                btnMade.className = 'flex items-center gap-2 border-b-2 border-transparent text-text-muted pb-2 px-1 hover:text-text-main hover:border-gray-300 transition';
-                badgeMade.className = 'bg-bg-secondary text-text-muted py-0.5 px-2 rounded-full text-xs font-semibold';
+                btnAssigned.className = 'flex items-center gap-2 border-b-2 border-slate-900 text-slate-900 pb-3 px-1 transition-colors';
+                badgeAssigned.className = 'bg-slate-100 text-slate-800 py-0.5 px-2.5 rounded-full text-[11px] font-bold';
+                btnMade.className = 'flex items-center gap-2 border-b-2 border-transparent text-slate-400 pb-3 px-1 hover:text-slate-700 transition-colors';
+                badgeMade.className = 'bg-slate-100 text-slate-500 py-0.5 px-2.5 rounded-full text-[11px] font-bold';
             } else {
-                btnAssigned.className = 'flex items-center gap-2 border-b-2 border-transparent text-text-muted pb-2 px-1 hover:text-text-main hover:border-gray-300 transition';
-                badgeAssigned.className = 'bg-bg-secondary text-text-muted py-0.5 px-2 rounded-full text-xs font-semibold';
-                btnMade.className = 'flex items-center gap-2 border-b-2 border-purple-600 text-primary pb-2 px-1 hover:text-primary transition';
-                badgeMade.className = 'bg-bg-secondary text-primary py-0.5 px-2 rounded-full text-xs font-semibold';
+                btnAssigned.className = 'flex items-center gap-2 border-b-2 border-transparent text-slate-400 pb-3 px-1 hover:text-slate-700 transition-colors';
+                badgeAssigned.className = 'bg-slate-100 text-slate-500 py-0.5 px-2.5 rounded-full text-[11px] font-bold';
+                btnMade.className = 'flex items-center gap-2 border-b-2 border-slate-900 text-slate-900 pb-3 px-1 transition-colors';
+                badgeMade.className = 'bg-slate-100 text-slate-800 py-0.5 px-2.5 rounded-full text-[11px] font-bold';
             }
         }
 
         btnAssigned.addEventListener('click', () => switchTab(true));
         btnMade.addEventListener('click', () => switchTab(false));
     });
+
+    // Inicializuojame Lucide ikonas
+    if (typeof lucide !== 'undefined') {
+        lucide.createIcons();
+    }
 </script>
 {% endblock %}
