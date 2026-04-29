@@ -17,10 +17,10 @@ services:
       - "8000"
     labels:
       - traefik.enable=true
-      - traefik.http.routers.kudosly.rule=Host(`kudosly.lt`) || Host(`www.kudosly.lt`)
-      - traefik.http.routers.kudosly.entrypoints=websecure
-      - traefik.http.routers.kudosly.tls.certresolver=letsencrypt
-      - traefik.http.services.kudosly.loadbalancer.server.port=8000
+      - traefik.http.routers.orbigrow.rule=Host(`orbigrow.lt`) || Host(`www.orbigrow.lt`)
+      - traefik.http.routers.orbigrow.entrypoints=websecure
+      - traefik.http.routers.orbigrow.tls.certresolver=letsencrypt
+      - traefik.http.services.orbigrow.loadbalancer.server.port=8000
       - traefik.docker.network=traefik-proxy
     networks:
       - traefik-proxy

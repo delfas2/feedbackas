@@ -40,21 +40,21 @@ def index(request):
         employees = request.POST.get('employees', 'Nepasirinkta')
         message = request.POST.get('message')
         
-        subject = f"Nauja užklausa iš Kudosly.lt: {name}"
+        subject = f"Nauja užklausa iš Orbigrow.lt: {name}"
         body = f"Vardas: {name}\nEl. paštas: {email}\nTelefonas: {phone}\nDarbuotojų skaičius: {employees}\n\nŽinutė:\n{message}"
         
         try:
             send_mail(
                 subject,
                 body,
-                'info@kudosly.lt',  # From email
-                ['info@kudosly.lt'], # To email
+                'info@orbigrow.lt',  # From email
+                ['info@orbigrow.lt'], # To email
                 fail_silently=False,
             )
             messages.success(request, 'Ačiū! Jūsų užklausa gauta, netrukus su jumis susisieksime.')
         except Exception as e:
             logger.error(f"Klaida siunčiant kontaktų formos el. laišką: {str(e)}")
-            messages.error(request, 'Apgailestaujame, įvyko klaida siunčiant žinutę. Bandykite vėliau arba rašykite tiesiogiai info@kudosly.lt.')
+            messages.error(request, 'Apgailestaujame, įvyko klaida siunčiant žinutę. Bandykite vėliau arba rašykite tiesiogiai info@orbigrow.lt.')
             
         return redirect('index')
         

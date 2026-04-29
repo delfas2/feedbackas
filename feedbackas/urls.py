@@ -25,7 +25,7 @@ from . import views
 from users import views as user_views
 
 urlpatterns = [
-    path('kudosly-admin-panel/', admin.site.urls),
+    path('orbigrow-admin-panel/', admin.site.urls),
     path('', views.index, name='index'),
     path('apie-mus/', views.apie_mus, name='apie_mus'),
     path('home/', views.home, name='home'),
