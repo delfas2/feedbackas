@@ -81,6 +81,7 @@ urlpatterns = [
     path('questionnaires/<hashid:questionnaire_id>/statistics/', views.questionnaire_statistics, name='questionnaire_statistics'),
     
     # Superusers management
+    path('superadmin/features/', views.superadmin_features, name='superadmin_features'),
     path('superadmin/superusers/', views.superadmin_superusers_list, name='superadmin_superusers_list'),
     path('superadmin/superusers/create/', views.superadmin_create_superuser, name='superadmin_create_superuser'),
     path('superadmin/superusers/<hashid:user_id>/edit/', views.superadmin_edit_superuser, name='superadmin_edit_superuser'),

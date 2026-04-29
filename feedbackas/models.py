@@ -81,3 +81,19 @@ class AIUsageLog(models.Model):
     def __str__(self):
         return f"{self.request_type} by {self.user} ({self.total_cost}$)"
 
+class GlobalSettings(models.Model):
+    personal_form_enabled = models.BooleanField(default=True, help_text="Įjungti 'Individuali forma' funkcionalumą visai platformai.")
+    team_form_enabled = models.BooleanField(default=True, help_text="Įjungti 'Komandinė forma' funkcionalumą visai platformai.")
+
+    class Meta:
+        verbose_name_plural = "Global Settings"
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super(GlobalSettings, self).save(*args, **kwargs)
+
+    @classmethod
+    def load(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+

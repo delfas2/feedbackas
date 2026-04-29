@@ -78,6 +78,7 @@
                     </svg>
                     <span>Mano Komanda</span>
                 </a>
+                {% if global_settings is None or global_settings.personal_form_enabled %}
                 <a href="{% url 'questionnaires_list' %}"
                     class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'questionnaires_list' or request.resolver_match.url_name == 'create_questionnaire' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
@@ -86,6 +87,7 @@
                     </svg>
                     <span>Individuali forma</span>
                 </a>
+                {% endif %}
 
                 {% if user.profile.is_company_admin %}
                 <a href="{% url 'company_management' %}"

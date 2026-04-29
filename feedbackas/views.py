@@ -2327,3 +2327,22 @@ def superadmin_users_list(request):
     
     return render(request, 'superadmin/users_list.html', context)
 
+
+from django.contrib.admin.views.decorators import staff_member_required
+from .models import GlobalSettings
+
+@staff_member_required
+def superadmin_features(request):
+    if not request.user.is_superuser:
+        return redirect('home')
+        
+    settings = GlobalSettings.load()
+    
+    if request.method == 'POST':
+        settings.personal_form_enabled = request.POST.get('personal_form_enabled') == 'on'
+        settings.team_form_enabled = request.POST.get('team_form_enabled') == 'on'
+        settings.save()
+        messages.success(request, 'Funkcionalumų nustatymai sėkmingai atnaujinti.')
+        return redirect('superadmin_features')
+        
+    return render(request, 'superadmin/features.html', {'settings': settings})
