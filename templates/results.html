@@ -65,11 +65,11 @@
                                 {{ comp.name }}
                                 <i data-lucide="external-link" class="w-3.5 h-3.5 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
                             </span>
-                            <span class="text-[15px] font-extrabold text-teal-600">{{ comp.score|floatformat }}/5</span>
+                            <span class="text-[15px] font-extrabold text-teal-600">{{ comp.score|floatformat }}/4</span>
                         </div>
                         <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
                             <div class="bg-gradient-to-r from-teal-400 to-teal-600 h-2.5 rounded-full transition-all duration-500"
-                                style="width: {% widthratio comp.score 5 100 %}%"></div>
+                                style="width: {% widthratio comp.score 4 100 %}%"></div>
                         </div>
                     </div>
                     {% endfor %}
@@ -269,7 +269,7 @@
                                         return projects[context[0].dataIndex] + ' (' + context[0].label + ')';
                                     },
                                     label: function (context) {
-                                        return ' Vertinimas: ' + context.raw + ' / 5';
+                                        return ' Vertinimas: ' + context.raw + ' / 4';
                                     }
                                 }
                             }
