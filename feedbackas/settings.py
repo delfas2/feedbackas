@@ -44,6 +44,10 @@ CSRF_TRUSTED_ORIGINS = [
     'https://www.orbigrow.lt',
 ]
 
+# Reverse proxy (Traefik) nustatymai – būtina, kad Django žinotų tikrą protokolą ir hostą
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+USE_X_FORWARDED_HOST = True
+
 # Application definition
 
 INSTALLED_APPS = [
