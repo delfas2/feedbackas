@@ -56,6 +56,11 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'feedbackas',
     'django_q',
+    # Django Allauth (Microsoft Entra ID)
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.microsoft',
 ]
 
 MIDDLEWARE = [
@@ -67,6 +72,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware',
 ]
 
 ROOT_URLCONF = 'feedbackas.urls'
@@ -162,6 +168,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTHENTICATION_BACKENDS = [
     'feedbackas.backends.EmailBackend',
     'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 LOGIN_REDIRECT_URL = '/home/'
@@ -196,5 +203,27 @@ Q_CLUSTER = {
         'host': 'redis',
         'port': 6379,
         'db': 0,
+    }
+}
+
+# Django Allauth – Microsoft Entra ID (Azure AD)
+ACCOUNT_LOGIN_METHODS = {'email'}
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = 'none'  # Microsoft jau patvirtina el. paštą
+SOCIALACCOUNT_AUTO_SIGNUP = True
+SOCIALACCOUNT_LOGIN_ON_GET = True  # Praleisti "Continue?" tarpinį puslapį
+SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
+SOCIALACCOUNT_EMAIL_VERIFICATION = 'none'
+SOCIALACCOUNT_ADAPTER = 'feedbackas.adapter.MicrosoftSocialAccountAdapter'
+
+SOCIALACCOUNT_PROVIDERS = {
+    'microsoft': {
+        'APP': {
+            'client_id': os.environ.get('MICROSOFT_CLIENT_ID', ''),
+            'secret': os.environ.get('MICROSOFT_CLIENT_SECRET', ''),
+        },
+        'TENANT': os.environ.get('MICROSOFT_TENANT_ID', 'common'),
+        'SCOPE': ['openid', 'email', 'profile', 'User.Read'],
     }
 }

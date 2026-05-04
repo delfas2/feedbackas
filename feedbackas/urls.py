@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, register_converter
+from django.urls import path, include, register_converter
 from django.contrib.auth import views as auth_views
 from .converters import HashIdConverter
 
@@ -87,6 +87,9 @@ urlpatterns = [
     path('superadmin/superusers/<hashid:user_id>/edit/', views.superadmin_edit_superuser, name='superadmin_edit_superuser'),
     path('superadmin/superusers/<hashid:user_id>/delete/', views.superadmin_delete_superuser, name='superadmin_delete_superuser'),
     path('superadmin/users/', views.superadmin_users_list, name='superadmin_users_list'),
+
+    # Django Allauth (Microsoft Entra ID)
+    path('accounts/', include('allauth.urls')),
 ]
 
 from django.conf import settings
