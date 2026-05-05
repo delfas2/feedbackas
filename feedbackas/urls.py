@@ -23,8 +23,11 @@ register_converter(HashIdConverter, 'hashid')
 from django.contrib.auth import views as auth_views
 from . import views
 from users import views as user_views
+from django.views.generic.base import RedirectView
+from django.contrib.staticfiles.storage import staticfiles_storage
 
 urlpatterns = [
+    path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('images/fav.png'))),
     path('orbigrow-admin-panel/', admin.site.urls),
     path('', views.index, name='index'),
     path('apie-mus/', views.apie_mus, name='apie_mus'),
