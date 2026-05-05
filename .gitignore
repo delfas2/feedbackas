@@ -19,7 +19,6 @@ db.sqlite3
 db.sqlite3-journal
 
 # Statinių ir medijos failų aplankai
-/static/
 /media/
 staticfiles/
 
