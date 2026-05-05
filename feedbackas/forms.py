@@ -82,3 +82,17 @@ class DepartmentForm(forms.ModelForm):
         if company_link:
             self.fields['parent'].queryset = Department.objects.filter(company=company_link)
             self.fields['manager'].queryset = User.objects.filter(profile__company_link=company_link)
+
+class PageDescriptionForm(forms.ModelForm):
+    class Meta:
+        model = __import__('feedbackas.models').models.PageDescription
+        fields = '__all__'
+        widgets = {}
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            if isinstance(field.widget, forms.Textarea):
+                field.widget.attrs.update({'class': 'w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-purple-500 outline-none transition-all resize-none', 'rows': 4})
+            else:
+                field.widget.attrs.update({'class': 'w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-purple-500 outline-none transition-all'})

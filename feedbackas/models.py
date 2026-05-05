@@ -97,3 +97,53 @@ class GlobalSettings(models.Model):
         obj, created = cls.objects.get_or_create(pk=1)
         return obj
 
+class PageDescription(models.Model):
+    # index.html
+    index_hero_title = models.CharField(max_length=255, default="Skatinkite atvirą komandos kultūrą")
+    index_hero_desc = models.TextField(default="Mūsų platforma padeda lengvai rinkti ir analizuoti atsiliepimus. Išryškinkite stiprybes ir padėkite savo darbuotojams augti kartu.")
+    index_features_title = models.CharField(max_length=255, default="Kodėl verta rinktis mus?")
+    index_feature1_title = models.CharField(max_length=255, default="Atviras Grįžtamasis Ryšys")
+    index_feature1_desc = models.TextField(default="Skatinkite skaidrumą ir asmeninį augimą su atvirais, vardiniais kolegų atsiliepimais bei vertinimais.")
+    index_feature2_title = models.CharField(max_length=255, default="Dirbtinio Intelekto Įžvalgos")
+    index_feature2_desc = models.TextField(default="AI algoritmai sistemina gautus atsiliepimus, išryškindami asmenines stiprybes ir aiškias sritis, kuriose vertėtų tobulėti.")
+    index_feature3_title = models.CharField(max_length=255, default="Paprasta Naudoti")
+    index_feature3_desc = models.TextField(default="Intuityvi sąsaja tiek administratoriams, tiek darbuotojams. Pradėkite per kelias minutes.")
+    index_howitworks_title = models.CharField(max_length=255, default="Kaip tai veikia?")
+    index_step1_title = models.CharField(max_length=255, default="Paprašykite Atsiliepimo")
+    index_step1_desc = models.TextField(default="Pasirinkite kolegą ir išsiųskite prašymą įvertinti jūsų darbą keliais paspaudimais.")
+    index_step2_title = models.CharField(max_length=255, default="Gaukite Įvertinimą")
+    index_step2_desc = models.TextField(default="Kolegos atvirai atsako į išsamius kompetencijų ir asmeninių savybių klausimus.")
+    index_step3_title = models.CharField(max_length=255, default="Analizuokite su AI")
+    index_step3_desc = models.TextField(default="Dirbtinis intelektas praskenuoja komentarus ir pateikia aiškias stiprybes bei tobulėjimo sritis.")
+    index_cta_title = models.CharField(max_length=255, default="Pasiruošę pagerinti komandos ryšį?")
+    index_cta_desc = models.TextField(default="Prisijunkite prie įmonių, kurios naudoja atsiliepimus savo augimui skatinti. Pradėkite nemokamą bandomąjį laikotarpį šiandien.")
+
+    # apie_mus.html
+    about_hero_title = models.CharField(max_length=255, default="Apie Mūsų Komandą")
+    about_hero_desc = models.TextField(default="Orbigrow.lt tikslas – padėti organizacijoms sukurti atvirą grįžtamojo ryšio kultūrą ir paskatinti kiekvieno darbuotojo augimą.")
+    about_mission_title = models.CharField(max_length=255, default="Mūsų Misija")
+    about_mission_desc1 = models.TextField(default="Tikime, kad nuolatinis ir atviras kolegų vertinimas yra pagrindinis komandos tobulėjimo variklis. Dažnai grįžtamasis ryšys įmonėse būna pamirštamas, paliekamas tik metiniams pokalbiams arba anoniminis, kas trukdo konstruktyviam dialogui.")
+    about_mission_desc2 = models.TextField(default="Mūsų platforma sprendžia šią problemą siūlydama patogų, vardinį ir struktūrizuotą atsiliepimų rinkimo procesą, kurį papildo modernus dirbtinis intelektas (AI), išryškinantis esmines stiprybes bei pastangas.")
+    about_values_title = models.CharField(max_length=255, default="Mūsų Vertybės")
+    about_values_subtitle = models.CharField(max_length=255, default="Principai, kuriais vadovaujamės kurdami platformą")
+    about_value1_title = models.CharField(max_length=255, default="Skaidrumas")
+    about_value1_desc = models.TextField(default="Mes nesislepiame už anonimiškumo. Tikime, kad tikras tobulėjimas prasideda nuo atviro ir nuoširdaus grįžtamojo ryšio.")
+    about_value2_title = models.CharField(max_length=255, default="Inovacijos")
+    about_value2_desc = models.TextField(default="AI integracija leidžia sutaupyti valandas laiko analizuojant dešimtis komentarų, paverčiant juos aiškiomis įžvalgomis.")
+    about_value3_title = models.CharField(max_length=255, default="Paprastumas")
+    about_value3_desc = models.TextField(default="Platforma sukurta taip, kad prašyti ir suteikti grįžtamąjį ryšį užtruktų vos kelis paspaudimus.")
+    about_value4_title = models.CharField(max_length=255, default="Palaikymas")
+    about_value4_desc = models.TextField(default="Mūsų tikslas ne kritikuoti, o auginti. Viskas orientuota į komandos nario stiprybių ugdymą.")
+
+    class Meta:
+        verbose_name_plural = "Page Descriptions"
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super(PageDescription, self).save(*args, **kwargs)
+
+    @classmethod
+    def load(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+

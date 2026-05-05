@@ -1,0 +1,189 @@
+{% extends 'superadmin/base_superadmin.html' %}
+{% load static %}
+
+{% block title %}Aprašymų Redagavimas - Orbigrow.lt{% endblock %}
+
+{% block content %}
+<main class="flex-1 overflow-y-auto bg-bg-secondary p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-extrabold text-text-main mb-2">Aprašymų Redagavimas</h1>
+        <p class="text-text-muted mb-8">Čia galite redaguoti tekstus, rodomus Pradžios ("index") ir "Apie mus" puslapiuose.</p>
+
+        <form method="POST" action="{% url 'superadmin_descriptions' %}" class="bg-bg-main p-8 rounded-2xl shadow-sm border border-gray-100">
+            {% csrf_token %}
+
+            <h2 class="text-2xl font-bold text-primary mb-6 border-b pb-2">Pradžios puslapis (Hero dalis)</h2>
+            <div class="space-y-4 mb-8">
+                <div>
+                    <label class="block text-sm font-medium text-text-main mb-1">Pagrindinė antraštė</label>
+                    {{ form.index_hero_title }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text-main mb-1">Pagrindinis aprašymas</label>
+                    {{ form.index_hero_desc }}
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold text-primary mb-6 border-b pb-2">Pradžios puslapis (Kodėl verta rinktis mus?)</h2>
+            <div class="space-y-4 mb-8">
+                <div>
+                    <label class="block text-sm font-medium text-text-main mb-1">Skyriaus antraštė</label>
+                    {{ form.index_features_title }}
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Funkcija 1: Antraštė</label>
+                        {{ form.index_feature1_title }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Funkcija 1: Aprašymas</label>
+                        {{ form.index_feature1_desc }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Funkcija 2: Antraštė</label>
+                        {{ form.index_feature2_title }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Funkcija 2: Aprašymas</label>
+                        {{ form.index_feature2_desc }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Funkcija 3: Antraštė</label>
+                        {{ form.index_feature3_title }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Funkcija 3: Aprašymas</label>
+                        {{ form.index_feature3_desc }}
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold text-primary mb-6 border-b pb-2">Pradžios puslapis (Kaip tai veikia?)</h2>
+            <div class="space-y-4 mb-8">
+                <div>
+                    <label class="block text-sm font-medium text-text-main mb-1">Skyriaus antraštė</label>
+                    {{ form.index_howitworks_title }}
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Žingsnis 1: Antraštė</label>
+                        {{ form.index_step1_title }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Žingsnis 1: Aprašymas</label>
+                        {{ form.index_step1_desc }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Žingsnis 2: Antraštė</label>
+                        {{ form.index_step2_title }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Žingsnis 2: Aprašymas</label>
+                        {{ form.index_step2_desc }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Žingsnis 3: Antraštė</label>
+                        {{ form.index_step3_title }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Žingsnis 3: Aprašymas</label>
+                        {{ form.index_step3_desc }}
+                    </div>
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold text-primary mb-6 border-b pb-2">Pradžios puslapis (Kvietimas veikti)</h2>
+            <div class="space-y-4 mb-8">
+                <div>
+                    <label class="block text-sm font-medium text-text-main mb-1">Antraštė</label>
+                    {{ form.index_cta_title }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text-main mb-1">Aprašymas</label>
+                    {{ form.index_cta_desc }}
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold text-primary mb-6 border-b pb-2 mt-12">Apie mus (Hero dalis)</h2>
+            <div class="space-y-4 mb-8">
+                <div>
+                    <label class="block text-sm font-medium text-text-main mb-1">Pagrindinė antraštė</label>
+                    {{ form.about_hero_title }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text-main mb-1">Pagrindinis aprašymas</label>
+                    {{ form.about_hero_desc }}
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold text-primary mb-6 border-b pb-2">Apie mus (Misija)</h2>
+            <div class="space-y-4 mb-8">
+                <div>
+                    <label class="block text-sm font-medium text-text-main mb-1">Antraštė</label>
+                    {{ form.about_mission_title }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text-main mb-1">Aprašymas (1 pastraipa)</label>
+                    {{ form.about_mission_desc1 }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text-main mb-1">Aprašymas (Paryškintas tekstas)</label>
+                    {{ form.about_mission_desc2 }}
+                </div>
+            </div>
+
+            <h2 class="text-2xl font-bold text-primary mb-6 border-b pb-2">Apie mus (Vertybės)</h2>
+            <div class="space-y-4 mb-8">
+                <div>
+                    <label class="block text-sm font-medium text-text-main mb-1">Skyriaus antraštė</label>
+                    {{ form.about_values_title }}
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-text-main mb-1">Skyriaus paantraštė</label>
+                    {{ form.about_values_subtitle }}
+                </div>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Vertybė 1: Antraštė</label>
+                        {{ form.about_value1_title }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Vertybė 1: Aprašymas</label>
+                        {{ form.about_value1_desc }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Vertybė 2: Antraštė</label>
+                        {{ form.about_value2_title }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Vertybė 2: Aprašymas</label>
+                        {{ form.about_value2_desc }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Vertybė 3: Antraštė</label>
+                        {{ form.about_value3_title }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Vertybė 3: Aprašymas</label>
+                        {{ form.about_value3_desc }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Vertybė 4: Antraštė</label>
+                        {{ form.about_value4_title }}
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-text-main mb-1">Vertybė 4: Aprašymas</label>
+                        {{ form.about_value4_desc }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6 border-t flex justify-end">
+                <button type="submit" class="px-8 py-3 bg-primary text-white font-bold rounded-xl hover:bg-purple-700 transition-colors shadow-sm">
+                    Išsaugoti Pakeitimus
+                </button>
+            </div>
+        </form>
+    </div>
+</main>
+{% endblock %}

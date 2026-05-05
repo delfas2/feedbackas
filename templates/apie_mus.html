@@ -59,11 +59,8 @@
                 <div class="inline-flex items-center justify-center p-3 bg-white/10 rounded-2xl mb-6 backdrop-blur-sm border border-white/20">
                     <i data-lucide="users" class="w-6 h-6 text-teal-400"></i>
                 </div>
-                <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight">Apie Mūsų Komandą</h1>
-                <p class="text-xl text-slate-300 max-w-2xl mx-auto font-medium leading-relaxed">
-                    Orbigrow.lt tikslas – padėti organizacijoms sukurti atvirą grįžtamojo ryšio kultūrą ir paskatinti
-                    kiekvieno darbuotojo augimą.
-                </p>
+                <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight whitespace-pre-line">{{ page_description.about_hero_title }}</h1>
+                <p class="text-xl text-slate-300 max-w-2xl mx-auto font-medium leading-relaxed whitespace-pre-line">{{ page_description.about_hero_desc }}</p>
             </div>
         </section>
 
@@ -77,26 +74,18 @@
                         <div class="w-12 h-12 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center shrink-0">
                             <i data-lucide="target" class="w-6 h-6"></i>
                         </div>
-                        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Mūsų Misija</h2>
+                        <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight whitespace-pre-line">{{ page_description.about_mission_title }}</h2>
                     </div>
                     
                     <div class="prose prose-lg text-slate-600">
-                        <p class="mb-6 leading-relaxed">
-                            Tikime, kad nuolatinis ir atviras kolegų vertinimas yra pagrindinis komandos tobulėjimo variklis.
-                            Dažnai grįžtamasis ryšys įmonėse būna pamirštamas, paliekamas tik metiniams pokalbiams arba
-                            anoniminis, kas trukdo konstruktyviam dialogui.
-                        </p>
-                        <p class="leading-relaxed font-medium text-slate-800 bg-slate-50 p-6 rounded-2xl border-l-4 border-teal-500">
-                            Mūsų platforma sprendžia šią problemą siūlydama patogų, vardinį ir struktūrizuotą atsiliepimų
-                            rinkimo procesą, kurį papildo modernus dirbtinis intelektas (AI), išryškinantis esmines stiprybes
-                            bei pastangas.
-                        </p>
+                        <p class="mb-6 leading-relaxed whitespace-pre-line">{{ page_description.about_mission_desc1 }}</p>
+                        <p class="leading-relaxed font-medium text-slate-800 bg-slate-50 p-6 rounded-2xl border-l-4 border-teal-500 whitespace-pre-line">{{ page_description.about_mission_desc2 }}</p>
                     </div>
                 </div>
 
                 <div class="text-center mb-12">
-                    <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Mūsų Vertybės</h2>
-                    <p class="text-slate-500 mt-4 font-medium">Principai, kuriais vadovaujamės kurdami platformą</p>
+                    <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight whitespace-pre-line">{{ page_description.about_values_title }}</h2>
+                    <p class="text-slate-500 mt-4 font-medium whitespace-pre-line">{{ page_description.about_values_subtitle }}</p>
                 </div>
 
                 <div class="grid md:grid-cols-2 gap-6">
@@ -104,36 +93,32 @@
                         <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                             <i data-lucide="eye" class="w-6 h-6"></i>
                         </div>
-                        <h4 class="text-xl font-bold text-slate-900 mb-3">Skaidrumas</h4>
-                        <p class="text-slate-500 text-[15px] leading-relaxed">Mes nesislepiame už anonimiškumo. Tikime, kad tikras
-                            tobulėjimas prasideda nuo atviro ir nuoširdaus grįžtamojo ryšio.</p>
+                        <h4 class="text-xl font-bold text-slate-900 mb-3 whitespace-pre-line">{{ page_description.about_value1_title }}</h4>
+                        <p class="text-slate-500 text-[15px] leading-relaxed whitespace-pre-line">{{ page_description.about_value1_desc }}</p>
                     </div>
                     
                     <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow hover:border-slate-200 group">
                         <div class="w-12 h-12 bg-purple-50 text-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                             <i data-lucide="lightbulb" class="w-6 h-6"></i>
                         </div>
-                        <h4 class="text-xl font-bold text-slate-900 mb-3">Inovacijos</h4>
-                        <p class="text-slate-500 text-[15px] leading-relaxed">AI integracija leidžia sutaupyti valandas laiko analizuojant
-                            dešimtis komentarų, paverčiant juos aiškiomis įžvalgomis.</p>
+                        <h4 class="text-xl font-bold text-slate-900 mb-3 whitespace-pre-line">{{ page_description.about_value2_title }}</h4>
+                        <p class="text-slate-500 text-[15px] leading-relaxed whitespace-pre-line">{{ page_description.about_value2_desc }}</p>
                     </div>
                     
                     <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow hover:border-slate-200 group">
                         <div class="w-12 h-12 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                             <i data-lucide="zap" class="w-6 h-6"></i>
                         </div>
-                        <h4 class="text-xl font-bold text-slate-900 mb-3">Paprastumas</h4>
-                        <p class="text-slate-500 text-[15px] leading-relaxed">Platforma sukurta taip, kad prašyti ir suteikti grįžtamąjį ryšį
-                            užtruktų vos kelis paspaudimus.</p>
+                        <h4 class="text-xl font-bold text-slate-900 mb-3 whitespace-pre-line">{{ page_description.about_value3_title }}</h4>
+                        <p class="text-slate-500 text-[15px] leading-relaxed whitespace-pre-line">{{ page_description.about_value3_desc }}</p>
                     </div>
                     
                     <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow hover:border-slate-200 group">
                         <div class="w-12 h-12 bg-rose-50 text-rose-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                             <i data-lucide="heart-handshake" class="w-6 h-6"></i>
                         </div>
-                        <h4 class="text-xl font-bold text-slate-900 mb-3">Palaikymas</h4>
-                        <p class="text-slate-500 text-[15px] leading-relaxed">Mūsų tikslas ne kritikuoti, o auginti. Viskas orientuota į
-                            komandos nario stiprybių ugdymą.</p>
+                        <h4 class="text-xl font-bold text-slate-900 mb-3 whitespace-pre-line">{{ page_description.about_value4_title }}</h4>
+                        <p class="text-slate-500 text-[15px] leading-relaxed whitespace-pre-line">{{ page_description.about_value4_desc }}</p>
                     </div>
                 </div>
             </div>

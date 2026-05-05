@@ -29,6 +29,8 @@ def is_company_active(user):
         return user.profile.company_link.is_active
     return True
 
+from .models import PageDescription
+
 def index(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -58,10 +60,31 @@ def index(request):
             
         return redirect('index')
         
-    return render(request, 'index.html')
+    page_description = PageDescription.load()
+    return render(request, 'index.html', {'page_description': page_description})
 
 def apie_mus(request):
-    return render(request, 'apie_mus.html')
+    page_description = PageDescription.load()
+    return render(request, 'apie_mus.html', {'page_description': page_description})
+
+from django.contrib.auth.decorators import user_passes_test
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_descriptions(request):
+    page_description = PageDescription.load()
+    from .forms import PageDescriptionForm
+    if request.method == 'POST':
+        form = PageDescriptionForm(request.POST, instance=page_description)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Aprašymai sėkmingai atnaujinti.')
+            return redirect('superadmin_descriptions')
+    else:
+        form = PageDescriptionForm(instance=page_description)
+    
+    return render(request, 'superadmin_descriptions.html', {
+        'form': form
+    })
 
 @login_required
 def home(request):
