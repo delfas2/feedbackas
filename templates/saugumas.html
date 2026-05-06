@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="lt">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saugumo užtikrinimas - Orbigrow.lt</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="icon" type="image/png" href="{% static 'images/fav.png' %}">
+    <link rel="shortcut icon" href="{% static 'images/fav.png' %}" type="image/x-icon">
+    <link rel="apple-touch-icon" href="{% static 'images/fav.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Pridėta Tailwind CSS CDN dėl prose klasės ir greitesnio atvaizdavimo -->
+    <script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#9333ea',
+                        secondary: '#f3e8ff',
+                        'bg-main': '#ffffff',
+                        'bg-secondary': '#faf5ff',
+                        'text-main': '#1f2937',
+                        'text-muted': '#4b5563',
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+
+<body class="bg-slate-50 min-h-screen flex flex-col font-sans">
+    
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
+        <nav class="container mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="{% url 'index' %}" class="flex items-center gap-3 group outline-none">
+                <img src="{% static 'images/logo.png' %}" alt="Orbigrow.lt" class="h-10 w-auto object-contain transition-transform group-hover:scale-105">
+            </a>
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="{% url 'index' %}" class="text-[15px] font-medium text-slate-500 hover:text-slate-900 transition-colors">Pradžia</a>
+                <a href="{% url 'apie_mus' %}" class="text-[15px] font-medium text-slate-500 hover:text-slate-900 transition-colors">Apie mus</a>
+            </div>
+            <div class="flex items-center space-x-4">
+                {% if user.is_authenticated %}
+                <a href="{% url 'home' %}"
+                    class="px-5 py-2.5 text-[14px] font-bold text-white bg-slate-900 rounded-xl shadow-sm hover:bg-slate-800 transition-colors flex items-center gap-2">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Prietaisų skydelis
+                </a>
+                {% else %}
+                <a href="{% url 'login' %}"
+                    class="px-5 py-2.5 text-[14px] font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">Prisijungti</a>
+                {% endif %}
+            </div>
+        </nav>
+    </header>
+
+    <!-- Content -->
+    <main class="flex-grow">
+        <!-- Hero Section -->
+        <section class="relative bg-slate-900 text-white py-16 overflow-hidden">
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
+            <div class="absolute -top-40 -right-40 w-96 h-96 bg-teal-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+            <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+            
+            <div class="container mx-auto px-4 text-center relative z-10">
+                <div class="inline-flex items-center justify-center p-3 bg-white/10 rounded-2xl mb-6 backdrop-blur-sm border border-white/20">
+                    <i data-lucide="shield-check" class="w-6 h-6 text-teal-400"></i>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight leading-tight">Saugumo Užtikrinimas</h1>
+                <p class="text-xl text-slate-300 max-w-2xl mx-auto font-medium leading-relaxed">
+                    Jūsų duomenų saugumas ir privatumas yra mūsų prioritetas.
+                </p>
+            </div>
+        </section>
+
+        <!-- Dynamic Content Section -->
+        <section class="py-16">
+            <div class="container mx-auto px-4 max-w-4xl">
+                <div class="bg-white rounded-3xl p-8 md:p-12 shadow-sm border border-slate-100 relative overflow-hidden group">
+                    <div class="prose prose-slate prose-lg max-w-none text-slate-700">
+                        {{ page_description.security_content|safe }}
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white py-10 border-t border-slate-100 mt-auto">
+        <div class="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between">
+            <div class="flex items-center gap-2 mb-4 md:mb-0">
+                <div class="w-8 h-8 bg-slate-900 text-white flex items-center justify-center rounded-lg font-bold text-sm">O</div>
+                <span class="font-extrabold text-slate-900 tracking-tight">Orbigrow.lt</span>
+            </div>
+            <div class="text-sm font-medium text-slate-400 text-center">
+                &copy; 2026 Orbigrow.lt. Visos teisės saugomos.<br>
+                <a href="{% url 'saugumas' %}" class="hover:text-primary transition-colors mt-2 inline-block">Saugumo užtikrinimas</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (typeof lucide !== 'undefined') {
+                lucide.createIcons();
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -67,6 +67,10 @@ def apie_mus(request):
     page_description = PageDescription.load()
     return render(request, 'apie_mus.html', {'page_description': page_description})
 
+def security_page(request):
+    page_description = PageDescription.load()
+    return render(request, 'saugumas.html', {'page_description': page_description})
+
 from django.contrib.auth.decorators import user_passes_test
 @login_required
 @user_passes_test(lambda u: u.is_superuser)

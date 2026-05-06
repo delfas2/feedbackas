@@ -135,6 +135,9 @@ class PageDescription(models.Model):
     about_value4_title = models.CharField(max_length=255, default="Palaikymas")
     about_value4_desc = models.TextField(default="Mūsų tikslas ne kritikuoti, o auginti. Viskas orientuota į komandos nario stiprybių ugdymą.")
 
+    # saugumas.html
+    security_content = models.TextField(default="""<h2>Mūsų saugumo praktikos</h2><p>Čia pateikiama informacija apie tai, kaip saugome jūsų duomenis.</p>""")
+
     class Meta:
         verbose_name_plural = "Page Descriptions"
 

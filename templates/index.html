@@ -35,8 +35,9 @@
 
             <!-- Navigacijos nuorodos (Desktop) -->
             <div class="hidden md:flex space-x-6 items-center">
-                <a href="{% url 'index' %}#funkcijos" class="text-text-muted hover:text-primary">Pradžia</a>
-                <a href="{% url 'apie_mus' %}" class="text-text-muted hover:text-primary">Apie mus</a>
+                <a href="{% url 'index' %}#funkcijos" class="text-text-muted hover:text-primary transition-colors">Pradžia</a>
+                <a href="{% url 'apie_mus' %}" class="text-text-muted hover:text-primary transition-colors">Apie mus</a>
+                <a href="{% url 'saugumas' %}" class="text-text-muted hover:text-primary transition-colors">Saugumas</a>
             </div>
 
             <!-- Prisijungimo mygtukai -->
@@ -299,6 +300,9 @@
     <footer class="bg-bg-main py-8 border-t">
         <div class="container mx-auto px-4 text-center text-sm text-text-muted">
             <p>&copy; 2026 Orbigrow.lt. Visos teisės saugomos.</p>
+            <div class="mt-4">
+                <a href="{% url 'saugumas' %}" class="hover:text-primary transition-colors">Saugumo užtikrinimas</a>
+            </div>
         </div>
     </footer>
 
