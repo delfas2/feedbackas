@@ -62,12 +62,18 @@ class OpenRouterService:
     def generate(ratings, keywords, comments, existing_feedback, colleague_name, user=None, company=None):
         """
         Generuoja grįžtamąjį ryšį naudojant OpenRouter API.
+        Prieš siunčiant, tikrasis vardas pakeičiamas žyme privatumui užtikrinti.
         """
+        placeholder = "[VARDAS]"
+        safe_comments = comments.replace(colleague_name, placeholder) if comments else comments
+        safe_existing_feedback = existing_feedback.replace(colleague_name, placeholder) if existing_feedback else existing_feedback
         prompt = f"""
         Veik kaip konkretus, kolegiškas komandos narys, būk empatiškas ir teik konstruktyvią kritiką.
         Eik iš kato prie esmės, nereikia jokių įžangų ir atsisveikinimų.
-        Tavo užduotis - sugeneruoti kokybišką, duomenimis pagrįstą grįžtamąjį ryšį kolegai {colleague_name}.
-        Į kolegą kreipkis Visada kreipkis į vardu tik šauksmininko linksniu. Niekada nenaudok vardininko kreipiniuose.
+        Tavo užduotis - sugeneruoti kokybišką, duomenimis pagrįstą grįžtamąjį ryšį kolegai, kurį tekste vadink tik žyme {placeholder}.
+        **SVARBU dėl vardo:**
+        Visada naudok tik žymę {placeholder} vietoj vardo. Niekada nenaudok tikrojo vardo (jei jį žinai). 
+        Nekeisk ir nelinksniuok šios žymės – naudok ją tiksliai tokią, kokia ji yra.
         Tekstas turi būti parašytas taisyklinga lietuvių kalba, be jokių gramatinių klaidų, ir turi būti lengvai skaitomas bei suprantamas.
 
         **SVARBU: Vertinimo sistema (Kontekstas):**
@@ -97,11 +103,11 @@ class OpenRouterService:
         - Problemų Sprendimas: {ratings.get('problem_solving')}
         
         - **Raktiniai žodžiai:** {keywords}
-        - **Komentarai:** {comments}
-        - **Papildomas kontekstas:** {existing_feedback}
+        - **Komentarai:** {safe_comments}
+        - **Papildomas kontekstas:** {safe_existing_feedback}
         
         **Generavimo Instrukcija:**
-        Parašyk rišlų atsiliepimą lietuvių kalba, skirtą {colleague_name}:
+        Parašyk rišlų atsiliepimą lietuvių kalba, kuriame kreipkis į {placeholder}:
         
         1. **Stiprybės (Lygiai 3-4 "Varo" ir "Pavyzdys"):**
         Jei yra sričių su įvertinimais 3 arba 4, paminėk jas kaip pavyzdines. Naudok tokias frazes kaip "Šioje srityje esi pavyzdys kitiems", "Čia tu tikrai varai į priekį". Konkrečiai įvardink, kokį teigiamą poveikį (Impact) tai daro.
@@ -120,9 +126,10 @@ class OpenRouterService:
         Tekstas turi būti motyvuojantis, profesionalus ir aiškus. Nenaudok Markdown formatavimo.
         """
 
-        return OpenRouterService._call_openrouter(
+        response_text = OpenRouterService._call_openrouter(
             prompt, user=user, company=company, request_type='feedback_generation'
         )
+        return response_text.replace(placeholder, colleague_name) if response_text else response_text
 
     @staticmethod
     def extract_strengths_weaknesses(feedback_text, comments_text, user=None, company=None):
