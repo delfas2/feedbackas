@@ -35,7 +35,7 @@ if not SECRET_KEY:
 
 HASHIDS_SALT = SECRET_KEY
 
-ALLOWED_HOSTS = ['127.0.0.1', '172.28.117.18', '*', 'home-lab.taild43829.ts.net']
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '*').split(',') if h.strip()]
 
 CSRF_TRUSTED_ORIGINS = [
     'https://home-lab.taild43829.ts.net',
