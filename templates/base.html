@@ -228,34 +228,47 @@
                         </svg>
                     </button>
                 </div>
-                <script>
-                    function toggleTheme() {
-                        var html = document.documentElement;
-                        var current = html.getAttribute('data-theme');
-                        var next = current === 'dark' ? 'light' : 'dark';
-                        html.setAttribute('data-theme', next);
-                        localStorage.setItem('theme', next);
-                        updateThemeIcons(next);
-                    }
-                    function updateThemeIcons(theme) {
-                        var sun = document.getElementById('icon-sun');
-                        var moon = document.getElementById('icon-moon');
-                        if (theme === 'dark') {
-                            sun.classList.remove('hidden');
-                            moon.classList.add('hidden');
-                        } else {
-                            sun.classList.add('hidden');
-                            moon.classList.remove('hidden');
-                        }
-                    }
-                    // Initialize icons on load
-                    document.addEventListener('DOMContentLoaded', function() {
-                        updateThemeIcons(document.documentElement.getAttribute('data-theme') || 'light');
-                    });
-                </script>
             </div>
         </aside>
         {% endblock %}
+
+        <script>
+            function toggleTheme() {
+                var html = document.documentElement;
+                var current = html.getAttribute('data-theme');
+                var next = current === 'dark' ? 'light' : 'dark';
+                html.setAttribute('data-theme', next);
+                localStorage.setItem('theme', next);
+                updateThemeIcons(next);
+            }
+            function updateThemeIcons(theme) {
+                var sun = document.getElementById('icon-sun');
+                var moon = document.getElementById('icon-moon');
+                if (sun && moon) {
+                    if (theme === 'dark') {
+                        sun.classList.remove('hidden');
+                        moon.classList.add('hidden');
+                    } else {
+                        sun.classList.add('hidden');
+                        moon.classList.remove('hidden');
+                    }
+                }
+
+                // Update logos
+                var logos = document.querySelectorAll('img[alt="Orbigrow.lt"]');
+                logos.forEach(function(img) {
+                    if (theme === 'dark') {
+                        img.src = "{% static 'images/logo_dark.png' %}";
+                    } else {
+                        img.src = "{% static 'images/logo.png' %}";
+                    }
+                });
+            }
+            // Initialize icons on load
+            document.addEventListener('DOMContentLoaded', function() {
+                updateThemeIcons(document.documentElement.getAttribute('data-theme') || 'light');
+            });
+        </script>
 
         {% block content %}{% endblock %}
 
