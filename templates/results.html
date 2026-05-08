@@ -221,61 +221,72 @@
                 const scores = data.trend.map(item => item.score);
                 const projects = data.trend.map(item => item.project);
 
-                compChartInstance = new Chart(ctx, {
-                    type: 'line',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Įvertinimas',
-                            data: scores,
-                            borderColor: '#0d9488', // teal-600
-                            backgroundColor: 'rgba(13, 148, 136, 0.1)',
-                            borderWidth: 3,
-                            pointBackgroundColor: '#0f766e', // teal-700
-                            pointBorderColor: '#fff',
-                            pointHoverBackgroundColor: '#fff',
-                            pointHoverBorderColor: '#0f766e',
-                            pointRadius: 6,
-                            pointHoverRadius: 8,
-                            fill: true,
-                            tension: 0.4
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                min: 0,
-                                max: 5,
-                                ticks: { stepSize: 1, font: { family: 'Inter, sans-serif' } },
-                                grid: { color: '#f1f5f9' } // slate-100
+                        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                        const gridColor = isDark ? '#334155' : '#f1f5f9';
+                        const tooltipBg = isDark ? '#0f172a' : '#1e293b';
+
+                        compChartInstance = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Įvertinimas',
+                                    data: scores,
+                                    borderColor: '#0d9488', // teal-600
+                                    backgroundColor: 'rgba(13, 148, 136, 0.1)',
+                                    borderWidth: 3,
+                                    pointBackgroundColor: '#0f766e', // teal-700
+                                    pointBorderColor: '#fff',
+                                    pointHoverBackgroundColor: '#fff',
+                                    pointHoverBorderColor: '#0f766e',
+                                    pointRadius: 6,
+                                    pointHoverRadius: 8,
+                                    fill: true,
+                                    tension: 0.4
+                                }]
                             },
-                            x: {
-                                grid: { display: false },
-                                ticks: { font: { family: 'Inter, sans-serif' } }
-                            }
-                        },
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                backgroundColor: '#1e293b', // slate-800
-                                titleFont: { family: 'Inter, sans-serif', size: 14, weight: 'bold' },
-                                bodyFont: { family: 'Inter, sans-serif', size: 13 },
-                                padding: 12,
-                                cornerRadius: 8,
-                                callbacks: {
-                                    title: function (context) {
-                                        return projects[context[0].dataIndex] + ' (' + context[0].label + ')';
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        min: 0,
+                                        max: 5,
+                                        ticks: { 
+                                            stepSize: 1, 
+                                            font: { family: 'Inter, sans-serif' },
+                                            color: isDark ? '#94a3b8' : '#64748b'
+                                        },
+                                        grid: { color: gridColor }
                                     },
-                                    label: function (context) {
-                                        return ' Vertinimas: ' + context.raw + ' / 4';
+                                    x: {
+                                        grid: { display: false },
+                                        ticks: { 
+                                            font: { family: 'Inter, sans-serif' },
+                                            color: isDark ? '#94a3b8' : '#64748b'
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    legend: { display: false },
+                                    tooltip: {
+                                        backgroundColor: tooltipBg,
+                                        titleFont: { family: 'Inter, sans-serif', size: 14, weight: 'bold' },
+                                        bodyFont: { family: 'Inter, sans-serif', size: 13 },
+                                        padding: 12,
+                                        cornerRadius: 8,
+                                        callbacks: {
+                                            title: function (context) {
+                                                return projects[context[0].dataIndex] + ' (' + context[0].label + ')';
+                                            },
+                                            label: function (context) {
+                                                return ' Vertinimas: ' + context.raw + ' / 4';
+                                            }
+                                        }
                                     }
                                 }
                             }
-                        }
-                    }
-                });
+                        });
             })
             .catch(err => {
                 console.error("Error fetching competency trend:", err);

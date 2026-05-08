@@ -11,6 +11,160 @@
   --color-text-muted: #666666;
 }
 
+/* ==========================================
+   DARK THEME — CSS custom property overrides
+   Activated by: <html data-theme="dark">
+   ========================================== */
+[data-theme="dark"] {
+  /* Semantic colors */
+  --color-bg-main: #1a1d23;
+  --color-bg-secondary: #13151a;
+  --color-text-main: #e4e7eb;
+  --color-text-muted: #9ca3af;
+  --color-primary: #5b8abf;
+  --color-secondary: #6ab4c4;
+  --color-accent: #7fbf76;
+
+  /* Override core Tailwind palette — white becomes dark surface */
+  --color-white: #1e2128;
+
+  /* Slate scale (used extensively: bg-slate-50, border-slate-100, text-slate-900, etc.) */
+  --color-slate-50: #22262e;
+  --color-slate-100: #2a2f38;
+  --color-slate-200: #353b46;
+  --color-slate-300: #4a5260;
+  --color-slate-400: #6b7585;
+  --color-slate-500: #8b95a5;
+  --color-slate-600: #a8b2c0;
+  --color-slate-700: #c4ccda;
+  --color-slate-800: #dce2ec;
+  --color-slate-900: #edf0f5;
+  --color-slate-950: #f5f7fa;
+
+  /* Gray scale */
+  --color-gray-50: #22262e;
+  --color-gray-100: #2a2f38;
+  --color-gray-200: #353b46;
+  --color-gray-300: #4a5260;
+  --color-gray-400: #6b7585;
+  --color-gray-500: #8b95a5;
+  --color-gray-600: #a8b2c0;
+  --color-gray-700: #c4ccda;
+  --color-gray-800: #dce2ec;
+  --color-gray-900: #edf0f5;
+  --color-gray-950: #f5f7fa;
+
+  /* Colored backgrounds softened for dark */
+  --color-teal-50: #1a2e2e;
+  --color-blue-50: #1a2333;
+  --color-green-50: #1a2e1e;
+  --color-red-50: #2e1a1e;
+  --color-purple-50: #251a33;
+  --color-indigo-50: #1e1a33;
+  --color-emerald-50: #1a2e24;
+  --color-amber-50: #2e2a1a;
+  --color-orange-50: #2e241a;
+  --color-yellow-50: #2e2c1a;
+  --color-rose-50: #2e1a22;
+  --color-sky-50: #1a2633;
+  --color-violet-50: #231a33;
+
+  /* Red error states */
+  --color-red-100: #3d2225;
+  --color-red-600: #ef5350;
+
+  /* Green / success subtle */
+  --color-green-100: #1e3322;
+  --color-emerald-100: #1e3328;
+  --color-teal-100: #1e3333;
+
+  /* Blue / info subtle */
+  --color-blue-100: #1e2940;
+  --color-indigo-100: #242040;
+
+  /* Purple subtle */
+  --color-purple-200: #352e55;
+
+  /* Accent colors — keep vibrant but adjust for contrast */
+  --color-purple-500: #a879e6;
+  --color-purple-600: #9461d6;
+  --color-purple-700: #7c4fc0;
+}
+
+/* Scrollbar dark mode */
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 8px;
+}
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: #1a1d23;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: #353b46;
+  border-radius: 4px;
+}
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: #4a5260;
+}
+
+/* Dark mode: override hardcoded arbitrary hex colors used in templates */
+[data-theme="dark"] .bg-\[\#f8fafc\] { background-color: #13151a !important; }
+[data-theme="dark"] .bg-\[\#2d4a77\] { background-color: #4a7ab5 !important; }
+[data-theme="dark"] .bg-\[\#2d4a77\]\/5 { background-color: rgba(74,122,181,.05) !important; }
+[data-theme="dark"] .bg-\[\#2d4a77\]\/10 { background-color: rgba(74,122,181,.1) !important; }
+[data-theme="dark"] .bg-\[\#fbf0df\] { background-color: #2e2a1a !important; }
+[data-theme="dark"] .bg-\[\#242424\] { background-color: #1a1d23 !important; }
+[data-theme="dark"] .bg-\[\#1a1a1a\] { background-color: #13151a !important; }
+[data-theme="dark"] .hover\:bg-\[\#233a5e\]:hover { background-color: #3a6090 !important; }
+[data-theme="dark"] .hover\:bg-\[\#1e3456\]:hover { background-color: #345a8a !important; }
+[data-theme="dark"] .hover\:bg-\[\#f3d5a3\]:hover { background-color: #4a4020 !important; }
+[data-theme="dark"] .text-\[\#2d4a77\] { color: #7aafe6 !important; }
+[data-theme="dark"] .text-\[\#1a1a1a\] { color: #e4e7eb !important; }
+[data-theme="dark"] .border-\[\#2d4a77\]\/15 { border-color: rgba(74,122,181,.15) !important; }
+[data-theme="dark"] .border-\[\#2d4a77\]\/20 { border-color: rgba(74,122,181,.2) !important; }
+[data-theme="dark"] .border-\[\#fbf0df\] { border-color: #3d3520 !important; }
+
+/* TomSelect: match input background and text color */
+.ts-wrapper .ts-control {
+  background-color: #f1f5f9 !important;
+  border-radius: 1rem !important;
+  padding: 0.875rem 1rem !important;
+  border: none !important;
+  color: #111827 !important;
+}
+.ts-wrapper .ts-control input {
+  color: #111827 !important;
+}
+.ts-wrapper .ts-control .item {
+  color: #111827 !important;
+}
+
+/* Force modal inputs to have light gray background and black text for better visibility */
+#feedback-modal input, #feedback-modal textarea, #feedback-modal select,
+#send-feedback-modal input, #send-feedback-modal textarea, #send-feedback-modal select,
+#editModal input, #editModal textarea, #editModal select {
+    background-color: #f1f5f9 !important;
+    color: #111827 !important;
+}
+#feedback-modal label, #send-feedback-modal label, #editModal label {
+    color: #4b5563 !important;
+}
+#feedback-modal h2, #send-feedback-modal h2, #editModal h2 {
+    color: #111827 !important;
+}
+#feedback-modal input::placeholder, #feedback-modal textarea::placeholder,
+#send-feedback-modal input::placeholder, #send-feedback-modal textarea::placeholder,
+#editModal input::placeholder, #editModal textarea::placeholder {
+    color: #6b7280 !important;
+}
+.ts-wrapper .ts-dropdown {
+  background-color: var(--color-white) !important;
+  border-color: var(--color-gray-200) !important;
+  border-radius: 1rem !important;
+}
+.ts-wrapper .ts-dropdown .option.active {
+  background-color: var(--color-gray-100) !important;
+}
+
 /* Base styles */
 @layer base {
   body {

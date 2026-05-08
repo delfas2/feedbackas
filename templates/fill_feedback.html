@@ -10,7 +10,7 @@ input[type='range']::-webkit-slider-thumb {
     appearance: none;
     width: 20px;
     height: 20px;
-    background: #8B5CF6;
+    background: var(--color-purple-500, #8B5CF6);
     border-radius: 50%;
     cursor: pointer;
     margin-top: -6px;
@@ -19,7 +19,7 @@ input[type='range']::-webkit-slider-thumb {
 input[type='range']::-moz-range-thumb {
     width: 20px;
     height: 20px;
-    background: #8B5CF6;
+    background: var(--color-purple-500, #8B5CF6);
     border-radius: 50%;
     cursor: pointer;
 }
@@ -34,19 +34,19 @@ input[type='range']::-moz-range-thumb {
 }
 
 .competency-battery .battery-segment.level-1.active {
-    background-color: #60A5FA; /* blue-400 */
+    background-color: var(--color-blue-400, #60A5FA);
 }
 
 .competency-battery .battery-segment.level-2.active {
-    background-color: #A3E635; /* lime-400 */
+    background-color: var(--color-lime-400, #A3E635);
 }
 
 .competency-battery .battery-segment.level-3.active {
-    background-color: #22C55E; /* green-500 */
+    background-color: var(--color-green-500, #22C55E);
 }
 
 .competency-battery .battery-segment.level-4.active {
-    background-color: #9333EA; /* purple-600 */
+    background-color: var(--color-purple-600, #9333EA);
 }
 
 .competency-battery .battery-label {
@@ -80,6 +80,20 @@ input[type='range']::-moz-range-thumb {
 }
 .competency-tag.level-4 {
     background-color: #F3E8FF; border-color: #9333EA; color: #581C87;
+}
+
+/* Dark mode overrides for tags */
+[data-theme="dark"] .competency-tag.level-1 {
+    background-color: rgba(30, 58, 138, 0.3); border-color: #3b82f6; color: #93c5fd;
+}
+[data-theme="dark"] .competency-tag.level-2 {
+    background-color: rgba(63, 98, 18, 0.3); border-color: #84cc16; color: #d9f99d;
+}
+[data-theme="dark"] .competency-tag.level-3 {
+    background-color: rgba(20, 83, 45, 0.3); border-color: #22c55e; color: #86efac;
+}
+[data-theme="dark"] .competency-tag.level-4 {
+    background-color: rgba(88, 28, 135, 0.3); border-color: #a855f7; color: #e9d5ff;
 }
 {% endblock %}
 
