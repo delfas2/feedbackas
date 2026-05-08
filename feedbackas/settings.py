@@ -37,12 +37,11 @@ HASHIDS_SALT = SECRET_KEY
 
 ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', '*').split(',') if h.strip()]
 
-CSRF_TRUSTED_ORIGINS = [
-    'https://home-lab.taild43829.ts.net',
-    'http://192.168.32.84:8001',
-    'https://orbigrow.lt',
-    'https://www.orbigrow.lt',
-]
+CSRF_TRUSTED_ORIGINS = [h.strip() for h in os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',') if h.strip()]
+
+# Contact Email for forms
+CONTACT_EMAIL = 'info@orbigrow.lt'
+
 
 # Reverse proxy (Traefik) nustatymai – būtina, kad Django žinotų tikrą protokolą ir hostą
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
@@ -56,11 +55,10 @@ SECURE_HSTS_SECONDS = 31536000  # 1 metai
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 
-# Cookies security (tik jei naudojama HTTPS)
-if not DEBUG:
-    SESSION_COOKIE_SECURE = True
-    CSRF_COOKIE_SECURE = True
-    SECURE_SSL_REDIRECT = True
+# Cookies security
+SESSION_COOKIE_SECURE = not DEBUG
+CSRF_COOKIE_SECURE = not DEBUG
+SECURE_SSL_REDIRECT = not DEBUG
 
 # Application definition
 

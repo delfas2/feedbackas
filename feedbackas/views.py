@@ -1,4 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.conf import settings
+
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.db.models import Q, Count, Avg, Sum
@@ -49,10 +51,11 @@ def index(request):
             send_mail(
                 subject,
                 body,
-                'info@orbigrow.lt',  # From email
-                ['info@orbigrow.lt'], # To email
+                settings.DEFAULT_FROM_EMAIL,
+                [settings.CONTACT_EMAIL],
                 fail_silently=False,
             )
+
             messages.success(request, 'Ačiū! Jūsų užklausa gauta, netrukus su jumis susisieksime.')
         except Exception as e:
             logger.error(f"Klaida siunčiant kontaktų formos el. laišką: {str(e)}")
