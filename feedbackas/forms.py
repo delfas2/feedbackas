@@ -94,5 +94,7 @@ class PageDescriptionForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             if isinstance(field.widget, forms.Textarea):
                 field.widget.attrs.update({'class': 'w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-purple-500 outline-none transition-all resize-none', 'rows': 4})
+            elif isinstance(field.widget, forms.CheckboxInput):
+                field.widget.attrs.update({'class': 'w-6 h-6 text-primary rounded focus:ring-primary border-gray-300'})
             else:
                 field.widget.attrs.update({'class': 'w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-purple-500 outline-none transition-all'})

@@ -1,4 +1,174 @@
 {% load static %}
+{% if page_description.maintenance_mode %}
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ page_description.maintenance_title|default:"OrbiGrow | Netrukus startuojame" }}</title>
+    <style>
+        :root {
+            --navy: #0A1C36;
+            --teal: #3D8B7A;
+            --orange: #FF7A41;
+            --white: #ffffff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--navy);
+            color: var(--white);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        .landing-container {
+            text-align: center;
+            padding: 20px;
+            position: relative;
+            z-index: 10;
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .logo-wrapper {
+            margin-bottom: 50px;
+        }
+
+        svg {
+            width: 320px;
+            height: 320px;
+            max-width: 100%;
+            display: block;
+            margin: 0 auto;
+            overflow: visible;
+        }
+
+        /* Pagrindinių elementų stilius */
+        .center-dot { fill: var(--white); }
+        .orbit { fill: none; stroke-width: 6; stroke-linecap: round; }
+        .teal-orbit { stroke: var(--teal); }
+        .orange-orbit { stroke: var(--orange); }
+        .arrowhead { fill: var(--teal); stroke: none; }
+
+        /* Turinys */
+        .content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 0.8rem;
+            letter-spacing: -1.5px;
+            font-weight: 300;
+        }
+
+        .content h1 span {
+            font-weight: 800;
+            color: var(--teal);
+        }
+
+        .content p {
+            font-size: 1.15rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            max-width: 480px;
+            margin: 0 auto 2.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 10px 22px;
+            background: rgba(61, 139, 122, 0.1);
+            border: 1px solid var(--teal);
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: var(--teal);
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+        }
+
+        .bg-glow {
+            position: absolute;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, rgba(61, 139, 122, 0.08) 0%, rgba(10, 28, 54, 0) 70%);
+            z-index: 1;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+        }
+
+        @media (max-width: 480px) {
+            .content h1 { font-size: 2.8rem; }
+            svg { width: 260px; height: 260px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-glow"></div>
+
+    <div class="landing-container">
+        <div class="badge">{{ page_description.maintenance_title }}</div>
+        
+        <div class="logo-wrapper">
+            <svg viewBox="0 0 200 200">
+                <!-- Centrinis baltas taškas -->
+                <circle class="center-dot" cx="100" cy="100" r="22" />
+
+                <!-- 1. Išorinė oranžinė (R=80, trumpesnė) -->
+                <g>
+                    <path class="orbit orange-orbit" d="M 100,20 A 80,80 0 0,1 156.6,43.4" />
+                    <animateTransform attributeName="transform" type="rotate" from="360 100 100" to="0 100 100" dur="12s" repeatCount="indefinite" />
+                </g>
+
+                <!-- 2. Vidurinė-išorinė žalsva (R=65, be rodyklės) -->
+                <g>
+                    <path class="orbit teal-orbit" d="M 100,35 A 65,65 0 1,1 35,100" />
+                    <animateTransform attributeName="transform" type="rotate" from="360 100 100" to="0 100 100" dur="6s" repeatCount="indefinite" />
+                </g>
+
+                <!-- 3. Vidurinė-vidinė žalsva (R=50, su rodykle) -->
+                <g>
+                    <path class="orbit teal-orbit" d="M 100,150 A 50,50 0 0,1 50,100" />
+                    <path class="arrowhead" d="M 50,96 L 42,106 L 58,106 Z" />
+                    <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="4s" repeatCount="indefinite" />
+                </g>
+
+                <!-- 4. Vidinė žalsva (R=35, su rodykle) -->
+                <g>
+                    <path class="orbit teal-orbit" d="M 100,135 A 35,35 0 1,1 135,100" />
+                    <path class="arrowhead" d="M 135,104 L 127,94 L 143,94 Z" />
+                    <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="3s" repeatCount="indefinite" />
+                </g>
+            </svg>
+        </div>
+
+        <div class="content">
+            <h1>Orbi<span>Grow</span></h1>
+            <p>{{ page_description.maintenance_desc }}</p>
+            {% if user.is_authenticated %}
+            <div style="margin-top: 30px;">
+                <a href="{% url 'home' %}" style="display: inline-block; padding: 12px 24px; background-color: var(--teal); color: white; text-decoration: none; border-radius: 30px; font-weight: bold; font-size: 1rem; transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#2d6b5e'" onmouseout="this.style.backgroundColor='var(--teal)'">
+                    Eiti į prietaisų skydelį
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+</body>
+</html>
+{% else %}
 <!DOCTYPE html>
 <html lang="lt">
 
@@ -435,5 +605,5 @@
         }
     </script>
 </body>
-
 </html>
+{% endif %}

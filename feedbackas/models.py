@@ -98,6 +98,11 @@ class GlobalSettings(models.Model):
         return obj
 
 class PageDescription(models.Model):
+    # Priežiūros režimas
+    maintenance_mode = models.BooleanField(default=False, help_text="Įjungus šį režimą, pradiniame puslapyje bus rodomas 'Greitai pradėsime' pranešimas.")
+    maintenance_title = models.CharField(max_length=255, default="Greitai pradėsime")
+    maintenance_desc = models.TextField(default="Šiuo metu atnaujiname sistemą. Užsukite netrukus!")
+
     # index.html
     index_hero_title = models.CharField(max_length=255, default="Skatinkite atvirą komandos kultūrą")
     index_hero_desc = models.TextField(default="Mūsų platforma padeda lengvai rinkti ir analizuoti atsiliepimus. Išryškinkite stiprybes ir padėkite savo darbuotojams augti kartu.")
