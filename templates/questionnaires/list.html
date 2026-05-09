@@ -33,7 +33,7 @@
         <div class="flex items-center gap-3">
             {% if managed_departments and global_settings.team_form_enabled %}
             <button id="open-create-team-modal" class="px-5 py-2.5 bg-blue-600 text-white font-bold rounded-xl shadow-sm hover:bg-blue-700 transition-colors flex items-center gap-2 text-[14px]">
-                <i data-lucide="users" class="w-4 h-4"></i> {% trans "{% trans "Komandinė" %} forma" %}
+                <i data-lucide="users" class="w-4 h-4"></i> {% trans "Komandinė forma" %}
             </button>
             {% endif %}
             <button id="open-create-modal" class="px-5 py-2.5 bg-slate-900 text-white font-bold rounded-xl shadow-sm hover:bg-slate-800 transition-colors flex items-center gap-2 text-[14px]">
@@ -147,7 +147,7 @@
 
                 <!-- Custom Trait Input -->
                 <div>
-                    <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "{% trans "Pridėti" %} savo savybę" %}</label>
+                    <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "Pridėti savo savybę" %}</label>
                     <div class="flex gap-2">
                         <input type="text" id="custom-trait-input"
                             class="flex-1 px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all font-medium text-slate-700 placeholder-slate-400 shadow-sm"
@@ -226,7 +226,7 @@
 
                 <!-- Custom Trait Input -->
                 <div>
-                    <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "{% trans "Pridėti" %} savo savybę" %}</label>
+                    <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "Pridėti savo savybę" %}</label>
                     <div class="flex gap-2">
                         <input type="text" id="team-custom-trait-input"
                             class="flex-1 px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium text-slate-700 placeholder-slate-400 shadow-sm"
@@ -249,7 +249,7 @@
             <!-- Submit Footer -->
             <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50/80 sticky bottom-0 z-10 w-full rounded-b-[32px]">
                 <button type="button" id="cancel-team-modal" class="px-6 py-3 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold text-[14px] transition-all">{% trans "Atšaukti" %}</button>
-                <button type="submit" form="create-team-form" class="px-8 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-bold text-[14px] shadow-sm">{% trans "{% trans "Sukurti" %} komandinę" %}</button>
+                <button type="submit" form="create-team-form" class="px-8 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-bold text-[14px] shadow-sm">{% trans "Sukurti komandinę" %}</button>
             </div>
         </div>
     </div>
@@ -258,7 +258,7 @@
     <div id="edit-modal" class="fixed inset-0 overflow-y-auto bg-black/40 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-2xl rounded-[32px] shadow-2xl overflow-hidden transition-all animate-in fade-in zoom-in duration-300">
             <div class="px-8 pt-8 pb-4 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
-                <h2 class="text-2xl font-extrabold text-slate-900">{% trans "{% trans "Redaguoti" %} klausimyną" %}</h2>
+                <h2 class="text-2xl font-extrabold text-slate-900">{% trans "Redaguoti klausimyną" %}</h2>
                 <button id="close-edit-modal" class="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
@@ -287,7 +287,7 @@
 
                 <!-- Custom Trait Input -->
                 <div>
-                    <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "{% trans "Pridėti" %} savo savybę" %}</label>
+                    <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "Pridėti savo savybę" %}</label>
                     <div class="flex gap-2">
                         <input type="text" id="edit-custom-trait-input"
                             class="flex-1 px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all font-medium text-slate-700 placeholder-slate-400 shadow-sm"
@@ -324,7 +324,7 @@
                         <i data-lucide="send" class="w-7 h-7 text-teal-600"></i>
                     </div>
                     <div class="flex-1 mt-1">
-                        <h3 class="text-2xl font-extrabold text-slate-900" id="modal-title">{% trans "{% trans "Siųsti" %} klausimyną" %}</h3>
+                        <h3 class="text-2xl font-extrabold text-slate-900" id="modal-title">{% trans "Siųsti klausimyną" %}</h3>
                         <p class="text-sm font-medium text-slate-500 mt-2">{% trans "Pasirinkite kolegą (-as), kurių prašysite užpildyti šį klausimyną." %}</p>
                     </div>
                 </div>
