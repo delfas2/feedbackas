@@ -26,7 +26,7 @@
                 <img src="{% static 'images/logo.png' %}" alt="Orbigrow.lt" class="h-8 w-auto object-contain">
             </a>
 
-            <h1 class="text-3xl font-bold text-slate-800 hidden md:block">Individuali forma</h1>
+            <h1 class="text-3xl font-bold text-slate-800 hidden md:block">{% trans "Individuali forma" %}</h1>
             <p class="text-slate-500 mt-1 hidden md:block">{% trans "Kurkite ir valdykite unikalius atsiliepimų klausimynus." %}</p>
         </div>
 
@@ -105,7 +105,7 @@
                 <i data-lucide="file-question" class="w-10 h-10 text-slate-300"></i>
             </div>
             <h3 class="text-2xl font-bold text-slate-800 mb-3">{% trans "Kol kas neturite klausimynų" %}</h3>
-            <p class="text-slate-500 font-medium max-w-md mb-8">Sukurkite asmeninius ar komandinius klausimynus ir siųskite juos kolegoms, kad gautumėte struktūruotą grįžtamąjį ryšį.</p>
+            <p class="text-slate-500 font-medium max-w-md mb-8">{% trans "Sukurkite asmeninius ar komandinius klausimynus ir siųskite juos kolegoms, kad gautumėte struktūruotą grįžtamąjį ryšį." %}</p>
             <button onclick="document.getElementById('open-create-modal').click()" class="px-6 py-3 bg-slate-900 text-white font-bold rounded-xl shadow-sm hover:bg-slate-800 transition-colors flex items-center gap-2">
                 <i data-lucide="plus" class="w-5 h-5"></i> {% trans "Kurti pirmąjį klausimyną" %}
             </button>
@@ -130,7 +130,7 @@
                     <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "Klausimyno pavadinimas" %}</label>
                     <input type="text" name="title" required
                         class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all font-medium text-slate-700 placeholder-slate-400 shadow-sm"
-                        placeholder="pvz., Komandinio darbo vertinimas">
+                        placeholder="{% trans 'pvz., Komandinio darbo vertinimas' %}">
                 </div>
 
                 <!-- Trait Cloud -->
@@ -192,7 +192,7 @@
                     <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "Klausimyno pavadinimas" %}</label>
                     <input type="text" name="title" required
                         class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium text-slate-700 placeholder-slate-400 shadow-sm"
-                        placeholder="pvz., Komandos efektyvumo vertinimas">
+                        placeholder="{% trans 'pvz., Komandos efektyvumo vertinimas' %}">
                 </div>
 
                 <!-- Department Select -->
@@ -201,7 +201,7 @@
                     <div class="relative">
                         <select name="department_id" required
                                 class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium text-slate-700 shadow-sm appearance-none">
-                            <option value="" disabled selected>{% trans "-- {% trans "Pasirinkite komandą" %} --" %}</option>
+                            <option value="" disabled selected>{% trans "-- Pasirinkite komandą --" %}</option>
                             {% for dept in managed_departments %}
                             <option value="{{ dept.id }}">{{ dept.name }}</option>
                             {% endfor %}
@@ -350,7 +350,7 @@
                         <div class="relative w-full">
                             <div id="colleague-select-container" class="flex flex-wrap items-center gap-1.5 w-full min-h-[52px] p-2 bg-white border border-slate-200 rounded-2xl shadow-sm focus-within:ring-2 focus-within:ring-teal-500 focus-within:border-transparent cursor-text transition-all">
                                 <div id="selected-colleagues-tags" class="flex flex-wrap gap-1.5 ml-1"></div>
-                                <input type="text" id="colleague-search" class="flex-1 min-w-[120px] bg-transparent border-none text-[15px] font-medium text-slate-700 placeholder-slate-400 focus:ring-0 p-1.5" placeholder="{% trans "Ieškoti kolegų..." %}" autocomplete="off">
+                                <input type="text" id="colleague-search" class="flex-1 min-w-[120px] bg-transparent border-none text-[15px] font-medium text-slate-700 placeholder-slate-400 focus:ring-0 p-1.5" placeholder="{% trans 'Ieškoti kolegų...' %}" autocomplete="off">
                             </div>
 
                             <div id="colleague-dropdown" class="absolute z-10 w-full mt-2 bg-white border border-slate-200 rounded-2xl shadow-xl max-h-60 overflow-y-auto hidden">
@@ -373,7 +373,7 @@
 
                     <div class="mt-8 flex flex-col sm:flex-row justify-end gap-3 pt-5 border-t border-slate-100">
                         <button type="button" id="cancel-send-modal" class="w-full sm:w-auto px-6 py-3 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold text-[15px] transition-all">{% trans "Atšaukti" %}</button>
-                        <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors font-bold text-[15px] shadow-sm flex items-center justify-center gap-2"><i data-lucide="send" class="w-4 h-4"></i> Išsiųsti</button>
+                        <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors font-bold text-[15px] shadow-sm flex items-center justify-center gap-2"><i data-lucide="send" class="w-4 h-4"></i> {% trans "Išsiųsti" %}</button>
                     </div>
                 </form>
             </div>
