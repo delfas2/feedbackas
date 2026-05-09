@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 
-{% block title %}Kolegos Apklausa - Orbigrow.lt{% endblock %}
+{% block title %}{% trans "Kolegos Apklausa - Orbigrow.lt" %}{% endblock %}
 
 {% block style %}
 /* Slankiklio stilius */
@@ -115,12 +116,12 @@ input[type='range']::-moz-range-thumb {
             </a>
 
             <div>
-                <h1 class="text-xl font-bold text-slate-800 tracking-tight">{{ feedback_request.project_name }}</h1>
+                <h1 class="text-xl font-bold text-slate-800 tracking-tight">{% if feedback_request.project_name == "Atsiliepimas" %}{% trans "Atsiliepimas" %}{% else %}{{ feedback_request.project_name }}{% endif %}</h1>
             </div>
         </div>
 
         <a href="{% url 'home' %}" class="px-5 py-2.5 bg-white border border-slate-200 text-slate-600 font-bold rounded-xl shadow-sm hover:bg-slate-50 transition-colors flex items-center gap-2">
-            <i data-lucide="arrow-left" class="w-4 h-4"></i> Atgal
+            <i data-lucide="arrow-left" class="w-4 h-4"></i> {% trans "Atgal" %}
         </a>
     </header>
 
@@ -134,7 +135,7 @@ input[type='range']::-moz-range-thumb {
                     {{ feedback_request.requester.first_name|first|upper }}{{ feedback_request.requester.last_name|first|upper }}
                 </div>
                 <div>
-                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">Atsiliepimas apie</p>
+                    <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-1">{% trans "Atsiliepimas apie" %}</p>
                     <h2 class="text-2xl font-bold text-slate-800">
                         {{ feedback_request.requester.get_full_name|default:feedback_request.requester.username }}
                     </h2>
@@ -189,30 +190,30 @@ input[type='range']::-moz-range-thumb {
                                     <div class="transition-transform duration-500 icon-wrapper group-hover:scale-110">
                                         <i data-lucide="circle-dashed" class="w-4 h-4 md:w-5 md:h-5"></i>
                                     </div>
-                                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider transition-opacity duration-300 opacity-80 label-text">Mokosi</span>
+                                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider transition-opacity duration-300 opacity-80 label-text">{% trans "Mokosi" %}</span>
                                 </button>
                                 <button type="button" data-level="2" class="relative z-10 flex-1 flex flex-row items-center justify-center gap-1.5 md:gap-2 transition-all duration-300 group battery-segment text-slate-400 hover:text-slate-600">
                                     <div class="transition-transform duration-500 icon-wrapper group-hover:scale-110">
                                         <i data-lucide="check-circle" class="w-4 h-4 md:w-5 md:h-5"></i>
                                     </div>
-                                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider transition-opacity duration-300 opacity-80 label-text">Daro</span>
+                                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider transition-opacity duration-300 opacity-80 label-text">{% trans "Daro" %}</span>
                                 </button>
                                 <button type="button" data-level="3" class="relative z-10 flex-1 flex flex-row items-center justify-center gap-1.5 md:gap-2 transition-all duration-300 group battery-segment text-slate-400 hover:text-slate-600">
                                     <div class="transition-transform duration-500 icon-wrapper group-hover:scale-110">
                                         <i data-lucide="zap" class="w-4 h-4 md:w-5 md:h-5"></i>
                                     </div>
-                                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider transition-opacity duration-300 opacity-80 label-text">Varo</span>
+                                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider transition-opacity duration-300 opacity-80 label-text">{% trans "Varo" %}</span>
                                 </button>
                                 <button type="button" data-level="4" class="relative z-10 flex-1 flex flex-row items-center justify-center gap-1.5 md:gap-2 transition-all duration-300 group battery-segment text-slate-400 hover:text-slate-600">
                                     <div class="transition-transform duration-500 icon-wrapper group-hover:scale-110">
                                         <i data-lucide="star" class="w-4 h-4 md:w-5 md:h-5"></i>
                                     </div>
-                                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider transition-opacity duration-300 opacity-80 label-text">Pavyzdys</span>
+                                    <span class="text-[10px] md:text-xs font-bold uppercase tracking-wider transition-opacity duration-300 opacity-80 label-text">{% trans "Pavyzdys" %}</span>
                                 </button>
                             </div>
                             <div class="mt-2 h-6 flex items-center justify-center info-panel overflow-hidden">
                                 <div class="flex flex-col items-center animate-pulse empty-state">
-                                    <p class="text-slate-400 text-[11px] font-medium">Pasirinkite vieną iš lygių aukščiau</p>
+                                    <p class="text-slate-400 text-[11px] font-medium">{% trans "Pasirinkite vieną iš lygių aukščiau" %}</p>
                                 </div>
                                 <div class="text-center transition-all duration-500 transform translate-y-4 opacity-0 selected-state hidden">
                                     <p class="text-slate-500 text-xs md:text-sm font-semibold active-desc"></p>
@@ -225,15 +226,15 @@ input[type='range']::-moz-range-thumb {
                 <!-- 2. Raktinių Žodžių Laukas -->
                 <div class="bg-slate-50 p-6 rounded-2xl border border-slate-100">
                     <label for="keywords" class="flex items-center gap-2 text-sm font-bold text-slate-700 mb-3">
-                        <i data-lucide="tags" class="w-4 h-4 text-slate-400"></i> Raktiniai žodžiai
+                        <i data-lucide="tags" class="w-4 h-4 text-slate-400"></i> {% trans "Raktiniai žodžiai" %}
                     </label>
                     <div class="flex flex-col sm:flex-row gap-3">
                         <div class="flex-1">
                             <input type="hidden" name="keywords" id="keywords">
-                            <input type="text" id="keyword-input-display" placeholder="Įveskite žodį ir spauskite Enter arba kablelį..." class="block w-full px-4 py-3 bg-white border border-slate-200 rounded-xl shadow-sm placeholder-slate-400 text-slate-700 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-all sm:text-sm">
+                            <input type="text" id="keyword-input-display" placeholder="{% trans "Įveskite žodį ir spauskite Enter arba kablelį..." %}" class="block w-full px-4 py-3 bg-white border border-slate-200 rounded-xl shadow-sm placeholder-slate-400 text-slate-700 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-all sm:text-sm">
                         </div>
                         <button type="button" id="open-keyword-modal" class="inline-flex items-center justify-center gap-2 px-5 py-3 text-sm font-bold text-teal-700 bg-teal-50 border border-teal-100 rounded-xl hover:bg-teal-100 hover:border-teal-200 transition-all sm:w-auto w-full whitespace-nowrap shadow-sm">
-                            <i data-lucide="cloud" class="w-4 h-4"></i> Rinktis iš debesies
+                            <i data-lucide="cloud" class="w-4 h-4"></i> {% trans "Rinktis iš debesies" %}
                         </button>
                     </div>
                     <div id="selected-keywords-container" class="mt-3 flex flex-wrap gap-2 empty:hidden"></div>
@@ -244,7 +245,7 @@ input[type='range']::-moz-range-thumb {
                     <div class="relative top-20 mx-auto p-6 border border-slate-100 w-[90%] md:w-2/3 lg:w-1/2 shadow-2xl rounded-3xl bg-white">
                         <div class="flex justify-between items-center mb-6 pb-4 border-b border-slate-100">
                             <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-                                <i data-lucide="cloud" class="w-5 h-5 text-teal-600"></i> Raktinių žodžių debesis
+                                <i data-lucide="cloud" class="w-5 h-5 text-teal-600"></i> {% trans "Raktinių žodžių debesis" %}
                             </h3>
                             <button type="button" id="close-keyword-modal" class="text-slate-400 hover:text-slate-600 bg-slate-50 hover:bg-slate-100 rounded-full p-2 transition-colors">
                                 <i data-lucide="x" class="w-5 h-5"></i>
@@ -259,18 +260,18 @@ input[type='range']::-moz-range-thumb {
                 <!-- Komentarų laukas -->
                 <div>
                     <label for="comments" class="flex items-center gap-2 text-sm font-bold text-slate-700 mb-3">
-                        <i data-lucide="message-square" class="w-4 h-4 text-slate-400"></i> Komentarai
+                        <i data-lucide="message-square" class="w-4 h-4 text-slate-400"></i> {% trans "Komentarai" %}
                     </label>
-                    <textarea id="comments" name="comments" rows="4" placeholder="Įrašykite laisvos formos komentarus apie kolegą..." class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl shadow-sm placeholder-slate-400 text-slate-700 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-all resize-none sm:text-sm"></textarea>
+                    <textarea id="comments" name="comments" rows="4" placeholder="{% trans "Įrašykite laisvos formos komentarus apie kolegą..." %}" class="block w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-2xl shadow-sm placeholder-slate-400 text-slate-700 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-all resize-none sm:text-sm"></textarea>
                 </div>
 
                 <!-- 3. Išsamaus Atsiliepimo Laukas -->
                 <div id="final-feedback-container" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
                     <label for="feedback" class="flex items-center gap-2 text-sm font-bold text-slate-700 mb-3">
-                        <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i> Išsamus atsiliepimas (AI)
+                        <i data-lucide="file-text" class="w-4 h-4 text-slate-400"></i> {% trans "Išsamus atsiliepimas (AI)" %}
                     </label>
                     <div class="relative">
-                        <textarea id="feedback" name="feedback" rows="6" placeholder="Pateikite išsamesnį komentarą..." class="block w-full px-4 py-4 bg-teal-50/30 border border-teal-100 rounded-2xl shadow-inner placeholder-slate-400 text-slate-800 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-all resize-none sm:text-sm leading-relaxed"></textarea>
+                        <textarea id="feedback" name="feedback" rows="6" placeholder="{% trans "Pateikite išsamesnį komentarą..." %}" class="block w-full px-4 py-4 bg-teal-50/30 border border-teal-100 rounded-2xl shadow-inner placeholder-slate-400 text-slate-800 focus:outline-none focus:ring-1 focus:ring-teal-500 focus:border-teal-500 transition-all resize-none sm:text-sm leading-relaxed"></textarea>
                         <div class="absolute top-3 right-3 text-teal-600 opacity-20 pointer-events-none">
                             <i data-lucide="sparkles" class="w-6 h-6"></i>
                         </div>
@@ -286,17 +287,17 @@ input[type='range']::-moz-range-thumb {
                                 <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                 <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                             </svg>
-                            <span id="ai-btn-text">Generuoti AI juodraštį</span>
+                            <span id="ai-btn-text">{% trans "Generuoti AI juodraštį" %}</span>
                         </button>
                         <!-- Tooltip: rodomas tik kai mygtukas disabled -->
                         <div id="ai-btn-tooltip" class="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2.5 bg-slate-800 text-white text-[11px] font-medium rounded-xl shadow-xl whitespace-nowrap opacity-0 pointer-events-none transition-all duration-300 z-50 transform translate-y-2 group-hover:-translate-y-0">
-                            <span id="ai-btn-tooltip-text">Pasirinkite visas savybes ir bent 3 raktinius žodžius</span>
+                            <span id="ai-btn-tooltip-text">{% trans "Pasirinkite visas savybes ir bent 3 raktinius žodžius" %}</span>
                             <div class="absolute top-full left-1/2 -translate-x-1/2 border-[6px] border-transparent border-t-slate-800"></div>
                         </div>
                     </div>
                     <div id="submit-feedback-btn-wrapper" class="hidden w-full sm:w-auto">
                         <button type="submit" id="submit-feedback-btn" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 text-sm font-bold text-white bg-teal-600 rounded-xl shadow-md hover:bg-teal-700 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 transition-all duration-300 hover:-translate-y-0.5">
-                            <i data-lucide="send" class="w-4 h-4"></i> Patvirtinti ir siųsti
+                            <i data-lucide="send" class="w-4 h-4"></i> {% trans "Patvirtinti ir siųsti" %}
                         </button>
                     </div>
                 </div>
@@ -658,7 +659,7 @@ input[type='range']::-moz-range-thumb {
                                       alert('Klaida generuojant atsiliepimą.');
                                       spinner.classList.add('hidden');
                                       aiIcon.classList.remove('hidden');
-                                      btnText.textContent = 'Generuoti AI juodraštį';
+                                      btnText.textContent = '{% trans "Generuoti AI juodraštį" %}';
                                       btn.disabled = false;
                                   }
                               }).catch(err => {

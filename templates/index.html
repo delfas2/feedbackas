@@ -1,4 +1,5 @@
-{% load static %}
+{% load i18n %}
+{% load static i18n translation_tags %}
 {% if page_description.maintenance_mode %}
 <!DOCTYPE html>
 <html lang="lt">
@@ -118,7 +119,7 @@
     <div class="bg-glow"></div>
 
     <div class="landing-container">
-        <div class="badge">{{ page_description.maintenance_title }}</div>
+        <div class="badge">{{ page_description|translate_field:'maintenance_title' }}</div>
         
         <div class="logo-wrapper">
             <svg viewBox="0 0 200 200">
@@ -155,7 +156,7 @@
 
         <div class="content">
             <h1>Orbi<span>Grow</span></h1>
-            <p>{{ page_description.maintenance_desc }}</p>
+            <p>{{ page_description|translate_field:'maintenance_desc' }}</p>
             {% if user.is_authenticated %}
             <div style="margin-top: 30px;">
                 <a href="{% url 'home' %}" style="display: inline-block; padding: 12px 24px; background-color: var(--teal); color: white; text-decoration: none; border-radius: 30px; font-weight: bold; font-size: 1rem; transition: background-color 0.3s;" onmouseover="this.style.backgroundColor='#2d6b5e'" onmouseout="this.style.backgroundColor='var(--teal)'">
@@ -214,12 +215,16 @@
             <div class="flex items-center space-x-4">
                 <!-- Kalbos pasirinkimas -->
                 <div class="hidden md:flex items-center space-x-1">
-                    <a href="#" class="p-1 rounded-md bg-bg-secondary">
-                        <img src="https://flagcdn.com/lt.svg" class="w-6 h-4 rounded-sm" alt="Lietuvių">
-                    </a>
-                    <a href="#" class="p-1 rounded-md hover:bg-bg-secondary">
-                        <img src="https://flagcdn.com/gb.svg" class="w-6 h-4 rounded-sm" alt="English">
-                    </a>
+                    <form action="{% url 'set_language' %}" method="post" class="flex items-center space-x-1">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                        <button type="submit" name="language" value="lt" class="p-1 rounded-md {% if LANGUAGE_CODE == 'lt' %}bg-bg-secondary{% else %}hover:bg-bg-secondary opacity-50 hover:opacity-100{% endif %}">
+                            <img src="https://flagcdn.com/lt.svg" class="w-6 h-4 rounded-sm" alt="Lietuvių">
+                        </button>
+                        <button type="submit" name="language" value="en" class="p-1 rounded-md {% if LANGUAGE_CODE == 'en' %}bg-bg-secondary{% else %}hover:bg-bg-secondary opacity-50 hover:opacity-100{% endif %}">
+                            <img src="https://flagcdn.com/gb.svg" class="w-6 h-4 rounded-sm" alt="English">
+                        </button>
+                    </form>
                 </div>
                 <div class="space-x-2">
                     {% if user.is_authenticated %}
@@ -244,12 +249,12 @@
                 <div class="grid md:grid-cols-2 gap-12 items-center">
                     <!-- Kairė: Tekstas ir mygtukai -->
                     <div class="text-center md:text-left z-10 relative">
-                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-main mb-6 leading-tight whitespace-pre-line">{{ page_description.index_hero_title }}</h1>
-                        <p class="text-lg text-text-muted mb-8 max-w-xl mx-auto md:mx-0 whitespace-pre-line">{{ page_description.index_hero_desc }}</p>
+                        <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-main mb-6 leading-tight whitespace-pre-line">{{ page_description|translate_field:'index_hero_title' }}</h1>
+                        <p class="text-lg text-text-muted mb-8 max-w-xl mx-auto md:mx-0 whitespace-pre-line">{{ page_description|translate_field:'index_hero_desc' }}</p>
                         <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                             <button type="button" onclick="openContactModal()"
                                 class="px-8 py-3 text-lg font-medium text-white bg-primary/90 rounded-xl shadow-lg hover:bg-purple-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center">
-                                Susisiekite su mumis
+                                {% trans "Susisiekite su mumis" %}
                             </button>
                             <a href="#funkcijos"
                                 class="px-8 py-3 text-lg font-medium text-primary bg-bg-main border border-purple-200 rounded-xl shadow-sm hover:bg-bg-secondary hover:border-purple-300 transition-colors duration-300 text-center">
@@ -294,7 +299,7 @@
                         <div class="absolute bottom-10 right-0 bg-bg-main/95 backdrop-blur-md p-6 rounded-2xl shadow-2xl border border-white/50 w-80 z-10"
                             style="animation: float 5s ease-in-out infinite reverse;">
                             <div class="flex justify-between items-center mb-6">
-                                <h3 class="text-sm font-bold text-text-main">AI Kompetencijų Profilis</h3>
+                                <h3 class="text-sm font-bold text-text-main">{% trans "AI Kompetencijų Profilis" %}</h3>
                                 <svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24"
                                     stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -374,7 +379,7 @@
         <!-- 3. Funkcijų skyrius -->
         <section id="funkcijos" class="py-20">
             <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold text-center text-text-main mb-12 whitespace-pre-line">{{ page_description.index_features_title }}</h2>
+                <h2 class="text-3xl font-bold text-center text-text-main mb-12 whitespace-pre-line">{{ page_description|translate_field:'index_features_title' }}</h2>
                 <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
 
                     <!-- Funkcija 1 -->
@@ -385,8 +390,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M12 18v-5.25m0 0a6.01 6.01 0 0 0 1.5-.189m-1.5.189a6.01 6.01 0 0 1-1.5-.189m3.75 7.478a12.06 12.06 0 0 1-7.5 0m7.5 0a12.06 12.06 0 0 0 7.5 0m-7.5 0a12.06 12.06 0 0 1 7.5 0m-7.5 0a12.06 12.06 0 0 0-7.5 0m7.5 0a6.01 6.01 0 0 0-1.5-.189m1.5.189a6.01 6.01 0 0 1-1.5-.189m0 0A23.978 23.978 0 0 1 6 15.75m12 0c.358.06.71.128 1.06.201m-1.06-.201a23.978 23.978 0 0 0-1.06.201m0 0A23.978 23.978 0 0 1 12 15.75m0 0a23.978 23.978 0 0 0-1.06.201M15 15.75a23.978 23.978 0 0 1-1.06.201m0 0a23.978 23.978 0 0 0-1.06.201m3.75 6.478A12.06 12.06 0 0 1 12 21.75m0 0a12.06 12.06 0 0 1-7.5-3.522m7.5 3.522a12.06 12.06 0 0 0 7.5-3.522m-7.5 3.522v-5.25" />
                         </svg>
-                        <h3 class="text-xl font-semibold text-text-main mb-2 whitespace-pre-line">{{ page_description.index_feature1_title }}</h3>
-                        <p class="text-text-muted whitespace-pre-line">{{ page_description.index_feature1_desc }}</p>
+                        <h3 class="text-xl font-semibold text-text-main mb-2 whitespace-pre-line">{{ page_description|translate_field:'index_feature1_title' }}</h3>
+                        <p class="text-text-muted whitespace-pre-line">{{ page_description|translate_field:'index_feature1_desc' }}</p>
                     </div>
 
                     <!-- Funkcija 2 -->
@@ -397,8 +402,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M3 13.125C3 12.504 3.504 12 4.125 12h15.75c.621 0 1.125.504 1.125 1.125v6.75C21 20.496 20.496 21 19.875 21H4.125A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.375c1.036 0 1.875.84 1.875 1.875v.375c0 1.036-.84 1.875-1.875 1.875h-.375A1.875 1.875 0 0 1 9.75 9v-.375ZM14.25 8.625c0-1.036.84-1.875 1.875-1.875h.375c1.036 0 1.875.84 1.875 1.875v.375c0 1.036-.84 1.875-1.875 1.875h-.375A1.875 1.875 0 0 1 14.25 9v-.375ZM5.25 8.625c0-1.036.84-1.875 1.875-1.875h.375c1.036 0 1.875.84 1.875 1.875v.375c0 1.036-.84 1.875-1.875 1.875H7.125A1.875 1.875 0 0 1 5.25 9v-.375Z" />
                         </svg>
-                        <h3 class="text-xl font-semibold text-text-main mb-2 whitespace-pre-line">{{ page_description.index_feature2_title }}</h3>
-                        <p class="text-text-muted whitespace-pre-line">{{ page_description.index_feature2_desc }}</p>
+                        <h3 class="text-xl font-semibold text-text-main mb-2 whitespace-pre-line">{{ page_description|translate_field:'index_feature2_title' }}</h3>
+                        <p class="text-text-muted whitespace-pre-line">{{ page_description|translate_field:'index_feature2_desc' }}</p>
                     </div>
 
                     <!-- Funkcija 3 -->
@@ -409,8 +414,8 @@
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
                         </svg>
-                        <h3 class="text-xl font-semibold text-text-main mb-2 whitespace-pre-line">{{ page_description.index_feature3_title }}</h3>
-                        <p class="text-text-muted whitespace-pre-line">{{ page_description.index_feature3_desc }}</p>
+                        <h3 class="text-xl font-semibold text-text-main mb-2 whitespace-pre-line">{{ page_description|translate_field:'index_feature3_title' }}</h3>
+                        <p class="text-text-muted whitespace-pre-line">{{ page_description|translate_field:'index_feature3_desc' }}</p>
                     </div>
                 </div>
             </div>
@@ -419,7 +424,7 @@
         <!-- 4. "Kaip tai veikia" skyrius -->
         <section id="apie" class="bg-bg-secondary py-20">
             <div class="container mx-auto px-4">
-                <h2 class="text-3xl font-bold text-center text-text-main mb-12 whitespace-pre-line">{{ page_description.index_howitworks_title }}</h2>
+                <h2 class="text-3xl font-bold text-center text-text-main mb-12 whitespace-pre-line">{{ page_description|translate_field:'index_howitworks_title' }}</h2>
                 <div class="flex flex-col md:flex-row justify-center gap-8 md:gap-12">
 
                     <!-- Žingsnis 1 -->
@@ -427,8 +432,8 @@
                         <div
                             class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
                             1</div>
-                        <h3 class="text-xl font-semibold text-text-main mb-2 whitespace-pre-line">{{ page_description.index_step1_title }}</h3>
-                        <p class="text-text-muted whitespace-pre-line">{{ page_description.index_step1_desc }}</p>
+                        <h3 class="text-xl font-semibold text-text-main mb-2 whitespace-pre-line">{{ page_description|translate_field:'index_step1_title' }}</h3>
+                        <p class="text-text-muted whitespace-pre-line">{{ page_description|translate_field:'index_step1_desc' }}</p>
                     </div>
 
                     <!-- Žingsnis 2 -->
@@ -436,8 +441,8 @@
                         <div
                             class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
                             2</div>
-                        <h3 class="text-xl font-semibold text-text-main mb-2 whitespace-pre-line">{{ page_description.index_step2_title }}</h3>
-                        <p class="text-text-muted whitespace-pre-line">{{ page_description.index_step2_desc }}</p>
+                        <h3 class="text-xl font-semibold text-text-main mb-2 whitespace-pre-line">{{ page_description|translate_field:'index_step2_title' }}</h3>
+                        <p class="text-text-muted whitespace-pre-line">{{ page_description|translate_field:'index_step2_desc' }}</p>
                     </div>
 
                     <!-- Žingsnis 3 -->
@@ -445,8 +450,8 @@
                         <div
                             class="bg-primary text-white w-12 h-12 rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
                             3</div>
-                        <h3 class="text-xl font-semibold text-text-main mb-2 whitespace-pre-line">{{ page_description.index_step3_title }}</h3>
-                        <p class="text-text-muted whitespace-pre-line">{{ page_description.index_step3_desc }}</p>
+                        <h3 class="text-xl font-semibold text-text-main mb-2 whitespace-pre-line">{{ page_description|translate_field:'index_step3_title' }}</h3>
+                        <p class="text-text-muted whitespace-pre-line">{{ page_description|translate_field:'index_step3_desc' }}</p>
                     </div>
 
                 </div>
@@ -456,11 +461,11 @@
         <!-- 5. Kvietimas veikti (CTA) skyrius -->
         <section class="bg-primary/90 text-white">
             <div class="container mx-auto px-4 py-20 text-center">
-                <h2 class="text-3xl md:text-4xl font-bold mb-4 whitespace-pre-line">{{ page_description.index_cta_title }}</h2>
-                <p class="text-lg text-purple-100 max-w-2xl mx-auto mb-8 whitespace-pre-line">{{ page_description.index_cta_desc }}</p>
+                <h2 class="text-3xl md:text-4xl font-bold mb-4 whitespace-pre-line">{{ page_description|translate_field:'index_cta_title' }}</h2>
+                <p class="text-lg text-purple-100 max-w-2xl mx-auto mb-8 whitespace-pre-line">{{ page_description|translate_field:'index_cta_desc' }}</p>
                 <button type="button" onclick="openContactModal()"
                     class="px-8 py-3 text-lg font-bold text-primary bg-bg-main rounded-lg shadow-lg hover:bg-bg-secondary transition-colors duration-200">
-                    Susisiekite su mumis
+                    {% trans "Susisiekite su mumis" %}
                 </button>
             </div>
         </section>
@@ -535,7 +540,7 @@
                 </svg>
             </button>
 
-            <h3 class="text-2xl font-bold text-text-main mb-2" style="padding-right: 3.5rem;">Susisiekite su mumis</h3>
+            <h3 class="text-2xl font-bold text-text-main mb-2" style="padding-right: 3.5rem;">{% trans "Susisiekite su mumis" %}</h3>
             <p class="text-text-muted mb-6">Užpildykite formą ir mes netrukus su jumis susisieksime!</p>
 
             <form method="POST" action="{% url 'index' %}" class="space-y-4">
@@ -547,20 +552,20 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-sm font-medium text-text-main mb-1">El. paštas <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-medium text-text-main mb-1">{% trans "El. paštas" %} <span class="text-red-500">*</span></label>
                         <input type="email" name="email" required placeholder="vardas@imone.lt"
                             class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-purple-500 outline-none transition-all">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-text-main mb-1">Telefono numeris <span class="text-red-500">*</span></label>
+                        <label class="block text-sm font-medium text-text-main mb-1">{% trans "Telefono numeris" %} <span class="text-red-500">*</span></label>
                         <input type="tel" name="phone" required placeholder="+370 600 00000"
                             class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-purple-500 outline-none transition-all">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-text-main mb-1">Darbuotojų skaičius jūsų įmonėje</label>
+                    <label class="block text-sm font-medium text-text-main mb-1">{% trans "Darbuotojų skaičius jūsų įmonėje" %}</label>
                     <select name="employees" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-purple-500 outline-none transition-all bg-white">
-                        <option value="">Pasirinkite...</option>
+                        <option value="">{% trans "Pasirinkite..." %}</option>
                         <option value="1-10">1 - 10</option>
                         <option value="11-50">11 - 50</option>
                         <option value="51-200">51 - 200</option>
@@ -568,14 +573,14 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-text-main mb-1">Jūsų Žinutė <span class="text-red-500">*</span></label>
-                    <textarea name="message" required rows="3" placeholder="Trumpai apibūdinkite savo poreikius..."
+                    <label class="block text-sm font-medium text-text-main mb-1">{% trans "Jūsų Žinutė" %} <span class="text-red-500">*</span></label>
+                    <textarea name="message" required rows="3" placeholder="{% trans "Trumpai apibūdinkite savo poreikius..." %}"
                         class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-purple-500 outline-none transition-all resize-none"></textarea>
                 </div>
 
                 <button type="submit"
                     class="w-full py-3 px-4 bg-primary/90 hover:bg-purple-700 text-white font-semibold rounded-xl transition-colors shadow-sm mt-2">
-                    Siųsti užklausą
+                    {% trans "Siųsti užklausą" %}
                 </button>
             </form>
         </div>

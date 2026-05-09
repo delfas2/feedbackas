@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load static %}
-{% block title %}Individuali forma{% endblock %}
+{% block title %}{% trans "Individuali forma" %}{% endblock %}
 
 {% block style %}
 .trait-tag { transition: all 0.2s; cursor: pointer; }
@@ -26,17 +27,17 @@
             </a>
 
             <h1 class="text-3xl font-bold text-slate-800 hidden md:block">Individuali forma</h1>
-            <p class="text-slate-500 mt-1 hidden md:block">Kurkite ir valdykite unikalius atsiliepimų klausimynus.</p>
+            <p class="text-slate-500 mt-1 hidden md:block">{% trans "Kurkite ir valdykite unikalius atsiliepimų klausimynus." %}</p>
         </div>
 
         <div class="flex items-center gap-3">
             {% if managed_departments and global_settings.team_form_enabled %}
             <button id="open-create-team-modal" class="px-5 py-2.5 bg-blue-600 text-white font-bold rounded-xl shadow-sm hover:bg-blue-700 transition-colors flex items-center gap-2 text-[14px]">
-                <i data-lucide="users" class="w-4 h-4"></i> Komandinė forma
+                <i data-lucide="users" class="w-4 h-4"></i> {% trans "{% trans "Komandinė" %} forma" %}
             </button>
             {% endif %}
             <button id="open-create-modal" class="px-5 py-2.5 bg-slate-900 text-white font-bold rounded-xl shadow-sm hover:bg-slate-800 transition-colors flex items-center gap-2 text-[14px]">
-                <i data-lucide="plus" class="w-4 h-4"></i> Kurti klausimyną
+                <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Kurti klausimyną" %}
             </button>
         </div>
     </header>
@@ -53,11 +54,11 @@
                         <h3 class="text-xl font-bold text-slate-800 group-hover:text-teal-700 transition-colors truncate" title="{{ q.title }}">{{ q.title }}</h3>
                         {% if q.is_team %}
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-extrabold tracking-wide uppercase bg-blue-50 text-blue-700 border border-blue-100">
-                            Komandinė
+                            {% trans "Komandinė" %}
                         </span>
                         {% else %}
                         <span class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-extrabold tracking-wide uppercase bg-teal-50 text-teal-700 border border-teal-100">
-                            Asmeninė
+                            {% trans "Asmeninė" %}
                         </span>
                         {% endif %}
                     </div>
@@ -72,7 +73,7 @@
                             {{ trait.name }}
                         </span>
                         {% empty %}
-                        <span class="text-[12px] font-medium text-slate-400 italic">Nėra savybių</span>
+                        <span class="text-[12px] font-medium text-slate-400 italic">{% trans "Nėra savybių" %}</span>
                         {% endfor %}
                     </div>
                 </div>
@@ -80,17 +81,17 @@
                 <!-- Right side: Actions -->
                 <div class="flex flex-wrap sm:flex-nowrap md:flex-col lg:flex-row items-center gap-2 w-full md:w-auto shrink-0 md:pl-6 md:border-l md:border-slate-100 relative z-10 pt-4 md:pt-0 border-t md:border-t-0 border-slate-100">
                     <a href="{% url 'questionnaire_statistics' q.id %}" class="flex-1 md:flex-none flex justify-center items-center gap-1.5 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-800 rounded-xl text-[13px] font-bold transition-all shadow-sm whitespace-nowrap">
-                        <i data-lucide="bar-chart-2" class="w-4 h-4"></i> Statistika
+                        <i data-lucide="bar-chart-2" class="w-4 h-4"></i> {% trans "Statistika" %}
                     </a>
                     <button type="button" class="flex-1 md:flex-none flex justify-center items-center gap-1.5 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-800 rounded-xl text-[13px] font-bold transition-all shadow-sm whitespace-nowrap open-edit-modal" data-questionnaire-id="{{ q.id }}" data-questionnaire-title="{{ q.title }}" data-questionnaire-traits="{% for t in q.traits.all %}{{ t.id }}{% if not forloop.last %},{% endif %}{% endfor %}">
-                        <i data-lucide="edit-3" class="w-4 h-4"></i> Redaguoti
+                        <i data-lucide="edit-3" class="w-4 h-4"></i> {% trans "Redaguoti" %}
                     </button>
                     <button type="button" class="flex-1 md:flex-none flex justify-center items-center gap-1.5 px-6 py-2.5 bg-slate-900 text-white hover:bg-slate-800 rounded-xl text-[13px] font-bold transition-all shadow-sm whitespace-nowrap open-send-modal" data-questionnaire-id="{{ q.id }}" data-questionnaire-title="{{ q.title }}">
-                        <i data-lucide="send" class="w-4 h-4"></i> Siųsti
+                        <i data-lucide="send" class="w-4 h-4"></i> {% trans "Siųsti" %}
                     </button>
                     <form method="POST" action="{% url 'delete_questionnaire' q.id %}" class="flex-none">
                         {% csrf_token %}
-                        <button type="submit" class="flex justify-center items-center p-2.5 text-rose-500 hover:bg-rose-50 hover:text-rose-700 rounded-xl transition-all border border-transparent hover:border-rose-100" onclick="return confirm('Ar tikrai norite ištrinti?')" title="Ištrinti">
+                        <button type="submit" class="flex justify-center items-center p-2.5 text-rose-500 hover:bg-rose-50 hover:text-rose-700 rounded-xl transition-all border border-transparent hover:border-rose-100" onclick="return confirm('{% trans "Ar tikrai norite ištrinti?" %}')" title="{% trans "Ištrinti" %}">
                             <i data-lucide="trash-2" class="w-5 h-5"></i>
                         </button>
                     </form>
@@ -103,10 +104,10 @@
             <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-5">
                 <i data-lucide="file-question" class="w-10 h-10 text-slate-300"></i>
             </div>
-            <h3 class="text-2xl font-bold text-slate-800 mb-3">Kol kas neturite klausimynų</h3>
+            <h3 class="text-2xl font-bold text-slate-800 mb-3">{% trans "Kol kas neturite klausimynų" %}</h3>
             <p class="text-slate-500 font-medium max-w-md mb-8">Sukurkite asmeninius ar komandinius klausimynus ir siųskite juos kolegoms, kad gautumėte struktūruotą grįžtamąjį ryšį.</p>
             <button onclick="document.getElementById('open-create-modal').click()" class="px-6 py-3 bg-slate-900 text-white font-bold rounded-xl shadow-sm hover:bg-slate-800 transition-colors flex items-center gap-2">
-                <i data-lucide="plus" class="w-5 h-5"></i> Kurti pirmąjį klausimyną
+                <i data-lucide="plus" class="w-5 h-5"></i> {% trans "Kurti pirmąjį klausimyną" %}
             </button>
         </div>
         {% endif %}
@@ -116,7 +117,7 @@
     <div id="create-modal" class="fixed inset-0 overflow-y-auto bg-black/40 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-2xl rounded-[32px] shadow-2xl overflow-hidden transition-all animate-in fade-in zoom-in duration-300">
             <div class="px-8 pt-8 pb-4 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
-                <h2 class="text-2xl font-extrabold text-slate-900">Naujas klausimynas</h2>
+                <h2 class="text-2xl font-extrabold text-slate-900">{% trans "Naujas klausimynas" %}</h2>
                 <button id="close-create-modal" class="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
@@ -126,7 +127,7 @@
 
                 <!-- Title -->
                 <div>
-                    <label class="block text-[15px] font-bold text-slate-800 mb-2">Klausimyno pavadinimas</label>
+                    <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "Klausimyno pavadinimas" %}</label>
                     <input type="text" name="title" required
                         class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all font-medium text-slate-700 placeholder-slate-400 shadow-sm"
                         placeholder="pvz., Komandinio darbo vertinimas">
@@ -134,7 +135,7 @@
 
                 <!-- Trait Cloud -->
                 <div>
-                    <label class="block text-[15px] font-bold text-slate-800 mb-2">Savybių debesis <span class="text-slate-400 font-medium text-sm">(paspauskite norimas savybes)</span></label>
+                    <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "Savybių debesis" %} <span class="text-slate-400 font-medium text-sm">({% trans "paspauskite norimas savybes" %})</span></label>
                     <div id="trait-cloud" class="flex flex-wrap gap-2 p-5 bg-white rounded-2xl border border-slate-200 min-h-[100px] shadow-sm">
                         {% for trait in all_traits %}
                         <span class="trait-tag inline-block px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[13px] font-bold text-slate-600 hover:bg-teal-50 hover:border-teal-200 hover:text-teal-700 transition-all cursor-pointer select-none"
@@ -146,21 +147,21 @@
 
                 <!-- Custom Trait Input -->
                 <div>
-                    <label class="block text-[15px] font-bold text-slate-800 mb-2">Pridėti savo savybę</label>
+                    <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "{% trans "Pridėti" %} savo savybę" %}</label>
                     <div class="flex gap-2">
                         <input type="text" id="custom-trait-input"
                             class="flex-1 px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all font-medium text-slate-700 placeholder-slate-400 shadow-sm"
-                            placeholder="Įveskite savybės pavadinimą...">
+                            placeholder="{% trans "Įveskite savybės pavadinimą..." %}">
                         <button type="button" id="add-custom-trait"
-                            class="px-5 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors shadow-sm">Pridėti</button>
+                            class="px-5 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors shadow-sm">{% trans "Pridėti" %}</button>
                     </div>
                 </div>
 
                 <!-- Selected Traits -->
                 <div class="bg-teal-50/50 p-5 rounded-2xl border border-teal-100/50">
-                    <label class="block text-[15px] font-bold text-teal-900 mb-3">Pasirinktos savybės</label>
+                    <label class="block text-[15px] font-bold text-teal-900 mb-3">{% trans "Pasirinktos savybės" %}</label>
                     <div id="selected-traits" class="flex flex-wrap gap-2 min-h-[40px]">
-                        <span id="no-traits-msg" class="text-[13px] text-teal-600 font-medium italic">Dar nepasirinkta jokia savybė</span>
+                        <span id="no-traits-msg" class="text-[13px] text-teal-600 font-medium italic">{% trans "Dar nepasirinkta jokia savybė" %}</span>
                     </div>
                     <div id="hidden-inputs"></div>
                 </div>
@@ -168,8 +169,8 @@
 
             <!-- Submit Footer -->
             <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50/80 sticky bottom-0 z-10 w-full rounded-b-[32px]">
-                <button type="button" id="cancel-modal" class="px-6 py-3 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold text-[14px] transition-all">Atšaukti</button>
-                <button type="button" onclick="document.querySelector('#create-modal form').submit()" class="px-8 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors font-bold text-[14px] shadow-sm">Sukurti</button>
+                <button type="button" id="cancel-modal" class="px-6 py-3 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold text-[14px] transition-all">{% trans "Atšaukti" %}</button>
+                <button type="button" onclick="document.querySelector('#create-modal form').submit()" class="px-8 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors font-bold text-[14px] shadow-sm">{% trans "Sukurti" %}</button>
             </div>
         </div>
     </div>
@@ -178,7 +179,7 @@
     <div id="create-team-modal" class="fixed inset-0 overflow-y-auto bg-black/40 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-2xl rounded-[32px] shadow-2xl overflow-hidden transition-all animate-in fade-in zoom-in duration-300">
             <div class="px-8 pt-8 pb-4 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
-                <h2 class="text-2xl font-extrabold text-blue-700 flex items-center gap-2"><i data-lucide="users" class="w-6 h-6"></i> Nauja komandinė forma</h2>
+                <h2 class="text-2xl font-extrabold text-blue-700 flex items-center gap-2"><i data-lucide="users" class="w-6 h-6"></i> {% trans "Nauja komandinė forma" %}</h2>
                 <button id="close-create-team-modal" class="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
@@ -188,7 +189,7 @@
 
                 <!-- Title -->
                 <div>
-                    <label class="block text-[15px] font-bold text-slate-800 mb-2">Klausimyno pavadinimas</label>
+                    <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "Klausimyno pavadinimas" %}</label>
                     <input type="text" name="title" required
                         class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium text-slate-700 placeholder-slate-400 shadow-sm"
                         placeholder="pvz., Komandos efektyvumo vertinimas">
@@ -196,11 +197,11 @@
 
                 <!-- Department Select -->
                 <div>
-                    <label class="block text-[15px] font-bold text-slate-800 mb-2">Pasirinkite komandą</label>
+                    <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "Pasirinkite komandą" %}</label>
                     <div class="relative">
                         <select name="department_id" required
                                 class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium text-slate-700 shadow-sm appearance-none">
-                            <option value="" disabled selected>-- Pasirinkite komandą --</option>
+                            <option value="" disabled selected>{% trans "-- {% trans "Pasirinkite komandą" %} --" %}</option>
                             {% for dept in managed_departments %}
                             <option value="{{ dept.id }}">{{ dept.name }}</option>
                             {% endfor %}
@@ -213,7 +214,7 @@
 
                 <!-- Trait Cloud -->
                 <div>
-                    <label class="block text-[15px] font-bold text-slate-800 mb-2">Savybių debesis <span class="text-slate-400 font-medium text-sm">(paspauskite norimas savybes)</span></label>
+                    <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "Savybių debesis" %} <span class="text-slate-400 font-medium text-sm">({% trans "paspauskite norimas savybes" %})</span></label>
                     <div id="team-trait-cloud" class="flex flex-wrap gap-2 p-5 bg-white rounded-2xl border border-slate-200 min-h-[100px] shadow-sm">
                         {% for trait in all_traits %}
                         <span class="team-trait-tag inline-block px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[13px] font-bold text-slate-600 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-all cursor-pointer select-none"
@@ -225,21 +226,21 @@
 
                 <!-- Custom Trait Input -->
                 <div>
-                    <label class="block text-[15px] font-bold text-slate-800 mb-2">Pridėti savo savybę</label>
+                    <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "{% trans "Pridėti" %} savo savybę" %}</label>
                     <div class="flex gap-2">
                         <input type="text" id="team-custom-trait-input"
                             class="flex-1 px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all font-medium text-slate-700 placeholder-slate-400 shadow-sm"
-                            placeholder="Įveskite savybės pavadinimą...">
+                            placeholder="{% trans "Įveskite savybės pavadinimą..." %}">
                         <button type="button" id="team-add-custom-trait"
-                            class="px-5 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors shadow-sm">Pridėti</button>
+                            class="px-5 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors shadow-sm">{% trans "Pridėti" %}</button>
                     </div>
                 </div>
 
                 <!-- Selected Traits -->
                 <div class="bg-blue-50/50 p-5 rounded-2xl border border-blue-100/50">
-                    <label class="block text-[15px] font-bold text-blue-900 mb-3">Pasirinktos savybės</label>
+                    <label class="block text-[15px] font-bold text-blue-900 mb-3">{% trans "Pasirinktos savybės" %}</label>
                     <div id="team-selected-traits" class="flex flex-wrap gap-2 min-h-[40px]">
-                        <span id="team-no-traits-msg" class="text-[13px] text-blue-600 font-medium italic">Dar nepasirinkta jokia savybė</span>
+                        <span id="team-no-traits-msg" class="text-[13px] text-blue-600 font-medium italic">{% trans "Dar nepasirinkta jokia savybė" %}</span>
                     </div>
                     <div id="team-hidden-inputs"></div>
                 </div>
@@ -247,8 +248,8 @@
 
             <!-- Submit Footer -->
             <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50/80 sticky bottom-0 z-10 w-full rounded-b-[32px]">
-                <button type="button" id="cancel-team-modal" class="px-6 py-3 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold text-[14px] transition-all">Atšaukti</button>
-                <button type="submit" form="create-team-form" class="px-8 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-bold text-[14px] shadow-sm">Sukurti komandinę</button>
+                <button type="button" id="cancel-team-modal" class="px-6 py-3 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold text-[14px] transition-all">{% trans "Atšaukti" %}</button>
+                <button type="submit" form="create-team-form" class="px-8 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-bold text-[14px] shadow-sm">{% trans "{% trans "Sukurti" %} komandinę" %}</button>
             </div>
         </div>
     </div>
@@ -257,7 +258,7 @@
     <div id="edit-modal" class="fixed inset-0 overflow-y-auto bg-black/40 backdrop-blur-sm z-[9999] hidden flex items-center justify-center p-4">
         <div class="bg-white w-full max-w-2xl rounded-[32px] shadow-2xl overflow-hidden transition-all animate-in fade-in zoom-in duration-300">
             <div class="px-8 pt-8 pb-4 border-b border-slate-100 flex justify-between items-center bg-white sticky top-0 z-10">
-                <h2 class="text-2xl font-extrabold text-slate-900">Redaguoti klausimyną</h2>
+                <h2 class="text-2xl font-extrabold text-slate-900">{% trans "{% trans "Redaguoti" %} klausimyną" %}</h2>
                 <button id="close-edit-modal" class="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
@@ -267,14 +268,14 @@
 
                 <!-- Title -->
                 <div>
-                    <label class="block text-[15px] font-bold text-slate-800 mb-2">Klausimyno pavadinimas</label>
+                    <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "Klausimyno pavadinimas" %}</label>
                     <input type="text" name="title" id="edit-title" required
                         class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all font-medium text-slate-700 placeholder-slate-400 shadow-sm">
                 </div>
 
                 <!-- Trait Cloud -->
                 <div>
-                    <label class="block text-[15px] font-bold text-slate-800 mb-2">Savybių debesis <span class="text-slate-400 font-medium text-sm">(paspauskite norimas savybes)</span></label>
+                    <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "Savybių debesis" %} <span class="text-slate-400 font-medium text-sm">({% trans "paspauskite norimas savybes" %})</span></label>
                     <div id="edit-trait-cloud" class="flex flex-wrap gap-2 p-5 bg-white rounded-2xl border border-slate-200 min-h-[100px] shadow-sm">
                         {% for trait in all_traits %}
                         <span class="edit-trait-tag inline-block px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[13px] font-bold text-slate-600 hover:bg-teal-50 hover:border-teal-200 hover:text-teal-700 transition-all cursor-pointer select-none"
@@ -286,21 +287,21 @@
 
                 <!-- Custom Trait Input -->
                 <div>
-                    <label class="block text-[15px] font-bold text-slate-800 mb-2">Pridėti savo savybę</label>
+                    <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "{% trans "Pridėti" %} savo savybę" %}</label>
                     <div class="flex gap-2">
                         <input type="text" id="edit-custom-trait-input"
                             class="flex-1 px-4 py-3 bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-teal-500 transition-all font-medium text-slate-700 placeholder-slate-400 shadow-sm"
-                            placeholder="Įveskite savybės pavadinimą...">
+                            placeholder="{% trans "Įveskite savybės pavadinimą..." %}">
                         <button type="button" id="edit-add-custom-trait"
-                            class="px-5 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors shadow-sm">Pridėti</button>
+                            class="px-5 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl hover:bg-slate-200 transition-colors shadow-sm">{% trans "Pridėti" %}</button>
                     </div>
                 </div>
 
                 <!-- Selected Traits -->
                 <div class="bg-teal-50/50 p-5 rounded-2xl border border-teal-100/50">
-                    <label class="block text-[15px] font-bold text-teal-900 mb-3">Pasirinktos savybės</label>
+                    <label class="block text-[15px] font-bold text-teal-900 mb-3">{% trans "Pasirinktos savybės" %}</label>
                     <div id="edit-selected-traits" class="flex flex-wrap gap-2 min-h-[40px]">
-                        <span id="edit-no-traits-msg" class="text-[13px] text-teal-600 font-medium italic">Dar nepasirinkta jokia savybė</span>
+                        <span id="edit-no-traits-msg" class="text-[13px] text-teal-600 font-medium italic">{% trans "Dar nepasirinkta jokia savybė" %}</span>
                     </div>
                     <div id="edit-hidden-inputs"></div>
                 </div>
@@ -308,8 +309,8 @@
 
             <!-- Submit Footer -->
             <div class="p-6 border-t border-slate-100 flex justify-end gap-3 bg-slate-50/80 sticky bottom-0 z-10 w-full rounded-b-[32px]">
-                <button type="button" id="cancel-edit-modal" class="px-6 py-3 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold text-[14px] transition-all">Atšaukti</button>
-                <button type="button" onclick="document.querySelector('#edit-modal form').submit()" class="px-8 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors font-bold text-[14px] shadow-sm">Išsaugoti</button>
+                <button type="button" id="cancel-edit-modal" class="px-6 py-3 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold text-[14px] transition-all">{% trans "Atšaukti" %}</button>
+                <button type="button" onclick="document.querySelector('#edit-modal form').submit()" class="px-8 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors font-bold text-[14px] shadow-sm">{% trans "Išsaugoti" %}</button>
             </div>
         </div>
     </div>
@@ -323,8 +324,8 @@
                         <i data-lucide="send" class="w-7 h-7 text-teal-600"></i>
                     </div>
                     <div class="flex-1 mt-1">
-                        <h3 class="text-2xl font-extrabold text-slate-900" id="modal-title">Siųsti klausimyną</h3>
-                        <p class="text-sm font-medium text-slate-500 mt-2">Pasirinkite kolegą (-as), kurių prašysite užpildyti šį klausimyną.</p>
+                        <h3 class="text-2xl font-extrabold text-slate-900" id="modal-title">{% trans "{% trans "Siųsti" %} klausimyną" %}</h3>
+                        <p class="text-sm font-medium text-slate-500 mt-2">{% trans "Pasirinkite kolegą (-as), kurių prašysite užpildyti šį klausimyną." %}</p>
                     </div>
                 </div>
 
@@ -338,18 +339,18 @@
                             <i data-lucide="clipboard-list" class="w-6 h-6 text-slate-700"></i>
                         </div>
                         <div class="overflow-hidden">
-                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">Pasirinktas klausimynas</p>
+                            <p class="text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-0.5">{% trans "Pasirinktas klausimynas" %}</p>
                             <p id="send-questionnaire-title" class="text-[17px] font-bold text-slate-800 truncate"></p>
                         </div>
                     </div>
 
                     <!-- User Select with Search -->
                     <div class="relative">
-                        <label class="block text-[15px] font-bold text-slate-800 mb-2">Kam norite jį išsiųsti?</label>
+                        <label class="block text-[15px] font-bold text-slate-800 mb-2">{% trans "Kam norite jį išsiųsti?" %}</label>
                         <div class="relative w-full">
                             <div id="colleague-select-container" class="flex flex-wrap items-center gap-1.5 w-full min-h-[52px] p-2 bg-white border border-slate-200 rounded-2xl shadow-sm focus-within:ring-2 focus-within:ring-teal-500 focus-within:border-transparent cursor-text transition-all">
                                 <div id="selected-colleagues-tags" class="flex flex-wrap gap-1.5 ml-1"></div>
-                                <input type="text" id="colleague-search" class="flex-1 min-w-[120px] bg-transparent border-none text-[15px] font-medium text-slate-700 placeholder-slate-400 focus:ring-0 p-1.5" placeholder="Ieškoti kolegų..." autocomplete="off">
+                                <input type="text" id="colleague-search" class="flex-1 min-w-[120px] bg-transparent border-none text-[15px] font-medium text-slate-700 placeholder-slate-400 focus:ring-0 p-1.5" placeholder="{% trans "Ieškoti kolegų..." %}" autocomplete="off">
                             </div>
 
                             <div id="colleague-dropdown" class="absolute z-10 w-full mt-2 bg-white border border-slate-200 rounded-2xl shadow-xl max-h-60 overflow-y-auto hidden">
@@ -363,15 +364,15 @@
                                     <i data-lucide="check" class="w-5 h-5 ml-auto text-teal-600 hidden checkmark-icon"></i>
                                 </label>
                                 {% empty %}
-                                <div class="p-6 text-sm font-medium text-slate-500 italic text-center">Nėra kolegų, kuriems galėtumėte išsiųsti</div>
+                                <div class="p-6 text-sm font-medium text-slate-500 italic text-center">{% trans "Nėra kolegų, kuriems galėtumėte išsiųsti" %}</div>
                                 {% endfor %}
                             </div>
                         </div>
-                        <p id="colleague-error-msg" class="text-[13px] font-semibold text-rose-500 mt-2 hidden"><i data-lucide="alert-circle" class="w-4 h-4 inline mr-1"></i> Turite pasirinkti bent vieną kolegą.</p>
+                        <p id="colleague-error-msg" class="text-[13px] font-semibold text-rose-500 mt-2 hidden"><i data-lucide="alert-circle" class="w-4 h-4 inline mr-1"></i> {% trans "Turite pasirinkti bent vieną kolegą." %}</p>
                     </div>
 
                     <div class="mt-8 flex flex-col sm:flex-row justify-end gap-3 pt-5 border-t border-slate-100">
-                        <button type="button" id="cancel-send-modal" class="w-full sm:w-auto px-6 py-3 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold text-[15px] transition-all">Atšaukti</button>
+                        <button type="button" id="cancel-send-modal" class="w-full sm:w-auto px-6 py-3 bg-white border border-slate-200 hover:bg-slate-100 text-slate-700 rounded-xl font-bold text-[15px] transition-all">{% trans "Atšaukti" %}</button>
                         <button type="submit" class="w-full sm:w-auto px-8 py-3 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-colors font-bold text-[15px] shadow-sm flex items-center justify-center gap-2"><i data-lucide="send" class="w-4 h-4"></i> Išsiųsti</button>
                     </div>
                 </form>
@@ -851,7 +852,7 @@
                     }
                 });
                 
-                colleagueSearchInput.placeholder = checkedCount > 0 ? '' : 'Ieškoti kolegų...';
+                colleagueSearchInput.placeholder = checkedCount > 0 ? '' : '{% trans "Ieškoti kolegų..." %}';
                 if (checkedCount > 0) errorMsg.classList.add('hidden');
             }
 

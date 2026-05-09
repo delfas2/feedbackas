@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.conf import settings
+from django.utils.translation import gettext as _
 
 from django.contrib import messages
 from django.core.mail import send_mail
@@ -327,7 +328,7 @@ def send_feedback(request, user_id):
     feedback_request = FeedbackRequest.objects.create(
         requester=requester,
         requested_to=requested_to,
-        project_name='Atsiliepimas',
+        project_name=_('Atsiliepimas'),
         comment='',
         due_date=date.today(),
         is_self_initiated=True
@@ -648,7 +649,8 @@ def generate_ai_feedback(request):
             comments=comments,
             existing_feedback=existing_feedback,
             colleague_name=colleague_name,
-            user_id=request.user.id
+            user_id=request.user.id,
+            language=getattr(request, 'LANGUAGE_CODE', 'lt')
         )
         
         return JsonResponse({'task_id': task_id, 'status': 'processing'})
@@ -773,10 +775,15 @@ def get_competency_trend(request, competency_name):
     # Map Lithuanian competency display names to DB field names
     competency_field_map = {
         'komandinis darbas': 'teamwork_rating',
+        'teamwork': 'teamwork_rating',
         'komunikacija': 'communication_rating',
+        'communication': 'communication_rating',
         'iniciatyvumas': 'initiative_rating',
+        'initiative': 'initiative_rating',
         'techninės žinios': 'technical_skills_rating',
+        'technical knowledge': 'technical_skills_rating',
         'problemų sprendimas': 'problem_solving_rating',
+        'problem solving': 'problem_solving_rating',
     }
 
     field_name = competency_field_map.get(competency_name.strip().lower())

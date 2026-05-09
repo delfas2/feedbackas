@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Saugumo užtikrinimas - Orbigrow.lt</title>
-    {% load static %}
+    <title>{% trans "Saugumo užtikrinimas" %} - Orbigrow.lt</title>
+    {% load static i18n translation_tags %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="icon" type="image/png" href="{% static 'images/fav.png' %}">
     <link rel="shortcut icon" href="{% static 'images/fav.png' %}" type="image/x-icon">
@@ -51,18 +51,18 @@
                 <img src="{% static 'images/logo.png' %}" alt="Orbigrow.lt" class="h-10 w-auto object-contain transition-transform group-hover:scale-105">
             </a>
             <div class="hidden md:flex space-x-8 items-center">
-                <a href="{% url 'index' %}" class="text-[15px] font-medium text-slate-500 hover:text-slate-900 transition-colors">Pradžia</a>
-                <a href="{% url 'apie_mus' %}" class="text-[15px] font-medium text-slate-500 hover:text-slate-900 transition-colors">Apie mus</a>
+                <a href="{% url 'index' %}" class="text-[15px] font-medium text-slate-500 hover:text-slate-900 transition-colors">{% trans "Pradžia" %}</a>
+                <a href="{% url 'apie_mus' %}" class="text-[15px] font-medium text-slate-500 hover:text-slate-900 transition-colors">{% trans "Apie mus" %}</a>
             </div>
             <div class="flex items-center space-x-4">
                 {% if user.is_authenticated %}
                 <a href="{% url 'home' %}"
                     class="px-5 py-2.5 text-[14px] font-bold text-white bg-slate-900 rounded-xl shadow-sm hover:bg-slate-800 transition-colors flex items-center gap-2">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> Prietaisų skydelis
+                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> {% trans "Prietaisų skydelis" %}
                 </a>
                 {% else %}
                 <a href="{% url 'login' %}"
-                    class="px-5 py-2.5 text-[14px] font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">Prisijungti</a>
+                    class="px-5 py-2.5 text-[14px] font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">{% trans "Prisijungti" %}</a>
                 {% endif %}
             </div>
         </nav>
@@ -80,9 +80,9 @@
                 <div class="inline-flex items-center justify-center p-3 bg-white/10 rounded-2xl mb-6 backdrop-blur-sm border border-white/20">
                     <i data-lucide="shield-check" class="w-6 h-6 text-teal-400"></i>
                 </div>
-                <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight leading-tight">Saugumo Užtikrinimas</h1>
+                <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight leading-tight">{% trans "Saugumo Užtikrinimas" %}</h1>
                 <p class="text-xl text-slate-300 max-w-2xl mx-auto font-medium leading-relaxed">
-                    Jūsų duomenų saugumas ir privatumas yra mūsų prioritetas.
+                    {% trans "Jūsų duomenų saugumas ir privatumas yra mūsų prioritetas." %}
                 </p>
             </div>
         </section>

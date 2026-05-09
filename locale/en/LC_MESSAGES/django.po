@@ -1,0 +1,1175 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-05-09 15:45+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: feedbackas/forms.py:17
+msgid "Password"
+msgstr "Password"
+
+#: feedbackas/forms.py:19
+msgid "Password confirmation"
+msgstr "Password confirmation"
+
+#: feedbackas/services.py:100 feedbackas/services.py:200
+#: feedbackas/services.py:232
+msgid "Komandinis Darbas"
+msgstr "Team work"
+
+#: feedbackas/services.py:101 feedbackas/services.py:201
+#: feedbackas/services.py:233
+msgid "Komunikacija"
+msgstr "Communication"
+
+#: feedbackas/services.py:102 feedbackas/services.py:202
+#: feedbackas/services.py:234
+msgid "Iniciatyvumas"
+msgstr "Initiative"
+
+#: feedbackas/services.py:103 feedbackas/services.py:203
+#: feedbackas/services.py:235
+msgid "Techninės Žinios"
+msgstr "Technical Knowledge"
+
+#: feedbackas/services.py:104 feedbackas/services.py:204
+#: feedbackas/services.py:236
+msgid "Problemų Sprendimas"
+msgstr "Problem Solving"
+
+#: feedbackas/settings.py:161
+msgid "Lietuvių"
+msgstr "Lithuanian"
+
+#: feedbackas/settings.py:162
+msgid "English"
+msgstr "English"
+
+#: feedbackas/templatetags/translation_tags.py:28 feedbackas/views.py:331
+#: templates/all_feedback_list.html:89 templates/fill_feedback.html:119
+#: templates/my_tasks.html:74 templates/my_tasks.html:144
+#: templates/my_tasks.html:167 templates/my_tasks.html:186
+msgid "Atsiliepimas"
+msgstr "Feedback"
+
+#: templates/all_feedback_list.html:5
+msgid "Visi Įvertinimai - Orbigrow.lt"
+msgstr "All Ratings - Orbigrow.lt"
+
+#: templates/all_feedback_list.html:28
+msgid "Visi įvertinimai"
+msgstr "All Ratings"
+
+#: templates/all_feedback_list.html:30
+msgid "Visų platformoje pateiktų įvertinimų sąrašas"
+msgstr ""
+
+#: templates/all_feedback_list.html:42
+msgid "Įvertinimų istorija"
+msgstr "Feedback"
+
+#: templates/all_feedback_list.html:51
+msgid "Vertinamas asmuo"
+msgstr "Person to Evaluate"
+
+#: templates/all_feedback_list.html:54
+msgid "Vertintojas"
+msgstr "Evaluator"
+
+#: templates/all_feedback_list.html:57
+msgid "Projektas"
+msgstr "Project name"
+
+#: templates/all_feedback_list.html:60
+msgid "Data"
+msgstr ""
+
+#: templates/all_feedback_list.html:63 templates/results.html:234
+msgid "Įvertinimas"
+msgstr "Rating"
+
+#: templates/all_feedback_list.html:109
+msgid "Užpildytų vertinimų nerasta."
+msgstr ""
+
+#: templates/apie_mus.html:8 templates/apie_mus.html:33
+#: templates/saugumas.html:55
+msgid "Apie mus"
+msgstr "About us"
+
+#: templates/apie_mus.html:32 templates/saugumas.html:54
+msgid "Pradžia"
+msgstr "Home"
+
+#: templates/apie_mus.html:34
+msgid "Saugumas"
+msgstr "Security"
+
+#: templates/apie_mus.html:40 templates/saugumas.html:61
+msgid "Prietaisų skydelis"
+msgstr "Dashboard"
+
+#: templates/apie_mus.html:44 templates/registration/login.html:78
+#: templates/registration/login.html:100 templates/saugumas.html:65
+msgid "Prisijungti"
+msgstr "Login"
+
+#: templates/base.html:9
+msgid "Orbigrow.lt"
+msgstr "Orbigrow.lt"
+
+#: templates/base.html:52
+msgid "Jūs peržiūrite sistemą kaip"
+msgstr "You are viewing the system as"
+
+#: templates/base.html:55
+msgid "Grįžti į Superadmin"
+msgstr "Return to Superadmin"
+
+#: templates/base.html:79
+msgid "Pagrindinis"
+msgstr "Home"
+
+#: templates/base.html:88
+msgid "Mano Užduotys"
+msgstr "My Tasks"
+
+#: templates/base.html:96
+msgid "Mano Komanda"
+msgstr "My Team"
+
+#: templates/base.html:105 templates/questionnaires/list.html:4
+msgid "Individuali forma"
+msgstr "Personal Form"
+
+#: templates/base.html:117
+msgid "Įmonės valdymas"
+msgstr "Company Management"
+
+#: templates/base.html:127 templates/feedbackas/team_members_list.html:113
+msgid "Rezultatai"
+msgstr "Results"
+
+#: templates/base.html:136 templates/team_statistics.html:16
+msgid "Komandos statistika"
+msgstr "Team Statistics"
+
+#: templates/base.html:160
+msgid "Įmonės"
+msgstr "Companies"
+
+#: templates/base.html:169
+msgid "Supervartotojai"
+msgstr "Superusers"
+
+#: templates/base.html:178
+msgid "Vartotojai"
+msgstr "Users"
+
+#: templates/base.html:186
+msgid "Aprašymai"
+msgstr "Descriptions"
+
+#: templates/base.html:207
+msgid "Atsijungti"
+msgstr "Logout"
+
+#: templates/company_management.html:4
+msgid "Įmonės Valdymas - Orbigrow.lt"
+msgstr "Company Management"
+
+#: templates/company_management.html:14
+msgid "struktūra"
+msgstr "structure"
+
+#: templates/company_management.html:15
+msgid "Valdykite komandas ir priskirkite darbuotojus."
+msgstr "Manage teams and assign employees."
+
+#: templates/company_management.html:19 templates/company_management.html:108
+msgid "Padalinys"
+msgstr "Department"
+
+#: templates/company_management.html:29
+msgid "Organizacinis Medis"
+msgstr "Organizational Tree"
+
+#: templates/company_management.html:43
+msgid "Struktūra dar nesukurta."
+msgstr "Structure not created yet."
+
+#: templates/company_management.html:53
+msgid "Nepriskirti Darbuotojai"
+msgstr "Unassigned Employees"
+
+#: templates/company_management.html:74
+msgid "Pasirinkite padalinį..."
+msgstr "Select a department..."
+
+#: templates/company_management.html:85
+msgid "Priskirti"
+msgstr "Assign"
+
+#: templates/company_management.html:92
+msgid "Visi darbuotojai priskirti."
+msgstr "All employees are assigned."
+
+#: templates/company_management.html:109
+msgid "Įveskite padalinio informaciją"
+msgstr "Enter department information"
+
+#: templates/company_management.html:116 templates/home.html:214
+msgid "Pavadinimas"
+msgstr "Title"
+
+#: templates/company_management.html:126
+msgid "Tėvinis padalinys"
+msgstr "Parent Department"
+
+#: templates/company_management.html:133
+#: templates/feedbackas/team_members_list.html:52
+msgid "Vadovas"
+msgstr "Manager"
+
+#: templates/company_management.html:141 templates/home.html:226
+#: templates/home.html:247 templates/questionnaires/list.html:172
+#: templates/questionnaires/list.html:251
+#: templates/questionnaires/list.html:312
+#: templates/questionnaires/list.html:375
+msgid "Atšaukti"
+msgstr "Cancel"
+
+#: templates/company_management.html:143 templates/questionnaires/list.html:173
+msgid "Sukurti"
+msgstr "Create"
+
+#: templates/feedbackas/team_members_list.html:5
+msgid "Mano Komanda - Orbigrow.lt"
+msgstr "My Team - Orbigrow.lt"
+
+#: templates/feedbackas/team_members_list.html:23
+#: templates/team_members.html:26
+msgid "Komandos nariai"
+msgstr "Team Members"
+
+#: templates/feedbackas/team_members_list.html:52
+#: templates/includes/department_node.html:24 templates/team_statistics.html:48
+msgid "nariai"
+msgstr "members"
+
+#: templates/feedbackas/team_members_list.html:60
+msgid "vidurkis"
+msgstr "average"
+
+#: templates/feedbackas/team_members_list.html:76
+#: templates/team_statistics.html:111
+msgid "Darbuotojas"
+msgstr "Employee"
+
+#: templates/feedbackas/team_members_list.html:78
+#: templates/feedbackas/team_members_list.html:166
+#: templates/team_members.html:65
+msgid "Reitingas"
+msgstr "Rating"
+
+#: templates/feedbackas/team_members_list.html:79
+msgid "Veiksmai"
+msgstr "Actions"
+
+#: templates/feedbackas/team_members_list.html:117
+#: templates/team_members.html:80
+msgid "Laukiama"
+msgstr "Pending"
+
+#: templates/feedbackas/team_members_list.html:119
+#: templates/feedbackas/team_members_list.html:175
+msgid "Jau turite neužpildytą užklausą nuo šio nario"
+msgstr "You already have a pending request from this member"
+
+#: templates/feedbackas/team_members_list.html:125
+#: templates/feedbackas/team_members_list.html:182
+#: templates/team_members.html:90
+msgid "Vertinti"
+msgstr "Rate"
+
+#: templates/feedbackas/team_members_list.html:132
+msgid "Nėra narių."
+msgstr "No members found."
+
+#: templates/feedbackas/team_members_list.html:173
+msgid "Laukiama užpildymo"
+msgstr "Waiting for completion"
+
+#: templates/feedbackas/team_members_list.html:188
+msgid "Jūs"
+msgstr "You"
+
+#: templates/feedbackas/team_members_list.html:195
+msgid "Jūsų komandoje narių nerasta."
+msgstr "No members found in your team."
+
+#: templates/fill_feedback.html:5
+msgid "Kolegos Apklausa - Orbigrow.lt"
+msgstr "Colleague Survey - Orbigrow.lt"
+
+#: templates/fill_feedback.html:124
+msgid "Atgal"
+msgstr "Back"
+
+#: templates/fill_feedback.html:138
+msgid "Atsiliepimas apie"
+msgstr "Feedback about"
+
+#: templates/fill_feedback.html:193 templates/team_statistics.html:166
+msgid "Mokosi"
+msgstr "Learning"
+
+#: templates/fill_feedback.html:199 templates/team_statistics.html:162
+msgid "Daro"
+msgstr "Doing"
+
+#: templates/fill_feedback.html:205 templates/team_statistics.html:158
+msgid "Varo"
+msgstr "Driving"
+
+#: templates/fill_feedback.html:211 templates/team_statistics.html:154
+msgid "Pavyzdys"
+msgstr "Example"
+
+#: templates/fill_feedback.html:216
+msgid "Pasirinkite vieną iš lygių aukščiau"
+msgstr "Choose one of the levels above"
+
+#: templates/fill_feedback.html:229 templates/team_member_detail.html:57
+msgid "Raktiniai žodžiai"
+msgstr "Keywords"
+
+#: templates/fill_feedback.html:234
+msgid "Įveskite žodį ir spauskite Enter arba kablelį..."
+msgstr "Enter a word and press Enter or comma..."
+
+#: templates/fill_feedback.html:237
+msgid "Rinktis iš debesies"
+msgstr "Choose from cloud"
+
+#: templates/fill_feedback.html:248
+msgid "Raktinių žodžių debesis"
+msgstr "Keyword cloud"
+
+#: templates/fill_feedback.html:263
+msgid "Komentarai"
+msgstr "Comments"
+
+#: templates/fill_feedback.html:265
+msgid "Įrašykite laisvos formos komentarus apie kolegą..."
+msgstr "Enter free-form comments about the colleague..."
+
+#: templates/fill_feedback.html:271
+msgid "Išsamus atsiliepimas (AI)"
+msgstr "Detailed feedback (AI)"
+
+#: templates/fill_feedback.html:274
+msgid "Pateikite išsamesnį komentarą..."
+msgstr "Provide a more detailed comment..."
+
+#: templates/fill_feedback.html:290 templates/fill_feedback.html:662
+msgid "Generuoti AI juodraštį"
+msgstr "Generate AI draft"
+
+#: templates/fill_feedback.html:294
+msgid "Pasirinkite visas savybes ir bent 3 raktinius žodžius"
+msgstr "Select all traits and at least 3 keywords"
+
+#: templates/fill_feedback.html:300
+msgid "Patvirtinti ir siųsti"
+msgstr "Confirm and send"
+
+#: templates/home.html:91
+msgid "Labas,"
+msgstr "Hello,"
+
+#: templates/home.html:92
+msgid "Štai kas šiandien vyksta su jūsų grįžtamuoju ryšiu."
+msgstr "Here is what is happening with your feedback today."
+
+#: templates/home.html:96 templates/home.html:121
+msgid "Prašyti įvertinimo"
+msgstr "Request feedback"
+
+#: templates/home.html:99
+msgid "Siųsti įvertinimą"
+msgstr "Send feedback"
+
+#: templates/home.html:113
+msgid "Jūs jau žinote. Mes tiesiog randame žodžius."
+msgstr "You already know. We just find the words."
+
+#: templates/home.html:115
+msgid ""
+"Pasirinkite raktinius žodžius, pridėkite komentarą — sistema per kelias "
+"sekundes pavers tai aiškiu, į augimą orientuotu grįžtamuoju ryšiu."
+msgstr ""
+"Choose keywords, add a comment — the system will turn it into clear, growth-"
+"oriented feedback in seconds."
+
+#: templates/home.html:120
+msgid "Paprašykite pirmojo įvertinimo"
+msgstr "Request your first rating"
+
+#: templates/home.html:134
+msgid "Laukiančios apklausos"
+msgstr "Pending surveys"
+
+#: templates/home.html:139 templates/my_tasks.html:89
+#: templates/my_tasks.html:154
+msgid "Laukiama atsakymo"
+msgstr "Awaiting response"
+
+#: templates/home.html:144
+msgid "Užpildytos apklausos"
+msgstr "Completed surveys"
+
+#: templates/home.html:149
+msgid "Iš viso surinkta atsakymų"
+msgstr "Total responses collected"
+
+#: templates/home.html:154
+msgid "Mano išsiųsta"
+msgstr "My sent"
+
+#: templates/home.html:159
+msgid "Komandos nariams išsiųstas ryšys"
+msgstr "Feedback sent to team members"
+
+#: templates/home.html:170
+msgid "Komandos veikla"
+msgstr "Team activity"
+
+#: templates/home.html:171
+msgid "Rodyti komandą"
+msgstr "Show team"
+
+#: templates/home.html:181
+msgid "prieš"
+msgstr "ago"
+
+#: templates/home.html:189
+msgid "Komandos veiklos dar nėra. Pakvieskite narius."
+msgstr "No team activity yet. Invite members."
+
+#: templates/home.html:190
+msgid "Pakviesti narius"
+msgstr "Invite members"
+
+#: templates/home.html:202
+msgid "Prašyti atsiliepimo"
+msgstr "Request feedback"
+
+#: templates/home.html:209 templates/home.html:242
+#: templates/team_members.html:57
+msgid "Kolega"
+msgstr "Colleague"
+
+#: templates/home.html:213
+msgid "Projekto pavadinimas"
+msgstr "Project name"
+
+#: templates/home.html:217 templates/team_member_detail.html:177
+msgid "Komentaras"
+msgstr "Comment"
+
+#: templates/home.html:218
+msgid "Žinutė..."
+msgstr "Message..."
+
+#: templates/home.html:221
+msgid "Pateikti iki"
+msgstr "Due date"
+
+#: templates/home.html:227 templates/questionnaires/list.html:90
+msgid "Siųsti"
+msgstr "Send"
+
+#: templates/home.html:236
+msgid "Siųsti atsiliepimą"
+msgstr "Send feedback"
+
+#: templates/home.html:248
+msgid "Pasirinkti"
+msgstr "Select"
+
+#: templates/home.html:276
+msgid "Klaida:"
+msgstr "Error:"
+
+#: templates/home.html:287
+msgid "Pasirinkite kolegą!"
+msgstr "Select a colleague!"
+
+#: templates/home.html:326
+msgid "Kraunama..."
+msgstr ""
+
+#: templates/home.html:331
+msgid "Grįžtamojo ryšio dar nėra."
+msgstr ""
+
+#: templates/home.html:333
+msgid "Kaip pradėti"
+msgstr ""
+
+#: templates/includes/department_node.html:10
+msgid "Vadovas:"
+msgstr "Manager:"
+
+#: templates/includes/department_node.html:18
+msgid "Nėra paskirto vadovo"
+msgstr "No manager assigned"
+
+#: templates/includes/department_node.html:27 templates/my_tasks.html:192
+#: templates/questionnaires/list.html:87
+msgid "Redaguoti"
+msgstr "Edit"
+
+#: templates/includes/department_node.html:31
+msgid "Ar tikrai norite ištrinti padalinį"
+msgstr "Are you sure you want to delete the department"
+
+#: templates/includes/department_node.html:31
+msgid "Visi sub-padaliniai taip pat bus ištrinti."
+msgstr "All sub-departments will also be deleted."
+
+#: templates/includes/department_node.html:33 templates/my_tasks.html:113
+#: templates/questionnaires/list.html:94
+msgid "Ištrinti"
+msgstr "Delete"
+
+#: templates/includes/view_feedback_modal.html:8
+msgid "Atsiliepimo Peržiūra"
+msgstr "Feedback"
+
+#: templates/index.html:257 templates/index.html:468 templates/index.html:543
+msgid "Susisiekite su mumis"
+msgstr "Contact us"
+
+#: templates/index.html:302
+msgid "AI Kompetencijų Profilis"
+msgstr "Competency assessment"
+
+#: templates/index.html:555 templates/registration/login.html:56
+#: templates/registration/login.html:59 templates/registration/login.html:183
+#: users/templates/users/profile.html:48
+msgid "El. paštas"
+msgstr "Email"
+
+#: templates/index.html:560
+msgid "Telefono numeris"
+msgstr "Phone Number"
+
+#: templates/index.html:566
+msgid "Darbuotojų skaičius jūsų įmonėje"
+msgstr "Number of employees in your company"
+
+#: templates/index.html:568
+msgid "Pasirinkite..."
+msgstr "Select"
+
+#: templates/index.html:576
+msgid "Jūsų Žinutė"
+msgstr "Message..."
+
+#: templates/index.html:577
+msgid "Trumpai apibūdinkite savo poreikius..."
+msgstr "Briefly describe your needs..."
+
+#: templates/index.html:583
+msgid "Siųsti užklausą"
+msgstr "Send feedback"
+
+#: templates/my_tasks.html:5
+msgid "Mano Užduotys - Atsiliepimai+"
+msgstr "My Tasks"
+
+#: templates/my_tasks.html:26
+msgid "Mano užduotys"
+msgstr "My Tasks"
+
+#: templates/my_tasks.html:28
+msgid "Tvarkykite savo atsiliepimų prašymus ir atsakymus."
+msgstr "Manage your feedback requests and responses."
+
+#: templates/my_tasks.html:34
+msgid "Naujausi viršuje"
+msgstr "Newest first"
+
+#: templates/my_tasks.html:35
+msgid "Pagal terminą"
+msgstr "By deadline"
+
+#: templates/my_tasks.html:48
+msgid "Užduotys man"
+msgstr "Assigned to me"
+
+#: templates/my_tasks.html:53
+msgid "Mano išsiųsti prašymai"
+msgstr "My sent requests"
+
+#: templates/my_tasks.html:79
+msgid "Atsiliepimas apie:"
+msgstr "Feedback about"
+
+#: templates/my_tasks.html:81
+msgid "Atsiliepimą inicijavo:"
+msgstr "Feedback about"
+
+#: templates/my_tasks.html:97
+msgid "Užbaigta"
+msgstr "Completed"
+
+#: templates/my_tasks.html:105
+msgid "Tęsti pildymą"
+msgstr "Continue filling"
+
+#: templates/my_tasks.html:105
+msgid "Pildyti atsiliepimą"
+msgstr "Fill feedback"
+
+#: templates/my_tasks.html:108
+msgid "Atlikta"
+msgstr "Done"
+
+#: templates/my_tasks.html:110
+msgid "Ar tikrai norite ištrinti šią užduotį?"
+msgstr "Are you sure you want to delete this task?"
+
+#: templates/my_tasks.html:123
+msgid "Jokių užduočių"
+msgstr "No tasks"
+
+#: templates/my_tasks.html:124
+msgid "Šiuo metu neturite jums priskirtų atsiliepimų prašymų."
+msgstr "You currently have no feedback requests assigned to you."
+
+#: templates/my_tasks.html:147
+msgid "Atsiliepimas iš:"
+msgstr "Feedback from:"
+
+#: templates/my_tasks.html:152
+msgid "Gautas atsakymas"
+msgstr "Response received"
+
+#: templates/my_tasks.html:182
+msgid "Peržiūrėti"
+msgstr "View"
+
+#: templates/my_tasks.html:196
+msgid "Ar tikrai norite ištrinti šį prašymą?"
+msgstr "Are you sure you want to delete this request?"
+
+#: templates/my_tasks.html:209
+msgid "Tuščia"
+msgstr "Empty"
+
+#: templates/my_tasks.html:210
+msgid "Jūs dar nesate išsiuntę jokių prašymų."
+msgstr "You have not sent any requests yet."
+
+#: templates/my_tasks.html:224
+msgid "Redaguoti Užklausą"
+msgstr "Edit Request"
+
+#: templates/my_tasks.html:250
+msgid "Jūsų žinutė / komentaras"
+msgstr "Your message / comment"
+
+#: templates/my_tasks.html:261
+msgid "Terminas *"
+msgstr "Deadline *"
+
+#: templates/my_tasks.html:278 templates/questionnaires/list.html:313
+msgid "Išsaugoti"
+msgstr "Save"
+
+#: templates/questionnaires/list.html:30
+msgid "Kurkite ir valdykite unikalius atsiliepimų klausimynus."
+msgstr "Create and manage unique feedback questionnaires."
+
+#: templates/questionnaires/list.html:36 templates/questionnaires/list.html:150
+#: templates/questionnaires/list.html:229
+#: templates/questionnaires/list.html:252
+#: templates/questionnaires/list.html:261
+#: templates/questionnaires/list.html:290
+#: templates/questionnaires/list.html:327 templates/registration/login.html:49
+#: templates/registration/register.html:33
+#, python-format
+msgid "{%% trans "
+msgstr ""
+
+#: templates/questionnaires/list.html:40
+msgid "Kurti klausimyną"
+msgstr "Create Questionnaire"
+
+#: templates/questionnaires/list.html:57
+msgid "Komandinė"
+msgstr "Team"
+
+#: templates/questionnaires/list.html:61
+msgid "Asmeninė"
+msgstr "Personal"
+
+#: templates/questionnaires/list.html:76
+msgid "Nėra savybių"
+msgstr "No traits"
+
+#: templates/questionnaires/list.html:84
+msgid "Statistika"
+msgstr "Team Statistics"
+
+#: templates/questionnaires/list.html:94
+msgid "Ar tikrai norite ištrinti?"
+msgstr "Are you sure you want to delete this?"
+
+#: templates/questionnaires/list.html:107
+msgid "Kol kas neturite klausimynų"
+msgstr "No keywords yet."
+
+#: templates/questionnaires/list.html:110
+msgid "Kurti pirmąjį klausimyną"
+msgstr "Create your first questionnaire"
+
+#: templates/questionnaires/list.html:120
+msgid "Naujas klausimynas"
+msgstr "New Questionnaire"
+
+#: templates/questionnaires/list.html:130
+#: templates/questionnaires/list.html:192
+#: templates/questionnaires/list.html:271
+msgid "Klausimyno pavadinimas"
+msgstr "Project name"
+
+#: templates/questionnaires/list.html:138
+#: templates/questionnaires/list.html:217
+#: templates/questionnaires/list.html:278
+msgid "Savybių debesis"
+msgstr "Trait Cloud"
+
+#: templates/questionnaires/list.html:138
+#: templates/questionnaires/list.html:217
+#: templates/questionnaires/list.html:278
+msgid "paspauskite norimas savybes"
+msgstr "click the desired traits"
+
+#: templates/questionnaires/list.html:154
+#: templates/questionnaires/list.html:233
+#: templates/questionnaires/list.html:294
+msgid "Įveskite savybės pavadinimą..."
+msgstr "Enter trait name..."
+
+#: templates/questionnaires/list.html:156
+#: templates/questionnaires/list.html:235
+#: templates/questionnaires/list.html:296
+msgid "Pridėti"
+msgstr "Add"
+
+#: templates/questionnaires/list.html:162
+#: templates/questionnaires/list.html:241
+#: templates/questionnaires/list.html:302
+msgid "Pasirinktos savybės"
+msgstr "Select"
+
+#: templates/questionnaires/list.html:164
+#: templates/questionnaires/list.html:243
+#: templates/questionnaires/list.html:304
+msgid "Dar nepasirinkta jokia savybė"
+msgstr "No traits selected yet"
+
+#: templates/questionnaires/list.html:182
+msgid "Nauja komandinė forma"
+msgstr "New Team Form"
+
+#: templates/questionnaires/list.html:200
+msgid "Pasirinkite komandą"
+msgstr "Select a colleague!"
+
+#: templates/questionnaires/list.html:204
+#, python-format
+msgid "-- {%% trans "
+msgstr ""
+
+#: templates/questionnaires/list.html:328
+msgid "Pasirinkite kolegą (-as), kurių prašysite užpildyti šį klausimyną."
+msgstr "Select colleague(s) you want to ask to fill out this questionnaire."
+
+#: templates/questionnaires/list.html:342
+msgid "Pasirinktas klausimynas"
+msgstr "Select"
+
+#: templates/questionnaires/list.html:349
+msgid "Kam norite jį išsiųsti?"
+msgstr "My sent"
+
+#: templates/questionnaires/list.html:353
+#: templates/questionnaires/list.html:855
+msgid "Ieškoti kolegų..."
+msgstr "Search colleagues..."
+
+#: templates/questionnaires/list.html:367
+msgid "Nėra kolegų, kuriems galėtumėte išsiųsti"
+msgstr "No colleagues to send to"
+
+#: templates/questionnaires/list.html:371
+msgid "Turite pasirinkti bent vieną kolegą."
+msgstr "Select a colleague!"
+
+#: templates/questionnaires/statistics.html:4
+msgid "Klausimyno Statistika - Orbigrow.lt"
+msgstr "Questionnaire Statistics - Orbigrow.lt"
+
+#: templates/questionnaires/statistics.html:28
+msgid "Statistika:"
+msgstr "Team Statistics"
+
+#: templates/questionnaires/statistics.html:45
+msgid "Bendras Įvertinimas"
+msgstr "Member Ratings"
+
+#: templates/questionnaires/statistics.html:49
+msgid "Visų atsakymų vidurkis"
+msgstr "Average of all responses"
+
+#: templates/questionnaires/statistics.html:56
+msgid "Gauta Atsakymų"
+msgstr "Feedback received"
+
+#: templates/questionnaires/statistics.html:64
+msgid "Rezultatų Dinamika"
+msgstr "Results"
+
+#: templates/questionnaires/statistics.html:75
+msgid "Kompetencijų Vidurkiai"
+msgstr "Competency assessment"
+
+#: templates/questionnaires/statistics.html:96
+msgid "Kolegų Paminėti Raktiniai Žodžiai"
+msgstr "Keywords"
+
+#: templates/questionnaires/statistics.html:102 templates/results.html:97
+msgid "Kol kas nėra raktinių žodžių."
+msgstr "No keywords yet."
+
+#: templates/questionnaires/statistics.html:120
+msgid "Laisvos formos komentarai"
+msgstr "Enter free-form comments about the colleague..."
+
+#: templates/questionnaires/statistics.html:128 templates/results.html:123
+#: templates/results.html:144
+msgid "Kol kas nėra atsiliepimų."
+msgstr "No keywords yet."
+
+#: templates/questionnaires/statistics.html:181
+msgid "Trūksta duomenų grafiko atvaizdavimui."
+msgstr "Not enough historical data to display the chart."
+
+#: templates/registration/login.html:10 templates/registration/login.html:52
+msgid "Prisijungimo Forma"
+msgstr "Login"
+
+#: templates/registration/login.html:39
+msgid "Grįžti į pradžią"
+msgstr "Return to Superadmin"
+
+#: templates/registration/login.html:65 templates/registration/login.html:68
+msgid "Slaptažodis"
+msgstr "Password"
+
+#: templates/registration/login.html:86
+msgid "arba"
+msgstr "or"
+
+#: templates/registration/register.html:8
+#: templates/registration/register.html:36
+msgid "Registracijos Forma"
+msgstr "Registration Form"
+
+#: templates/registration/register.html:42
+msgid "Klaida!"
+msgstr "Error:"
+
+#: templates/registration/register.html:53
+#: templates/registration/register.html:56
+#: users/templates/users/profile.html:38
+msgid "Vardas"
+msgstr "First Name"
+
+#: templates/registration/register.html:61
+#: templates/registration/register.html:64
+#: users/templates/users/profile.html:43
+msgid "Pavardė"
+msgstr "Last Name"
+
+#: templates/registration/register.html:72
+msgid "Įmonė (Nebūtina)"
+msgstr "Company (Optional)"
+
+#: templates/registration/register.html:96
+msgid "Pakartokite slaptažodį"
+msgstr "Repeat password"
+
+#: templates/registration/register.html:112
+msgid "Jau turite paskyrą?"
+msgstr "Already have an account?"
+
+#: templates/registration/register.html:114
+msgid "Prisijunkite"
+msgstr "Login"
+
+#: templates/results.html:5
+msgid "Rezultatai - Orbigrow.lt"
+msgstr "Results - Orbigrow.lt"
+
+#: templates/results.html:27
+msgid "Mano rezultatai"
+msgstr "My results"
+
+#: templates/results.html:29
+msgid "Jūsų asmeninio tobulėjimo suvestinė."
+msgstr "Your personal development summary."
+
+#: templates/results.html:35
+msgid "Visi"
+msgstr "All"
+
+#: templates/results.html:37
+msgid "Mėnuo"
+msgstr "Month"
+
+#: templates/results.html:39
+msgid "Ketvirtis"
+msgstr "Quarter"
+
+#: templates/results.html:41
+msgid "Metai"
+msgstr "Year"
+
+#: templates/results.html:57
+msgid "Kompetencijų vertinimas"
+msgstr "Competency assessment"
+
+#: templates/results.html:87
+msgid "Kaip jus apibūdina"
+msgstr "How you are described"
+
+#: templates/results.html:104 templates/results.html:107
+#: templates/results.html:115
+msgid "Stiprybės"
+msgstr "Strengths"
+
+#: templates/results.html:136
+msgid "Ką tobulinti"
+msgstr "Areas for Improvement"
+
+#: templates/results.html:159
+msgid "Kompetencijos Vertinimas"
+msgstr "Competency assessment"
+
+#: templates/results.html:174
+msgid "Nepakanka istorinių duomenų grafikui atvaizduoti."
+msgstr "Not enough historical data to display the chart."
+
+#: templates/results.html:180
+msgid "Uždaryti"
+msgstr "Close"
+
+#: templates/results.html:284
+msgid "Vertinimas:"
+msgstr "Evaluate"
+
+#: templates/results.html:295
+msgid "Įvyko klaida gaunant duomenis."
+msgstr "An error occurred while fetching data."
+
+#: templates/saugumas.html:7
+msgid "Saugumo užtikrinimas"
+msgstr "Security assurance"
+
+#: templates/saugumas.html:83
+msgid "Saugumo Užtikrinimas"
+msgstr "Security Assurance"
+
+#: templates/saugumas.html:85
+msgid "Jūsų duomenų saugumas ir privatumas yra mūsų prioritetas."
+msgstr "Your data security and privacy is our priority."
+
+#: templates/team_member_detail.html:5
+msgid "{{ member.get_full_name }} — Komandos Statistika"
+msgstr ""
+
+#: templates/team_member_detail.html:34
+msgid "Bendras vidurkis"
+msgstr "Team average"
+
+#: templates/team_member_detail.html:47
+msgid "Atsiliepimų skaičius"
+msgstr "Feedback"
+
+#: templates/team_member_detail.html:51
+msgid "Užbaigtų apklausų"
+msgstr "Completed surveys"
+
+#: templates/team_member_detail.html:63
+msgid "Kol kas nėra raktinių žodžių"
+msgstr "No keywords yet."
+
+#: templates/team_member_detail.html:77
+msgid "Kompetencijos"
+msgstr "Team Competencies"
+
+#: templates/team_member_detail.html:102
+msgid "Savybių įvertinimai"
+msgstr "Member Ratings"
+
+#: templates/team_member_detail.html:123
+msgid "Šis darbuotojas dar neturi unikalių savybių įvertinimų."
+msgstr "This employee does not have unique trait ratings yet."
+
+#: templates/team_member_detail.html:135
+msgid "Atsiliepimų istorija"
+msgstr "Feedback"
+
+#: templates/team_member_detail.html:235
+msgid "Šis darbuotojas dar neturi jokių atsiliepimų istorijos."
+msgstr "This employee has no feedback history yet."
+
+#: templates/team_members.html:5
+msgid "Mano Komanda - Atsiliepimai+"
+msgstr "My Team"
+
+#: templates/team_members.html:28
+msgid "Bendraukite ir keiskitės grįžtamuoju ryšiu su kolegomis."
+msgstr "Communicate and exchange feedback with colleagues."
+
+#: templates/team_members.html:59
+msgid "Skyrius nepriskirtas"
+msgstr "Department not assigned"
+
+#: templates/team_members.html:83
+msgid "Jau turite neužpildytą užklausą"
+msgstr "You already have an unfilled request"
+
+#: templates/team_members.html:105
+msgid "Tuščia komanda"
+msgstr "Empty team"
+
+#: templates/team_members.html:106
+msgid ""
+"Jūsų komandoje dar nėra narių. Pakvieskite kolegas prisijungti prie "
+"platformos, kad galėtumėte keistis atsiliepimais."
+msgstr ""
+
+#: templates/team_statistics.html:3
+msgid "Komandos Statistika - Orbigrow.lt"
+msgstr "Team Statistics"
+
+#: templates/team_statistics.html:18
+msgid "Bendra komandos kompetencijų ir aktyvumo apžvalga"
+msgstr "General overview of team competencies and activity"
+
+#: templates/team_statistics.html:31
+msgid "Komandos vidurkis"
+msgstr "Team average"
+
+#: templates/team_statistics.html:35
+msgid "iš 4"
+msgstr "out of 4"
+
+#: templates/team_statistics.html:44
+msgid "Narių skaičius"
+msgstr "Number of members"
+
+#: templates/team_statistics.html:57
+msgid "Gauta atsiliepimų"
+msgstr "Feedback received"
+
+#: templates/team_statistics.html:61
+msgid "iš viso"
+msgstr "total"
+
+#: templates/team_statistics.html:72
+msgid "Komandos Kompetencijos"
+msgstr "Team Competencies"
+
+#: templates/team_statistics.html:92
+msgid "Nėra pakankamai duomenų kompetencijoms rodyti."
+msgstr "Not enough data to display competencies."
+
+#: templates/team_statistics.html:104
+msgid "Narių Įvertinimai"
+msgstr "Member Ratings"
+
+#: templates/team_statistics.html:113
+msgid "Atsiliepimų"
+msgstr "Feedback"
+
+#: templates/team_statistics.html:115
+msgid "Vidurkis"
+msgstr "Average"
+
+#: templates/team_statistics.html:117
+msgid "Lygis"
+msgstr "Level"
+
+#: templates/team_statistics.html:178
+msgid "Komandoje kol kas nėra narių su atsiliepimais."
+msgstr "No members with feedback in the team yet."
+
+#: users/templates/users/profile.html:4
+msgid "Profilis"
+msgstr "Profile"
+
+#: users/templates/users/profile.html:35
+msgid "Asmeninė informacija"
+msgstr "Personal Information"
+
+#: users/templates/users/profile.html:57
+msgid "Profilio nuotrauka"
+msgstr "Profile Picture"
+
+#: users/templates/users/profile.html:66
+msgid "Keisti slaptažodį"
+msgstr "Change Password"
+
+#: users/templates/users/profile.html:67
+msgid "Palikite tuščia, jei nenorite keisti slaptažodžio."
+msgstr "Leave blank if you don't want to change the password."
+
+#: users/templates/users/profile.html:70
+msgid "Dabartinis slaptažodis"
+msgstr "Current password"
+
+#: users/templates/users/profile.html:79
+msgid "Naujas slaptažodis"
+msgstr "New password"
+
+#: users/templates/users/profile.html:87
+msgid "Pakartokite naują slaptažodį"
+msgstr "Repeat new password"
+
+#: users/templates/users/profile.html:99
+msgid "Atnaujinti profilį"
+msgstr "Update Profile"
+
+#~ msgid "Sukurti Paskyrą ✨"
+#~ msgstr "Create Account ✨"

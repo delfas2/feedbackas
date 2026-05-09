@@ -1,10 +1,11 @@
+{% load i18n %}
 {% load static %}
 <!DOCTYPE html>
 <html lang="lt">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registracijos Forma</title>
+    <title>{% trans "Registracijos Forma" %}</title>
     <!-- Tailwind CSS CDN -->
     <link href="{% static 'css/styles.css' %}" rel="stylesheet">
     <!-- Google Fonts (Inter) -->
@@ -29,16 +30,16 @@
 
         <!-- Formos Antraštė -->
         <h2 class="text-3xl font-bold text-center text-text-main mb-6">
-            Sukurti Paskyrą ✨
+            {% trans "{% trans "Sukurti Paskyrą ✨" %}" %}
         </h2>
         
-        <!-- Registracijos Forma -->
+        <!-- {% trans "Registracijos Forma" %} -->
         <form method="POST" class="space-y-4">
             {% csrf_token %}
 
             {% if form.errors %}
                 <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                    <strong class="font-bold">Klaida!</strong>
+                    <strong class="font-bold">{% trans "Klaida!" %}</strong>
                     <ul class="list-disc pl-5">
                     {% for field, errors in form.errors.items %}
                         {% for error in errors %}
@@ -49,18 +50,18 @@
                 </div>
             {% endif %}
             
-            <!-- Vardas -->
+            <!-- {% trans "Vardas" %} -->
             <div>
                 <label for="{{ form.first_name.id_for_label }}" class="block text-sm font-medium text-text-main">
-                    Vardas
+                    {% trans "Vardas" %}
                 </label>
                 {{ form.first_name }}
             </div>
 
-            <!-- Pavardė -->
+            <!-- {% trans "Pavardė" %} -->
             <div>
                 <label for="{{ form.last_name.id_for_label }}" class="block text-sm font-medium text-text-main">
-                    Pavardė
+                    {% trans "Pavardė" %}
                 </label>
                 {{ form.last_name }}
             </div>
@@ -68,7 +69,7 @@
             <!-- Įmonė -->
             <div>
                 <label for="{{ form.company.id_for_label }}" class="block text-sm font-medium text-text-main">
-                    Įmonė (Nebūtina)
+                    {% trans "Įmonė (Nebūtina)" %}
                 </label>
                 {{ form.company }}
             </div>
@@ -92,7 +93,7 @@
             <!-- Pakartoti Slaptažodį -->
             <div>
                 <label for="{{ form.password2.id_for_label }}" class="block text-sm font-medium text-text-main">
-                    Pakartokite slaptažodį
+                    {% trans "Pakartokite slaptažodį" %}
                 </label>
                 {{ form.password2 }}
             </div>
@@ -108,9 +109,9 @@
 
         <!-- Prisijungimo Nuoroda -->
         <p class="mt-6 text-center text-sm text-text-muted">
-            Jau turite paskyrą?
+            {% trans "Jau turite paskyrą?" %}
             <a href="{% url 'login' %}" class="font-medium text-primary hover:text-primary">
-                Prisijunkite
+                {% trans "Prisijunkite" %}
             </a>
         </p>
     </div>

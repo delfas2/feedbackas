@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 
-{% block title %}Mano Užduotys - Atsiliepimai+{% endblock %}
+{% block title %}{% trans "Mano Užduotys - Atsiliepimai+" %}{% endblock %}
 
 {% block content %}
 <script src="https://unpkg.com/lucide@latest"></script>
@@ -22,16 +23,16 @@
             </a>
 
             <h1 class="text-3xl font-bold text-slate-800 hidden md:block">
-                Mano užduotys
+                {% trans "Mano užduotys" %}
             </h1>
-            <p class="text-slate-500 mt-1 hidden md:block">Tvarkykite savo atsiliepimų prašymus ir atsakymus.</p>
+            <p class="text-slate-500 mt-1 hidden md:block">{% trans "Tvarkykite savo atsiliepimų prašymus ir atsakymus." %}</p>
         </div>
 
         <!-- Filtravimas -->
         <div class="flex space-x-2">
             <select class="bg-white border border-slate-200 text-slate-700 py-2.5 px-4 rounded-xl text-sm font-semibold shadow-sm outline-none transition-all focus:border-slate-300 focus:ring-4 focus:ring-slate-100 cursor-pointer hover:bg-slate-50">
-                <option>Naujausi viršuje</option>
-                <option>Pagal terminą</option>
+                <option>{% trans "Naujausi viršuje" %}</option>
+                <option>{% trans "Pagal terminą" %}</option>
             </select>
         </div>
     </header>
@@ -44,12 +45,12 @@
             <nav class="flex space-x-8 text-sm font-semibold" aria-label="Tabs">
                 <button id="btn-tab-assigned"
                     class="flex items-center gap-2 border-b-2 border-slate-900 text-slate-900 pb-3 px-1 transition-colors">
-                    Užduotys man
+                    {% trans "Užduotys man" %}
                     <span class="bg-slate-100 text-slate-800 py-0.5 px-2.5 rounded-full text-[11px] font-bold">{{ assigned_requests.count }}</span>
                 </button>
                 <button id="btn-tab-made"
                     class="flex items-center gap-2 border-b-2 border-transparent text-slate-400 pb-3 px-1 hover:text-slate-700 transition-colors">
-                    Mano išsiųsti prašymai
+                    {% trans "Mano išsiųsti prašymai" %}
                     <span class="bg-slate-100 text-slate-500 py-0.5 px-2.5 rounded-full text-[11px] font-bold">{{ made_requests.count }}</span>
                 </button>
             </nav>
@@ -70,14 +71,14 @@
                         </div>
                         <div>
                             <h3 class="text-[17px] font-bold text-slate-800 {% if request.status == 'completed' %}line-through{% endif %}">
-                                {{ request.project_name }}
+                                {% if request.project_name == "Atsiliepimas" %}{% trans "Atsiliepimas" %}{% else %}{{ request.project_name }}{% endif %}
                             </h3>
                             {% with req=request.requester %}
                             {% with name=req.get_full_name|default:req.username %}
                             {% if request.is_self_initiated %}
-                            <p class="text-slate-500 text-[13px] mt-1 font-medium">Atsiliepimas apie: <span class="font-bold text-slate-900">{{ name }}</span></p>
+                            <p class="text-slate-500 text-[13px] mt-1 font-medium">{% trans "Atsiliepimas apie:" %} <span class="font-bold text-slate-900">{{ name }}</span></p>
                             {% else %}
-                            <p class="text-slate-500 text-[13px] mt-1 font-medium">Atsiliepimą inicijavo: <span class="font-bold text-slate-900">{{ name }}</span></p>
+                            <p class="text-slate-500 text-[13px] mt-1 font-medium">{% trans "Atsiliepimą inicijavo:" %} <span class="font-bold text-slate-900">{{ name }}</span></p>
                             {% endif %}
                             {% endwith %}
                             {% endwith %}
@@ -85,7 +86,7 @@
                             
                             <div class="flex items-center mt-4 space-x-3 text-xs">
                                 {% if request.status == 'pending' %}
-                                <span class="bg-teal-50 text-teal-700 px-3 py-1 rounded-full font-bold tracking-wide uppercase text-[10px]">Laukiama atsakymo</span>
+                                <span class="bg-teal-50 text-teal-700 px-3 py-1 rounded-full font-bold tracking-wide uppercase text-[10px]">{% trans "Laukiama atsakymo" %}</span>
                                 {% if request.due_date %}
                                 <span class="text-slate-500 flex items-center font-semibold">
                                     <i data-lucide="calendar" class="w-3.5 h-3.5 mr-1.5 opacity-60"></i>
@@ -93,7 +94,7 @@
                                 </span>
                                 {% endif %}
                                 {% else %}
-                                <span class="bg-slate-100 text-slate-500 px-3 py-1 rounded-full font-bold tracking-wide uppercase text-[10px]">Užbaigta</span>
+                                <span class="bg-slate-100 text-slate-500 px-3 py-1 rounded-full font-bold tracking-wide uppercase text-[10px]">{% trans "Užbaigta" %}</span>
                                 {% endif %}
                             </div>
                         </div>
@@ -101,15 +102,15 @@
                     <div class="w-full md:w-auto flex flex-col sm:flex-row gap-3">
                         {% if request.status == 'pending' %}
                         <a href="{% url 'fill_feedback' request.id %}" class="block w-full sm:w-auto text-center px-8 py-3 bg-slate-900 text-white font-bold rounded-2xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/10">
-                            {% if request.is_self_initiated %}Tęsti pildymą{% else %}Pildyti atsiliepimą{% endif %}
+                            {% if request.is_self_initiated %}{% trans "Tęsti pildymą" %}{% else %}{% trans "Pildyti atsiliepimą" %}{% endif %}
                         </a>
                         {% else %}
-                        <span class="block w-full sm:w-auto text-center px-8 py-3 text-slate-400 font-bold cursor-default">Atlikta</span>
+                        <span class="block w-full sm:w-auto text-center px-8 py-3 text-slate-400 font-bold cursor-default">{% trans "Atlikta" %}</span>
                         {% endif %}
-                        <form action="{% url 'reject_feedback_request' request.id %}" method="POST" class="w-full sm:w-auto" onsubmit="return confirm('Ar tikrai norite ištrinti šią užduotį?');">
+                        <form action="{% url 'reject_feedback_request' request.id %}" method="POST" class="w-full sm:w-auto" onsubmit="return confirm('{% trans "Ar tikrai norite ištrinti šią užduotį?" %}');">
                             {% csrf_token %}
                             <button type="submit" class="block w-full text-center px-4 py-3 bg-white border border-slate-200 text-red-500 font-bold rounded-2xl hover:bg-red-50 hover:text-red-600 transition-colors">
-                                Ištrinti
+                                {% trans "Ištrinti" %}
                             </button>
                         </form>
                     </div>
@@ -119,8 +120,8 @@
                     <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
                         <i data-lucide="inbox" class="w-8 h-8 text-slate-300"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-1">Jokių užduočių</h3>
-                    <p class="text-slate-500 text-sm">Šiuo metu neturite jums priskirtų atsiliepimų prašymų.</p>
+                    <h3 class="text-lg font-bold text-slate-800 mb-1">{% trans "Jokių užduočių" %}</h3>
+                    <p class="text-slate-500 text-sm">{% trans "Šiuo metu neturite jums priskirtų atsiliepimų prašymų." %}</p>
                 </div>
                 {% endfor %}
             </div>
@@ -140,17 +141,17 @@
                             {% endif %}
                         </div>
                         <div>
-                            <h3 class="text-[17px] font-bold text-slate-800">{{ request.project_name }}</h3>
+                            <h3 class="text-[17px] font-bold text-slate-800">{% if request.project_name == "Atsiliepimas" %}{% trans "Atsiliepimas" %}{% else %}{{ request.project_name }}{% endif %}</h3>
                             {% with reqto=request.requested_to %}
                             {% with name=reqto.get_full_name|default:reqto.username %}
-                            <p class="text-slate-500 text-[13px] mt-1 font-medium">Atsiliepimas iš: <span class="font-bold text-slate-900">{{ name }}</span></p>
+                            <p class="text-slate-500 text-[13px] mt-1 font-medium">{% trans "Atsiliepimas iš:" %} <span class="font-bold text-slate-900">{{ name }}</span></p>
                             {% endwith %}
                             {% endwith %}
                             <div class="flex items-center mt-4 space-x-3 text-xs">
                                 {% if request.status == 'completed' %}
-                                <span class="bg-green-50 text-green-700 px-3 py-1 rounded-full font-bold tracking-wide uppercase text-[10px]">Gautas atsakymas</span>
+                                <span class="bg-green-50 text-green-700 px-3 py-1 rounded-full font-bold tracking-wide uppercase text-[10px]">{% trans "Gautas atsakymas" %}</span>
                                 {% else %}
-                                <span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-bold tracking-wide uppercase text-[10px]">Laukiama atsakymo</span>
+                                <span class="bg-blue-50 text-blue-700 px-3 py-1 rounded-full font-bold tracking-wide uppercase text-[10px]">{% trans "Laukiama atsakymo" %}</span>
                                 {% endif %}
                                 {% if request.due_date %}
                                 <span class="text-slate-500 flex items-center font-semibold">
@@ -163,7 +164,7 @@
                     </div>
                     <div class="w-full md:w-auto flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
                         {% if request.status == 'completed' and request.feedback %}
-                        <button type="button" data-project="{{ request.project_name }}"
+                        <button type="button" data-project="{% if request.project_name == "Atsiliepimas" %}{% trans "Atsiliepimas" %}{% else %}{{ request.project_name }}{% endif %}"
                             data-rname="{{ request.requested_to.get_full_name|default:request.requested_to.username }}"
                             data-rating="{{ request.feedback.rating }}"
                             data-date="{{ request.feedback.created_at|default:request.created_at|date:'Y-m-d' }}"
@@ -178,21 +179,21 @@
                             data-traits='[{% for tr in request.feedback.trait_ratings.all %}{"name": "{{ tr.trait.name|escapejs }}", "rating": {{ tr.rating }}}{% if not forloop.last %},{% endif %}{% endfor %}]'
                             {% endif %} onclick="openViewModal(this)"
                             class="block w-full sm:w-auto text-center px-8 py-3 bg-white border border-slate-200 text-slate-800 font-bold rounded-2xl hover:bg-slate-50 transition-colors">
-                            Peržiūrėti
+                            {% trans "Peržiūrėti" %}
                         </button>
                         {% else %}
                             {% with reqto=request.requested_to %}
-                            <button type="button" data-id="{{ request.id }}" data-project="{{ request.project_name }}"
+                            <button type="button" data-id="{{ request.id }}" data-project="{% if request.project_name == "Atsiliepimas" %}{% trans "Atsiliepimas" %}{% else %}{{ request.project_name }}{% endif %}"
                                 data-comment="{{ request.comment|default:'' }}"
                                 data-date="{{ request.due_date|date:'Y-m-d' }}"
                                 data-rname="{{ reqto.get_full_name|default:reqto.username }}"
                                 onclick="openEditModal(this)"
                                 class="block w-full sm:w-auto text-center px-8 py-3 bg-white border border-slate-200 text-slate-800 font-bold rounded-2xl hover:bg-slate-50 transition-colors flex items-center justify-center gap-2">
-                                <i data-lucide="edit-2" class="w-4 h-4"></i> Redaguoti
+                                <i data-lucide="edit-2" class="w-4 h-4"></i> {% trans "Redaguoti" %}
                             </button>
                             {% endwith %}
                         {% endif %}
-                        <form action="{% url 'cancel_feedback_request' request.id %}" method="POST" class="w-full sm:w-auto" onsubmit="return confirm('Ar tikrai norite ištrinti šį prašymą?');">
+                        <form action="{% url 'cancel_feedback_request' request.id %}" method="POST" class="w-full sm:w-auto" onsubmit="return confirm('{% trans "Ar tikrai norite ištrinti šį prašymą?" %}');">
                             {% csrf_token %}
                             <button type="submit" class="block w-full text-center px-4 py-3 bg-white border border-slate-200 text-red-500 font-bold rounded-2xl hover:bg-red-50 hover:text-red-600 transition-colors">
                                 Ištrinti
@@ -205,8 +206,8 @@
                     <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
                         <i data-lucide="send" class="w-8 h-8 text-slate-300"></i>
                     </div>
-                    <h3 class="text-lg font-bold text-slate-800 mb-1">Tuščia</h3>
-                    <p class="text-slate-500 text-sm">Jūs dar nesate išsiuntę jokių prašymų.</p>
+                    <h3 class="text-lg font-bold text-slate-800 mb-1">{% trans "Tuščia" %}</h3>
+                    <p class="text-slate-500 text-sm">{% trans "Jūs dar nesate išsiuntę jokių prašymų." %}</p>
                 </div>
                 {% endfor %}
             </div>
@@ -220,7 +221,7 @@
     <div class="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden transition-all animate-in fade-in zoom-in duration-300 border border-white/20">
 
         <div class="px-8 pt-8 pb-4 flex justify-between items-center">
-            <h2 class="text-2xl font-extrabold tracking-tight text-slate-900" id="modal-title">Redaguoti Užklausą</h2>
+            <h2 class="text-2xl font-extrabold tracking-tight text-slate-900" id="modal-title">{% trans "Redaguoti Užklausą" %}</h2>
             <button type="button" onclick="closeEditModal()" class="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors">
                 <i data-lucide="x"></i>
             </button>
@@ -246,7 +247,7 @@
                     </div>
 
                     <div class="space-y-1.5">
-                        <label for="modal_comment" class="text-[12px] font-bold text-slate-400 uppercase tracking-wider ml-1">Jūsų žinutė / komentaras</label>
+                        <label for="modal_comment" class="text-[12px] font-bold text-slate-400 uppercase tracking-wider ml-1">{% trans "Jūsų žinutė / komentaras" %}</label>
                         <div class="relative group">
                             <div class="absolute left-4 top-4 text-slate-400 z-10">
                                 <i data-lucide="message-square" class="w-[18px] h-[18px]"></i>
@@ -257,7 +258,7 @@
                     </div>
 
                     <div class="space-y-1.5">
-                        <label for="modal_due_date" class="text-[12px] font-bold text-slate-400 uppercase tracking-wider ml-1">Terminas *</label>
+                        <label for="modal_due_date" class="text-[12px] font-bold text-slate-400 uppercase tracking-wider ml-1">{% trans "Terminas *" %}</label>
                         <div class="relative group">
                             <div class="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none z-10">
                                 <i data-lucide="calendar" class="w-[18px] h-[18px]"></i>
@@ -274,7 +275,7 @@
                     Atšaukti
                 </button>
                 <button type="submit" class="flex-[2] bg-[#2d4a77] hover:bg-[#1e3456] text-white px-4 sm:px-8 py-4 rounded-2xl font-bold text-[15px] shadow-lg shadow-[#2d4a77]/20 flex flex-row items-center justify-center gap-2 transition-all">
-                    Išsaugoti
+                    {% trans "Išsaugoti" %}
                     <i data-lucide="check" class="w-4 h-4"></i>
                 </button>
             </div>

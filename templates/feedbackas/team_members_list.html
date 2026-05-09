@@ -1,6 +1,8 @@
 {% extends 'base.html' %}
+{% load i18n %}
+{% load translation_tags %}
 
-{% block title %}Mano Komanda - Orbigrow.lt{% endblock %}
+{% block title %}{% trans "Mano Komanda - Orbigrow.lt" %}{% endblock %}
 
 {% block content %}
 <!-- 2. Pagrindinis Turinys -->
@@ -18,7 +20,7 @@
             </button>
 
             <h1 class="text-2xl font-bold text-text-main hidden md:block">
-                Komandos nariai
+                {% trans "Komandos nariai" %}
             </h1>
         </div>
         <div class="flex space-x-3">
@@ -47,7 +49,7 @@
                         </div>
                         <div>
                             <h3 class="text-lg font-bold text-text-main">{{ block.department.name }}</h3>
-                            <p class="text-sm text-text-muted">{% if block.department.manager %}Vadovas: {{ block.department.manager.get_full_name }}{% endif %} · {{ block.member_count }} nariai
+                            <p class="text-sm text-text-muted">{% if block.department.manager %}{% trans "Vadovas" %}: {{ block.department.manager.get_full_name }}{% endif %} · {{ block.member_count }} {% trans "nariai" %}
                             </p>
                         </div>
                     </div>
@@ -55,7 +57,7 @@
                         {% if block.avg_rating %}
                         <div class="text-right">
                             <p class="text-xl font-bold text-text-main">{{ block.avg_rating }}</p>
-                            <p class="text-xs text-text-muted">vidurkis</p>
+                            <p class="text-xs text-text-muted">{% trans "vidurkis" %}</p>
                         </div>
                         {% endif %}
                         <svg class="dept-arrow w-5 h-5 text-text-muted transition-transform"
@@ -71,10 +73,10 @@
                         <thead class="bg-bg-secondary">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-semibold text-text-muted uppercase">
-                                    Darbuotojas</th>
+                                    {% trans "Darbuotojas" %}</th>
                                 <th class="px-6 py-3 text-center text-xs font-semibold text-text-muted uppercase">
-                                    Reitingas</th>
-                                <th class="px-6 py-3 text-center text-xs font-semibold text-text-muted uppercase">Veiksmai
+                                    {% trans "Reitingas" %}</th>
+                                <th class="px-6 py-3 text-center text-xs font-semibold text-text-muted uppercase">{% trans "Veiksmai" %}
                                 </th>
                             </tr>
                         </thead>
@@ -108,26 +110,26 @@
                                 <td class="px-6 py-4 text-center">
                                     <div class="flex items-center justify-center gap-2">
                                         <a href="{% url 'team_member_detail' member.id %}"
-                                            class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-primary bg-bg-secondary border border-purple-200 rounded-lg hover:bg-bg-secondary transition">Rezultatai</a>
+                                            class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-primary bg-bg-secondary border border-purple-200 rounded-lg hover:bg-bg-secondary transition">{% trans "Rezultatai" %}</a>
                                         {% if member.id in pending_from_me_ids %}
                                         <div class="relative group">
                                             <span
-                                                class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">Laukiama</span>
+                                                class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">{% trans "Laukiama" %}</span>
                                             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50">
-                                                Jau turite neužpildytą užklausą nuo šio nario
+                                                {% trans "Jau turite neužpildytą užklausą nuo šio nario" %}
                                                 <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
                                             </div>
                                         </div>
                                         {% else %}
                                         <a href="{% url 'send_feedback' user_id=member.id %}"
-                                            class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition">Vertinti</a>
+                                            class="inline-flex items-center px-3 py-1.5 text-xs font-medium text-white bg-primary rounded-lg hover:bg-primary/90 transition">{% trans "Vertinti" %}</a>
                                         {% endif %}
                                     </div>
                                 </td>
                             </tr>
                             {% empty %}
                             <tr>
-                                <td colspan="3" class="px-6 py-4 text-center text-text-muted">Nėra narių.</td>
+                                <td colspan="3" class="px-6 py-4 text-center text-text-muted">{% trans "Nėra narių." %}</td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -150,7 +152,7 @@
                             alt="{{ member.first_name }} {{ member.last_name }}">
                     </div>
                     <h3 class="text-lg font-bold text-text-main">{{ member.first_name }} {{ member.last_name }}</h3>
-                    <p class="text-sm text-primary font-medium mb-2">{{ member.profile.company_link.name|default:"-- Pozicija --" }}</p>
+                    <p class="text-sm text-primary font-medium mb-2">{{ member.profile.company_link.name|default:"-- Pozicija --"|translate_field:"position" }}</p>
                     <span class="px-3 py-1 text-xs font-semibold text-text-muted bg-bg-secondary rounded-full mb-4">{{ member.profile.department.name|default:"—" }}</span>
 
                     <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1 relative">
@@ -161,36 +163,36 @@
                         <div class="bg-gray-300 h-2.5 rounded-full" style="width: 0%"></div>
                         {% endif %}
                     </div>
-                    <p class="text-xs text-text-muted w-full text-right">Reitingas: {{ member.average_rating|default:"N/A"|floatformat:2 }}/4</p>
+                    <p class="text-xs text-text-muted w-full text-right">{% trans "Reitingas" %}: {{ member.average_rating|default:"N/A"|floatformat:2 }}/4</p>
                 </div>
                 <div class="bg-bg-secondary p-4 border-t flex justify-center space-x-2">
                     {% if member.id != user.id %}
                         {% if member.id in pending_from_me_ids %}
                         <div class="relative group flex-1">
                             <span
-                                class="block text-center py-2 text-sm text-gray-400 bg-gray-200 rounded-lg cursor-not-allowed">Laukiama užpildymo</span>
+                                class="block text-center py-2 text-sm text-gray-400 bg-gray-200 rounded-lg cursor-not-allowed">{% trans "Laukiama užpildymo" %}</span>
                             <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 bg-gray-800 text-white text-xs rounded shadow-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity z-50">
-                                Jau turite neužpildytą užklausą nuo šio nario
+                                {% trans "Jau turite neužpildytą užklausą nuo šio nario" %}
                                 <div class="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-800"></div>
                             </div>
                         </div>
                         {% else %}
                         <a href="{% url 'send_feedback' user_id=member.id %}"
                             class="flex-1 text-center py-2 text-sm text-white bg-primary rounded-lg hover:bg-primary/90 transition-colors">
-                            Vertinti
+                            {% trans "Vertinti" %}
                         </a>
                         {% endif %}
                     {% else %}
                     <span
                         class="flex-1 text-center py-2 text-sm text-text-muted bg-gray-200 rounded-lg cursor-not-allowed">
-                        Jūs
+                        {% trans "Jūs" %}
                     </span>
                     {% endif %}
                 </div>
             </div>
             {% empty %}
             <div class="col-span-full text-center py-10">
-                <p class="text-text-muted">Jūsų komandoje narių nerasta.</p>
+                <p class="text-text-muted">{% trans "Jūsų komandoje narių nerasta." %}</p>
             </div>
             {% endfor %}
 

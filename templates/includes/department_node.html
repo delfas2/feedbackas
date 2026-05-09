@@ -7,7 +7,7 @@
         <div class="flex-1">
             <h3 class="font-bold text-slate-800">{{ node.name }}</h3>
             {% if node.manager %}
-            <p class="text-xs text-slate-500 mt-0.5">Vadovas: <span class="font-bold text-slate-700">
+            <p class="text-xs text-slate-500 mt-0.5">{% trans "Vadovas:" %} <span class="font-bold text-slate-700">
                     {% if node.manager.first_name or node.manager.last_name %}
                     {{ node.manager.first_name }} {{ node.manager.last_name }}
                     {% else %}
@@ -15,22 +15,22 @@
                     {% endif %}
                 </span></p>
             {% else %}
-            <p class="text-[11px] text-slate-400 font-medium italic mt-0.5">Nėra paskirto vadovo</p>
+            <p class="text-[11px] text-slate-400 font-medium italic mt-0.5">{% trans "Nėra paskirto vadovo" %}</p>
             {% endif %}
         </div>
 
         <div class="flex items-center space-x-1.5 ml-2">
             <span class="mr-2 bg-slate-50 border border-slate-100 text-slate-600 text-[11px] font-bold px-2.5 py-1 rounded-lg">
-                {{ node.members.count }} nariai
+                {{ node.members.count }} {% trans "nariai" %}
             </span>
             <a href="{% url 'superadmin_edit_department' node.company.id node.id %}"
-                class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 rounded-lg transition-colors" title="Redaguoti">
+                class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 rounded-lg transition-colors" title="{% trans "Redaguoti" %}">
                 <i data-lucide="edit-2" class="w-4 h-4"></i>
             </a>
             <form action="{% url 'superadmin_delete_department' node.company.id node.id %}" method="post"
-                onsubmit="return confirm('Ar tikrai norite ištrinti departamentą &quot;{{ node.name }}&quot;? Visi sub-departamentai taip pat bus ištrinti.');" class="inline">
+                onsubmit="return confirm('{% trans "Ar tikrai norite ištrinti padalinį" %} &quot;{{ node.name }}&quot;? {% trans "Visi sub-padaliniai taip pat bus ištrinti." %}');" class="inline">
                 {% csrf_token %}
-                <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Ištrinti">
+                <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="{% trans "Ištrinti" %}">
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
             </form>

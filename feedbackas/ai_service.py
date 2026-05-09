@@ -59,7 +59,7 @@ class OpenRouterService:
         return data['choices'][0]['message']['content']
 
     @staticmethod
-    def generate(ratings, keywords, comments, existing_feedback, colleague_name, user=None, company=None):
+    def generate(ratings, keywords, comments, existing_feedback, colleague_name, user=None, company=None, language='lt'):
         """
         Generuoja grįžtamąjį ryšį naudojant OpenRouter API.
         Prieš siunčiant, tikrasis vardas pakeičiamas žyme privatumui užtikrinti.
@@ -67,6 +67,9 @@ class OpenRouterService:
         placeholder = "[VARDAS]"
         safe_comments = comments.replace(colleague_name, placeholder) if comments else comments
         safe_existing_feedback = existing_feedback.replace(colleague_name, placeholder) if existing_feedback else existing_feedback
+        
+        target_lang_str = "lietuvių kalba" if language == 'lt' else "anglų kalba (English)"
+
         prompt = f"""
         Veik kaip konkretus, kolegiškas komandos narys, būk empatiškas ir teik konstruktyvią kritiką.
         Eik iš kato prie esmės, nereikia jokių įžangų ir atsisveikinimų.
@@ -74,7 +77,7 @@ class OpenRouterService:
         **SVARBU dėl vardo:**
         Visada naudok tik žymę {placeholder} vietoj vardo. Niekada nenaudok tikrojo vardo (jei jį žinai). 
         Nekeisk ir nelinksniuok šios žymės – naudok ją tiksliai tokią, kokia ji yra.
-        Tekstas turi būti parašytas taisyklinga lietuvių kalba, be jokių gramatinių klaidų, ir turi būti lengvai skaitomas bei suprantamas.
+        Tekstas turi būti parašytas {target_lang_str}, be jokių gramatinių klaidų, ir turi būti lengvai skaitomas bei suprantamas.
 
         **SVARBU: Vertinimo sistema (Kontekstas):**
         Mes nenaudojame standartinių balų. Mes naudojame augimo skalę (1-4):
@@ -89,9 +92,7 @@ class OpenRouterService:
         - Tekstas turi būti paprastas, suskirstytas tik į pastraipas (paragraphs), glaustas, konkretus. Tai turi atrodyti kaip paprastas el. laiškas ar žinutė nuo kolegos.
         - Maksimalus ilgis 160-180 žodžių.
 
-        
         Naudok Situation-Behavior-Impact logiką, bet integruok ją į sakinius natūraliai.
- 
         
         **Duomenys:**
         - **Kompetencijų lygiai (1-4):**
@@ -107,7 +108,7 @@ class OpenRouterService:
         - **Papildomas kontekstas:** {safe_existing_feedback}
         
         **Generavimo Instrukcija:**
-        Parašyk rišlų atsiliepimą lietuvių kalba, kuriame kreipkis į {placeholder}:
+        Parašyk rišlų atsiliepimą {target_lang_str}, kuriame kreipkis į {placeholder}:
         
         1. **Stiprybės (Lygiai 3-4 "Varo" ir "Pavyzdys"):**
         Jei yra sričių su įvertinimais 3 arba 4, paminėk jas kaip pavyzdines. Naudok tokias frazes kaip "Šioje srityje esi pavyzdys kitiems", "Čia tu tikrai varai į priekį". Konkrečiai įvardink, kokį teigiamą poveikį (Impact) tai daro.

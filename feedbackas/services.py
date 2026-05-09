@@ -1,3 +1,4 @@
+from django.utils.translation import gettext as _
 from django.conf import settings
 from django.db.models import Avg
 from .models import Feedback, FeedbackRequest
@@ -96,11 +97,11 @@ class FeedbackAnalytics:
             problem_solving=Avg('problem_solving_rating')
         )
         competencies = [
-            {'name': 'Komandinis Darbas', 'score': round(competency_averages.get('teamwork') or 0, 2)},
-            {'name': 'Komunikacija', 'score': round(competency_averages.get('communication') or 0, 2)},
-            {'name': 'Iniciatyvumas', 'score': round(competency_averages.get('initiative') or 0, 2)},
-            {'name': 'Techninės Žinios', 'score': round(competency_averages.get('technical_skills') or 0, 2)},
-            {'name': 'Problemų Sprendimas', 'score': round(competency_averages.get('problem_solving') or 0, 2)},
+            {'name': _('Komandinis Darbas'), 'score': round(competency_averages.get('teamwork') or 0, 2)},
+            {'name': _('Komunikacija'), 'score': round(competency_averages.get('communication') or 0, 2)},
+            {'name': _('Iniciatyvumas'), 'score': round(competency_averages.get('initiative') or 0, 2)},
+            {'name': _('Techninės Žinios'), 'score': round(competency_averages.get('technical_skills') or 0, 2)},
+            {'name': _('Problemų Sprendimas'), 'score': round(competency_averages.get('problem_solving') or 0, 2)},
         ]
 
         training_map = {
@@ -131,7 +132,7 @@ class FeedbackAnalytics:
             'recommended_trainings': recommended_trainings,
         }
 
-def generate_ai_feedback_task(ratings, keywords, comments, existing_feedback, colleague_name, user_id=None):
+def generate_ai_feedback_task(ratings, keywords, comments, existing_feedback, colleague_name, user_id=None, language='lt'):
     from .ai_service import OpenRouterService
     from django.contrib.auth.models import User
     
@@ -152,7 +153,8 @@ def generate_ai_feedback_task(ratings, keywords, comments, existing_feedback, co
         existing_feedback=existing_feedback,
         colleague_name=colleague_name,
         user=user,
-        company=company
+        company=company,
+        language=language
     )
 
 class TeamAnalytics:
@@ -195,11 +197,11 @@ class TeamAnalytics:
         )
         
         competencies = [
-            {'name': 'Komandinis Darbas', 'score': round(competency_averages.get('teamwork') or 0, 2)},
-            {'name': 'Komunikacija', 'score': round(competency_averages.get('communication') or 0, 2)},
-            {'name': 'Iniciatyvumas', 'score': round(competency_averages.get('initiative') or 0, 2)},
-            {'name': 'Techninės Žinios', 'score': round(competency_averages.get('technical_skills') or 0, 2)},
-            {'name': 'Problemų Sprendimas', 'score': round(competency_averages.get('problem_solving') or 0, 2)},
+            {'name': _('Komandinis Darbas'), 'score': round(competency_averages.get('teamwork') or 0, 2)},
+            {'name': _('Komunikacija'), 'score': round(competency_averages.get('communication') or 0, 2)},
+            {'name': _('Iniciatyvumas'), 'score': round(competency_averages.get('initiative') or 0, 2)},
+            {'name': _('Techninės Žinios'), 'score': round(competency_averages.get('technical_skills') or 0, 2)},
+            {'name': _('Problemų Sprendimas'), 'score': round(competency_averages.get('problem_solving') or 0, 2)},
         ]
         
         return {
@@ -227,11 +229,11 @@ class TeamAnalytics:
             problem_solving=Avg('problem_solving_rating')
         )
         competencies = [
-            {'name': 'Komandinis Darbas', 'score': round(competency_averages.get('teamwork') or 0, 2)},
-            {'name': 'Komunikacija', 'score': round(competency_averages.get('communication') or 0, 2)},
-            {'name': 'Iniciatyvumas', 'score': round(competency_averages.get('initiative') or 0, 2)},
-            {'name': 'Techninės Žinios', 'score': round(competency_averages.get('technical_skills') or 0, 2)},
-            {'name': 'Problemų Sprendimas', 'score': round(competency_averages.get('problem_solving') or 0, 2)},
+            {'name': _('Komandinis Darbas'), 'score': round(competency_averages.get('teamwork') or 0, 2)},
+            {'name': _('Komunikacija'), 'score': round(competency_averages.get('communication') or 0, 2)},
+            {'name': _('Iniciatyvumas'), 'score': round(competency_averages.get('initiative') or 0, 2)},
+            {'name': _('Techninės Žinios'), 'score': round(competency_averages.get('technical_skills') or 0, 2)},
+            {'name': _('Problemų Sprendimas'), 'score': round(competency_averages.get('problem_solving') or 0, 2)},
         ]
         
         # Collect all keywords

@@ -1,7 +1,8 @@
 {% extends "base.html" %}
+{% load i18n %}
 {% load static %}
 
-{% block title %}{{ member.get_full_name }} — Komandos Statistika{% endblock %}
+{% block title %}{% trans "{{ member.get_full_name }} — Komandos Statistika" %}{% endblock %}
 
 {% block content %}
 <script src="https://unpkg.com/lucide@latest"></script>
@@ -14,7 +15,7 @@
             </a>
             <div>
                 <h1 class="text-3xl font-bold text-slate-800">{{ member.get_full_name }}</h1>
-                <p class="text-sm text-slate-500 mt-1 font-medium">{{ department.name|default:"Skyrius nepriskirtas" }} · {{ member.email }}</p>
+                <p class="text-sm text-slate-500 mt-1 font-medium">{{ department.name|default:"{% trans "Skyrius nepriskirtas" %}" }} · {{ member.email }}</p>
             </div>
         </div>
     </header>
@@ -30,7 +31,7 @@
                 <div class="relative z-10">
                     <div class="flex items-center gap-2 mb-2 opacity-80">
                         <i data-lucide="star" class="w-4 h-4"></i>
-                        <p class="font-medium text-sm">Bendras vidurkis</p>
+                        <p class="font-medium text-sm">{% trans "Bendras vidurkis" %}</p>
                     </div>
                     <div class="flex items-end gap-2">
                         <h2 class="text-5xl font-extrabold">{{ avg_rating }}</h2>
@@ -43,23 +44,23 @@
                 <div>
                     <div class="flex items-center gap-2 mb-2 text-slate-500">
                         <i data-lucide="check-square" class="w-4 h-4"></i>
-                        <p class="font-medium text-sm">Atsiliepimų skaičius</p>
+                        <p class="font-medium text-sm">{% trans "Atsiliepimų skaičius" %}</p>
                     </div>
                     <h2 class="text-4xl font-extrabold text-teal-600">{{ feedback_count }}</h2>
                 </div>
-                <p class="text-[13px] text-slate-400 font-medium mt-4">Užbaigtų apklausų</p>
+                <p class="text-[13px] text-slate-400 font-medium mt-4">{% trans "Užbaigtų apklausų" %}</p>
             </div>
             
             <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 flex flex-col">
                 <div class="flex items-center gap-2 mb-4 text-slate-500">
                     <i data-lucide="hash" class="w-4 h-4"></i>
-                    <p class="font-medium text-sm">Raktiniai žodžiai</p>
+                    <p class="font-medium text-sm">{% trans "Raktiniai žodžiai" %}</p>
                 </div>
                 <div class="flex flex-wrap gap-2 mt-auto">
                     {% for kw in all_keywords %}
                     <span class="px-3 py-1 bg-slate-50 border border-slate-100 text-slate-700 rounded-lg text-[13px] font-bold">{{ kw }}</span>
                     {% empty %}
-                    <span class="text-[13px] text-slate-400 font-medium">Kol kas nėra raktinių žodžių</span>
+                    <span class="text-[13px] text-slate-400 font-medium">{% trans "Kol kas nėra raktinių žodžių" %}</span>
                     {% endfor %}
                 </div>
             </div>
@@ -73,7 +74,7 @@
                     <div class="p-2.5 bg-teal-50 rounded-xl">
                         <i data-lucide="bar-chart-2" class="w-5 h-5 text-teal-600"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-800">Kompetencijos</h3>
+                    <h3 class="text-xl font-bold text-slate-800">{% trans "Kompetencijos" %}</h3>
                 </div>
                 
                 <div class="space-y-6">
@@ -98,7 +99,7 @@
                     <div class="p-2.5 bg-blue-50 rounded-xl">
                         <i data-lucide="activity" class="w-5 h-5 text-blue-600"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-slate-800">Savybių įvertinimai</h3>
+                    <h3 class="text-xl font-bold text-slate-800">{% trans "Savybių įvertinimai" %}</h3>
                 </div>
                 
                 {% if trait_ratings %}
@@ -119,7 +120,7 @@
                 {% else %}
                 <div class="h-full min-h-[150px] flex flex-col items-center justify-center text-center">
                     <i data-lucide="pie-chart" class="w-8 h-8 text-slate-200 mb-3"></i>
-                    <p class="text-sm font-medium text-slate-500">Šis darbuotojas dar neturi <br/> unikalių savybių įvertinimų.</p>
+                    <p class="text-sm font-medium text-slate-500">{% trans "Šis darbuotojas dar neturi unikalių savybių įvertinimų." %}</p>
                 </div>
                 {% endif %}
             </div>
@@ -131,7 +132,7 @@
                 <div class="p-2.5 bg-slate-200/50 rounded-xl">
                     <i data-lucide="history" class="w-5 h-5 text-slate-600"></i>
                 </div>
-                <h3 class="text-xl font-bold text-slate-800">Atsiliepimų istorija</h3>
+                <h3 class="text-xl font-bold text-slate-800">{% trans "Atsiliepimų istorija" %}</h3>
             </div>
             
             <div class="divide-y divide-slate-100">
@@ -173,7 +174,7 @@
                     <div class="bg-amber-50 border border-amber-100 rounded-2xl p-4 mb-4">
                         <div class="flex items-center gap-1.5 mb-1.5">
                             <i data-lucide="message-circle" class="w-4 h-4 text-amber-600"></i>
-                            <p class="text-[12px] font-bold text-amber-800 uppercase tracking-wide">Komentaras</p>
+                            <p class="text-[12px] font-bold text-amber-800 uppercase tracking-wide">{% trans "Komentaras" %}</p>
                         </div>
                         <p class="text-[14px] text-amber-900 font-medium">{{ fb.comments }}</p>
                     </div>
@@ -231,7 +232,7 @@
                     <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mb-4">
                         <i data-lucide="message-square-off" class="w-8 h-8 text-slate-300"></i>
                     </div>
-                    <p class="text-slate-500 font-medium">Šis darbuotojas dar neturi jokių atsiliepimų istorijos.</p>
+                    <p class="text-slate-500 font-medium">{% trans "Šis darbuotojas dar neturi jokių atsiliepimų istorijos." %}</p>
                 </div>
                 {% endfor %}
             </div>

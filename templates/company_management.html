@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
+{% load i18n %}
 
-{% block title %}Įmonės Valdymas - Orbigrow.lt{% endblock %}
+{% block title %}{% trans "Įmonės Valdymas - Orbigrow.lt" %}{% endblock %}
 
 {% block content %}
 <script src="https://unpkg.com/lucide@latest"></script>
@@ -10,12 +11,12 @@
 
         <header class="flex justify-between items-center mb-8 gap-4">
             <div>
-                <h1 class="text-3xl font-bold text-slate-800">{{ company_name }} struktūra</h1>
-                <p class="text-slate-500 mt-1">Valdykite komandas ir priskirkite darbuotojus.</p>
+                <h1 class="text-3xl font-bold text-slate-800">{{ company_name }} {% trans "struktūra" %}</h1>
+                <p class="text-slate-500 mt-1">{% trans "Valdykite komandas ir priskirkite darbuotojus." %}</p>
             </div>
             <button onclick="document.getElementById('add-dept-modal').classList.remove('hidden')"
                 class="bg-slate-900 text-white font-bold px-5 py-2.5 rounded-xl hover:bg-slate-800 transition-colors shadow-sm flex items-center gap-2">
-                <i data-lucide="plus" class="w-4 h-4"></i> Padalinys
+                <i data-lucide="plus" class="w-4 h-4"></i> {% trans "Padalinys" %}
             </button>
         </header>
 
@@ -25,7 +26,7 @@
                     <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
                         <i data-lucide="sitemap" class="w-5 h-5"></i>
                     </div>
-                    <h2 class="text-xl font-bold text-slate-800">Organizacinis Medis</h2>
+                    <h2 class="text-xl font-bold text-slate-800">{% trans "Organizacinis Medis" %}</h2>
                 </div>
 
                 {% if root_departments %}
@@ -39,7 +40,7 @@
                     <div class="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
                         <i data-lucide="folder-tree" class="w-8 h-8 text-slate-300"></i>
                     </div>
-                    <p class="text-slate-500 font-medium italic">Struktūra dar nesukurta.</p>
+                    <p class="text-slate-500 font-medium italic">{% trans "Struktūra dar nesukurta." %}</p>
                 </div>
                 {% endif %}
             </div>
@@ -49,7 +50,7 @@
                     <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600">
                         <i data-lucide="user-minus" class="w-5 h-5"></i>
                     </div>
-                    <h2 class="text-xl font-bold text-slate-800">Nepriskirti Darbuotojai</h2>
+                    <h2 class="text-xl font-bold text-slate-800">{% trans "Nepriskirti Darbuotojai" %}</h2>
                 </div>
                 
                 <div class="space-y-3">
@@ -70,7 +71,7 @@
                             <div class="relative">
                                 <select name="department_id" required
                                     class="w-full text-[13px] font-medium text-slate-700 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none appearance-none bg-white">
-                                    <option value="" disabled selected>Pasirinkite padalinį...</option>
+                                    <option value="" disabled selected>{% trans "Pasirinkite padalinį..." %}</option>
                                     {% for dept in all_departments %}
                                     <option value="{{ dept.id }}">{{ dept.name }}</option>
                                     {% endfor %}
@@ -81,14 +82,14 @@
                             </div>
                             <button type="submit"
                                 class="w-full text-[13px] text-white bg-slate-900 hover:bg-slate-800 px-3 py-2 rounded-xl font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
-                                <i data-lucide="check" class="w-3.5 h-3.5"></i> Priskirti
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i> {% trans "Priskirti" %}
                             </button>
                         </div>
                     </form>
                     {% empty %}
                     <div class="text-center py-8">
                         <i data-lucide="check-circle-2" class="w-12 h-12 text-teal-400 mx-auto mb-2 opacity-50"></i>
-                        <p class="text-[14px] font-bold text-slate-500">Visi darbuotojai priskirti.</p>
+                        <p class="text-[14px] font-bold text-slate-500">{% trans "Visi darbuotojai priskirti." %}</p>
                     </div>
                     {% endfor %}
                 </div>
@@ -104,15 +105,15 @@
                 <i data-lucide="folder-plus" class="w-8 h-8"></i>
             </div>
             <div class="text-center mb-6">
-                <h3 class="text-2xl font-extrabold text-slate-900">Naujas Padalinys</h3>
-                <p class="text-sm font-medium text-slate-500 mt-1">Įveskite padalinio informaciją</p>
+                <h3 class="text-2xl font-extrabold text-slate-900">Naujas {% trans "Padalinys" %}</h3>
+                <p class="text-sm font-medium text-slate-500 mt-1">{% trans "Įveskite padalinio informaciją" %}</p>
             </div>
             
             <form method="POST" class="text-left space-y-4">
                 {% csrf_token %}
                 
                 <div class="space-y-1">
-                    <label class="block text-[14px] font-bold text-slate-800">Pavadinimas</label>
+                    <label class="block text-[14px] font-bold text-slate-800">{% trans "Pavadinimas" %}</label>
                     <div class="relative">
                         <!-- form.name applies django widget rendering. We'll wrap it in standard styling via JS below or let it be if it inherits standard input styles -->
                         <div class="custom-django-field">
@@ -122,14 +123,14 @@
                 </div>
                 
                 <div class="space-y-1">
-                    <label class="block text-[14px] font-bold text-slate-800">Tėvinis padalinys <span class="text-slate-400 font-normal text-xs">(neprivaloma)</span></label>
+                    <label class="block text-[14px] font-bold text-slate-800">{% trans "Tėvinis padalinys" %} <span class="text-slate-400 font-normal text-xs">(neprivaloma)</span></label>
                     <div class="custom-django-field">
                         {{ form.parent }}
                     </div>
                 </div>
                 
                 <div class="space-y-1">
-                    <label class="block text-[14px] font-bold text-slate-800">Vadovas</label>
+                    <label class="block text-[14px] font-bold text-slate-800">{% trans "Vadovas" %}</label>
                     <div class="custom-django-field">
                         {{ form.manager }}
                     </div>
@@ -137,9 +138,9 @@
                 
                 <div class="flex justify-end gap-3 mt-8 pt-4 border-t border-slate-100">
                     <button type="button" onclick="document.getElementById('add-dept-modal').classList.add('hidden')"
-                        class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-colors">Atšaukti</button>
+                        class="px-5 py-2.5 bg-white border border-slate-200 text-slate-700 font-bold rounded-xl hover:bg-slate-50 transition-colors">{% trans "Atšaukti" %}</button>
                     <button type="submit"
-                        class="px-6 py-2.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 shadow-sm transition-colors">Sukurti</button>
+                        class="px-6 py-2.5 bg-slate-900 text-white font-bold rounded-xl hover:bg-slate-800 shadow-sm transition-colors">{% trans "Sukurti" %}</button>
                 </div>
             </form>
         </div>

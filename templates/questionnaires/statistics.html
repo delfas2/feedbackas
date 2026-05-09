@@ -1,6 +1,7 @@
 {% extends "base.html" %}
+{% load i18n %}
 
-{% block title %}Klausimyno Statistika - Orbigrow.lt{% endblock %}
+{% block title %}{% trans "Klausimyno Statistika - Orbigrow.lt" %}{% endblock %}
 
 {% block content %}
 <!-- Pagrindinis Turinys -->
@@ -24,7 +25,7 @@
                 </svg>
             </a>
             <h1 class="text-2xl font-bold text-text-main hidden md:block">
-                Statistika: {{ questionnaire.title }}
+                {% trans "Statistika:" %} {{ questionnaire.title }}
             </h1>
         </div>
 
@@ -41,18 +42,18 @@
             <div class="flex flex-col md:flex-row justify-between items-center gap-8 relative z-10">
                 <!-- Įvertinimas -->
                 <div class="text-center md:text-left">
-                    <p class="text-text-muted font-medium mb-1">Bendras Įvertinimas</p>
+                    <p class="text-text-muted font-medium mb-1">{% trans "Bendras Įvertinimas" %}</p>
                     <div class="flex items-baseline gap-2 justify-center md:justify-start">
                         <h2 class="text-5xl font-extrabold text-text-main">{{ overall_avg_rating }}</h2>
                     </div>
-                    <p class="text-sm text-text-muted mt-2">Visų atsakymų vidurkis</p>
+                    <p class="text-sm text-text-muted mt-2">{% trans "Visų atsakymų vidurkis" %}</p>
                 </div>
 
                 <!-- Statistika -->
                 <div class="flex gap-8">
                     <div class="text-center">
                         <div class="text-2xl font-bold text-primary">{{ received_feedback_count }}</div>
-                        <div class="text-xs text-text-muted uppercase tracking-wide">Gauta Atsakymų</div>
+                        <div class="text-xs text-text-muted uppercase tracking-wide">{% trans "Gauta Atsakymų" %}</div>
                     </div>
                 </div>
             </div>
@@ -60,7 +61,7 @@
 
         <!-- 1.5 Grafikas -->
         <div class="bg-bg-main rounded-2xl shadow-lg p-6">
-            <h3 class="text-xl font-bold text-text-main mb-6">Rezultatų Dinamika</h3>
+            <h3 class="text-xl font-bold text-text-main mb-6">{% trans "Rezultatų Dinamika" %}</h3>
             <div class="relative h-64 w-full">
                 <canvas id="statisticsChart"></canvas>
             </div>
@@ -71,7 +72,7 @@
 
             <!-- Kairė: Kompetencijos (Progress Bars) -->
             <div class="lg:col-span-2 bg-bg-main rounded-2xl shadow-lg p-6">
-                <h3 class="text-xl font-bold text-text-main mb-6">Kompetencijų Vidurkiai</h3>
+                <h3 class="text-xl font-bold text-text-main mb-6">{% trans "Kompetencijų Vidurkiai" %}</h3>
                 <div class="space-y-6">
 
                     {% for comp in competencies %}
@@ -92,13 +93,13 @@
 
             <!-- Dešinė: Raktiniai Žodžiai -->
             <div class="bg-bg-main rounded-2xl shadow-lg p-6">
-                <h3 class="text-xl font-bold text-text-main mb-6">Kolegų Paminėti Raktiniai Žodžiai</h3>
+                <h3 class="text-xl font-bold text-text-main mb-6">{% trans "Kolegų Paminėti Raktiniai Žodžiai" %}</h3>
                 <div class="flex flex-wrap gap-2">
                     {% for keyword in all_keywords %}
                     <span class="px-3 py-1 bg-bg-secondary text-primary rounded-full text-sm font-medium">{{ keyword
                         }}</span>
                     {% empty %}
-                    <span class="text-sm text-text-muted">Kol kas nėra raktinių žodžių.</span>
+                    <span class="text-sm text-text-muted">{% trans "Kol kas nėra raktinių žodžių." %}</span>
                     {% endfor %}
                 </div>
             </div>
@@ -116,7 +117,7 @@
                                 d="M6.633 10.5c.806 0 1.533-.446 2.031-1.08a9.041 9.041 0 012.861-2.4c.723-.384 1.35-.956 1.653-1.715a4.498 4.498 0 00.322-1.672V3a.75.75 0 01.75-.75A2.25 2.25 0 0116.5 4.5c0 1.152-.26 2.247-.723 3.218-.266.558.107 1.282.725 1.282h3.126c1.026 0 1.945.694 2.054 1.715.045.422.068.85.068 1.285a11.95 11.95 0 01-2.649 7.521c-.388.482-.987.729-1.605.729H13.48c-.483 0-.964-.078-1.423-.23l-3.114-1.04a4.501 4.501 0 00-1.423-.23H5.904M14.25 9h2.25M5.904 18.75c.083.205.176.405.28.6a3.75 3.75 0 10-4.296-5.75l-.02.02a.75.75 0 01-1.248-.742l.2-.406a5.25 5.25 0 011.683-1.914M5.904 18.75c.098-.237.21-.468.332-.688M5.904 18.75h2.906" />
                         </svg>
                     </div>
-                    <h3 class="text-lg font-bold text-green-800">Laisvos formos komentarai</h3>
+                    <h3 class="text-lg font-bold text-green-800">{% trans "Laisvos formos komentarai" %}</h3>
                 </div>
                 <ul class="space-y-4">
                     {% for feedback_text in strengths %}
@@ -124,7 +125,7 @@
                         "{{ feedback_text }}"
                     </li>
                     {% empty %}
-                    <li class="text-sm text-text-muted">Kol kas nėra atsiliepimų.</li>
+                    <li class="text-sm text-text-muted">{% trans "Kol kas nėra atsiliepimų." %}</li>
                     {% endfor %}
                 </ul>
             </div>
@@ -177,7 +178,7 @@
                 }
             });
         } else {
-            document.getElementById('statisticsChart').parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-text-muted">Trūksta duomenų grafiko atvaizdavimui.</div>';
+            document.getElementById('statisticsChart').parentElement.innerHTML = '<div class="flex items-center justify-center h-full text-text-muted">{% trans "Trūksta duomenų grafiko atvaizdavimui." %}</div>';
         }
     });
 </script>

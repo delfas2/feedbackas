@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-{% block title %}Komandos Statistika - Orbigrow.lt{% endblock %}
+{% load i18n %}
+{% block title %}{% trans "Komandos Statistika - Orbigrow.lt" %}{% endblock %}
 
 {% block content %}
 <script src="https://unpkg.com/lucide@latest"></script>
@@ -12,9 +13,9 @@
                 <i data-lucide="menu"></i>
             </button>
             <h1 class="text-3xl font-bold text-slate-800 hidden md:block">
-                Komandos statistika — {{ department.name }}
+                {% trans "Komandos statistika" %} — {{ department.name }}
             </h1>
-            <p class="text-slate-500 mt-1 hidden md:block">Bendra komandos kompetencijų ir aktyvumo apžvalga</p>
+            <p class="text-slate-500 mt-1 hidden md:block">{% trans "Bendra komandos kompetencijų ir aktyvumo apžvalga" %}</p>
         </div>
     </header>
 
@@ -27,11 +28,11 @@
                     <div class="p-2.5 bg-teal-50 text-teal-600 rounded-xl">
                         <i data-lucide="star" class="w-5 h-5"></i>
                     </div>
-                    <p class="text-slate-500 font-bold text-[13px] uppercase tracking-wide">Komandos vidurkis</p>
+                    <p class="text-slate-500 font-bold text-[13px] uppercase tracking-wide">{% trans "Komandos vidurkis" %}</p>
                 </div>
                 <div class="flex items-end gap-2 relative z-10">
                     <h2 class="text-5xl font-extrabold text-slate-900 tracking-tight">{{ team_avg_rating }}</h2>
-                    <p class="text-[14px] font-medium text-slate-400 mb-1.5">iš 4</p>
+                    <p class="text-[14px] font-medium text-slate-400 mb-1.5">{% trans "iš 4" %}</p>
                 </div>
             </div>
             
@@ -40,11 +41,11 @@
                     <div class="p-2.5 bg-blue-50 text-blue-600 rounded-xl">
                         <i data-lucide="users" class="w-5 h-5"></i>
                     </div>
-                    <p class="text-slate-500 font-bold text-[13px] uppercase tracking-wide">Narių skaičius</p>
+                    <p class="text-slate-500 font-bold text-[13px] uppercase tracking-wide">{% trans "Narių skaičius" %}</p>
                 </div>
                 <div class="flex items-end gap-2">
                     <h2 class="text-5xl font-extrabold text-blue-600 tracking-tight">{{ team_member_count }}</h2>
-                    <p class="text-[14px] font-medium text-slate-400 mb-1.5">nariai</p>
+                    <p class="text-[14px] font-medium text-slate-400 mb-1.5">{% trans "nariai" %}</p>
                 </div>
             </div>
             
@@ -53,11 +54,11 @@
                     <div class="p-2.5 bg-rose-50 text-rose-600 rounded-xl">
                         <i data-lucide="message-square" class="w-5 h-5"></i>
                     </div>
-                    <p class="text-slate-500 font-bold text-[13px] uppercase tracking-wide">Gauta atsiliepimų</p>
+                    <p class="text-slate-500 font-bold text-[13px] uppercase tracking-wide">{% trans "Gauta atsiliepimų" %}</p>
                 </div>
                 <div class="flex items-end gap-2">
                     <h2 class="text-5xl font-extrabold text-rose-600 tracking-tight">{{ team_feedback_count }}</h2>
-                    <p class="text-[14px] font-medium text-slate-400 mb-1.5">iš viso</p>
+                    <p class="text-[14px] font-medium text-slate-400 mb-1.5">{% trans "iš viso" %}</p>
                 </div>
             </div>
         </div>
@@ -68,7 +69,7 @@
                 <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600">
                     <i data-lucide="activity" class="w-5 h-5"></i>
                 </div>
-                <h3 class="text-xl font-bold text-slate-800">Komandos Kompetencijos</h3>
+                <h3 class="text-xl font-bold text-slate-800">{% trans "Komandos Kompetencijos" %}</h3>
             </div>
             
             <div class="space-y-6">
@@ -88,7 +89,7 @@
                 {% empty %}
                 <div class="text-center py-8">
                     <i data-lucide="bar-chart-3" class="w-12 h-12 text-slate-300 mx-auto mb-3"></i>
-                    <p class="text-slate-500 font-medium">Nėra pakankamai duomenų kompetencijoms rodyti.</p>
+                    <p class="text-slate-500 font-medium">{% trans "Nėra pakankamai duomenų kompetencijoms rodyti." %}</p>
                 </div>
                 {% endfor %}
             </div>
@@ -100,20 +101,20 @@
                 <div class="w-10 h-10 rounded-xl bg-slate-50 flex items-center justify-center text-slate-600">
                     <i data-lucide="users-2" class="w-5 h-5"></i>
                 </div>
-                <h3 class="text-xl font-bold text-slate-800">Narių Įvertinimai</h3>
+                <h3 class="text-xl font-bold text-slate-800">{% trans "Narių Įvertinimai" %}</h3>
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full">
                     <thead class="bg-slate-50/50">
                         <tr>
                             <th class="px-8 py-4 text-left text-[12px] font-bold text-slate-400 uppercase tracking-wider">
-                                Darbuotojas</th>
+                                {% trans "Darbuotojas" %}</th>
                             <th class="px-8 py-4 text-center text-[12px] font-bold text-slate-400 uppercase tracking-wider">
-                                Atsiliepimų</th>
+                                {% trans "Atsiliepimų" %}</th>
                             <th class="px-8 py-4 text-center text-[12px] font-bold text-slate-400 uppercase tracking-wider">
-                                Vidurkis</th>
+                                {% trans "Vidurkis" %}</th>
                             <th class="px-8 py-4 text-center text-[12px] font-bold text-slate-400 uppercase tracking-wider">
-                                Lygis</th>
+                                {% trans "Lygis" %}</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-100">
@@ -150,19 +151,19 @@
                                 {% if ms.avg_rating %}
                                     {% if ms.avg_rating >= 3.5 %}
                                     <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-[12px] font-bold bg-teal-50 text-teal-700 border border-teal-100">
-                                        Pavyzdys
+                                        {% trans "Pavyzdys" %}
                                     </span>
                                     {% elif ms.avg_rating >= 2.5 %}
                                     <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-[12px] font-bold bg-sky-50 text-sky-700 border border-sky-100">
-                                        Varo
+                                        {% trans "Varo" %}
                                     </span>
                                     {% elif ms.avg_rating >= 1.5 %}
                                     <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-[12px] font-bold bg-amber-50 text-amber-700 border border-amber-100">
-                                        Daro
+                                        {% trans "Daro" %}
                                     </span>
                                     {% else %}
                                     <span class="inline-flex items-center px-3 py-1.5 rounded-xl text-[12px] font-bold bg-slate-100 text-slate-600 border border-slate-200">
-                                        Mokosi
+                                        {% trans "Mokosi" %}
                                     </span>
                                     {% endif %}
                                 {% else %}
@@ -174,7 +175,7 @@
                         <tr>
                             <td colspan="4" class="px-8 py-12 text-center">
                                 <i data-lucide="users" class="w-12 h-12 text-slate-300 mx-auto mb-3"></i>
-                                <p class="text-[15px] font-medium text-slate-500">Komandoje kol kas nėra narių su atsiliepimais.</p>
+                                <p class="text-[15px] font-medium text-slate-500">{% trans "Komandoje kol kas nėra narių su atsiliepimais." %}</p>
                             </td>
                         </tr>
                         {% endfor %}

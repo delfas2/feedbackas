@@ -27,6 +27,7 @@ from django.views.generic.base import RedirectView
 from django.contrib.staticfiles.storage import staticfiles_storage
 
 urlpatterns = [
+    path('i18n/', include('django.conf.urls.i18n')),
     path('favicon.ico', RedirectView.as_view(url=staticfiles_storage.url('images/fav.png'))),
     path('orbigrow-admin-panel/', admin.site.urls),
     path('', views.index, name='index'),

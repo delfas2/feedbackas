@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
+{% load i18n %}
 {% load static %}
 
-{% block title %}Visi Įvertinimai - Orbigrow.lt{% endblock %}
+{% block title %}{% trans "Visi Įvertinimai - Orbigrow.lt" %}{% endblock %}
 
 {% block content %}
 <script src="https://unpkg.com/lucide@latest"></script>
@@ -24,9 +25,9 @@
 
             <div>
                 <h1 class="text-3xl font-bold text-slate-800 hidden md:block">
-                    Visi įvertinimai
+                    {% trans "Visi įvertinimai" %}
                 </h1>
-                <p class="text-slate-500 mt-1 hidden md:block">Visų platformoje pateiktų įvertinimų sąrašas</p>
+                <p class="text-slate-500 mt-1 hidden md:block">{% trans "Visų platformoje pateiktų įvertinimų sąrašas" %}</p>
             </div>
         </div>
     </header>
@@ -38,7 +39,7 @@
                 <div class="w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600">
                     <i data-lucide="inbox" class="w-5 h-5"></i>
                 </div>
-                <h3 class="text-xl font-bold text-slate-800">Įvertinimų istorija</h3>
+                <h3 class="text-xl font-bold text-slate-800">{% trans "Įvertinimų istorija" %}</h3>
             </div>
         </div>
         
@@ -47,19 +48,19 @@
                 <thead class="bg-slate-50/50">
                     <tr>
                         <th scope="col" class="px-8 py-4 text-left text-[12px] font-bold text-slate-400 uppercase tracking-wider">
-                            Vertinamas asmuo
+                            {% trans "Vertinamas asmuo" %}
                         </th>
                         <th scope="col" class="px-8 py-4 text-left text-[12px] font-bold text-slate-400 uppercase tracking-wider">
-                            Vertintojas
+                            {% trans "Vertintojas" %}
                         </th>
                         <th scope="col" class="px-8 py-4 text-left text-[12px] font-bold text-slate-400 uppercase tracking-wider">
-                            Projektas
+                            {% trans "Projektas" %}
                         </th>
                         <th scope="col" class="px-8 py-4 text-left text-[12px] font-bold text-slate-400 uppercase tracking-wider">
-                            Data
+                            {% trans "Data" %}
                         </th>
                         <th scope="col" class="px-8 py-4 text-left text-[12px] font-bold text-slate-400 uppercase tracking-wider">
-                            Įvertinimas
+                            {% trans "Įvertinimas" %}
                         </th>
                     </tr>
                 </thead>
@@ -85,7 +86,7 @@
                         <td class="px-8 py-5 whitespace-nowrap">
                             <div class="flex items-center gap-2">
                                 <i data-lucide="folder" class="w-4 h-4 text-slate-400"></i>
-                                <span class="text-[14px] font-medium text-slate-600">{{ feedback.feedback_request.project_name }}</span>
+                                <span class="text-[14px] font-medium text-slate-600">{% if feedback.feedback_request.project_name == "Atsiliepimas" %}{% trans "Atsiliepimas" %}{% else %}{{ feedback.feedback_request.project_name }}{% endif %}</span>
                             </div>
                         </td>
                         <td class="px-8 py-5 whitespace-nowrap">
@@ -105,7 +106,7 @@
                     <tr>
                         <td colspan="5" class="px-8 py-16 text-center">
                             <i data-lucide="inbox" class="w-12 h-12 text-slate-300 mx-auto mb-4"></i>
-                            <p class="text-[15px] font-medium text-slate-500">Užpildytų vertinimų nerasta.</p>
+                            <p class="text-[15px] font-medium text-slate-500">{% trans "Užpildytų vertinimų nerasta." %}</p>
                         </td>
                     </tr>
                     {% endfor %}

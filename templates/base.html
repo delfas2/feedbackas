@@ -1,12 +1,12 @@
 {% load static %}
-{% load static user_tags %}
+{% load static user_tags i18n %}
 <!DOCTYPE html>
 <html lang="lt" data-theme="light">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Orbigrow.lt{% endblock %}</title>
+    <title>{% block title %}{% trans "Orbigrow.lt" %}{% endblock %}</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="icon" type="image/png" href="{% static 'images/fav.png' %}">
     <link rel="shortcut icon" href="{% static 'images/fav.png' %}" type="image/x-icon">
@@ -49,10 +49,10 @@
     {% if request.session.impersonator_id %}
     <div class="bg-red-600 text-white px-4 py-2 text-center text-sm font-medium relative z-50">
         <div class="flex items-center justify-center space-x-4">
-            <span>Jūs peržiūrite sistemą kaip <strong>{{ user.get_full_name|default:user.email }}</strong></span>
+            <span>{% trans "Jūs peržiūrite sistemą kaip" %} <strong>{{ user.get_full_name|default:user.email }}</strong></span>
             <a href="{% url 'stop_impersonation' %}"
                 class="bg-bg-main text-red-600 px-3 py-1 rounded hover:bg-red-50 transition-colors text-xs font-bold uppercase">
-                Grįžti į Superadmin
+                {% trans "Grįžti į Superadmin" %}
             </a>
         </div>
     </div>
@@ -76,7 +76,7 @@
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                     </svg>
-                    <span>Pagrindinis</span>
+                    <span>{% trans "Pagrindinis" %}</span>
                 </a>
                 <a href="{% url 'my_tasks_list' %}"
                     class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'my_tasks_list' or request.resolver_match.url_name == 'fill_feedback' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
@@ -85,7 +85,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M11.35 3.336a3.75 3.75 0 0 1 1.3 0c.94.12 1.708.743 2.052 1.543a.75.75 0 0 0 .634.416 3.377 3.377 0 0 1 3.165 3.377v11.082a3.377 3.377 0 0 1-3.377 3.377H8.876a3.377 3.377 0 0 1-3.377-3.377V8.672a3.377 3.377 0 0 1 3.165-3.377.75.75 0 0 0 .634-.416 3.75 3.75 0 0 1 2.052-1.543Z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 13.5H12M9 16.5H12M15 13.5H15.008V13.508H15V13.5ZM15 16.5H15.008V16.508H15V16.5ZM15 10.5H15.008V10.508H15V10.5ZM9 10.5H12" />
                     </svg>
-                    <span>Mano Užduotys</span>
+                    <span>{% trans "Mano Užduotys" %}</span>
                 </a>
                 <a href="{% url 'team_members_list' %}"
                     class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'team_members_list' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
@@ -93,7 +93,7 @@
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                     </svg>
-                    <span>Mano Komanda</span>
+                    <span>{% trans "Mano Komanda" %}</span>
                 </a>
                 {% if global_settings is None or global_settings.personal_form_enabled %}
                 <a href="{% url 'questionnaires_list' %}"
@@ -102,7 +102,7 @@
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                     </svg>
-                    <span>Individuali forma</span>
+                    <span>{% trans "Individuali forma" %}</span>
                 </a>
                 {% endif %}
 
@@ -114,7 +114,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
                     </svg>
-                    <span>Įmonės valdymas</span>
+                    <span>{% trans "Įmonės valdymas" %}</span>
                 </a>
                 {% endif %}
 
@@ -124,7 +124,7 @@
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 0 1 3 19.875v-6.75ZM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V8.625ZM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 0 1-1.125-1.125V4.125Z" />
                     </svg>
-                    <span>Rezultatai</span>
+                    <span>{% trans "Rezultatai" %}</span>
                 </a>
                 {% if user.managed_departments.exists %}
                 <a href="{% url 'team_statistics' %}"
@@ -133,7 +133,7 @@
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
                     </svg>
-                    <span>Komandos statistika</span>
+                    <span>{% trans "Komandos statistika" %}</span>
                 </a>
                 {% endif %}
 
@@ -157,7 +157,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                     </svg>
-                    <span>Įmonės</span>
+                    <span>{% trans "Įmonės" %}</span>
                 </a>
                 <a href="{% url 'superadmin_superusers_list' %}"
                     class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if 'superusers' in request.path %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
@@ -166,7 +166,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                     </svg>
-                    <span>Supervartotojai</span>
+                    <span>{% trans "Supervartotojai" %}</span>
                 </a>
                 <a href="{% url 'superadmin_users_list' %}"
                     class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'superadmin_users_list' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
@@ -175,7 +175,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round"
                             d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
                     </svg>
-                    <span>Vartotojai</span>
+                    <span>{% trans "Vartotojai" %}</span>
                 </a>
                 <a href="{% url 'superadmin_descriptions' %}"
                     class="flex items-center space-x-3 px-4 py-2 rounded-lg {% if request.resolver_match.url_name == 'superadmin_descriptions' %}text-white bg-primary{% else %}text-text-muted hover:bg-bg-secondary hover:text-primary{% endif %} font-medium">
@@ -183,7 +183,7 @@
                         stroke-width="1.5" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
                     </svg>
-                    <span>Aprašymai</span>
+                    <span>{% trans "Aprašymai" %}</span>
                 </a>
                 {% endif %}
             </nav>
@@ -204,19 +204,21 @@
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 9l-3 3m0 0 3 3m-3-3h12.75" />
                             </svg>
-                            <span>Atsijungti</span>
+                            <span>{% trans "Atsijungti" %}</span>
                         </a>
                     </div>
                 </div>
                 <div class="px-4 pt-4 mt-4 border-t flex items-center justify-between">
-                    <div class="flex items-center space-x-2">
-                        <a href="#" class="flex items-center p-1 rounded-md bg-bg-secondary">
+                    <form action="{% url 'set_language' %}" method="post" class="flex items-center space-x-2">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                        <button type="submit" name="language" value="lt" class="flex items-center p-1 rounded-md {% if LANGUAGE_CODE == 'lt' %}bg-bg-secondary{% else %}hover:bg-bg-secondary opacity-50 hover:opacity-100{% endif %}">
                             <img src="https://flagcdn.com/lt.svg" class="w-6 h-4 rounded-sm" alt="Lietuvių">
-                        </a>
-                        <a href="#" class="flex items-center p-1 rounded-md hover:bg-bg-secondary">
+                        </button>
+                        <button type="submit" name="language" value="en" class="flex items-center p-1 rounded-md {% if LANGUAGE_CODE == 'en' %}bg-bg-secondary{% else %}hover:bg-bg-secondary opacity-50 hover:opacity-100{% endif %}">
                             <img src="https://flagcdn.com/gb.svg" class="w-6 h-4 rounded-sm" alt="English">
-                        </a>
-                    </div>
+                        </button>
+                    </form>
                     <button id="theme-toggle" onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-bg-secondary text-text-muted transition-colors" title="Perjungti temą">
                         <!-- Sun icon (shown in dark mode) -->
                         <svg id="icon-sun" class="w-5 h-5 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
