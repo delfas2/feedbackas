@@ -23,7 +23,31 @@ def translate_field(obj, field_name):
 
 @register.filter
 def translate_project(name):
-    if name == 'Atsiliepimas':
-        from django.utils.translation import gettext as _
-        return _('Atsiliepimas')
-    return name
+    if not name:
+        return ""
+        
+    translations = {
+        'Atsiliepimas': _('Atsiliepimas'),
+        'Komandinis darbas': _('Komandinis darbas'),
+        'Komunikabilumas': _('Komunikabilumas'),
+        'Iniciatyvumas': _('Iniciatyvumas'),
+        'Problemų sprendimas': _('Problemų sprendimas'),
+        'Lyderystė': _('Lyderystė'),
+        'Analitinis mąstymas': _('Analitinis mąstymas'),
+        'Kūrybiškumas': _('Kūrybiškumas'),
+        'Adaptabilumas': _('Adaptabilumas'),
+        'Atsakingumas': _('Atsakingumas'),
+        'Laiko planavimas': _('Laiko planavimas'),
+        'Techninės žinios': _('Techninės žinios'),
+        'Strateginis mąstymas': _('Strateginis mąstymas'),
+        'Klientų aptarnavimas': _('Klientų aptarnavimas'),
+        'Derybos': _('Derybos'),
+        'Prezentavimo įgūdžiai': _('Prezentavimo įgūdžiai'),
+        'Patikimumas': _('Patikimumas'),
+        'Motyvacija': _('Motyvacija'),
+        'Pozityvumas': _('Pozityvumas'),
+        'Efektyvumas': _('Efektyvumas'),
+        'Savarankiškumas': _('Savarankiškumas'),
+    }
+    
+    return translations.get(name, name)

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-09 15:45+0000\n"
+"POT-Creation-Date: 2026-05-09 16:34+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -36,7 +36,7 @@ msgid "Komunikacija"
 msgstr "Communication"
 
 #: feedbackas/services.py:102 feedbackas/services.py:202
-#: feedbackas/services.py:234
+#: feedbackas/services.py:234 feedbackas/templatetags/translation_tags.py:33
 msgid "Iniciatyvumas"
 msgstr "Initiative"
 
@@ -58,12 +58,100 @@ msgstr "Lithuanian"
 msgid "English"
 msgstr "English"
 
-#: feedbackas/templatetags/translation_tags.py:28 feedbackas/views.py:331
+#: feedbackas/templatetags/translation_tags.py:30 feedbackas/views.py:331
 #: templates/all_feedback_list.html:89 templates/fill_feedback.html:119
 #: templates/my_tasks.html:74 templates/my_tasks.html:144
 #: templates/my_tasks.html:167 templates/my_tasks.html:186
 msgid "Atsiliepimas"
 msgstr "Feedback"
+
+#: feedbackas/templatetags/translation_tags.py:31
+#, fuzzy
+#| msgid "Komandinis Darbas"
+msgid "Komandinis darbas"
+msgstr "Team work"
+
+#: feedbackas/templatetags/translation_tags.py:32
+#, fuzzy
+#| msgid "Komunikacija"
+msgid "Komunikabilumas"
+msgstr "Communication"
+
+#: feedbackas/templatetags/translation_tags.py:34
+#, fuzzy
+#| msgid "Problemų Sprendimas"
+msgid "Problemų sprendimas"
+msgstr "Problem Solving"
+
+#: feedbackas/templatetags/translation_tags.py:35
+msgid "Lyderystė"
+msgstr "Leadership"
+
+#: feedbackas/templatetags/translation_tags.py:36
+msgid "Analitinis mąstymas"
+msgstr "Analytical thinking"
+
+#: feedbackas/templatetags/translation_tags.py:37
+msgid "Kūrybiškumas"
+msgstr "Creativity"
+
+#: feedbackas/templatetags/translation_tags.py:38
+msgid "Adaptabilumas"
+msgstr "Adaptability"
+
+#: feedbackas/templatetags/translation_tags.py:39
+#, fuzzy
+#| msgid "Saugumas"
+msgid "Atsakingumas"
+msgstr "Security"
+
+#: feedbackas/templatetags/translation_tags.py:40
+msgid "Laiko planavimas"
+msgstr "Time management"
+
+#: feedbackas/templatetags/translation_tags.py:41
+#, fuzzy
+#| msgid "Techninės Žinios"
+msgid "Techninės žinios"
+msgstr "Technical Knowledge"
+
+#: feedbackas/templatetags/translation_tags.py:42
+msgid "Strateginis mąstymas"
+msgstr "Strategic thinking"
+
+#: feedbackas/templatetags/translation_tags.py:43
+msgid "Klientų aptarnavimas"
+msgstr "Customer service"
+
+#: feedbackas/templatetags/translation_tags.py:44
+msgid "Derybos"
+msgstr "Negotiations"
+
+#: feedbackas/templatetags/translation_tags.py:45
+msgid "Prezentavimo įgūdžiai"
+msgstr "Presentation skills"
+
+#: feedbackas/templatetags/translation_tags.py:46
+msgid "Patikimumas"
+msgstr "Reliability"
+
+#: feedbackas/templatetags/translation_tags.py:47
+msgid "Motyvacija"
+msgstr "Motivation"
+
+#: feedbackas/templatetags/translation_tags.py:48
+#, fuzzy
+#| msgid "Iniciatyvumas"
+msgid "Pozityvumas"
+msgstr "Initiative"
+
+#: feedbackas/templatetags/translation_tags.py:49
+msgid "Efektyvumas"
+msgstr "Efficiency"
+
+#: feedbackas/templatetags/translation_tags.py:50
+msgid "Savarankiškumas"
+msgstr "Autonomy"
 
 #: templates/all_feedback_list.html:5
 msgid "Visi Įvertinimai - Orbigrow.lt"
@@ -152,6 +240,7 @@ msgid "Mano Komanda"
 msgstr "My Team"
 
 #: templates/base.html:105 templates/questionnaires/list.html:4
+#: templates/questionnaires/list.html:29
 msgid "Individuali forma"
 msgstr "Personal Form"
 
@@ -280,7 +369,7 @@ msgid "Darbuotojas"
 msgstr "Employee"
 
 #: templates/feedbackas/team_members_list.html:78
-#: templates/feedbackas/team_members_list.html:166
+#: templates/feedbackas/team_members_list.html:172
 #: templates/team_members.html:65
 msgid "Reitingas"
 msgstr "Rating"
@@ -295,12 +384,12 @@ msgid "Laukiama"
 msgstr "Pending"
 
 #: templates/feedbackas/team_members_list.html:119
-#: templates/feedbackas/team_members_list.html:175
+#: templates/feedbackas/team_members_list.html:181
 msgid "Jau turite neužpildytą užklausą nuo šio nario"
 msgstr "You already have a pending request from this member"
 
 #: templates/feedbackas/team_members_list.html:125
-#: templates/feedbackas/team_members_list.html:182
+#: templates/feedbackas/team_members_list.html:188
 #: templates/team_members.html:90
 msgid "Vertinti"
 msgstr "Rate"
@@ -309,15 +398,19 @@ msgstr "Rate"
 msgid "Nėra narių."
 msgstr "No members found."
 
-#: templates/feedbackas/team_members_list.html:173
+#: templates/feedbackas/team_members_list.html:159
+msgid "-- Pozicija --"
+msgstr ""
+
+#: templates/feedbackas/team_members_list.html:179
 msgid "Laukiama užpildymo"
 msgstr "Waiting for completion"
 
-#: templates/feedbackas/team_members_list.html:188
+#: templates/feedbackas/team_members_list.html:194
 msgid "Jūs"
 msgstr "You"
 
-#: templates/feedbackas/team_members_list.html:195
+#: templates/feedbackas/team_members_list.html:201
 msgid "Jūsų komandoje narių nerasta."
 msgstr "No members found in your team."
 
@@ -707,16 +800,11 @@ msgstr "Save"
 msgid "Kurkite ir valdykite unikalius atsiliepimų klausimynus."
 msgstr "Create and manage unique feedback questionnaires."
 
-#: templates/questionnaires/list.html:36 templates/questionnaires/list.html:150
-#: templates/questionnaires/list.html:229
-#: templates/questionnaires/list.html:252
-#: templates/questionnaires/list.html:261
-#: templates/questionnaires/list.html:290
-#: templates/questionnaires/list.html:327 templates/registration/login.html:49
-#: templates/registration/register.html:33
-#, python-format
-msgid "{%% trans "
-msgstr ""
+#: templates/questionnaires/list.html:36
+#, fuzzy
+#| msgid "Nauja komandinė forma"
+msgid "Komandinė forma"
+msgstr "New Team Form"
 
 #: templates/questionnaires/list.html:40
 msgid "Kurti klausimyną"
@@ -746,6 +834,14 @@ msgstr "Are you sure you want to delete this?"
 msgid "Kol kas neturite klausimynų"
 msgstr "No keywords yet."
 
+#: templates/questionnaires/list.html:108
+msgid ""
+"Sukurkite asmeninius ar komandinius klausimynus ir siųskite juos kolegoms, "
+"kad gautumėte struktūruotą grįžtamąjį ryšį."
+msgstr ""
+"Create personal or team questionnaires and send them to colleagues to "
+"receive structured feedback."
+
 #: templates/questionnaires/list.html:110
 msgid "Kurti pirmąjį klausimyną"
 msgstr "Create your first questionnaire"
@@ -758,7 +854,11 @@ msgstr "New Questionnaire"
 #: templates/questionnaires/list.html:192
 #: templates/questionnaires/list.html:271
 msgid "Klausimyno pavadinimas"
-msgstr "Project name"
+msgstr "Survey title"
+
+#: templates/questionnaires/list.html:133
+msgid "pvz., Komandinio darbo vertinimas"
+msgstr "e.g., Team work evaluation"
 
 #: templates/questionnaires/list.html:138
 #: templates/questionnaires/list.html:217
@@ -771,6 +871,12 @@ msgstr "Trait Cloud"
 #: templates/questionnaires/list.html:278
 msgid "paspauskite norimas savybes"
 msgstr "click the desired traits"
+
+#: templates/questionnaires/list.html:150
+#: templates/questionnaires/list.html:229
+#: templates/questionnaires/list.html:290
+msgid "Pridėti savo savybę"
+msgstr "Add your own trait"
 
 #: templates/questionnaires/list.html:154
 #: templates/questionnaires/list.html:233
@@ -800,14 +906,37 @@ msgstr "No traits selected yet"
 msgid "Nauja komandinė forma"
 msgstr "New Team Form"
 
+#: templates/questionnaires/list.html:195
+msgid "pvz., Komandos efektyvumo vertinimas"
+msgstr "e.g., Team efficiency evaluation"
+
 #: templates/questionnaires/list.html:200
 msgid "Pasirinkite komandą"
 msgstr "Select a colleague!"
 
 #: templates/questionnaires/list.html:204
-#, python-format
-msgid "-- {%% trans "
-msgstr ""
+#, fuzzy
+#| msgid "Pasirinkite komandą"
+msgid "-- Pasirinkite komandą --"
+msgstr "Select a team!"
+
+#: templates/questionnaires/list.html:252
+#, fuzzy
+#| msgid "Rodyti komandą"
+msgid "Sukurti komandinę"
+msgstr "Show team"
+
+#: templates/questionnaires/list.html:261
+#, fuzzy
+#| msgid "Redaguoti Užklausą"
+msgid "Redaguoti klausimyną"
+msgstr "Edit Request"
+
+#: templates/questionnaires/list.html:327
+#, fuzzy
+#| msgid "Siųsti užklausą"
+msgid "Siųsti klausimyną"
+msgstr "Send feedback"
 
 #: templates/questionnaires/list.html:328
 msgid "Pasirinkite kolegą (-as), kurių prašysite užpildyti šį klausimyną."
@@ -833,6 +962,10 @@ msgstr "No colleagues to send to"
 #: templates/questionnaires/list.html:371
 msgid "Turite pasirinkti bent vieną kolegą."
 msgstr "Select a colleague!"
+
+#: templates/questionnaires/list.html:376
+msgid "Išsiųsti"
+msgstr "Send"
 
 #: templates/questionnaires/statistics.html:4
 msgid "Klausimyno Statistika - Orbigrow.lt"
@@ -891,6 +1024,12 @@ msgstr "Login"
 msgid "Grįžti į pradžią"
 msgstr "Return to Superadmin"
 
+#: templates/registration/login.html:49
+#, fuzzy
+#| msgid "Prisijungti"
+msgid "Prisijungti 👋"
+msgstr "Login"
+
 #: templates/registration/login.html:65 templates/registration/login.html:68
 msgid "Slaptažodis"
 msgstr "Password"
@@ -903,6 +1042,10 @@ msgstr "or"
 #: templates/registration/register.html:36
 msgid "Registracijos Forma"
 msgstr "Registration Form"
+
+#: templates/registration/register.html:33
+msgid "Sukurti Paskyrą ✨"
+msgstr "Create Account ✨"
 
 #: templates/registration/register.html:42
 msgid "Klaida!"
@@ -1170,6 +1313,3 @@ msgstr "Repeat new password"
 #: users/templates/users/profile.html:99
 msgid "Atnaujinti profilį"
 msgstr "Update Profile"
-
-#~ msgid "Sukurti Paskyrą ✨"
-#~ msgstr "Create Account ✨"

@@ -70,7 +70,7 @@
                     <div class="flex flex-wrap gap-1.5 relative z-10">
                         {% for trait in q.traits.all %}
                         <span class="inline-block px-2.5 py-1 bg-slate-50 border border-slate-100 text-slate-600 rounded-lg text-[11px] font-bold">
-                            {{ trait.name }}
+                            {{ trait.name|translate_project }}
                         </span>
                         {% empty %}
                         <span class="text-[12px] font-medium text-slate-400 italic">{% trans "Nėra savybių" %}</span>
@@ -139,7 +139,7 @@
                     <div id="trait-cloud" class="flex flex-wrap gap-2 p-5 bg-white rounded-2xl border border-slate-200 min-h-[100px] shadow-sm">
                         {% for trait in all_traits %}
                         <span class="trait-tag inline-block px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[13px] font-bold text-slate-600 hover:bg-teal-50 hover:border-teal-200 hover:text-teal-700 transition-all cursor-pointer select-none"
-                            data-trait-id="{{ trait.id }}" data-trait-name="{{ trait.name }}">{{ trait.name }}
+                            data-trait-id="{{ trait.id }}" data-trait-name="{{ trait.name|translate_project }}">{{ trait.name|translate_project }}
                         </span>
                         {% endfor %}
                     </div>
@@ -218,7 +218,7 @@
                     <div id="team-trait-cloud" class="flex flex-wrap gap-2 p-5 bg-white rounded-2xl border border-slate-200 min-h-[100px] shadow-sm">
                         {% for trait in all_traits %}
                         <span class="team-trait-tag inline-block px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[13px] font-bold text-slate-600 hover:bg-blue-50 hover:border-blue-200 hover:text-blue-700 transition-all cursor-pointer select-none"
-                            data-trait-id="{{ trait.id }}" data-trait-name="{{ trait.name }}">{{ trait.name }}
+                            data-trait-id="{{ trait.id }}" data-trait-name="{{ trait.name|translate_project }}">{{ trait.name|translate_project }}
                         </span>
                         {% endfor %}
                     </div>
@@ -279,7 +279,7 @@
                     <div id="edit-trait-cloud" class="flex flex-wrap gap-2 p-5 bg-white rounded-2xl border border-slate-200 min-h-[100px] shadow-sm">
                         {% for trait in all_traits %}
                         <span class="edit-trait-tag inline-block px-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-[13px] font-bold text-slate-600 hover:bg-teal-50 hover:border-teal-200 hover:text-teal-700 transition-all cursor-pointer select-none"
-                            data-trait-id="{{ trait.id }}" data-trait-name="{{ trait.name }}">{{ trait.name }}
+                            data-trait-id="{{ trait.id }}" data-trait-name="{{ trait.name|translate_project }}">{{ trait.name|translate_project }}
                         </span>
                         {% endfor %}
                     </div>
