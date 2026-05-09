@@ -19,8 +19,8 @@ class UserAdmin(BaseUserAdmin):
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 
-from feedbackas.models import AIUsageLog
 from django.db.models import Sum
+from .models import AIUsageLog, GlobalSettings, PageDescription
 
 @admin.register(AIUsageLog)
 class AIUsageLogAdmin(admin.ModelAdmin):
@@ -52,3 +52,11 @@ class AIUsageLogAdmin(admin.ModelAdmin):
         if hasattr(response, 'context_data'):
             response.context_data.update(my_context)
         return response
+
+@admin.register(GlobalSettings)
+class GlobalSettingsAdmin(admin.ModelAdmin):
+    list_display = ('personal_form_enabled', 'team_form_enabled', 'language_switcher_enabled')
+
+@admin.register(PageDescription)
+class PageDescriptionAdmin(admin.ModelAdmin):
+    list_display = ('maintenance_mode', 'maintenance_title')

@@ -214,6 +214,7 @@
             <!-- Prisijungimo mygtukai -->
             <div class="flex items-center space-x-4">
                 <!-- Kalbos pasirinkimas -->
+                {% if global_settings is None or global_settings.language_switcher_enabled %}
                 <div class="hidden md:flex items-center space-x-1">
                     <form action="{% url 'set_language' %}" method="post" class="flex items-center space-x-1">
                         {% csrf_token %}
@@ -226,6 +227,7 @@
                         </button>
                     </form>
                 </div>
+                {% endif %}
                 <div class="space-x-2">
                     {% if user.is_authenticated %}
                     <a href="{% url 'home' %}"

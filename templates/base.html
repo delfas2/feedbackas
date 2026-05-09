@@ -209,6 +209,7 @@
                     </div>
                 </div>
                 <div class="px-4 pt-4 mt-4 border-t flex items-center justify-between">
+                    {% if global_settings is None or global_settings.language_switcher_enabled %}
                     <form action="{% url 'set_language' %}" method="post" class="flex items-center space-x-2">
                         {% csrf_token %}
                         <input name="next" type="hidden" value="{{ request.get_full_path }}">
@@ -219,6 +220,7 @@
                             <img src="https://flagcdn.com/gb.svg" class="w-6 h-4 rounded-sm" alt="English">
                         </button>
                     </form>
+                    {% endif %}
                     <button id="theme-toggle" onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-bg-secondary text-text-muted transition-colors" title="Perjungti temą">
                         <!-- Sun icon (shown in dark mode) -->
                         <svg id="icon-sun" class="w-5 h-5 hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">

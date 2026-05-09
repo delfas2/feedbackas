@@ -84,6 +84,7 @@ class AIUsageLog(models.Model):
 class GlobalSettings(models.Model):
     personal_form_enabled = models.BooleanField(default=True, help_text="Įjungti 'Individuali forma' funkcionalumą visai platformai.")
     team_form_enabled = models.BooleanField(default=True, help_text="Įjungti 'Komandinė forma' funkcionalumą visai platformai.")
+    language_switcher_enabled = models.BooleanField(default=True, help_text="Įjungti kalbų pasirinkimą (LT/EN) visoje platformoje.")
 
     class Meta:
         verbose_name_plural = "Global Settings"

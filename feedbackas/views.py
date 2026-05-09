@@ -2378,6 +2378,7 @@ def superadmin_features(request):
     if request.method == 'POST':
         settings.personal_form_enabled = request.POST.get('personal_form_enabled') == 'on'
         settings.team_form_enabled = request.POST.get('team_form_enabled') == 'on'
+        settings.language_switcher_enabled = request.POST.get('language_switcher_enabled') == 'on'
         settings.save()
         messages.success(request, 'Funkcionalumų nustatymai sėkmingai atnaujinti.')
         return redirect('superadmin_features')
