@@ -152,7 +152,13 @@
                             alt="{{ member.first_name }} {{ member.last_name }}">
                     </div>
                     <h3 class="text-lg font-bold text-text-main">{{ member.first_name }} {{ member.last_name }}</h3>
-                    <p class="text-sm text-primary font-medium mb-2">{{ member.profile.company_link.name|default:"-- Pozicija --"|translate_field:"position" }}</p>
+                    <p class="text-sm text-primary font-medium mb-2">
+                        {% if member.profile.company_link %}
+                            {{ member.profile.company_link.name }}
+                        {% else %}
+                            {% trans "-- Pozicija --" %}
+                        {% endif %}
+                    </p>
                     <span class="px-3 py-1 text-xs font-semibold text-text-muted bg-bg-secondary rounded-full mb-4">{{ member.profile.department.name|default:"—" }}</span>
 
                     <div class="w-full bg-gray-200 rounded-full h-2.5 mb-1 relative">
