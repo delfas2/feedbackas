@@ -228,9 +228,13 @@
 
             <!-- ANGLŲ KALBOS LAUKAI -->
             <div id="en-content" class="tab-pane hidden">
-<h2 class="text-2xl font-bold text-primary mb-6 border-b pb-2">Priežiūros režimas (Išjungti puslapį)</h2>
+            <h2 class="text-2xl font-bold text-primary mb-6 border-b pb-2">Priežiūros režimas (Išjungti puslapį)</h2>
             <div class="space-y-4 mb-8 bg-red-50/50 p-6 rounded-xl border border-red-100">
-                
+                <div class="flex items-center justify-between pb-4 border-b border-red-100/50">
+                    <div>
+                        <h3 class="text-lg font-bold text-red-800">Išjungti pradinį puslapį (EN)</h3>
+                        <p class="text-sm text-red-600">Įjungus šį jungiklį, lankytojams vietoje pradinio puslapio bus rodomas pranešimas.</p>
+                    </div>
                     <label class="relative inline-flex items-center cursor-pointer">
                         {{ form.maintenance_mode_en }}
                     </label>
@@ -453,13 +457,32 @@
     });
 
     function switchLangTab(lang) {
-        document.getElementById('lt-tab').className = lang === 'lt' ? 'inline-block p-4 border-b-2 rounded-t-lg text-primary border-primary active font-bold' : 'inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-primary hover:border-gray-300 text-gray-500 font-bold';
-        document.getElementById('en-tab').className = lang === 'en' ? 'inline-block p-4 border-b-2 rounded-t-lg text-primary border-primary active font-bold' : 'inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-primary hover:border-gray-300 text-gray-500 font-bold';
-        
-        document.getElementById('lt-content').className = lang === 'lt' ? 'tab-pane block' : 'tab-pane hidden';
-        document.getElementById('en-content').className = lang === 'en' ? 'tab-pane block' : 'tab-pane hidden';
-    }
+        console.log('Switching to language:', lang);
+        const ltTab = document.getElementById('lt-tab');
+        const enTab = document.getElementById('en-tab');
+        const ltContent = document.getElementById('lt-content');
+        const enContent = document.getElementById('en-content');
 
-    });
+        if (!ltTab || !enTab || !ltContent || !enContent) {
+            console.error('Could not find tab elements');
+            return;
+        }
+
+        if (lang === 'lt') {
+            ltTab.className = 'inline-block p-4 border-b-2 rounded-t-lg text-primary border-primary active font-bold';
+            enTab.className = 'inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-primary hover:border-gray-300 text-gray-500 font-bold';
+            ltContent.classList.remove('hidden');
+            ltContent.classList.add('block');
+            enContent.classList.remove('block');
+            enContent.classList.add('hidden');
+        } else {
+            enTab.className = 'inline-block p-4 border-b-2 rounded-t-lg text-primary border-primary active font-bold';
+            ltTab.className = 'inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-primary hover:border-gray-300 text-gray-500 font-bold';
+            enContent.classList.remove('hidden');
+            enContent.classList.add('block');
+            ltContent.classList.remove('block');
+            ltContent.classList.add('hidden');
+        }
+    }
 </script>
 {% endblock %}
