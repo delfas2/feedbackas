@@ -90,6 +90,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'feedbackas.middleware.CompanyRequiredMiddleware',
 ]
 
 ROOT_URLCONF = 'feedbackas.urls'

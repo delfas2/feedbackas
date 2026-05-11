@@ -31,6 +31,7 @@
                     <thead class="bg-bg-secondary text-text-muted border-b border-gray-100">
                         <tr>
                             <th class="px-6 py-3 font-medium">Pavadinimas</th>
+                            <th class="px-6 py-3 font-medium">El. pašto domenas</th>
                             <th class="px-6 py-3 font-medium">Sukurta</th>
                             <th class="px-6 py-3 font-medium">Darbuotojų sk.</th>
                             <th class="px-6 py-3 font-medium">Būsena</th>
@@ -45,6 +46,15 @@
                                     class="hover:text-primary hover:underline">
                                     {{ company.name }}
                                 </a>
+                            </td>
+                            <td class="px-6 py-3">
+                                {% if company.email_domain %}
+                                <span class="px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs font-semibold">
+                                    @{{ company.email_domain }}
+                                </span>
+                                {% else %}
+                                <span class="text-text-muted text-xs">–</span>
+                                {% endif %}
                             </td>
                             <td class="px-6 py-3">{{ company.created_at|date:"Y-m-d" }}</td>
                             <td class="px-6 py-3">
@@ -86,7 +96,7 @@
                         </tr>
                         {% empty %}
                         <tr>
-                            <td colspan="5" class="px-6 py-4 text-center text-text-muted">Nėra registruotų įmonių</td>
+                            <td colspan="6" class="px-6 py-4 text-center text-text-muted">Nėra registruotų įmonių</td>
                         </tr>
                         {% endfor %}
                     </tbody>

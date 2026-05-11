@@ -5,6 +5,10 @@ from django.utils import timezone
 
 class Company(models.Model):
     name = models.CharField(max_length=255)
+    email_domain = models.CharField(
+        max_length=255, blank=True, default='',
+        help_text="El. pašto domenas (pvz. orbigrow.lt). Vartotojai su šiuo domenu bus automatiškai priskirti šiai įmonei."
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     is_active = models.BooleanField(default=True)
 

@@ -209,6 +209,15 @@ def register(request):
             company = None
             if company_name:
                 company, created = Company.objects.get_or_create(name=company_name)
+
+            # Jei įmonė nenurodyta – bandyti priskirti pagal el. pašto domeną
+            if not company and user.email and '@' in user.email:
+                domain = user.email.split('@')[1].lower()
+                company = Company.objects.filter(
+                    email_domain__iexact=domain,
+                    is_active=True,
+                ).first()
+
             Profile.objects.create(user=user, company_link=company)
             login(request, user, backend='django.contrib.auth.backends.ModelBackend')
             return redirect('home')
@@ -219,6 +228,10 @@ def register(request):
 def logout_view(request):
     logout(request)
     return redirect('index')
+
+def no_company(request):
+    """Puslapis rodomas vartotojams, kurių įmonė neužregistruota sistemoje."""
+    return render(request, 'no_company.html')
 
 @login_required
 def get_team_members(request):
@@ -1195,9 +1208,14 @@ def superadmin_create_company(request):
             import csv
             import io
 
+            # Clean email domain
+            email_domain = request.POST.get('email_domain', '').strip().lower()
+            if email_domain.startswith('@'):
+                email_domain = email_domain[1:]
+
             try:
                 with transaction.atomic():
-                    company = Company.objects.create(name=name)
+                    company = Company.objects.create(name=name, email_domain=email_domain)
                     employee_file = request.FILES.get('employee_list')
                     
                     if employee_file:

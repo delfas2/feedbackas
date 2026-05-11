@@ -37,9 +37,29 @@ class RegistrationForm(UserCreationForm):
         self.fields['company'].widget.attrs.update({'class': css_class})
 
     def clean_email(self):
+        from users.models import Company, Profile
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Vartotojas su tokiu el. pašto adresu jau egzistuoja.")
+
+        # Tikrinti ar el. pašto domenas susietas su įmone
+        if email and '@' in email:
+            domain = email.split('@')[1].lower()
+            company_exists = Company.objects.filter(
+                email_domain__iexact=domain,
+                is_active=True,
+            ).exists()
+            # Fallback: tikrinti ar yra esamų vartotojų su tuo domenu
+            if not company_exists:
+                profile_exists = Profile.objects.filter(
+                    user__email__iendswith=f'@{domain}',
+                    company_link__isnull=False,
+                    company_link__is_active=True,
+                ).exists()
+                if not profile_exists:
+                    raise forms.ValidationError(
+                        "Jūsų įmonė sistemoje neužregistruota. Susisiekite su administratoriumi."
+                    )
         return email
 
     def save(self, commit=True):

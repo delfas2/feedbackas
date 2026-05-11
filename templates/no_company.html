@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="lt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Įmonė neužregistruota - Orbigrow.lt</title>
+    <link href="{% static 'css/styles.css' %}" rel="stylesheet">
+    <link rel="icon" type="image/png" href="{% static 'images/fav.png' %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+    </style>
+</head>
+<body class="bg-bg-secondary flex items-center justify-center min-h-screen px-4">
+    <div class="bg-bg-main p-8 sm:p-12 rounded-2xl shadow-lg w-full max-w-md text-center">
+
+        <!-- Ikona -->
+        <div class="mx-auto w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mb-6">
+            <svg class="w-10 h-10 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+            </svg>
+        </div>
+
+        <!-- Pranešimas -->
+        <h1 class="text-2xl font-bold text-text-main mb-3">Jūsų įmonė sistemoje neužregistruota</h1>
+        <p class="text-text-muted mb-8 leading-relaxed">
+            Jūsų el. pašto domenas nėra susietas su jokia registruota įmone mūsų sistemoje. 
+            Prašome kreiptis į savo įmonės administratorių arba susisiekti su mumis.
+        </p>
+
+        <!-- Kontaktinė informacija -->
+        <div class="bg-bg-secondary rounded-xl p-4 mb-6 text-sm text-text-muted">
+            <p class="font-medium text-text-main mb-1">Reikia pagalbos?</p>
+            <p>Susisiekite el. paštu: <a href="mailto:info@orbigrow.lt" class="text-primary font-medium hover:underline">info@orbigrow.lt</a></p>
+        </div>
+
+        <!-- Veiksmai -->
+        <div class="flex flex-col gap-3">
+            <a href="{% url 'logout' %}" 
+                class="w-full py-3 px-4 bg-primary/90 hover:bg-purple-700 text-white font-semibold rounded-xl transition-colors shadow-sm text-center">
+                Atsijungti
+            </a>
+            <a href="{% url 'index' %}" 
+                class="w-full py-3 px-4 border border-gray-300 text-text-main font-medium rounded-xl hover:bg-bg-secondary transition-colors text-center">
+                Grįžti į pradžią
+            </a>
+        </div>
+
+        <!-- Prisijungęs kaip -->
+        {% if request.user.is_authenticated %}
+        <p class="mt-6 text-xs text-text-muted">
+            Prisijungę kaip: <span class="font-medium">{{ request.user.email }}</span>
+        </p>
+        {% endif %}
+    </div>
+</body>
+</html>

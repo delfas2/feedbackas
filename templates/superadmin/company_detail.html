@@ -120,6 +120,14 @@
                 <span class="text-slate-900 text-sm font-bold">{{ company.name }}</span>
              </div>
              <div class="flex flex-col border-b border-slate-50 pb-2">
+                <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">El. pašto domenas</span>
+                {% if company.email_domain %}
+                <span class="text-sm font-bold text-blue-700">@{{ company.email_domain }}</span>
+                {% else %}
+                <span class="text-sm text-slate-400">Nenustatytas</span>
+                {% endif %}
+             </div>
+             <div class="flex flex-col border-b border-slate-50 pb-2">
                 <span class="text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-1">Sistemos ID</span>
                 <span class="text-slate-900 text-sm font-bold">{{ company.id }}</span>
              </div>

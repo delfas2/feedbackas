@@ -1,6 +1,9 @@
 import logging
 from allauth.socialaccount.adapter import DefaultSocialAccountAdapter
+from allauth.exceptions import ImmediateHttpResponse
 from django.contrib.auth.models import User
+from django.contrib import messages
+from django.shortcuts import redirect
 from users.models import Profile, Company
 
 logger = logging.getLogger(__name__)
@@ -24,6 +27,7 @@ class MicrosoftSocialAccountAdapter(DefaultSocialAccountAdapter):
         """
         Automatiškai susieja Microsoft paskyrą su esamu vartotoju,
         jei el. pašto adresas sutampa.
+        Blokuoja prisijungimą, jei domenas nesusietas su jokia įmone.
         """
         # Jei jau susieta – nieko nedaryti
         if sociallogin.is_existing:
@@ -43,17 +47,30 @@ class MicrosoftSocialAccountAdapter(DefaultSocialAccountAdapter):
         # Ieškoti esamo vartotojo su tuo pačiu el. paštu
         try:
             existing_user = User.objects.get(email__iexact=email)
+            # Jei tai superuser – visada leisti
+            if existing_user.is_superuser:
+                sociallogin.connect(request, existing_user)
+                return
             # Susieti Microsoft paskyrą su esamu vartotoju
             sociallogin.connect(request, existing_user)
             logger.info(f"Microsoft paskyra automatiškai susieta su esamu vartotoju: {email}")
+            return
         except User.DoesNotExist:
-            pass  # Naujas vartotojas – bus sukurtas per save_user
+            pass  # Naujas vartotojas – tikrinsime domeną
         except User.MultipleObjectsReturned:
             # Jei keli vartotojai su tuo pačiu el. paštu – imti pirmą aktyvų
             existing_user = User.objects.filter(email__iexact=email, is_active=True).first()
             if existing_user:
                 sociallogin.connect(request, existing_user)
                 logger.info(f"Microsoft paskyra susieta su esamu vartotoju (multi): {email}")
+                return
+
+        # Naujas vartotojas – tikrinti ar domenas susietas su įmone
+        company = self._find_company_by_email(email)
+        if not company:
+            logger.warning(f"Microsoft SSO atmestas – domenas nesusietas su įmone: {email}")
+            messages.error(request, "Jūsų įmonė sistemoje neužregistruota. Susisiekite su administratoriumi.")
+            raise ImmediateHttpResponse(redirect('login'))
 
     def save_user(self, request, sociallogin, form=None):
         """Iškviečiamas kai naujas vartotojas registruojasi per socialinį tiekėją."""
@@ -95,15 +112,24 @@ class MicrosoftSocialAccountAdapter(DefaultSocialAccountAdapter):
     def _find_company_by_email(self, email):
         """
         Ieško Company pagal el. pašto domeną.
-        Pvz., jei vartotojas prisijungia su vardas@acme.lt,
-        tikrina ar yra vartotojų su tuo pačiu domenu, priskirtų įmonei.
+        1. Pirmiausia tikrina ar yra Company su atitinkamu email_domain lauku.
+        2. Jei nerasta – bando rasti pagal esamų vartotojų el. pašto domeną (fallback).
         """
         if not email or '@' not in email:
             return None
 
         domain = email.split('@')[1].lower()
 
-        # Rasti pirmus profilį su tuo pačiu domenu ir priskirta įmone
+        # 1. Tikrinti pagal Company.email_domain lauką
+        company_by_domain = Company.objects.filter(
+            email_domain__iexact=domain,
+            is_active=True,
+        ).first()
+
+        if company_by_domain:
+            return company_by_domain
+
+        # 2. Fallback: rasti profilį su tuo pačiu domenu ir priskirta įmone
         matching_profile = (
             Profile.objects
             .filter(

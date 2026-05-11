@@ -36,6 +36,7 @@ urlpatterns = [
     path('home/', views.home, name='home'),
     path('register/', views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),
+    path('no-company/', views.no_company, name='no_company'),
     path('logout/', views.logout_view, name='logout'),
     path('get_team_members/', views.get_team_members, name='get_team_members'),
     path('request_feedback/', views.request_feedback, name='request_feedback'),
