@@ -997,6 +997,57 @@ def assign_to_department(request):
                 target_user.profile.save()
     return redirect('company_management')
 
+@login_required
+def company_edit_department(request, department_id):
+    """Padalinio redagavimas – prieinamas įmonės administratoriams ir superuseriams."""
+    user = request.user
+    if not user.is_superuser and not getattr(user.profile, 'is_company_admin', False):
+        messages.error(request, 'Neturite teisių atlikti šio veiksmo.')
+        return redirect('home')
+
+    user_company = user.profile.company_link
+    department = get_object_or_404(Department, id=department_id, company=user_company)
+
+    if request.method == 'POST':
+        form = DepartmentForm(user, request.POST, instance=department)
+        form.fields['parent'].queryset = Department.objects.filter(company=user_company).exclude(id=department.id)
+        form.fields['manager'].queryset = User.objects.filter(profile__company_link=user_company)
+
+        if form.is_valid():
+            dept = form.save()
+            if dept.manager:
+                manager_profile = dept.manager.profile
+                manager_profile.department = dept
+                manager_profile.save()
+            messages.success(request, f'Padalinys „{dept.name}" sėkmingai atnaujintas.')
+            return redirect('company_management')
+    else:
+        form = DepartmentForm(user, instance=department)
+        form.fields['parent'].queryset = Department.objects.filter(company=user_company).exclude(id=department.id)
+        form.fields['manager'].queryset = User.objects.filter(profile__company_link=user_company)
+
+    context = {
+        'department': department,
+        'form': form,
+    }
+    return render(request, 'company_edit_department.html', context)
+
+@login_required
+def company_delete_department(request, department_id):
+    """Padalinio trynimas – prieinamas įmonės administratoriams ir superuseriams."""
+    user = request.user
+    if not user.is_superuser and not getattr(user.profile, 'is_company_admin', False):
+        messages.error(request, 'Neturite teisių atlikti šio veiksmo.')
+        return redirect('home')
+
+    if request.method == 'POST':
+        user_company = user.profile.company_link
+        department = get_object_or_404(Department, id=department_id, company=user_company)
+        department.delete()
+        messages.success(request, f'Padalinys „{department.name}" sėkmingai ištrintas.')
+
+    return redirect('company_management')
+
 from django.contrib.auth.decorators import user_passes_test
 
 @user_passes_test(lambda u: u.is_superuser)

@@ -1,3 +1,4 @@
+{% load i18n %}
 <li class="relative">
     <div class="flex items-center p-4 border border-slate-200 rounded-2xl bg-white hover:shadow-md hover:border-slate-300 transition-all">
         <div class="mr-4 w-10 h-10 rounded-xl bg-teal-50 flex items-center justify-center text-teal-600 shrink-0">
@@ -23,6 +24,7 @@
             <span class="mr-2 bg-slate-50 border border-slate-100 text-slate-600 text-[11px] font-bold px-2.5 py-1 rounded-lg">
                 {{ node.members.count }} {% trans "nariai" %}
             </span>
+            {% if request.user.is_superuser %}
             <a href="{% url 'superadmin_edit_department' node.company.id node.id %}"
                 class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 rounded-lg transition-colors" title="{% trans "Redaguoti" %}">
                 <i data-lucide="edit-2" class="w-4 h-4"></i>
@@ -34,6 +36,19 @@
                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                 </button>
             </form>
+            {% elif request.user.profile.is_company_admin %}
+            <a href="{% url 'company_edit_department' node.id %}"
+                class="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-50 rounded-lg transition-colors" title="{% trans "Redaguoti" %}">
+                <i data-lucide="edit-2" class="w-4 h-4"></i>
+            </a>
+            <form action="{% url 'company_delete_department' node.id %}" method="post"
+                onsubmit="return confirm('{% trans "Ar tikrai norite ištrinti padalinį" %} &quot;{{ node.name }}&quot;? {% trans "Visi sub-padaliniai taip pat bus ištrinti." %}');" class="inline">
+                {% csrf_token %}
+                <button type="submit" class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="{% trans "Ištrinti" %}">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+            </form>
+            {% endif %}
         </div>
     </div>
 

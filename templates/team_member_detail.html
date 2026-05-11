@@ -15,7 +15,7 @@
             </a>
             <div>
                 <h1 class="text-3xl font-bold text-slate-800">{{ member.get_full_name }}</h1>
-                <p class="text-sm text-slate-500 mt-1 font-medium">{{ department.name|default:"{% trans "Skyrius nepriskirtas" %}" }} · {{ member.email }}</p>
+                <p class="text-sm text-slate-500 mt-1 font-medium">{% if department %}{{ department.name }}{% else %}{% trans "Skyrius nepriskirtas" %}{% endif %} · {{ member.email }}</p>
             </div>
         </div>
     </header>

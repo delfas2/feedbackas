@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Redaguoti padalinį" %} - {{ department.name }}{% endblock %}
+
+{% block content %}
+<main class="flex-1 overflow-y-auto bg-bg-secondary p-6">
+    <div class="max-w-2xl mx-auto">
+        <nav class="flex mb-4 text-text-muted text-sm">
+            <a href="{% url 'company_management' %}" class="hover:text-primary">{% trans "Struktūros valdymas" %}</a>
+            <span class="mx-2">/</span>
+            <span class="text-text-main">{{ department.name }}</span>
+        </nav>
+
+        <h1 class="text-2xl font-bold text-text-main mb-8">{% trans "Redaguoti padalinį:" %} {{ department.name }}</h1>
+
+        <div class="bg-bg-main rounded-xl shadow-sm p-6 border border-gray-100">
+            <form method="post">
+                {% csrf_token %}
+                {% if form.non_field_errors %}
+                <div class="mb-4 p-3 bg-red-50 text-red-700 rounded-lg text-sm">
+                    {{ form.non_field_errors.0 }}
+                </div>
+                {% endif %}
+
+                <div class="space-y-6">
+                    <div>
+                        <label for="{{ form.name.id_for_label }}" class="block text-sm font-medium text-text-main mb-1">
+                            {% trans "Pavadinimas" %}
+                        </label>
+                        {{ form.name }}
+                        {% if form.name.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.name.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <label for="{{ form.parent.id_for_label }}" class="block text-sm font-medium text-text-main mb-1">
+                            {% trans "Tėvinis padalinys" %}
+                        </label>
+                        {{ form.parent }}
+                        {% if form.parent.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.parent.errors.0 }}</p>
+                        {% endif %}
+                        <p class="text-xs text-text-muted mt-1">{% trans "Palikite tuščią, jei tai pagrindinis padalinys." %}</p>
+                    </div>
+
+                    <div>
+                        <label for="{{ form.manager.id_for_label }}" class="block text-sm font-medium text-text-main mb-1">
+                            {% trans "Vadovas" %}
+                        </label>
+                        {{ form.manager }}
+                        {% if form.manager.errors %}
+                        <p class="mt-1 text-sm text-red-600">{{ form.manager.errors.0 }}</p>
+                        {% endif %}
+                    </div>
+
+                    <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-100">
+                        <a href="{% url 'company_management' %}"
+                            class="px-4 py-2 border border-gray-300 text-text-main rounded-lg hover:bg-bg-secondary transition-colors font-medium">
+                            {% trans "Atšaukti" %}
+                        </a>
+                        <button type="submit"
+                            class="px-6 py-2 bg-primary/90 text-white rounded-lg hover:bg-purple-700 transition-colors font-medium">
+                            {% trans "Išsaugoti pakeitimus" %}
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+{% endblock %}
