@@ -22,7 +22,6 @@ services:
       - traefik.http.routers.orbigrow.rule=Host(`orbigrow.lt`) || Host(`www.orbigrow.lt`)
       - traefik.http.routers.orbigrow.entrypoints=websecure
       - traefik.http.routers.orbigrow.tls.certresolver=letsencrypt
-      - traefik.http.routers.orbigrow.tls.options=secure-tls@docker
       - traefik.http.routers.orbigrow.middlewares=security-headers@docker
       - traefik.http.services.orbigrow.loadbalancer.server.port=8000
       - traefik.docker.network=traefik-proxy
@@ -44,9 +43,6 @@ services:
       - traefik.http.middlewares.security-headers.headers.frameDeny=true
       - traefik.http.middlewares.security-headers.headers.referrerPolicy=strict-origin-when-cross-origin
       - traefik.http.middlewares.security-headers.headers.contentSecurityPolicy=upgrade-insecure-requests
-
-      # --- TLS Options (TLS 1.2+ only) ---
-      - traefik.tls.options.secure-tls.minVersion=VersionTLS12
     networks:
       - traefik-proxy
       - default
