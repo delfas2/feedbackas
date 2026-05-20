@@ -258,3 +258,8 @@ SOCIALACCOUNT_PROVIDERS = {
         'SCOPE': ['openid', 'email', 'profile', 'User.Read'],
     }
 }
+
+# --- Sesijų valdymo nustatymai ---
+# Automatinis atsijungimas po 30 minučių neaktyvumo
+SESSION_COOKIE_AGE = 1800  # 30 min (sekundėmis)
+SESSION_SAVE_EVERY_REQUEST = True  # Atnaujinti sesijos laikmatį su kiekviena užklausa
