@@ -297,3 +297,4 @@ CSP_IMG_SRC = (
 CSP_OBJECT_SRC = ("'none'",)
 CSP_BASE_URI = ("'self'",)
 CSP_FRAME_SRC = ("'self'",)
+CSP_UPGRADE_INSECURE_REQUESTS = True

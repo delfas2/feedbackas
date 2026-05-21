@@ -42,7 +42,6 @@ services:
       - traefik.http.middlewares.security-headers.headers.browserXssFilter=true
       - traefik.http.middlewares.security-headers.headers.frameDeny=true
       - traefik.http.middlewares.security-headers.headers.referrerPolicy=strict-origin-when-cross-origin
-      - traefik.http.middlewares.security-headers.headers.contentSecurityPolicy=upgrade-insecure-requests
     networks:
       - traefik-proxy
       - default
