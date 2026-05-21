@@ -82,6 +82,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'csp.middleware.CSPMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.locale.LocaleMiddleware',
@@ -263,3 +264,36 @@ SOCIALACCOUNT_PROVIDERS = {
 # Automatinis atsijungimas po 30 minučių neaktyvumo
 SESSION_COOKIE_AGE = 1800  # 30 min (sekundėmis)
 SESSION_SAVE_EVERY_REQUEST = True  # Atnaujinti sesijos laikmatį su kiekviena užklausa
+
+# --- Content Security Policy (CSP) ---
+CSP_DEFAULT_SRC = ("'self'",)
+CSP_SCRIPT_SRC = (
+    "'self'",
+    "'unsafe-inline'",
+    "'unsafe-eval'",
+    "https://cdn.jsdelivr.net",
+    "https://unpkg.com",
+    "https://cdn.tailwindcss.com",
+    "https://cdnjs.cloudflare.com",
+)
+CSP_STYLE_SRC = (
+    "'self'",
+    "'unsafe-inline'",
+    "https://fonts.googleapis.com",
+    "https://cdn.jsdelivr.net",
+)
+CSP_FONT_SRC = (
+    "'self'",
+    "https://fonts.gstatic.com",
+    "data:",
+)
+CSP_IMG_SRC = (
+    "'self'",
+    "data:",
+    "https://flagcdn.com",
+    "https://www.transparenttextures.com",
+    "https://placehold.co",
+)
+CSP_OBJECT_SRC = ("'none'",)
+CSP_BASE_URI = ("'self'",)
+CSP_FRAME_SRC = ("'self'",)
