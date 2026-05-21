@@ -42,6 +42,10 @@ services:
       - traefik.http.middlewares.security-headers.headers.browserXssFilter=true
       - traefik.http.middlewares.security-headers.headers.frameDeny=true
       - traefik.http.middlewares.security-headers.headers.referrerPolicy=strict-origin-when-cross-origin
+      # Cross-Origin and Permissions headers (OWASP ZAP)
+      - traefik.http.middlewares.security-headers.headers.customResponseHeaders.Cross-Origin-Resource-Policy=same-origin
+      - traefik.http.middlewares.security-headers.headers.customResponseHeaders.Cross-Origin-Embedder-Policy=unsafe-none
+      - traefik.http.middlewares.security-headers.headers.customResponseHeaders.Permissions-Policy=camera=(), microphone=(), geolocation=()
     networks:
       - traefik-proxy
       - default
