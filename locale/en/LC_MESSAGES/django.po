@@ -1313,3 +1313,27 @@ msgstr "Repeat new password"
 #: users/templates/users/profile.html:99
 msgid "Atnaujinti profilį"
 msgstr "Update Profile"
+
+#: templates/index.html (SEO title)
+msgid "OrbiGrow – Darbuotojų grįžtamojo ryšio ir komandos mikroklimato platforma"
+msgstr "OrbiGrow – Employee Feedback & Team Climate Platform"
+
+#: templates/index.html (SEO description)
+msgid "OrbiGrow – 360° grįžtamojo ryšio platforma komandoms. Vertinkite darbuotojų kompetencijas, stebėkite mikroklimatą ir auginkite organizaciją su AI."
+msgstr "OrbiGrow – 360° feedback platform for teams. Evaluate employee competencies, monitor team climate and grow your organisation with AI."
+
+#: templates/apie_mus.html (SEO title)
+msgid "Apie mus – OrbiGrow komanda | Darbuotojų augimo platforma"
+msgstr "About Us – OrbiGrow Team | Employee Growth Platform"
+
+#: templates/apie_mus.html (SEO description)
+msgid "Sužinokite, kas yra OrbiGrow – Lietuvoje sukurta HR platforma darbuotojų grįžtamajam ryšiui, kompetencijų vertinimui ir organizacijos augimui."
+msgstr "Learn about OrbiGrow – an HR tool built in Lithuania for employee feedback, competency evaluation and organisational growth."
+
+#: templates/saugumas.html (SEO title)
+msgid "Saugumo užtikrinimas – OrbiGrow | Duomenų apsauga ir privatumas"
+msgstr "Security – OrbiGrow | Data Protection & Privacy"
+
+#: templates/saugumas.html (SEO description)
+msgid "Kaip OrbiGrow užtikrina jūsų darbuotojų duomenų saugumą: šifravimas, BDAR atitiktis, prieigos valdymas ir reguliarus saugumo auditas."
+msgstr "How OrbiGrow protects your employee data: encryption, GDPR compliance, access control and regular security audits."

@@ -1,0 +1,42 @@
+# robots.txt for orbigrow.lt
+# Leidžiame indeksuoti viešus puslapius, draudžiame vidines sritis.
+
+User-agent: *
+
+# Leisti viešus puslapius
+Allow: /
+Allow: /apie-mus/
+Allow: /saugumas/
+
+# Drausti administravimo, autentifikacijos ir vidines sritis
+Disallow: /admin/
+Disallow: /orbigrow-admin-panel/
+Disallow: /login/
+Disallow: /register/
+Disallow: /logout/
+Disallow: /profile/
+Disallow: /home/
+Disallow: /questionnaires/
+Disallow: /fill-feedback/
+Disallow: /feedback/fill/
+Disallow: /results/
+Disallow: /team/
+Disallow: /tasks/
+Disallow: /management/
+Disallow: /superadmin/
+Disallow: /accounts/
+Disallow: /no-company/
+Disallow: /api/
+Disallow: /get_team_members/
+Disallow: /request_feedback/
+Disallow: /send_feedback/
+Disallow: /generate_ai_feedback/
+Disallow: /check_ai_task_status/
+Disallow: /all_feedback/
+Disallow: /get_feedback_data/
+Disallow: /team-statistics/
+Disallow: /static/
+Disallow: /media/
+
+# Sitemap
+Sitemap: https://orbigrow.lt/sitemap.xml
