@@ -283,11 +283,13 @@ CSP_STYLE_SRC = (
     "'unsafe-inline'",
     "https://fonts.googleapis.com",
     "https://cdn.jsdelivr.net",
+    "https://cdnjs.cloudflare.com",
 )
 CSP_FONT_SRC = (
     "'self'",
     "https://fonts.gstatic.com",
     "data:",
+    "https://cdnjs.cloudflare.com",
 )
 CSP_IMG_SRC = (
     "'self'",
