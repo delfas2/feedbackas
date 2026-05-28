@@ -15,6 +15,7 @@ class StaticViewSitemap(Sitemap):
             {'name': 'index', 'priority': 1.0},
             {'name': 'apie_mus', 'priority': 0.8},
             {'name': 'saugumas', 'priority': 0.8},
+            {'name': 'privatumo_politika', 'priority': 0.8},
         ]
 
     def location(self, item):

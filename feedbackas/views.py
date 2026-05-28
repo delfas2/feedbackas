@@ -75,6 +75,9 @@ def security_page(request):
     page_description = PageDescription.load()
     return render(request, 'saugumas.html', {'page_description': page_description})
 
+def privacy_policy(request):
+    return render(request, 'privatumo_politika.html')
+
 from django.contrib.auth.decorators import user_passes_test
 @login_required
 @user_passes_test(lambda u: u.is_superuser)

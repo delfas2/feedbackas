@@ -41,6 +41,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('apie-mus/', views.apie_mus, name='apie_mus'),
     path('saugumas/', views.security_page, name='saugumas'),
+    path('privatumo-politika/', views.privacy_policy, name='privatumo_politika'),
     path('home/', views.home, name='home'),
     path('register/', views.register, name='register'),
     path('login/', auth_views.LoginView.as_view(template_name='registration/login.html'), name='login'),

@@ -26,6 +26,7 @@ class CompanyRequiredMiddleware:
         '/media/',
         '/apie-mus/',
         '/saugumas/',
+        '/privatumo-politika/',
         '/favicon.ico',
         '/',  # index landing page
     ]
