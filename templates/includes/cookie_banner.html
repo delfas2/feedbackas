@@ -2,7 +2,7 @@
 <div id="cookieBanner" class="fixed bottom-0 left-0 w-full bg-white border-t border-gray-200 shadow-2xl p-4 md:p-6 z-[100] hidden">
     <div class="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
         <div class="text-sm text-gray-600 flex-1">
-            <p>{% trans "Šioje svetainėje naudojame slapukus (angl. cookies), kad užtikrintume geriausią naršymo patirtį bei analizuotume lankytojų srautus. Tęsdami naršymą, sutinkate su slapukų naudojimu." %} <a href="{% url 'saugumas' %}" class="text-primary hover:underline font-medium">{% trans "Sužinoti daugiau" %}</a>.</p>
+            <p>{% trans "Šioje svetainėje naudojame slapukus (angl. cookies), kad užtikrintume geriausią naršymo patirtį bei analizuotume lankytojų srautus. Tęsdami naršymą, sutinkate su slapukų naudojimu." %} <a href="{% url 'saugumas' %}" class="text-primary hover:underline font-medium">{% trans "Saugumas" %}</a> {% trans "ir" %} <a href="{% url 'privatumo_politika' %}" class="text-primary hover:underline font-medium">{% trans "Privatumo politika" %}</a>.</p>
         </div>
         <div class="flex-shrink-0">
             <button onclick="acceptCookies()" class="px-6 py-2.5 bg-primary text-white font-medium rounded-lg hover:bg-primary/90 transition-colors whitespace-nowrap shadow-sm">
