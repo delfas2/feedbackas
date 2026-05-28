@@ -277,6 +277,7 @@ CSP_SCRIPT_SRC = (
     "https://unpkg.com",
     "https://cdn.tailwindcss.com",
     "https://cdnjs.cloudflare.com",
+    "https://www.googletagmanager.com",
 )
 CSP_STYLE_SRC = (
     "'self'",
@@ -297,6 +298,13 @@ CSP_IMG_SRC = (
     "https://flagcdn.com",
     "https://www.transparenttextures.com",
     "https://placehold.co",
+    "https://www.google-analytics.com",
+    "https://analytics.google.com",
+)
+CSP_CONNECT_SRC = (
+    "'self'",
+    "https://www.google-analytics.com",
+    "https://analytics.google.com",
 )
 CSP_OBJECT_SRC = ("'none'",)
 CSP_BASE_URI = ("'self'",)

@@ -4,10 +4,19 @@
 <html lang="lt" data-theme="light">
 
 <head>
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; upgrade-insecure-requests; base-uri 'self'; object-src 'none'; default-src 'self'; img-src 'self' data: https://flagcdn.com https://www.transparenttextures.com https://placehold.co; font-src 'self' https://fonts.gstatic.com data: https://cdnjs.cloudflare.com; frame-src 'self'; form-action 'self'; frame-ancestors 'none';">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://unpkg.com https://cdn.tailwindcss.com https://cdnjs.cloudflare.com https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; connect-src 'self' https://www.google-analytics.com https://analytics.google.com; upgrade-insecure-requests; base-uri 'self'; object-src 'none'; default-src 'self'; img-src 'self' data: https://flagcdn.com https://www.transparenttextures.com https://placehold.co https://www.google-analytics.com https://analytics.google.com; font-src 'self' https://fonts.gstatic.com data: https://cdnjs.cloudflare.com; frame-src 'self'; form-action 'self'; frame-ancestors 'none';">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% trans "Orbigrow.lt" %}{% endblock %}</title>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-L8KWNPPX9Y"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-L8KWNPPX9Y');
+    </script>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="icon" type="image/png" href="{% static 'images/fav.png' %}">
     <link rel="shortcut icon" href="{% static 'images/fav.png' %}" type="image/x-icon">
