@@ -1,6 +1,27 @@
 from django.shortcuts import redirect
 from django.urls import reverse
 from users.models import Profile, Company
+from django.utils import translation
+class ForceLanguageMiddleware:
+    """
+    Jei kalbų pasirinkimas išjungtas, priverstinai nustato lietuvių kalbą ('lt')
+    visiems vartotojams.
+    """
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        try:
+            from feedbackas.models import GlobalSettings
+            settings = GlobalSettings.load()
+            if not settings.language_switcher_enabled:
+                translation.activate('lt')
+                request.LANGUAGE_CODE = 'lt'
+        except Exception:
+            pass
+            
+        response = self.get_response(request)
+        return response
 
 
 class CompanyRequiredMiddleware:
