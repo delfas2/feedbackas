@@ -279,11 +279,11 @@
                         <p class="text-lg text-text-muted mb-8 max-w-xl mx-auto md:mx-0 whitespace-pre-line">{{ page_description|translate_field:'index_hero_desc' }}</p>
                         <div class="flex flex-col sm:flex-row gap-4 justify-center md:justify-start">
                             <button type="button" onclick="openContactModal()"
-                                class="px-8 py-3 text-lg font-medium text-white bg-primary/90 rounded-xl shadow-lg hover:bg-purple-700 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center">
+                                class="px-8 py-3 text-lg font-medium text-white bg-primary/90 rounded-xl shadow-lg hover:bg-primary hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-center">
                                 {% trans "Susisiekite su mumis" %}
                             </button>
                             <a href="#funkcijos"
-                                class="px-8 py-3 text-lg font-medium text-primary bg-bg-main border border-purple-200 rounded-xl shadow-sm hover:bg-bg-secondary hover:border-purple-300 transition-colors duration-300 text-center">
+                                class="px-8 py-3 text-lg font-medium text-primary bg-bg-main border border-[#a5c6cf] rounded-xl shadow-sm hover:bg-bg-secondary hover:border-[#4a8e9e] transition-colors duration-300 text-center">
                                 Kaip tai veikia?
                             </a>
                         </div>
@@ -293,7 +293,7 @@
                     <div class="relative h-[400px] md:h-[500px] w-full hidden md:block select-none">
                         <!-- Foninis švytėjimas -->
                         <div
-                            class="absolute inset-0 bg-gradient-to-tr from-purple-300 to-pink-200 rounded-full blur-[80px] opacity-40 transform scale-110">
+                            class="absolute inset-0 bg-gradient-to-tr from-[#4a8e9e] to-[#94c98d] rounded-full blur-[80px] opacity-40 transform scale-110">
                         </div>
 
                         <!-- Kortelė 1: Apklausos atsiliepimas -->
@@ -301,7 +301,7 @@
                             style="animation: float 6s ease-in-out infinite;">
                             <div class="flex items-center gap-4 mb-4">
                                 <div
-                                    class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-400 to-purple-600 flex items-center justify-center text-white font-bold shadow-md">
+                                    class="w-10 h-10 rounded-full bg-gradient-to-r from-[#94c98d] to-[#4a8e9e] flex items-center justify-center text-white font-bold shadow-md">
                                     J</div>
                                 <div>
                                     <div class="h-3 w-24 bg-gray-200 rounded-full mb-2"></div>
@@ -335,19 +335,19 @@
                             <!-- Dinaminio stiliaus stulpeliai -->
                             <div class="flex items-end gap-3 h-32 mb-4 border-b border-gray-100 pb-2">
                                 <div
-                                    class="w-1/4 bg-purple-200 rounded-t-lg h-[60%] hover:h-[65%] transition-all overflow-hidden relative">
-                                    <div class="absolute bottom-0 w-full bg-purple-300 h-1/2"></div>
+                                    class="w-1/4 bg-[#a5c6cf] rounded-t-lg h-[60%] hover:h-[65%] transition-all overflow-hidden relative">
+                                    <div class="absolute bottom-0 w-full bg-[#76aebc] h-1/2"></div>
                                 </div>
                                 <div
-                                    class="w-1/4 bg-purple-400 rounded-t-lg h-[80%] hover:h-[85%] transition-all overflow-hidden relative">
-                                    <div class="absolute bottom-0 w-full bg-primary h-1/2"></div>
+                                    class="w-1/4 bg-[#76aebc] rounded-t-lg h-[80%] hover:h-[85%] transition-all overflow-hidden relative">
+                                    <div class="absolute bottom-0 w-full bg-[#2a5384] h-1/2"></div>
                                 </div>
                                 <div
-                                    class="w-1/4 bg-purple-300 rounded-t-lg h-[40%] hover:h-[45%] transition-all overflow-hidden relative">
-                                    <div class="absolute bottom-0 w-full bg-purple-400 h-1/2"></div>
+                                    class="w-1/4 bg-[#cae4c6] rounded-t-lg h-[40%] hover:h-[45%] transition-all overflow-hidden relative">
+                                    <div class="absolute bottom-0 w-full bg-[#94c98d] h-1/2"></div>
                                 </div>
                                 <div
-                                    class="w-1/4 bg-gradient-to-t from-purple-600 to-purple-400 rounded-t-lg h-[100%] hover:h-[100%] shadow-lg shadow-purple-500/30">
+                                    class="w-1/4 bg-gradient-to-t from-[#2a5384] to-[#94c98d] rounded-t-lg h-[100%] hover:h-[100%] shadow-lg">
                                 </div>
                             </div>
                             <div class="flex justify-between text-[10px] font-medium text-text-muted px-1">
@@ -488,7 +488,7 @@
         <section class="bg-primary/90 text-white">
             <div class="container mx-auto px-4 py-20 text-center">
                 <h2 class="text-3xl md:text-4xl font-bold mb-4 whitespace-pre-line">{{ page_description|translate_field:'index_cta_title' }}</h2>
-                <p class="text-lg text-purple-100 max-w-2xl mx-auto mb-8 whitespace-pre-line">{{ page_description|translate_field:'index_cta_desc' }}</p>
+                <p class="text-lg text-white/80 max-w-2xl mx-auto mb-8 whitespace-pre-line">{{ page_description|translate_field:'index_cta_desc' }}</p>
                 <button type="button" onclick="openContactModal()"
                     class="px-8 py-3 text-lg font-bold text-primary bg-bg-main rounded-lg shadow-lg hover:bg-bg-secondary transition-colors duration-200">
                     {% trans "Susisiekite su mumis" %}
@@ -519,7 +519,7 @@
             <div>
                 <p class="font-medium">{{ message }}</p>
             </div>
-            <button onclick="this.parentElement.remove()" class="text-white hover:text-purple-200 focus:outline-none">
+            <button onclick="this.parentElement.remove()" class="text-white hover:text-gray-200 focus:outline-none">
                 <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
                     </path>
@@ -574,23 +574,23 @@
                 <div>
                     <label class="block text-sm font-medium text-text-main mb-1">Jūsų Vardas</label>
                     <input type="text" name="name" required placeholder="Vardenis Pavardenis"
-                        class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-purple-500 outline-none transition-all">
+                        class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-secondary outline-none transition-all">
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label class="block text-sm font-medium text-text-main mb-1">{% trans "El. paštas" %} <span class="text-red-500">*</span></label>
                         <input type="email" name="email" required placeholder="vardas@imone.lt"
-                            class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-purple-500 outline-none transition-all">
+                            class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-secondary outline-none transition-all">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-text-main mb-1">{% trans "Telefono numeris" %} <span class="text-red-500">*</span></label>
                         <input type="tel" name="phone" required placeholder="+370 600 00000"
-                            class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-purple-500 outline-none transition-all">
+                            class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-secondary outline-none transition-all">
                     </div>
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-text-main mb-1">{% trans "Darbuotojų skaičius jūsų įmonėje" %}</label>
-                    <select name="employees" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-purple-500 outline-none transition-all bg-white">
+                    <select name="employees" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-secondary outline-none transition-all bg-white">
                         <option value="">{% trans "Pasirinkite..." %}</option>
                         <option value="1-10">1 - 10</option>
                         <option value="11-50">11 - 50</option>
@@ -601,11 +601,11 @@
                 <div>
                     <label class="block text-sm font-medium text-text-main mb-1">{% trans "Jūsų Žinutė" %} <span class="text-red-500">*</span></label>
                     <textarea name="message" required rows="3" placeholder="{% trans "Trumpai apibūdinkite savo poreikius..." %}"
-                        class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-purple-500 outline-none transition-all resize-none"></textarea>
+                        class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-primary focus:border-secondary outline-none transition-all resize-none"></textarea>
                 </div>
 
                 <button type="submit"
-                    class="w-full py-3 px-4 bg-primary/90 hover:bg-purple-700 text-white font-semibold rounded-xl transition-colors shadow-sm mt-2">
+                    class="w-full py-3 px-4 bg-primary/90 hover:bg-primary text-white font-semibold rounded-xl transition-colors shadow-sm mt-2">
                     {% trans "Siųsti užklausą" %}
                 </button>
             </form>
