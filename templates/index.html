@@ -221,18 +221,18 @@
 <body class="bg-bg-main text-text-main">
 
     <!-- 1. Navigacija (Header) -->
-    <header class="bg-bg-main shadow-sm sticky top-0 z-50">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
         <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
             <!-- Logotipas -->
-            <a href="{% url 'index' %}" class="block outline-none flex items-center">
-                <img src="{% static 'images/logo.png' %}" alt="Orbigrow.lt" class="h-10 w-auto object-contain">
+            <a href="{% url 'index' %}" class="block outline-none flex items-center group">
+                <img src="{% static 'images/logo.png' %}" alt="Orbigrow.lt" class="h-10 w-auto object-contain transition-transform group-hover:scale-105">
             </a>
 
             <!-- Navigacijos nuorodos (Desktop) -->
-            <div class="hidden md:flex space-x-6 items-center">
-                <a href="{% url 'index' %}#funkcijos" class="text-text-muted hover:text-primary transition-colors">Pradžia</a>
-                <a href="{% url 'apie_mus' %}" class="text-text-muted hover:text-primary transition-colors">Apie mus</a>
-                <a href="{% url 'saugumas' %}" class="text-text-muted hover:text-primary transition-colors">Saugumas</a>
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="{% url 'index' %}#funkcijos" class="text-[15px] font-medium text-gray-500 hover:text-[#2a5384] transition-colors">{% trans "Pradžia" %}</a>
+                <a href="{% url 'apie_mus' %}" class="text-[15px] font-medium text-gray-500 hover:text-[#2a5384] transition-colors">{% trans "Apie mus" %}</a>
+                <a href="{% url 'saugumas' %}" class="text-[15px] font-medium text-gray-500 hover:text-[#2a5384] transition-colors">{% trans "Saugumas" %}</a>
             </div>
 
             <!-- Prisijungimo mygtukai -->

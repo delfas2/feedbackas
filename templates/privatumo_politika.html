@@ -55,15 +55,15 @@
 <body class="bg-slate-50 min-h-screen flex flex-col font-sans">
     
     <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-md border-b border-slate-100 sticky top-0 z-50">
-        <nav class="container mx-auto px-6 h-20 flex items-center justify-between">
-            <a href="{% url 'index' %}" class="flex items-center gap-3 group outline-none">
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="{% url 'index' %}" class="block outline-none flex items-center group">
                 <img src="{% static 'images/logo.png' %}" alt="Orbigrow.lt" class="h-10 w-auto object-contain transition-transform group-hover:scale-105">
             </a>
             <div class="hidden md:flex space-x-8 items-center">
-                <a href="{% url 'index' %}#funkcijos" class="text-[15px] font-medium text-slate-500 hover:text-slate-900 transition-colors">{% trans "Pradžia" %}</a>
-                <a href="{% url 'apie_mus' %}" class="text-[15px] font-medium text-slate-500 hover:text-slate-900 transition-colors">{% trans "Apie mus" %}</a>
-                <a href="{% url 'saugumas' %}" class="text-[15px] font-medium text-slate-500 hover:text-slate-900 transition-colors">{% trans "Saugumas" %}</a>
+                <a href="{% url 'index' %}#funkcijos" class="text-[15px] font-medium text-gray-500 hover:text-[#2a5384] transition-colors">{% trans "Pradžia" %}</a>
+                <a href="{% url 'apie_mus' %}" class="text-[15px] font-medium text-gray-500 hover:text-[#2a5384] transition-colors">{% trans "Apie mus" %}</a>
+                <a href="{% url 'saugumas' %}" class="text-[15px] font-medium text-gray-500 hover:text-[#2a5384] transition-colors">{% trans "Saugumas" %}</a>
             </div>
             <div class="flex items-center space-x-4">
                 {% if user.is_authenticated %}
