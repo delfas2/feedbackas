@@ -18,7 +18,7 @@
     </script>
     <meta name="description" content="{% trans "Sužinokite, kas yra OrbiGrow – Lietuvoje sukurta HR platforma darbuotojų grįžtamajam ryšiui, kompetencijų vertinimui ir organizacijos augimui." %}">
     <link rel="canonical" href="https://orbigrow.lt/apie-mus/">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <script src="https://unpkg.com/lucide@0.460.0" integrity="sha384-ieG+IKD0d/ZPXyCBTMVAbqsQdns8QGJR/e26WMw7M4fkaI/rHcS/YIoi+ah9WGge" crossorigin="anonymous"></script>
     <link rel="icon" type="image/png" href="{% static 'images/fav.png' %}">
     <link rel="shortcut icon" href="{% static 'images/fav.png' %}" type="image/x-icon">
@@ -46,15 +46,32 @@
                 <a href="{% url 'saugumas' %}" class="text-[15px] font-medium text-gray-500 hover:text-[#2a5384] transition-colors">{% trans "Saugumas" %}</a>
             </div>
             <div class="flex items-center space-x-4">
-                {% if user.is_authenticated %}
-                <a href="{% url 'home' %}"
-                    class="px-5 py-2.5 text-[14px] font-bold text-white bg-slate-900 rounded-xl shadow-sm hover:bg-slate-800 transition-colors flex items-center gap-2">
-                    <i data-lucide="layout-dashboard" class="w-4 h-4"></i> {% trans "Prietaisų skydelis" %}
-                </a>
-                {% else %}
-                <a href="{% url 'login' %}"
-                    class="px-5 py-2.5 text-[14px] font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl transition-colors">{% trans "Prisijungti" %}</a>
+                <!-- Kalbos pasirinkimas -->
+                {% if global_settings is None or global_settings.language_switcher_enabled %}
+                <div class="hidden md:flex items-center space-x-1">
+                    <form action="{% url 'set_language' %}" method="post" class="flex items-center space-x-1">
+                        {% csrf_token %}
+                        <input name="next" type="hidden" value="{{ request.get_full_path }}">
+                        <button type="submit" name="language" value="lt" class="p-1 rounded-md {% if LANGUAGE_CODE == 'lt' %}bg-gray-100{% else %}hover:bg-gray-100 opacity-50 hover:opacity-100{% endif %}">
+                            <img src="https://flagcdn.com/lt.svg" class="w-6 h-4 rounded-sm" alt="Lietuvių">
+                        </button>
+                        <button type="submit" name="language" value="en" class="p-1 rounded-md {% if LANGUAGE_CODE == 'en' %}bg-gray-100{% else %}hover:bg-gray-100 opacity-50 hover:opacity-100{% endif %}">
+                            <img src="https://flagcdn.com/gb.svg" class="w-6 h-4 rounded-sm" alt="English">
+                        </button>
+                    </form>
+                </div>
                 {% endif %}
+                <div class="space-x-2">
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'home' %}"
+                        class="px-4 py-2 text-sm font-medium text-white bg-[#2a5384] rounded-lg shadow-sm hover:opacity-90 transition-colors">
+                        {% trans "Prietaisų skydelis" %}
+                    </a>
+                    {% else %}
+                    <a href="{% url 'login' %}"
+                        class="px-4 py-2 text-sm font-medium text-white bg-[#2a5384] rounded-lg shadow-sm hover:opacity-90 transition-colors">{% trans "Prisijungti" %}</a>
+                    {% endif %}
+                </div>
             </div>
         </nav>
     </header>
@@ -62,17 +79,13 @@
     <!-- Pagrindinis Turinys -->
     <main class="flex-grow">
         <!-- Hero Section -->
-        <section class="relative bg-slate-900 text-white py-24 overflow-hidden">
-            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay"></div>
-            <div class="absolute -top-40 -right-40 w-96 h-96 bg-teal-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
-            <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
+        <section class="relative bg-[#2a5384] text-white py-20 overflow-hidden">
+            <div class="absolute -top-40 -right-40 w-96 h-96 bg-[#4a8e9e] rounded-full mix-blend-multiply filter blur-3xl opacity-30"></div>
+            <div class="absolute -bottom-40 -left-40 w-96 h-96 bg-[#94c98d] rounded-full mix-blend-multiply filter blur-3xl opacity-20"></div>
             
             <div class="container mx-auto px-4 text-center relative z-10">
-                <div class="inline-flex items-center justify-center p-3 bg-white/10 rounded-2xl mb-6 backdrop-blur-sm border border-white/20">
-                    <i data-lucide="users" class="w-6 h-6 text-teal-400"></i>
-                </div>
-                <h1 class="text-4xl md:text-6xl font-extrabold mb-6 tracking-tight leading-tight whitespace-pre-line">{{ page_description|translate_field:'about_hero_title' }}</h1>
-                <p class="text-xl text-slate-300 max-w-2xl mx-auto font-medium leading-relaxed whitespace-pre-line">{{ page_description|translate_field:'about_hero_desc' }}</p>
+                <h1 class="text-4xl md:text-5xl font-extrabold mb-4 tracking-tight leading-tight whitespace-pre-line">{{ page_description|translate_field:'about_hero_title' }}</h1>
+                <p class="text-xl text-white/80 max-w-2xl mx-auto font-medium leading-relaxed whitespace-pre-line">{{ page_description|translate_field:'about_hero_desc' }}</p>
             </div>
         </section>
 
