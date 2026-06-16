@@ -571,6 +571,11 @@
 
             <form method="POST" action="{% url 'index' %}" class="space-y-4">
                 {% csrf_token %}
+                <!-- Honeypot laukas apsaugai nuo botų -->
+                <div style="display: none;" aria-hidden="true">
+                    <label for="company_website">Nepildykite šio lauko, jei esate žmogus</label>
+                    <input type="text" name="company_website" id="company_website" tabindex="-1" autocomplete="off">
+                </div>
                 <div>
                     <label class="block text-sm font-medium text-text-main mb-1">Jūsų Vardas</label>
                     <input type="text" name="name" required placeholder="Vardenis Pavardenis"

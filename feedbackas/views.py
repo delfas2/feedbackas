@@ -39,6 +39,12 @@ def index(request):
         return redirect('home')
         
     if request.method == 'POST':
+        # Honeypot check for bots
+        honeypot = request.POST.get('company_website', '')
+        if honeypot:
+            # Pretend it was successful for bots
+            return redirect('index')
+
         name = request.POST.get('name')
         email = request.POST.get('email')
         phone = request.POST.get('phone')
