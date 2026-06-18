@@ -968,8 +968,8 @@ def company_management(request):
     # Vaikus gausime template su rekursija arba prefetch_related
     root_departments = Department.objects.filter(company=user_company, parent__isnull=True).prefetch_related('sub_departments')
     
-    # Gauname darbuotojus be departamento, kad galėtume juos priskirti
-    unassigned_users = User.objects.filter(profile__company_link=user_company, profile__department__isnull=True)
+    # Gauname visus įmonės darbuotojus, kad galėtume juos priskirti arba perpriskirti
+    company_users = User.objects.filter(profile__company_link=user_company).select_related('profile__department').order_by('first_name', 'last_name')
 
     # All departments for the assignment dropdown
     all_departments = Department.objects.filter(company=user_company).order_by('name')
@@ -977,7 +977,7 @@ def company_management(request):
     context = {
         'root_departments': root_departments,
         'form': form,
-        'unassigned_users': unassigned_users,
+        'company_users': company_users,
         'company_name': user_company.name,
         'all_departments': all_departments,
     }
@@ -996,14 +996,18 @@ def assign_to_department(request):
             
         user_id = request.POST.get('user_id')
         department_id = request.POST.get('department_id')
-        if user_id and department_id:
+        if user_id:
             target_user = get_object_or_404(User, id=user_id)
-            department = get_object_or_404(Department, id=department_id)
-            # Ensure both belong to the same company as the current user
             user_company = request.user.profile.company_link
-            if department.company == user_company and target_user.profile.company_link == user_company:
-                target_user.profile.department = department
-                target_user.profile.save()
+            if target_user.profile.company_link == user_company:
+                if department_id:
+                    department = get_object_or_404(Department, id=department_id)
+                    if department.company == user_company:
+                        target_user.profile.department = department
+                        target_user.profile.save()
+                else:
+                    target_user.profile.department = None
+                    target_user.profile.save()
     return redirect('company_management')
 
 @login_required

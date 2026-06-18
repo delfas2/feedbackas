@@ -47,14 +47,14 @@
 
             <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-8 h-fit">
                 <div class="flex items-center gap-3 mb-6 border-b border-slate-100 pb-4">
-                    <div class="w-10 h-10 rounded-xl bg-rose-50 flex items-center justify-center text-rose-600">
-                        <i data-lucide="user-minus" class="w-5 h-5"></i>
+                    <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+                        <i data-lucide="users" class="w-5 h-5"></i>
                     </div>
-                    <h2 class="text-xl font-bold text-slate-800">{% trans "Nepriskirti Darbuotojai" %}</h2>
+                    <h2 class="text-xl font-bold text-slate-800">{% trans "Darbuotojų Priskyrimas" %}</h2>
                 </div>
                 
-                <div class="space-y-3">
-                    {% for u in unassigned_users %}
+                <div class="space-y-3 max-h-[600px] overflow-y-auto pr-2 custom-scrollbar">
+                    {% for u in company_users %}
                     <form method="POST" action="{% url 'assign_to_department' %}" class="p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-slate-200 transition-colors">
                         {% csrf_token %}
                         <input type="hidden" name="user_id" value="{{ u.id }}">
@@ -69,11 +69,11 @@
                         </div>
                         <div class="flex flex-col gap-2">
                             <div class="relative">
-                                <select name="department_id" required
+                                <select name="department_id"
                                     class="w-full text-[13px] font-medium text-slate-700 border border-slate-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-teal-500 focus:outline-none appearance-none bg-white">
-                                    <option value="" disabled selected>{% trans "Pasirinkite padalinį..." %}</option>
+                                    <option value="">{% trans "Nepriskirtas" %}</option>
                                     {% for dept in all_departments %}
-                                    <option value="{{ dept.id }}">{{ dept.name }}</option>
+                                    <option value="{{ dept.id }}" {% if u.profile.department_id == dept.id %}selected{% endif %}>{{ dept.name }}</option>
                                     {% endfor %}
                                 </select>
                                 <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-slate-400">
@@ -82,14 +82,14 @@
                             </div>
                             <button type="submit"
                                 class="w-full text-[13px] text-white bg-slate-900 hover:bg-slate-800 px-3 py-2 rounded-xl font-bold transition flex items-center justify-center gap-1.5 shadow-sm">
-                                <i data-lucide="check" class="w-3.5 h-3.5"></i> {% trans "Priskirti" %}
+                                <i data-lucide="check" class="w-3.5 h-3.5"></i> {% trans "Išsaugoti" %}
                             </button>
                         </div>
                     </form>
                     {% empty %}
                     <div class="text-center py-8">
-                        <i data-lucide="check-circle-2" class="w-12 h-12 text-teal-400 mx-auto mb-2 opacity-50"></i>
-                        <p class="text-[14px] font-bold text-slate-500">{% trans "Visi darbuotojai priskirti." %}</p>
+                        <i data-lucide="users" class="w-12 h-12 text-slate-300 mx-auto mb-2 opacity-50"></i>
+                        <p class="text-[14px] font-bold text-slate-500">{% trans "Įmonėje nėra darbuotojų." %}</p>
                     </div>
                     {% endfor %}
                 </div>
