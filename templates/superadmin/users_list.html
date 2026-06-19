@@ -71,7 +71,7 @@
                                         </button>
                                     </form>
                                     <form method="post" action="{% url 'superadmin_delete_user' sys_user.id %}"
-                                        onsubmit="return confirm('Ar tikrai norite ištrinti vartotoją „{{ sys_user.get_full_name|default:sys_user.username }}"? Šis veiksmas negrįžtamas.');"
+                                        onsubmit="return confirm('Ar tikrai norite ištrinti vartotoją \'' + '{{ sys_user.get_full_name|default:sys_user.username|escapejs }}' + '\'? Šis veiksmas negrįžtamas.');"
                                         class="inline">
                                         {% csrf_token %}
                                         <button type="submit" title="Ištrinti vartotoją"

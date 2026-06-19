@@ -1134,12 +1134,17 @@ def superadmin_dashboard(request):
         ai_m = AIUsageLog.objects.filter(timestamp__year=y, timestamp__month=m).aggregate(Sum('total_cost'))['total_cost__sum'] or 0.0
         ai_cost_history.append(float(ai_m))
 
-        # Users
-        u_m = User.objects.filter(date_joined__year=y, date_joined__month=m).count()
+        # Helper: End of month date for cumulative queries
+        import calendar
+        _, last_day = calendar.monthrange(y, m)
+        end_of_month = target_date.replace(day=last_day, hour=23, minute=59, second=59)
+
+        # Users (Cumulative up to the end of this month)
+        u_m = User.objects.filter(date_joined__lte=end_of_month).count()
         users_history.append(u_m)
 
-        # Companies
-        c_m = Company.objects.filter(created_at__year=y, created_at__month=m).count()
+        # Companies (Cumulative up to the end of this month)
+        c_m = Company.objects.filter(created_at__lte=end_of_month).count()
         companies_history.append(c_m)
 
         # Completed Feedback
