@@ -21,15 +21,18 @@ def save_profile(sender, instance, **kwargs):
 @receiver(post_save, sender=Profile)
 def log_employee_count_on_profile_save(sender, instance, **kwargs):
     """
-    Fiksuoja aktyvių darbuotojų skaičių kaskart, kai Profile įrašomas.
-    Tai apima: darbuotojo pridėjimą, perkėlimą į kitą įmonę,
-    ir User.is_active pakeitimą (nes User.save() trigina Profile.save()).
+    Fiksuoja aktyvių darbuotojų skaičių kartą per dieną kiekvienai įmonei.
+    Jei šiandien jau yra įrašas – atnaujina jo skaičių.
+    Jei dar nėra – sukuria naują.
     """
+    from django.utils import timezone
     from .models import EmployeeCountLog
 
     company = instance.company_link
     if company is None:
-        return  # Profiilis be įmonės – ignoruojame
+        return  # Profilis be įmonės – ignoruojame
+
+    today = timezone.now().date()
 
     # Skaičiuojame visus aktyvius šios įmonės darbuotojus
     active_count = Profile.objects.filter(
@@ -37,7 +40,12 @@ def log_employee_count_on_profile_save(sender, instance, **kwargs):
         user__is_active=True,
     ).count()
 
-    EmployeeCountLog.objects.create(
+    # Vienas įrašas per dieną – atnaujina arba sukuria
+    EmployeeCountLog.objects.update_or_create(
         company=company,
-        active_count=active_count,
+        recorded_at__date=today,
+        defaults={
+            'active_count': active_count,
+            'recorded_at': timezone.now(),
+        },
     )
