@@ -2446,6 +2446,22 @@ def superadmin_users_list(request):
     
     return render(request, 'superadmin/users_list.html', context)
 
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_delete_user(request, user_id):
+    """Vartotojo trynimas – prieinamas tik superuseriams."""
+    if request.method == 'POST':
+        target_user = get_object_or_404(User, id=user_id)
+        if target_user.is_superuser:
+            messages.error(request, 'Negalima ištrinti superuser vartotojo per šį puslapį.')
+            return redirect('superadmin_users_list')
+        if target_user == request.user:
+            messages.error(request, 'Negalite ištrinti savęs.')
+            return redirect('superadmin_users_list')
+        name = target_user.get_full_name() or target_user.username
+        target_user.delete()
+        messages.success(request, f'Vartotojas „{name}" sėkmingai ištrintas.')
+    return redirect('superadmin_users_list')
+
 
 from django.contrib.admin.views.decorators import staff_member_required
 from .models import GlobalSettings

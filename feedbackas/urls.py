@@ -104,6 +104,7 @@ urlpatterns = [
     path('superadmin/superusers/<hashid:user_id>/edit/', views.superadmin_edit_superuser, name='superadmin_edit_superuser'),
     path('superadmin/superusers/<hashid:user_id>/delete/', views.superadmin_delete_superuser, name='superadmin_delete_superuser'),
     path('superadmin/users/', views.superadmin_users_list, name='superadmin_users_list'),
+    path('superadmin/users/<hashid:user_id>/delete/', views.superadmin_delete_user, name='superadmin_delete_user'),
     path('superadmin/descriptions/', views.superadmin_descriptions, name='superadmin_descriptions'),
 
     # Django Allauth (Microsoft Entra ID)

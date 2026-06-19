@@ -42,33 +42,44 @@
                                 </span>
                                 {% endif %}
                             </td>
-                            <td class="px-6 py-3 text-right flex justify-end items-center">
-                                <form method="post" action="{% url 'superadmin_users_list' %}"
-                                    class="flex items-center space-x-2">
-                                    {% csrf_token %}
-                                    <input type="hidden" name="user_id" value="{{ sys_user.id }}">
-                                    <select name="company_id"
-                                        class="text-sm border-gray-300 rounded-lg focus:ring-primary focus:border-purple-500"
-                                        required>
-                                        <option value="">Pasirinkti įmonę...</option>
-                                        {% for company in companies %}
-                                        {% if sys_user.profile.company_link.id == company.id %}
-                                        <option value="{{ company.id }}" selected>
-                                            {{ company.name }}
-                                        </option>
-                                        {% else %}
-                                        <option value="{{ company.id }}">
-                                            {{ company.name }}
-                                        </option>
-                                        {% endif %}
-                                        {% endfor %}
-                                        <option value="none">-- Pašalinti priskyrimą --</option>
-                                    </select>
-                                    <button type="submit"
-                                        class="px-3 py-1.5 bg-bg-secondary text-primary rounded-md hover:bg-bg-secondary font-medium transition-colors">
-                                        Išsaugoti
-                                    </button>
-                                </form>
+                            <td class="px-6 py-3 text-right">
+                                <div class="flex justify-end items-center gap-2">
+                                    <form method="post" action="{% url 'superadmin_users_list' %}"
+                                        class="flex items-center space-x-2">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="user_id" value="{{ sys_user.id }}">
+                                        <select name="company_id"
+                                            class="text-sm border-gray-300 rounded-lg focus:ring-primary focus:border-purple-500"
+                                            required>
+                                            <option value="">Pasirinkti įmonę...</option>
+                                            {% for company in companies %}
+                                            {% if sys_user.profile.company_link.id == company.id %}
+                                            <option value="{{ company.id }}" selected>
+                                                {{ company.name }}
+                                            </option>
+                                            {% else %}
+                                            <option value="{{ company.id }}">
+                                                {{ company.name }}
+                                            </option>
+                                            {% endif %}
+                                            {% endfor %}
+                                            <option value="none">-- Pašalinti priskyrimą --</option>
+                                        </select>
+                                        <button type="submit"
+                                            class="px-3 py-1.5 bg-bg-secondary text-primary rounded-md hover:bg-bg-secondary font-medium transition-colors">
+                                            Išsaugoti
+                                        </button>
+                                    </form>
+                                    <form method="post" action="{% url 'superadmin_delete_user' sys_user.id %}"
+                                        onsubmit="return confirm('Ar tikrai norite ištrinti vartotoją „{{ sys_user.get_full_name|default:sys_user.username }}"? Šis veiksmas negrįžtamas.');"
+                                        class="inline">
+                                        {% csrf_token %}
+                                        <button type="submit" title="Ištrinti vartotoją"
+                                            class="px-3 py-1.5 text-red-600 bg-red-50 hover:bg-red-100 rounded-md font-medium transition-colors border border-red-100">
+                                            Ištrinti
+                                        </button>
+                                    </form>
+                                </div>
                             </td>
                         </tr>
                         {% empty %}
