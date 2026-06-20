@@ -84,3 +84,22 @@ class CompanyRequiredMiddleware:
             return redirect('no_company')
 
         return self.get_response(request)
+
+class SecurityHeadersMiddleware:
+    """
+    Middleware skirtas pašalinti nereikalingas antraštes (Server, X-Powered-By),
+    kad nebūtų atskleidžiamos Django/Python ar kitos technologijų versijos.
+    """
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+        
+        # Pašalinti antraštes, jei jos buvo pridėtos anksčiau Django lygyje
+        if 'Server' in response:
+            del response['Server']
+        if 'X-Powered-By' in response:
+            del response['X-Powered-By']
+            
+        return response
