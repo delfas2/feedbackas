@@ -1179,6 +1179,68 @@ def superadmin_dashboard(request):
     return render(request, 'superadmin/dashboard.html', context)
 
 @user_passes_test(lambda u: u.is_superuser)
+def superadmin_statistics(request):
+    import json
+    from datetime import timedelta
+    from django.db.models import Count
+    from django.db.models.functions import TruncDate
+
+    now = timezone.now()
+    
+    # 1. Setup Company Filtering
+    company_id = request.GET.get('company_id')
+    companies = Company.objects.all().order_by('name')
+    
+    # Base queries (All historical data)
+    users_qs = User.objects.all()
+    feedback_qs = Feedback.objects.all()
+    
+    from users.models import EmployeeCountLog
+    active_users_qs = EmployeeCountLog.objects.all()
+
+    if company_id:
+        users_qs = users_qs.filter(profile__company_link_id=company_id)
+        # Note: Feedback model traces back to user -> company.
+        # Feedback -> FeedbackRequest -> requested_to -> Profile -> Company
+        feedback_qs = feedback_qs.filter(feedback_request__requested_to__profile__company_link_id=company_id)
+        active_users_qs = active_users_qs.filter(company_id=company_id)
+
+    # 2. Detailed User Growth (Registrations per day)
+    users_per_day = list(users_qs.annotate(date=TruncDate('date_joined'))
+                        .values('date')
+                        .annotate(count=Count('id'))
+                        .order_by('date'))
+    
+    # 3. Active Users Per Day (Sum of active_count grouped by date)
+    from django.db.models import Sum
+    active_users_per_day = list(active_users_qs.annotate(date=TruncDate('recorded_at'))
+                                .values('date')
+                                .annotate(total_active=Sum('active_count'))
+                                .order_by('date'))
+
+    # 4. Completed Feedback per Day
+    feedback_per_day = list(feedback_qs.annotate(date=TruncDate('created_at'))
+                            .values('date')
+                            .annotate(count=Count('id'))
+                            .order_by('date'))
+
+    def serialize_data(data_list, value_key):
+        # Grąžina [{ date: 'YYYY-MM-DD', value: X }, ...]
+        return [{'date': str(item['date']), 'value': item[value_key] or 0} for item in data_list if item['date']]
+
+    context = {
+        'companies': companies,
+        'selected_company_id': int(company_id) if company_id and company_id.isdigit() else None,
+        
+        # Raw dieniniai duomenys kaip JSON
+        'user_growth_raw': json.dumps(serialize_data(users_per_day, 'count')),
+        'active_users_raw': json.dumps(serialize_data(active_users_per_day, 'total_active')),
+        'feedback_raw': json.dumps(serialize_data(feedback_per_day, 'count')),
+    }
+
+    return render(request, 'superadmin/statistics.html', context)
+
+@user_passes_test(lambda u: u.is_superuser)
 def superadmin_companies_list(request):
     companies = Company.objects.annotate(employee_count=Count('profile')).order_by('-created_at')
     

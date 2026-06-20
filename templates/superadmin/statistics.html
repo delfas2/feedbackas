@@ -1,0 +1,273 @@
+{% extends 'superadmin/base_superadmin.html' %}
+{% load static %}
+
+{% block title %}Statistika - Superadmin{% endblock %}
+
+{% block content %}
+<main class="flex-1 overflow-y-auto bg-slate-50">
+    <header class="h-[72px] border-b border-slate-200 bg-white/70 backdrop-blur-md sticky top-0 z-10 px-8 flex items-center justify-between">
+        <h1 class="text-xl font-bold text-slate-800">Sistemos Statistika</h1>
+    </header>
+
+    <div class="p-8 max-w-7xl mx-auto space-y-8">
+        
+        <!-- Filtravimas -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 flex flex-wrap gap-4 justify-between items-center">
+            <div>
+                <h3 class="font-bold text-slate-800">Duomenų filtras</h3>
+                <p class="text-xs text-slate-500">Pasirinkite įmonę, jei norite matyti tik jos duomenis</p>
+            </div>
+            <form method="GET" action="{% url 'superadmin_statistics' %}" class="flex gap-4 items-center">
+                <select name="company_id" class="border-slate-300 rounded-xl text-sm focus:ring-indigo-500 focus:border-indigo-500 min-w-[250px]" onchange="this.form.submit()">
+                    <option value="">-- Visos įmonės (Bendra statistika) --</option>
+                    {% for company in companies %}
+                        <option value="{{ company.id }}" {% if selected_company_id == company.id %}selected{% endif %}>
+                            {{ company.name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </form>
+        </div>
+
+        <!-- 1. Vartotojų augimas -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative">
+            <div class="flex flex-wrap gap-4 justify-between items-center mb-6">
+                <h4 class="font-bold text-slate-800">Registruoti vartotojai</h4>
+                <div class="flex bg-slate-100 p-1 rounded-lg text-xs font-semibold" id="filters-user-growth">
+                    <button class="px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-800 transition" data-period="day">Diena</button>
+                    <button class="px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-800 transition" data-period="week">Savaitė</button>
+                    <button class="px-3 py-1.5 rounded-md bg-white text-indigo-600 shadow-sm transition" data-period="month">Mėnuo</button>
+                    <button class="px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-800 transition" data-period="year">Metai</button>
+                </div>
+            </div>
+            <div class="h-72 w-full">
+                <canvas id="chart-user-growth"></canvas>
+            </div>
+        </div>
+
+        <!-- 2. Aktyvūs vartotojai -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative">
+            <div class="flex flex-wrap gap-4 justify-between items-center mb-6">
+                <h4 class="font-bold text-slate-800">Aktyvūs vartotojai (pagal įrašų sumą)</h4>
+                <div class="flex bg-slate-100 p-1 rounded-lg text-xs font-semibold" id="filters-active-users">
+                    <button class="px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-800 transition" data-period="day">Diena</button>
+                    <button class="px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-800 transition" data-period="week">Savaitė</button>
+                    <button class="px-3 py-1.5 rounded-md bg-white text-emerald-600 shadow-sm transition" data-period="month">Mėnuo</button>
+                    <button class="px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-800 transition" data-period="year">Metai</button>
+                </div>
+            </div>
+            <div class="h-72 w-full">
+                <canvas id="chart-active-users"></canvas>
+            </div>
+        </div>
+
+        <!-- 3. Atliktos apklausos -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 relative">
+            <div class="flex flex-wrap gap-4 justify-between items-center mb-6">
+                <h4 class="font-bold text-slate-800">Atliktos apklausos</h4>
+                <div class="flex bg-slate-100 p-1 rounded-lg text-xs font-semibold" id="filters-feedback">
+                    <button class="px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-800 transition" data-period="day">Diena</button>
+                    <button class="px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-800 transition" data-period="week">Savaitė</button>
+                    <button class="px-3 py-1.5 rounded-md bg-white text-rose-600 shadow-sm transition" data-period="month">Mėnuo</button>
+                    <button class="px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-800 transition" data-period="year">Metai</button>
+                </div>
+            </div>
+            <div class="h-72 w-full">
+                <canvas id="chart-feedback"></canvas>
+            </div>
+        </div>
+        
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+
+<!-- Day.js laiko manipuliavimui, kad išvengtume problemų su laiko juostomis grupuojant -->
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dayjs@1/plugin/isoWeek.js"></script>
+<script>
+    dayjs.extend(window.dayjs_plugin_isoWeek);
+
+    document.addEventListener("DOMContentLoaded", function() {
+        const rawUserGrowth = {{ user_growth_raw|safe }};
+        const rawActiveUsers = {{ active_users_raw|safe }};
+        const rawFeedback = {{ feedback_raw|safe }};
+
+        // Grupavimo logika
+        function groupData(rawData, period, isCumulative = false) {
+            // Sukuriame žodyną norimam periodui
+            const grouped = {};
+            let runningTotal = 0;
+
+            // Rūšiuojame chronologiškai
+            const sortedData = [...rawData].sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            // Randame pradžios ir pabaigos datas, kad galėtume užpildyti tarpus
+            if (sortedData.length === 0) return { labels: [], values: [] };
+            
+            let current = dayjs(sortedData[0].date);
+            const end = dayjs(new Date()); // Iki šiandienos
+
+            // Supildome duomenis į dataDictionary
+            const dataDict = {};
+            sortedData.forEach(item => {
+                dataDict[item.date] = item.value;
+            });
+
+            const labels = [];
+            const values = [];
+
+            while (current.isBefore(end) || current.isSame(end, 'day')) {
+                const dateStr = current.format('YYYY-MM-DD');
+                const val = dataDict[dateStr] || 0;
+
+                let groupKey = '';
+                let labelKey = '';
+
+                if (period === 'day') {
+                    groupKey = dateStr;
+                    labelKey = current.format('MMM DD');
+                } else if (period === 'week') {
+                    // Start of week
+                    const startOfWeek = current.startOf('isoWeek');
+                    groupKey = startOfWeek.format('YYYY-WW');
+                    labelKey = startOfWeek.format('MMM DD') + ' - S' + startOfWeek.isoWeek();
+                } else if (period === 'month') {
+                    groupKey = current.format('YYYY-MM');
+                    labelKey = current.format('MMM YYYY');
+                } else if (period === 'year') {
+                    groupKey = current.format('YYYY');
+                    labelKey = current.format('YYYY');
+                }
+
+                if (!grouped[groupKey]) {
+                    grouped[groupKey] = { label: labelKey, value: 0 };
+                }
+                
+                grouped[groupKey].value += val;
+                current = current.add(1, 'day');
+            }
+
+            // Paverčiame atgal į masyvus
+            for (const key in grouped) {
+                labels.push(grouped[key].label);
+                if (isCumulative) {
+                    runningTotal += grouped[key].value;
+                    values.push(runningTotal);
+                } else {
+                    values.push(grouped[key].value);
+                }
+            }
+
+            return { labels, values };
+        }
+
+        const charts = {};
+
+        function createOrUpdateChart(chartId, title, type, color, rawData, period, isCumulative) {
+            const { labels, values } = groupData(rawData, period, isCumulative);
+            const ctx = document.getElementById(chartId).getContext('2d');
+
+            if (charts[chartId]) {
+                charts[chartId].data.labels = labels;
+                charts[chartId].data.datasets[0].data = values;
+                charts[chartId].update();
+                return;
+            }
+
+            const gradient = ctx.createLinearGradient(0, 0, 0, 400);
+            gradient.addColorStop(0, color.replace('1)', '0.5)'));
+            gradient.addColorStop(1, color.replace('1)', '0)'));
+
+            charts[chartId] = new Chart(ctx, {
+                type: type,
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: title,
+                        data: values,
+                        borderColor: color,
+                        backgroundColor: type === 'line' ? gradient : color.replace('1)', '0.8)'),
+                        fill: type === 'line',
+                        tension: 0.4,
+                        borderWidth: type === 'line' ? 2 : 0,
+                        pointBackgroundColor: color,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: type === 'line' ? 2 : 0,
+                        pointHoverRadius: 5,
+                        borderRadius: type === 'bar' ? 4 : 0,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: '#1e293b',
+                            titleColor: '#94a3b8',
+                            bodyColor: '#fff',
+                            borderColor: '#334155',
+                            borderWidth: 1,
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { display: false },
+                            ticks: { maxTicksLimit: 12, color: '#94a3b8' }
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: { color: '#f1f5f9' },
+                            ticks: { precision: 0, color: '#94a3b8' }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+        }
+
+        // Init Charts with default "month" period
+        createOrUpdateChart('chart-user-growth', 'Registruoti vartotojai', 'line', 'rgba(99, 102, 241, 1)', rawUserGrowth, 'month', true);
+        createOrUpdateChart('chart-active-users', 'Aktyvūs vartotojai', 'bar', 'rgba(52, 211, 153, 1)', rawActiveUsers, 'month', false);
+        createOrUpdateChart('chart-feedback', 'Atliktos apklausos', 'bar', 'rgba(244, 63, 94, 1)', rawFeedback, 'month', false);
+
+        // Mygtukų logika
+        function setupFilters(containerId, chartId, title, type, color, rawData, isCumulative) {
+            const container = document.getElementById(containerId);
+            const buttons = container.querySelectorAll('button');
+            const activeClassColors = {
+                'chart-user-growth': 'text-indigo-600',
+                'chart-active-users': 'text-emerald-600',
+                'chart-feedback': 'text-rose-600'
+            };
+            const activeColorClass = activeClassColors[chartId];
+
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Reset all buttons in this group
+                    buttons.forEach(b => {
+                        b.className = "px-3 py-1.5 rounded-md text-slate-500 hover:text-slate-800 transition";
+                    });
+                    // Set active state for clicked button
+                    this.className = `px-3 py-1.5 rounded-md bg-white ${activeColorClass} shadow-sm transition`;
+                    
+                    const period = this.getAttribute('data-period');
+                    createOrUpdateChart(chartId, title, type, color, rawData, period, isCumulative);
+                });
+            });
+        }
+
+        setupFilters('filters-user-growth', 'chart-user-growth', 'Registruoti vartotojai', 'line', 'rgba(99, 102, 241, 1)', rawUserGrowth, true);
+        setupFilters('filters-active-users', 'chart-active-users', 'Aktyvūs vartotojai', 'bar', 'rgba(52, 211, 153, 1)', rawActiveUsers, false);
+        setupFilters('filters-feedback', 'chart-feedback', 'Atliktos apklausos', 'bar', 'rgba(244, 63, 94, 1)', rawFeedback, false);
+    });
+</script>
+{% endblock %}

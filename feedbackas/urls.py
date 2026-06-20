@@ -69,6 +69,7 @@ urlpatterns = [
     path('management/department/<hashid:department_id>/edit/', views.company_edit_department, name='company_edit_department'),
     path('management/department/<hashid:department_id>/delete/', views.company_delete_department, name='company_delete_department'),
     path('superadmin/', views.superadmin_dashboard, name='superadmin_dashboard'),
+    path('superadmin/statistics/', views.superadmin_statistics, name='superadmin_statistics'),
     path('superadmin/companies/', views.superadmin_companies_list, name='superadmin_companies_list'),
     path('superadmin/ai-analytics/', views.superadmin_ai_analytics, name='superadmin_ai_analytics'),
     path('superadmin/companies/create/', views.superadmin_create_company, name='superadmin_create_company'),
