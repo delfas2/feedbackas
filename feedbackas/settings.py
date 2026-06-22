@@ -55,9 +55,18 @@ SECURE_BROWSER_XSS_FILTER = True
 # Production-only security (requires HTTPS)
 if not DEBUG:
     SECURE_SSL_REDIRECT = True
+    
+    # Session cookies
     SESSION_COOKIE_SECURE = True
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    
+    # CSRF cookies
     CSRF_COOKIE_SECURE = True
     CSRF_COOKIE_HTTPONLY = True
+    CSRF_COOKIE_SAMESITE = 'Lax'
+    
+    # HSTS
     SECURE_HSTS_SECONDS = 31536000  # 1 metai
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
@@ -84,6 +93,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'feedbackas.middleware.SecurityHeadersMiddleware',
+    'feedbackas.middleware.RestrictHttpMethodMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'csp.middleware.CSPMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',

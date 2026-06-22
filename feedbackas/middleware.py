@@ -103,3 +103,20 @@ class SecurityHeadersMiddleware:
             del response['X-Powered-By']
             
         return response
+
+class RestrictHttpMethodMiddleware:
+    """
+    Middleware skirtas blokuoti nepageidaujamus HTTP metodus (TRACE, PUT, DELETE ir pan.).
+    Leidžiami tik standartiniai ir saugūs GET, POST, HEAD, OPTIONS metodai.
+    """
+    ALLOWED_METHODS = ['GET', 'POST', 'HEAD', 'OPTIONS']
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        if request.method not in self.ALLOWED_METHODS:
+            from django.http import HttpResponseNotAllowed
+            return HttpResponseNotAllowed(self.ALLOWED_METHODS)
+            
+        return self.get_response(request)
