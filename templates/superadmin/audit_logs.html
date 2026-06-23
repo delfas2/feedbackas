@@ -1,0 +1,127 @@
+{% extends 'superadmin/base_superadmin.html' %}
+
+{% block title %}Audito logai - Superadmin{% endblock %}
+
+{% block content %}
+<main class="flex-1 overflow-y-auto bg-slate-50">
+    <header class="h-[72px] border-b border-slate-200 bg-white/70 backdrop-blur-md sticky top-0 z-10 px-8 flex items-center justify-between">
+        <h1 class="text-xl font-bold text-slate-800">Sistemos Audito Logai</h1>
+    </header>
+
+    <div class="p-8 max-w-7xl mx-auto space-y-6">
+        
+        <!-- Eksportavimo forma -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex items-center justify-between">
+            <h2 class="text-slate-700 font-semibold text-sm">Duomenų eksportavimas (CSV)</h2>
+            <form action="{% url 'superadmin_export_audit_logs' %}" method="get" class="flex items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <label for="start_date" class="text-xs text-slate-500">Nuo:</label>
+                    <input type="date" id="start_date" name="start_date" class="text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" required>
+                </div>
+                <div class="flex items-center gap-2">
+                    <label for="end_date" class="text-xs text-slate-500">Iki:</label>
+                    <input type="date" id="end_date" name="end_date" class="text-sm border-slate-200 rounded-lg px-3 py-1.5 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500" required>
+                </div>
+                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-lg shadow-sm transition">
+                    Eksportuoti
+                </button>
+            </form>
+        </div>
+        
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm text-slate-600">
+                    <thead class="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold">
+                        <tr>
+                            <th class="px-6 py-4">Data/Laikas</th>
+                            <th class="px-6 py-4">Vartotojas</th>
+                            <th class="px-6 py-4">Veiksmas</th>
+                            <th class="px-6 py-4">Objektas</th>
+                            <th class="px-6 py-4">Pakeitimai</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        {% for log in page_obj %}
+                        <tr class="hover:bg-slate-50 transition">
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="font-medium text-slate-800">{{ log.timestamp|date:"Y-m-d H:i:s" }}</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                {% if log.actor %}
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-6 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-bold text-[10px]">
+                                            {{ log.actor.first_name|first|default:log.actor.username|first|upper }}
+                                        </div>
+                                        <span>{{ log.actor.get_full_name|default:log.actor.username }}</span>
+                                    </div>
+                                {% else %}
+                                    <span class="text-slate-400 italic">Sistemos veiksmas</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                {% if log.action == 0 %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md bg-emerald-50 text-emerald-600 text-xs font-bold">CREATE</span>
+                                {% elif log.action == 1 %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md bg-amber-50 text-amber-600 text-xs font-bold">UPDATE</span>
+                                {% elif log.action == 2 %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md bg-rose-50 text-rose-600 text-xs font-bold">DELETE</span>
+                                {% else %}
+                                    <span class="inline-flex items-center px-2 py-1 rounded-md bg-slate-100 text-slate-600 text-xs font-bold">KITA</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="font-medium text-slate-800">{{ log.content_type.model|title }}</div>
+                                <div class="text-xs text-slate-500 truncate max-w-[200px]" title="{{ log.object_repr }}">{{ log.object_repr }}</div>
+                            </td>
+                            <td class="px-6 py-4 max-w-md">
+                                {% if log.formatted_changes %}
+                                    <div class="text-xs font-mono bg-slate-100 text-slate-600 p-2 rounded-lg break-words overflow-hidden" title="{{ log.formatted_changes }}">
+                                        {{ log.formatted_changes|truncatechars:100 }}
+                                    </div>
+                                {% else %}
+                                    <span class="text-slate-400 text-xs italic">Nėra detalių</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5" class="px-6 py-12 text-center text-slate-500">
+                                <div class="flex flex-col items-center justify-center">
+                                    <svg class="w-12 h-12 text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <p>Nėra jokių audito įrašų.</p>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Pagination -->
+            {% if page_obj.has_other_pages %}
+            <div class="px-6 py-4 border-t border-slate-200 flex items-center justify-between bg-slate-50">
+                <span class="text-sm text-slate-500">
+                    Rodomas puslapis <strong>{{ page_obj.number }}</strong> iš <strong>{{ page_obj.paginator.num_pages }}</strong>
+                </span>
+                <div class="flex items-center gap-2">
+                    {% if page_obj.has_previous %}
+                        <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 transition text-sm">Atgal</a>
+                    {% else %}
+                        <span class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-400 bg-slate-100 cursor-not-allowed text-sm">Atgal</span>
+                    {% endif %}
+                    
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1.5 rounded-lg border border-slate-300 text-slate-600 hover:bg-slate-100 transition text-sm">Pirmyn</a>
+                    {% else %}
+                        <span class="px-3 py-1.5 rounded-lg border border-slate-200 text-slate-400 bg-slate-100 cursor-not-allowed text-sm">Pirmyn</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+    </div>
+</main>
+{% endblock %}

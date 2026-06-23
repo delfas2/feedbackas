@@ -1329,6 +1329,117 @@ def superadmin_download_employee_template(request):
     return response
 
 @user_passes_test(lambda u: u.is_superuser)
+def superadmin_audit_logs(request):
+    try:
+        from auditlog.models import LogEntry
+        from django.core.paginator import Paginator
+        import json
+        
+        # Get all logs, ordered from newest to oldest
+        log_entries_list = LogEntry.objects.all().order_by('-timestamp')
+        
+        # Pagination
+        paginator = Paginator(log_entries_list, 50) # 50 logs per page
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+        
+        # Process the changes for better display
+        for entry in page_obj:
+            if entry.changes:
+                try:
+                    changes_dict = json.loads(entry.changes)
+                    formatted_changes = []
+                    for field, values in changes_dict.items():
+                        if isinstance(values, list) and len(values) == 2:
+                            old_val, new_val = values
+                            formatted_changes.append(f"{field}: '{old_val}' -> '{new_val}'")
+                        else:
+                            formatted_changes.append(f"{field}: {values}")
+                    entry.formatted_changes = " | ".join(formatted_changes)
+                except Exception:
+                    entry.formatted_changes = entry.changes
+            else:
+                entry.formatted_changes = ""
+                
+        context = {
+            'page_obj': page_obj,
+        }
+        return render(request, 'superadmin/audit_logs.html', context)
+    except ImportError:
+        # Fallback if auditlog isn't installed properly
+        from django.http import HttpResponse
+        return HttpResponse("Klaida: django-auditlog neįdiegtas arba nesukonfigūruotas.")
+
+@user_passes_test(lambda u: u.is_superuser)
+def superadmin_export_audit_logs(request):
+    try:
+        from auditlog.models import LogEntry
+        from django.http import HttpResponse
+        from datetime import datetime
+        import csv
+        import json
+        
+        start_date_str = request.GET.get('start_date')
+        end_date_str = request.GET.get('end_date')
+        
+        logs = LogEntry.objects.all().order_by('-timestamp')
+        
+        if start_date_str:
+            try:
+                start_date = datetime.strptime(start_date_str, '%Y-%m-%d')
+                logs = logs.filter(timestamp__gte=start_date)
+            except ValueError:
+                pass
+                
+        if end_date_str:
+            try:
+                # Add 1 day to end date to include the whole day
+                end_date = datetime.strptime(end_date_str, '%Y-%m-%d')
+                logs = logs.filter(timestamp__lte=end_date.replace(hour=23, minute=59, second=59))
+            except ValueError:
+                pass
+
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="audit_logs.csv"'
+        response.write('\ufeff'.encode('utf8')) # BOM for Excel
+        
+        writer = csv.writer(response, delimiter=';')
+        writer.writerow(['Data', 'Vartotojas', 'Veiksmas', 'Objektas', 'Pakeitimai'])
+        
+        action_map = {0: 'CREATE', 1: 'UPDATE', 2: 'DELETE'}
+        
+        for log in logs:
+            action = action_map.get(log.action, 'KITA')
+            actor = log.actor.get_full_name() or log.actor.username if log.actor else 'Sistemos veiksmas'
+            
+            changes_str = log.changes
+            if changes_str:
+                try:
+                    changes_dict = json.loads(changes_str)
+                    formatted_changes = []
+                    for field, values in changes_dict.items():
+                        if isinstance(values, list) and len(values) == 2:
+                            formatted_changes.append(f"{field}: '{values[0]}' -> '{values[1]}'")
+                        else:
+                            formatted_changes.append(f"{field}: {values}")
+                    changes_str = " | ".join(formatted_changes)
+                except Exception:
+                    pass
+            
+            writer.writerow([
+                log.timestamp.strftime("%Y-%m-%d %H:%M:%S"),
+                actor,
+                action,
+                f"{log.content_type.model.title()} ({log.object_repr})",
+                changes_str
+            ])
+            
+        return response
+    except ImportError:
+        from django.http import HttpResponse
+        return HttpResponse("Klaida: django-auditlog neįdiegtas.")
+
+@user_passes_test(lambda u: u.is_superuser)
 def superadmin_create_company(request):
     if request.method == 'POST':
         name = request.POST.get('name')

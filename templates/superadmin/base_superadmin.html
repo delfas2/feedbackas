@@ -68,6 +68,13 @@
                 </svg>
                 <span class="font-semibold">Supervartotojai</span>
             </a>
+            <a href="{% url 'superadmin_audit_logs' %}"
+                class="flex items-center gap-3 px-4 py-3 rounded-xl transition {% if request.resolver_match.url_name == 'superadmin_audit_logs' %}bg-indigo-50 text-indigo-600 shadow-sm{% else %}text-slate-600 hover:bg-slate-50 hover:text-indigo-600{% endif %}">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span class="font-semibold">Audito logai</span>
+            </a>
             <a href="{% url 'superadmin_features' %}"
                 class="flex items-center gap-3 px-4 py-3 rounded-xl transition {% if request.resolver_match.url_name == 'superadmin_features' %}bg-indigo-50 text-indigo-600 shadow-sm{% else %}text-slate-600 hover:bg-slate-50 hover:text-indigo-600{% endif %}">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
